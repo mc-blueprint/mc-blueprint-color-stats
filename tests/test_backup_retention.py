@@ -51,3 +51,19 @@ def test_cli_removes_expired_dumps_and_sidecars_only(tmp_path, monkeypatch) -> N
     assert len(list(tmp_path.glob("postgres-*.dump"))) == 7
     assert len(list(tmp_path.glob("postgres-*.dump.sha256"))) == 7
     assert (tmp_path / "notes.txt").exists()
+
+
+def test_archives_and_dumps_retain_independent_generations(tmp_path, monkeypatch) -> None:
+    artifacts = names(date(2026, 1, 1), 35)
+    artifacts += [name.replace(".dump", ".tar.gz") for name in artifacts]
+    for name in artifacts:
+        (tmp_path / name).touch()
+        (tmp_path / f"{name}.sha256").touch()
+    daily, weekly = retention_plan(artifacts)
+    assert len(daily) == 14
+    assert len(weekly) == 8
+    monkeypatch.setattr("sys.argv", ["retention", str(tmp_path), "--generations", "7"])
+
+    main()
+
+    assert {p.name for p in tmp_path.iterdir()} == daily | {f"{n}.sha256" for n in daily}

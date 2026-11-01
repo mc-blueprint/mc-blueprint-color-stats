@@ -1,6 +1,9 @@
 [Unit]
 Description=Prune PostgreSQL colorstats backup generations
 After=local-fs.target
+ConditionPathIsMountPoint=/srv/colorstats/backup-wd750
+ConditionPathIsMountPoint=/srv/colorstats/backup-st500a
+ConditionPathIsMountPoint=/srv/colorstats/backup-st500b
 
 [Service]
 Type=oneshot
@@ -8,3 +11,7 @@ User=colorstats-backup
 Group=colorstats-backup
 ExecStart=/usr/bin/python3 /var/lib/colorstats-backup/retention.py /srv/colorstats/backup-wd750/daily --generations 7
 ExecStart=/usr/bin/python3 /var/lib/colorstats-backup/retention.py /srv/colorstats/backup-wd750/weekly --generations 4
+ExecStart=/usr/bin/python3 /var/lib/colorstats-backup/retention.py /srv/colorstats/backup-st500a/daily --generations 7
+ExecStart=/usr/bin/python3 /var/lib/colorstats-backup/retention.py /srv/colorstats/backup-st500a/weekly --generations 4
+ExecStart=/usr/bin/python3 /var/lib/colorstats-backup/retention.py /srv/colorstats/backup-st500b/daily --generations 7
+ExecStart=/usr/bin/python3 /var/lib/colorstats-backup/retention.py /srv/colorstats/backup-st500b/weekly --generations 4
