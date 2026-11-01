@@ -1,0 +1,158 @@
+[
+  {
+    "batchcomplete": true,
+    "continue": {
+      "sroffset": 1,
+      "continue": "-||"
+    },
+    "query": {
+      "searchinfo": {
+        "totalhits": 918
+      },
+      "search": [
+        {
+          "ns": 6,
+          "title": "File:Dilution-concentration simple example.jpg",
+          "pageid": 1492655,
+          "size": 563,
+          "wordcount": 7,
+          "snippet": "DescriptionDilution-concentration simple <span class=\"searchmatch\">example</span>.<span class=\"searchmatch\">jpg</span> Very simple demonstration of qualitative differences in dye concentration (Dilution-concentration",
+          "timestamp": "2026-04-29T23:16:03Z"
+        }
+      ]
+    }
+  },
+  {
+    "batchcomplete": true,
+    "query": {
+      "pages": [
+        {
+          "pageid": 1492655,
+          "ns": 6,
+          "title": "File:Dilution-concentration simple example.jpg",
+          "imagerepository": "local",
+          "imageinfo": [
+            {
+              "size": 6537,
+              "width": 360,
+              "height": 154,
+              "url": "https://upload.wikimedia.org/wikipedia/commons/6/63/Dilution-concentration_simple_example.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+              "descriptionurl": "https://commons.wikimedia.org/wiki/File:Dilution-concentration_simple_example.jpg",
+              "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=1492655",
+              "extmetadata": {
+                "DateTime": {
+                  "value": "2006-12-25 23:13:54",
+                  "source": "mediawiki-metadata",
+                  "hidden": ""
+                },
+                "ObjectName": {
+                  "value": "Dilution-concentration simple example",
+                  "source": "mediawiki-metadata"
+                },
+                "CommonsMetadataExtension": {
+                  "value": 1.2,
+                  "source": "extension",
+                  "hidden": ""
+                },
+                "Categories": {
+                  "value": "License migration completed|Self-published work|PD-self|GFDL-en|Files with derivative versions|Concentration (chemistry)",
+                  "source": "commons-categories",
+                  "hidden": ""
+                },
+                "Assessments": {
+                  "value": "",
+                  "source": "commons-categories",
+                  "hidden": ""
+                },
+                "ImageDescription": {
+                  "value": "Very simple demonstration of qualitative differences in dye concentration (Dilution-concentration simple example)",
+                  "source": "commons-desc-page"
+                },
+                "DateTimeOriginal": {
+                  "value": "2004-09-25",
+                  "source": "commons-desc-page"
+                },
+                "Credit": {
+                  "value": "<a class=\"external free\" data-mw-original-href=\"http://en.wikipedia.org/wiki/Image:Dilution-concentration_simple_example.jpg\" href=\"https://en.wikipedia.org/wiki/Image:Dilution-concentration_simple_example.jpg\">http://en.wikipedia.org/wiki/Image:Dilution-concentration_simple_example.jpg</a>",
+                  "source": "commons-desc-page"
+                },
+                "Artist": {
+                  "value": "<a href=\"https://en.wikipedia.org/wiki/User:FirstPrinciples\" class=\"extiw\" title=\"en:User:FirstPrinciples\">en:User:FirstPrinciples</a>",
+                  "source": "commons-desc-page"
+                },
+                "Permission": {
+                  "value": "<table class=\"licensetpl\" style=\"display:none\">\n<tbody><tr>\n<td><span class=\"licensetpl_short\">Public domain</span><span class=\"licensetpl_long\">Public domain</span><span class=\"licensetpl_link_req\">false</span><span class=\"licensetpl_attr_req\">false</span>\n</td></tr></tbody></table>\n<table style=\"width: 100%; clear: both; margin: 0.5em auto; background-color: var(--background-color-progressive-subtle, #f7f8ff); color: var(--color-base, #202122); border: var(--border-subtle, 2px solid #8888aa); border-spacing: 8px; padding: 0px;\" dir=\"ltr\" class=\"layouttemplate\" lang=\"en\">\n<tbody><tr>\n<td><span typeof=\"mw:File\"><span title=\"Public domain\"><img alt=\"Public domain\" src=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/PD-icon.svg/120px-PD-icon.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail\" decoding=\"async\" loading=\"lazy\" width=\"64\" height=\"64\" class=\"mw-file-element\" srcset=\"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/PD-icon.svg/250px-PD-icon.svg.png?utm_source=commons.wikimedia.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x\" data-file-width=\"196\" data-file-height=\"196\"></span></span>\n</td>\n<td>I, the copyright holder of this work, release this work into the <b><a href=\"https://en.wikipedia.org/wiki/en:public_domain\" class=\"extiw\" title=\"w:en:public domain\">public domain</a></b>. This applies worldwide.<br><small>In some countries this may not be legally possible; if so:</small><br><i>I grant anyone the right to use this work <b>for any purpose</b>, without any conditions, unless such conditions are required by law.</i>\n</td></tr></tbody></table>",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "LicenseShortName": {
+                  "value": "Public domain",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "UsageTerms": {
+                  "value": "Public domain",
+                  "source": "commons-desc-page"
+                },
+                "AttributionRequired": {
+                  "value": "false",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "Copyrighted": {
+                  "value": "False",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "Restrictions": {
+                  "value": "",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "License": {
+                  "value": "pd",
+                  "source": "commons-templates",
+                  "hidden": ""
+                }
+              },
+              "mime": "image/jpeg"
+            }
+          ],
+          "categories": [
+            {
+              "ns": 14,
+              "title": "Category:CC-BY-SA-3.0-migrated-with-disclaimers"
+            },
+            {
+              "ns": 14,
+              "title": "Category:Concentration (chemistry)"
+            },
+            {
+              "ns": 14,
+              "title": "Category:Files with derivative versions"
+            },
+            {
+              "ns": 14,
+              "title": "Category:GFDL-en"
+            },
+            {
+              "ns": 14,
+              "title": "Category:License migration completed"
+            },
+            {
+              "ns": 14,
+              "title": "Category:PD-self"
+            },
+            {
+              "ns": 14,
+              "title": "Category:Self-published work"
+            }
+          ]
+        }
+      ]
+    },
+    "limits": {
+      "categories": 500
+    }
+  }
+]

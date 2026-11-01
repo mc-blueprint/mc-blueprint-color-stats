@@ -1,0 +1,23 @@
+# ホストごとの論理保存先。媒体識別にはUUIDを使い、/dev名は使わない。
+storage:
+  raw:
+    - host: ubuntu-1
+      path: /srv/colorstats/raw-orico
+      uuid: 138e6f52-15ae-4b26-b370-bd6f1a586e7e
+      serial: TM40BNK57PJCFY2MF32P
+    - host: ubuntu-1
+      path: /srv/colorstats/raw-suneast
+      uuid: 0b0662f1-5ad5-4131-a758-e78d3abb6d6c
+      serial: '30084394891'
+  derived:
+    host: ubuntu-2
+    path: /mnt/data/derived
+  models:
+    host: ubuntu-2
+    path: /mnt/data/models
+  work:
+    host: windows
+    path: H:/MCBlueprintColorStats/work
+  backup:
+    host: ubuntu-0
+    path: /srv/colorstats/backup-wd750

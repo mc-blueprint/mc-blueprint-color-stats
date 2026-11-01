@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["taxonomy_version", "kind"],
+  "properties": {
+    "taxonomy_version": {"type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"},
+    "kind": {"enum": ["parts", "terrain", "scene", "mcblueprint"]}
+  },
+  "oneOf": [
+    {
+      "properties": {"kind": {"const": "parts"}, "groups": {"$ref": "#/$defs/vocabulary"}},
+      "required": ["groups"]
+    },
+    {
+      "properties": {
+        "kind": {"const": "terrain"},
+        "labels": {"$ref": "#/$defs/labels"},
+        "attributes": {
+          "type": "object", "additionalProperties": false,
+          "required": ["relative_elevation", "slope", "estimated"],
+          "properties": {
+            "relative_elevation": {"$ref": "#/$defs/labels"},
+            "slope": {"$ref": "#/$defs/labels"},
+            "estimated": {"const": [true, false]}
+          }
+        }
+      },
+      "required": ["labels", "attributes"]
+    },
+    {
+      "properties": {
+        "kind": {"const": "scene"},
+        "attributes": {
+          "$ref": "#/$defs/vocabulary",
+          "required": ["style", "building_type", "scale", "biome_like", "season", "weather", "time_of_day"]
+        }
+      },
+      "required": ["attributes"]
+    },
+    {
+      "properties": {
+        "kind": {"const": "mcblueprint"},
+        "upstream_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "status": {"const": "provisional"},
+        "presets": {"type": "object", "minProperties": 1, "additionalProperties": {"$ref": "#/$defs/vocabulary"}}
+      },
+      "required": ["upstream_commit", "status", "presets"]
+    }
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "labels": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}
+    },
+    "vocabulary": {
+      "type": "object", "minProperties": 1,
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_]*$"},
+      "additionalProperties": {"$ref": "#/$defs/labels"}
+    }
+  }
+}

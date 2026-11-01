@@ -1,0 +1,30 @@
+taxonomy_version: 0.1.0
+kind: scene
+attributes:
+  style:
+    - medieval
+    - japanese
+    - modern
+    - gothic
+    - romanesque
+    - renaissance
+    - baroque
+    - neoclassical
+    - victorian
+    - art_nouveau
+    - art_deco
+    - brutalist
+    - industrial
+    - mediterranean
+    - nordic
+    - chinese
+    - islamic
+    - vernacular
+    - fantasy
+    - other
+  building_type: [house, tower, temple, castle, shop, bridge, other]
+  scale: [small, medium, large]
+  biome_like: [plains, forest, taiga, jungle, savanna, desert, badlands, swamp, mountains, snowy, ocean, river, beach, mushroom_fields, nether, end]
+  season: [spring, summer, autumn, winter]
+  weather: [clear, cloudy, rain, snow, fog, thunder]
+  time_of_day: [dawn, day, dusk, night]

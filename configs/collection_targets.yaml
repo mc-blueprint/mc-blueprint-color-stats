@@ -1,0 +1,49 @@
+# 初期値は仮値。実パイロットの結果で調整する。
+taxonomy_version: 0.1.0
+# subject.nameをキーに、検索タイトルで使われる別名の配列を指定する。
+subject_aliases: {}
+image_budget: 1000
+limits:
+  subject_images: 3
+  subject_share: 0.003
+  author_share: 0.05
+  source_share: 0.8
+  region_share: 0.4
+search:
+  providers: [wikimedia_commons]
+  pages: 3
+  limit: 10
+  max_offset: 500
+strata:
+  - id: japanese-castle
+    attributes:
+      domain: real_building
+      style: japanese
+      building_type: castle
+      region: japan
+      era: early_modern
+    subjects: 100
+    queries:
+      ja: [日本 城 天守, 日本 城 石垣]
+      en: [Japanese castle exterior, Japanese castle walls]
+  - id: gothic-temple
+    attributes:
+      domain: real_building
+      style: gothic
+      building_type: temple
+      region: europe
+      era: medieval
+    subjects: 100
+    queries:
+      en: [gothic church exterior, gothic cathedral facade]
+      de: [gotische Kirche Außenansicht, gotische Kathedrale Fassade]
+  - id: forest-autumn-day
+    attributes:
+      domain: real_terrain
+      biome_like: forest
+      season: autumn
+      time_of_day: day
+    subjects: 100
+    queries:
+      ja: [秋 森 風景, 紅葉 森林]
+      en: [autumn forest landscape, fall woodland landscape]
