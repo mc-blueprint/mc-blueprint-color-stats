@@ -46,7 +46,7 @@ def test_PostgreSQL用の適用と巻戻しSQLを接続なしで生成できる(
     assert "search_parameters JSONB" in asset_sql
     output.seek(0)
     output.truncate()
-    command.downgrade(config, "0001:base", sql=True)
+    command.downgrade(config, "0003:base", sql=True)
     sql = output.getvalue()
     for table in Base.metadata.tables:
         assert f"DROP TABLE {table}" in sql

@@ -1,0 +1,140 @@
+[
+  {
+    "batchcomplete": true,
+    "continue": {
+      "sroffset": 1,
+      "continue": "-||"
+    },
+    "query": {
+      "searchinfo": {
+        "totalhits": 1210
+      },
+      "search": [
+        {
+          "ns": 6,
+          "title": "File:Himeji Castle, November 2016 -02.jpg",
+          "pageid": 53627077,
+          "size": 5761,
+          "wordcount": 148,
+          "snippet": "DescriptionHimeji Castle, November 2016 -02.jpg English: <span class=\"searchmatch\">Himeji</span> <span class=\"searchmatch\">Castle</span>, UNESCO World Heritage Site Ref. Number 661, is a hilltop Japanese castle complex",
+          "timestamp": "2026-04-04T18:29:46Z"
+        }
+      ]
+    }
+  },
+  {
+    "continue": {
+      "iistart": "2016-12-18T09:39:04Z",
+      "continue": "||"
+    },
+    "query": {
+      "pages": [
+        {
+          "pageid": 53627077,
+          "ns": 6,
+          "title": "File:Himeji Castle, November 2016 -02.jpg",
+          "imagerepository": "local",
+          "imageinfo": [
+            {
+              "size": 12612003,
+              "width": 5179,
+              "height": 2688,
+              "url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Himeji_Castle%2C_November_2016_-02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+              "descriptionurl": "https://commons.wikimedia.org/wiki/File:Himeji_Castle,_November_2016_-02.jpg",
+              "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=53627077",
+              "extmetadata": {
+                "DateTime": {
+                  "value": "2016-12-18 09:58:10",
+                  "source": "mediawiki-metadata",
+                  "hidden": ""
+                },
+                "ObjectName": {
+                  "value": "Himeji Castle, November 2016 -02",
+                  "source": "mediawiki-metadata"
+                },
+                "CommonsMetadataExtension": {
+                  "value": 1.2,
+                  "source": "extension",
+                  "hidden": ""
+                },
+                "Categories": {
+                  "value": "Featured pictures of Japan|Self-published work|Featured Pictures by Martin Falbisoner|Featured pictures on Wikipedia, Persian|Water reflections of structures in Japan|Files with coordinates missing SDC location of creation|Japan photographs taken on 2016-11-17|Views of Himeji Castle Keep Tower from Sangoku-bori-kuruwa|Autumn in Himeji",
+                  "source": "commons-categories",
+                  "hidden": ""
+                },
+                "Assessments": {
+                  "value": "quality|featured|valued|potd",
+                  "source": "commons-categories",
+                  "hidden": ""
+                },
+                "GPSLatitude": {
+                  "value": "34.839459",
+                  "source": "commons-desc-page"
+                },
+                "GPSLongitude": {
+                  "value": "134.693584",
+                  "source": "commons-desc-page"
+                },
+                "GPSMapDatum": {
+                  "value": "WGS-84",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "ImageDescription": {
+                  "value": "<a href=\"https://en.wikipedia.org/wiki/Himeji_Castle\" class=\"extiw\" title=\"en:Himeji Castle\">Himeji Castle</a>, UNESCO World Heritage Site Ref. Number <a rel=\"nofollow\" class=\"external text\" href=\"http://whc.unesco.org/en/list/661\">661</a>, is a hilltop <a href=\"https://en.wikipedia.org/wiki/Japanese_castle\" class=\"extiw\" title=\"en:Japanese castle\">Japanese castle</a> complex located in <a href=\"https://en.wikipedia.org/wiki/Himeji\" class=\"extiw\" title=\"en:Himeji\">Himeji</a>, <a href=\"https://en.wikipedia.org/wiki/Hy%C5%8Dgo_Prefecture\" class=\"extiw\" title=\"en:Hyōgo Prefecture\">Hyōgo Prefecture</a>. The castle is regarded as the finest surviving example of prototypical Japanese castle architecture, comprising a network of 83 buildings with advanced defensive systems from the <a href=\"https://en.wikipedia.org/wiki/Feudal_Japan\" class=\"extiw\" title=\"en:Feudal Japan\">feudal period</a>.",
+                  "source": "commons-desc-page"
+                },
+                "DateTimeOriginal": {
+                  "value": "2016-11-17 13:59:05",
+                  "source": "commons-desc-page"
+                },
+                "Credit": {
+                  "value": "<span class=\"int-own-work\" lang=\"en\">Own work</span>",
+                  "source": "commons-desc-page"
+                },
+                "Artist": {
+                  "value": "<bdi>Martin Falbisoner</bdi>",
+                  "source": "commons-desc-page"
+                },
+                "LicenseShortName": {
+                  "value": "CC BY-SA 4.0",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "UsageTerms": {
+                  "value": "Creative Commons Attribution-Share Alike 4.0",
+                  "source": "commons-desc-page"
+                },
+                "AttributionRequired": {
+                  "value": "true",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "LicenseUrl": {
+                  "value": "https://creativecommons.org/licenses/by-sa/4.0",
+                  "source": "commons-desc-page"
+                },
+                "Copyrighted": {
+                  "value": "True",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "Restrictions": {
+                  "value": "",
+                  "source": "commons-desc-page",
+                  "hidden": ""
+                },
+                "License": {
+                  "value": "cc-by-sa-4.0",
+                  "source": "commons-templates",
+                  "hidden": ""
+                }
+              },
+              "mime": "image/jpeg"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
