@@ -14,6 +14,8 @@ def prepare(claim):
     started.write_text(str(claim.attempt), encoding="utf-8")
     if claim.payload.get("readonly"):
         raise OSError(errno.EROFS, "保存先がreadonlyです")
+    if claim.payload.get("io_error"):
+        raise OSError(errno.EIO, "保存先のI/Oエラーです")
     if claim.payload.get("exit") and claim.attempt == 1:
         os._exit(17)
     if claim.payload.get("crash"):

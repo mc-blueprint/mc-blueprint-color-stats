@@ -1,3 +1,4 @@
+import errno
 import os
 import threading
 import uuid
@@ -95,6 +96,14 @@ def expire(queue, claim):
             update(Job)
             .where(Job.id == claim.id)
             .values(lease_until=func.clock_timestamp() - timedelta(seconds=1))
+        )
+
+
+def make_available(queue, job_id):
+    with queue.engine.begin() as connection:
+        connection.execute(
+            update(Job).where(Job.id == job_id)
+            .values(available_at=func.clock_timestamp() - timedelta(seconds=1))
         )
 
 
@@ -486,6 +495,10 @@ def test_保存先の保留は試行数を消費せず古い所有権を拒否�
     queue.defer(old, "保存先の復旧待ち")
     job = read_job(queue, job_id)
     assert job.status == "pending" and job.attempts == 0
+    assert queue.claim(["prep"]) is None
+    with pytest.raises(LeaseLost):
+        queue.defer(old, "保留済みの試行")
+    make_available(queue, job_id)
     current = queue.claim(["prep"])
     assert current.attempt == 1 and current.token != old.token
     with pytest.raises(LeaseLost):
@@ -500,9 +513,58 @@ def test_子のreadonly例外は監視記録に先行しても失敗を消費し
     worker = Worker(queue, {"prep": "tests.queue_handler"}, tmp_path / "stop")
     for _ in range(3):
         worker.run(once=True)
+        assert queue.claim(["prep"]) is None
+        make_available(queue, job_id)
     job = read_job(queue, job_id)
     assert job.status == "pending" and job.attempts == 0
     assert "readonly" in job.failure_reason
+
+
+@pytest.mark.parametrize("failure", ["child", "publish"])
+def test_EIO保留中も後続ジョブが完了し待機後に再取得できる(
+    queue, tmp_path, monkeypatch, failure
+):
+    first = queue.enqueue("prep", None, "a" * 64,
+                          {"started": str(tmp_path / "first"), "io_error": failure == "child"})
+    second = queue.enqueue("prep", None, "b" * 64, {"started": str(tmp_path / "second")})
+    third = queue.enqueue("color", None, "c" * 64, {"started": str(tmp_path / "third")})
+    worker = Worker(queue, {"prep": "tests.queue_handler", "color": "tests.queue_handler"},
+                    tmp_path / "stop")
+    complete = queue.complete
+
+    def publish(claim, *args, **kwargs):
+        if claim.id == first:
+            raise OSError(errno.EIO, "公開時のI/Oエラーです")
+        return complete(claim, *args, **kwargs)
+
+    if failure == "publish":
+        monkeypatch.setattr(queue, "complete", publish)
+    for _ in range(2):
+        with queue.engine.connect() as connection:
+            before = connection.scalar(select(func.clock_timestamp()))
+        worker.run(once=True)
+        job = read_job(queue, first)
+        with queue.engine.connect() as connection:
+            after = connection.scalar(select(func.clock_timestamp()))
+        assert job.status == "pending" and job.attempts == 0
+        assert before + timedelta(seconds=30) <= job.available_at <= after + timedelta(seconds=30)
+        worker.run(once=True)
+        worker.run(once=True)
+        assert read_job(queue, second).status == "succeeded"
+        assert read_job(queue, third).status == "succeeded"
+        assert queue.claim(["prep", "color"]) is None
+        make_available(queue, first)
+    with queue.engine.begin() as connection:
+        connection.execute(
+            update(Job).where(Job.id == first)
+            .values(available_at=func.clock_timestamp() + timedelta(milliseconds=200))
+        )
+    assert queue.claim(["prep"]) is None
+    sleep(0.25)
+    current = queue.claim(["prep"])
+    assert current.id == first and current.attempt == 1
+    complete(current, INFO, lambda session, run: None)
+    assert read_job(queue, first).status == "succeeded"
 
 
 def test_計算中の保存先異常は保留し復旧後に再開する(queue, tmp_path, monkeypatch):
@@ -525,6 +587,9 @@ def test_計算中の保存先異常は保留し復旧後に再開する(queue, 
         assert read_job(queue, job_id).attempts == 0
         assert read_job(queue, job_id).status == "pending"
         available.set()
+        worker.run(once=True)
+        assert read_job(queue, job_id).status == "pending"
+        make_available(queue, job_id)
         worker.run(once=True)
         assert read_job(queue, job_id).status == "succeeded"
         assert read_job(queue, job_id).attempts == 1
