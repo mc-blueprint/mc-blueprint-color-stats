@@ -1,14 +1,13 @@
 """Openverse API を使う画像検索アダプター。"""
 
 import json
-import shutil
+from html.parser import HTMLParser
 from pathlib import Path
-from time import monotonic, sleep
 from urllib.parse import urlencode, urlsplit
-from urllib.request import Request, urlopen
 
 from colorstats.collect import Candidate, SearchResult
-from colorstats.collect.policy import check_policy, license_class
+from colorstats.collect.http import HttpClient
+from colorstats.collect.policy import license_class
 
 ENDPOINT = "https://api.openverse.org/v1/images/"
 MIME_TYPES = {
@@ -23,31 +22,100 @@ MIME_TYPES = {
 }
 
 
-class OpenverseAdapter:
+class _LinkedData(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.parts = None
+        self.documents = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "script" and dict(attrs).get("type", "").lower() == "application/ld+json":
+            self.parts = []
+
+    def handle_data(self, data):
+        if self.parts is not None:
+            self.parts.append(data)
+
+    def handle_endtag(self, tag):
+        if tag == "script" and self.parts is not None:
+            try:
+                self.documents.append(json.loads("".join(self.parts)))
+            except ValueError:
+                pass
+            self.parts = None
+
+
+def _images(value, schema=False):
+    if isinstance(value, list):
+        for child in value:
+            yield from _images(child, schema)
+    elif isinstance(value, dict):
+        context = value.get("@context")
+        if context is not None:
+            schema = context in (
+                "https://schema.org", "https://schema.org/",
+                "http://schema.org", "http://schema.org/",
+            )
+        kind = value.get("@type")
+        if schema and kind in (
+            "ImageObject", "https://schema.org/ImageObject", "http://schema.org/ImageObject"
+        ):
+            yield value
+        for child in value.values():
+            yield from _images(child, schema)
+
+
+def _license_url(value):
+    if not isinstance(value, str):
+        return None
+    url = urlsplit(value)
+    if (
+        url.scheme not in ("http", "https") or url.netloc != "creativecommons.org"
+        or url.query or url.fragment
+    ):
+        return None
+    return url.path.rstrip("/")
+
+
+def _verify_source(page, item):
+    """対象原本と結び付くImageObjectの作者・CCライセンスURLを完全照合する。"""
+    name, version = item.get("license"), item.get("license_version")
+    versions = ("1.0",) if name in ("cc0", "pdm") else ("1.0", "2.0", "2.5", "3.0", "4.0")
+    if name not in ("by", "by-sa", "cc0", "pdm") or version not in versions:
+        return False
+    path = {"cc0": "publicdomain/zero", "pdm": "publicdomain/mark"}.get(
+        name, f"licenses/{name}"
+    )
+    expected = f"/{path}/{version}"
+    if _license_url(item.get("license_url")) != expected:
+        return False
+    parser = _LinkedData()
+    parser.feed(page)
+    matches = [
+        image for document in parser.documents for image in _images(document)
+        if image.get("contentUrl", image.get("url")) == item["url"]
+    ]
+    if not matches:
+        return False
+    for image in matches:
+        author = image.get("creator", image.get("author"))
+        if isinstance(author, dict):
+            author = author.get("name")
+        if (
+            not isinstance(author, str)
+            or author.strip().casefold() != item["creator"].strip().casefold()
+        ):
+            return False
+        license_url = image.get("license")
+        if isinstance(license_url, dict):
+            license_url = license_url.get("@id", license_url.get("url"))
+        if _license_url(license_url) != expected:
+            return False
+    return True
+
+
+class OpenverseAdapter(HttpClient):
     """匿名 Openverse API で検索し、元サイトのページを照合してから取得する。"""
-
-    def __init__(self, policy, *, opener=urlopen, clock=monotonic, wait=sleep):
-        check_policy(policy)
-        self.policy, self.opener, self.clock, self.wait = policy, opener, clock, wait
-        self.next_request = 0.0
-
-    def _get(self, url, *, target=None, text=False):
-        self.wait(max(0, self.next_request - self.clock()))
-        request = Request(url, headers={"User-Agent": self.policy["user_agent"]})
-        try:
-            with self.opener(request, timeout=60) as response:
-                if target is not None:
-                    with target.open("wb") as output:
-                        shutil.copyfileobj(response, output)
-                    length = response.headers.get("Content-Length")
-                    if length is not None and target.stat().st_size != int(length):
-                        raise OSError("画像の受信が途中で終了しました")
-                    return None
-                if text:
-                    return response.read().decode("utf-8", errors="replace")
-                return json.load(response)
-        finally:
-            self.next_request = self.clock() + self.policy["min_interval"]
 
     def search(self, request):
         if request.provider != "openverse":
@@ -60,7 +128,7 @@ class OpenverseAdapter:
             "license": "cc0,pdm,by,by-sa",
             "mature": "false",
         }
-        data = self._get(ENDPOINT + "?" + urlencode(params))
+        data = self.get(ENDPOINT + "?" + urlencode(params))
         candidates = []
         for index, item in enumerate(data.get("results", [])):
             landing = item.get("foreign_landing_url") or ""
@@ -81,8 +149,8 @@ class OpenverseAdapter:
             verified = False
             if not reasons:
                 try:
-                    page = self._get(landing, text=True).lower()
-                    verified = license_name in page and creator.lower() in page
+                    page = self.get(landing, text=True)
+                    verified = _verify_source(page, item)
                 except Exception:
                     verified = False
                 if not verified:
@@ -108,7 +176,14 @@ class OpenverseAdapter:
                     width=item.get("width") or 0,
                     height=item.get("height") or 0,
                     mime=MIME_TYPES.get(filetype.lower(), filetype),
-                    metadata={"openverse": item, "source_verified": verified},
+                    metadata={
+                        "openverse": item,
+                        "source_verified": verified,
+                        "source_verification": {
+                            "method": "schema.org/ImageObject",
+                            "status": "verified" if verified else "review",
+                        },
+                    },
                     attribution=attribution,
                     exclusion_reason=",".join(reasons) or None,
                 )
@@ -133,7 +208,4 @@ class OpenverseAdapter:
             raise ValueError(candidate.exclusion_reason or "source_license_or_author_unverified")
         if license_class(self.policy, candidate.license) == "restricted":
             raise ValueError("restricted の候補は取得できません")
-        self._get(candidate.original_url, target=target)
-
-    def finish(self):
-        self.wait(max(0, self.next_request - self.clock()))
+        self.get(candidate.original_url, target=target)
