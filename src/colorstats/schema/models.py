@@ -190,6 +190,9 @@ class Job(Identity, Base):
     payload: Mapped[dict] = mapped_column(JSONB)
     status: Mapped[str] = mapped_column(Text, default="pending")
     attempts: Mapped[int] = mapped_column(Integer, default=0)
+    available_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     lease_token: Mapped[uuid.UUID | None] = mapped_column(Uuid)
     lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     failure_reason: Mapped[str | None] = mapped_column(Text)
