@@ -27,16 +27,44 @@ for database in "${databases[@]}"; do
     sha256sum "$dump" >"${dump}.sha256"
 done
 
-transferred=false
+for name in ground-truth aggregates; do
+    archive="${dump_dir}/${name}-${date_utc}.tar.gz"
+    artifacts+=("$archive" "${archive}.sha256")
+    tar -czf "$archive" -C "$DATA_ROOT" "$name"
+    sha256sum "$archive" >"${archive}.sha256"
+done
+
+declare -a destinations=()
+declare -A uuids=()
+excluded=0
 while IFS= read -r destination; do
     [[ -z "$destination" || "$destination" == \#* ]] && continue
     host=${destination%%:*}
     path=${destination#*:}
     [[ "$host" =~ ^[A-Za-z0-9_.-]+@[A-Za-z0-9_.-]+$ && ( "$path" == . || ( "$path" == /* && "$path" != *"'"* ) ) ]]
-    transferred=true
+    if ! health=$(ssh -n -i "$key" -o BatchMode=yes -o StrictHostKeyChecking=yes "$host" health 2>&1); then
+        printf 'excluded destination=%s reason=%s\n' "$destination" "$health"
+        excluded=$((excluded + 1))
+        continue
+    fi
+    [[ "$health" =~ ^uuid=([a-fA-F0-9-]+)$ ]]
+    uuid=${BASH_REMATCH[1]}
+    [[ -n "${uuids[$uuid]:-}" ]] && continue
+    uuids[$uuid]=1
+    destinations+=("$destination")
+done < "$DESTINATIONS_FILE"
+printf 'backup destinations: healthy=%s excluded=%s\n' "${#destinations[@]}" "$excluded"
+if (( ${#destinations[@]} < 2 )); then
+    echo 'backup failed: fewer than 2 healthy media' >&2
+    exit 1
+fi
+for destination in "${destinations[@]}"; do
+    host=${destination%%:*}
+    path=${destination#*:}
     rsync -t -e "ssh -i $key -o BatchMode=yes -o StrictHostKeyChecking=yes" "${artifacts[@]}" "${host}:${path}/daily/"
     if [[ "$(date +%u)" == 7 ]]; then
         rsync -t -e "ssh -i $key -o BatchMode=yes -o StrictHostKeyChecking=yes" "${artifacts[@]}" "${host}:${path}/weekly/"
     fi
-done < "$DESTINATIONS_FILE"
-[[ "$transferred" == true ]]
+    printf 'transferred destination=%s\n' "$destination"
+done
+printf 'backup result: transferred=%s\n' "${#destinations[@]}"

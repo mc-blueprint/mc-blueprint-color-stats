@@ -2,17 +2,37 @@
 
 ## 保存領域
 
-主保存先はWD750GB ext4（UUID `3f9a319f-394c-4cca-805d-fc88d782d644`）を `/srv/colorstats/backup-wd750` にUUID指定でマウントする。ST3500 2台は既存NTFSデータの確認と利用判断が済むまで変更しない。保存先はリストとして設定し、追加媒体が利用可能になった後に追記できる。追加媒体が未設定の間は冗長性要件未達として扱う。
+主保存先はWD750GB ext4（UUID `3f9a319f-394c-4cca-805d-fc88d782d644`）を `/srv/colorstats/backup-wd750` にUUID指定でマウントする。2026-11-01のユーザー承認に従ってST3500×2をext4化し、以下を追加した。全媒体を `defaults,nofail` で永続マウントする。
+
+| serial | マウント先 | UUID |
+| --- | --- | --- |
+| 9QG4GD0M | `/srv/colorstats/backup-st500a` | `71cefe86-d90a-4caa-be51-54cc5f8d6ebc` |
+| 9QG4B26Z | `/srv/colorstats/backup-st500b` | `e53f78c3-2918-4a64-bc50-807a38249da1` |
+
+`configs/storage.yaml` の `backup.host/path` は主保存先のまま維持し、`replicas` に同じホストの追加媒体を記録する。論理パスresolverは主保存先を返し、複製転送はバックアップ処理が担当する。
 
 ## 世代
 
 - `colorstats-backup.service` が毎日、全接続可能な非template DBを `pg_dump -Fc` でDBごとに取得し、`pg_restore --list` とSHA-256を確認してから保存先リストの各宛先へ転送する。
-- DBごとに日次7世代、週次4世代を `daily/` と `weekly/` に分けて保持する。日曜は週次ディレクトリにもコピーし、ubuntu-0の `colorstats-backup-retention.timer` が日次でPython標準ライブラリの保持処理を実行する。
-- 保存先リストは `/etc/colorstats/backup-destinations` に1行1宛先（`user@host:path`）で置く。WDの初期宛先は `colorstats-backup@192.168.1.46:.`。SSH鍵の強制コマンドで転送ルートを `/srv/colorstats/backup-wd750` に固定する。追加先はユーザー判断後に適切な転送ルートを設定して行を追加する。
-- バックアップ転送用SSH鍵はubuntu-2上のPostgreSQL実行ユーザーだけが読める権限で保管する。ubuntu-0の専用アカウントは `rrsync -wo` 強制コマンドでWDバックアップ領域への受信だけを許可する。
+- `/etc/colorstats/backup.conf` の `DATA_ROOT=/mnt/data/backup-inputs` 以下の `ground-truth/`（正解データ）と `aggregates/`（集計結果）を、日付付きtar.gzとSHA-256にして同じ宛先へ送る。生成元からここへ確定済みのデータを投入し、バックアップ中は変更しない。ディレクトリ欠落・読取失敗時はserviceを失敗させ、欠落を成功扱いしない。初回確認時は両ディレクトリが空で、実データは未投入。
+- DB・アーカイブごとに、各媒体で日次7世代、週次4世代を `daily/` と `weekly/` に分けて保持する。日曜は週次ディレクトリにもコピーし、ubuntu-0の `colorstats-backup-retention.timer` が日次でPython標準ライブラリの保持処理を実行する。媒体未マウント時は保持serviceをスキップするため、復旧後に手動実行する。
+- 保存先リストは `/etc/colorstats/backup-destinations` に1行1宛先（`user@host:path`）で置く。`destinations.example` の3行を配置する。WDは既存の `colorstats-backup`、STは `colorstats-backup-st500a`・`colorstats-backup-st500b` を使い、同じ公開鍵に媒体別の強制コマンドを設定する。
+- バックアップ転送用SSH鍵はubuntu-2上のPostgreSQL実行ユーザーだけが読める権限で保管する。ubuntu-0は `rrsync -wo` で受信領域を限定する。3媒体共通の `receive-st500.sh` はマウント・UUID・監視状態を検証し、欠落・取り違え・異常時は書き込まず失敗する。転送開始後に1宛先で失敗するとserviceも失敗し、後続宛先は未転送となるため、復旧後に再実行する。
 - rsync/sshは既存コマンドを利用する。追加パッケージが必要な場合は導入前に報告する。
 
-systemd timerは毎日実行し、失敗はsystemd journalで確認する。媒体のSMART監視はIssue #3の担当範囲。
+systemd timerは毎日実行する。送信側は転送直前に各受信アカウントへSSHの `health` コマンドを送り、`health.py` が既存監視の `/var/lib/colorstats-storage/state.json` と `/var/log/colorstats-storage/events.jsonl` を確認する。60°C以上、SMART増分・kernel異常などの記録がある媒体を除外する。監視状態の欠落・不正・15分以上の更新停止も除外し、異常記録ファイルがまだない初回は最新SMART値で判定する。受信時にも同じ判定を行う。既存SSHとPython標準ライブラリを利用し、依存は追加しない。
+
+除外理由は送信serviceのjournalに `excluded destination=... reason=...` と記録し、転送完了時は `backup result: transferred=...` を残す。同じUUIDを重複して数えず、健全な保存先が2台未満なら転送せずserviceを失敗させる。外部通知の仕組みは未実装で、systemdの失敗状態とjournalで代える。`systemctl --failed` と `journalctl -u colorstats-backup.service` で確認する。STは約7.4万時間稼働しており、単独保存先にはしない。
+
+異常イベントは原因確認まで除外を維持する。フォーマット前の異常も、監視JSONの `previous_uuids` で同じserialの旧UUIDに対応付ける。ST500bは旧UUIDで61〜63°Cの記録があり、現在冷却されていても除外する。復帰時はtimerを停止し、冷却・配線・SMARTを点検し、イベントログを退避して対象UUID（旧UUIDを含む）の解決済み行だけを管理者が除去する。他媒体の記録は保持する。監視serviceを再実行し、2台以上の健全性とハッシュ一致を確認してtimerを再開する。復帰は自動化しない。
+
+## 追加媒体の配置
+
+`setup-st500.sh` は上表のフォーマット済みUUID・serialを検証し、マウントと専用受信アカウントを設定する。再実行してもフォーマットしない。事前にubuntu-0の `/tmp/` に `health.py` と `receive-st500.sh` を転送し、`setup-health-ubuntu0.sh` を実行する。判定を `/usr/local/lib/colorstats-backup/health.py`、受信ガードを `/usr/local/sbin/colorstats-receive-st500` にroot所有で配置し、既存WDアカウントの強制コマンドにも適用する。初期配置では `install-ubuntu0.sh` の前に同じファイルを配置する。STの設定は既存WD受信用の公開鍵を内部で複製し、秘密鍵を移動・表示しない。`colorstats-backup` グループでSTの世代保持を許可する。
+
+ubuntu-0へ更新した監視JSON、`backup_retention.py`、保持serviceを既存の配置先へ設置し、`systemctl daemon-reload` 後に監視・保持serviceを起動する。ubuntu-2は `update-ubuntu2.sh` で `colorstats-backup.sh` と宛先リストを更新し、`DATA_ROOT` とその2ディレクトリをpostgres所有・700で準備する。初期配置の `install-ubuntu2.sh` と更新スクリプトは `/tmp/destinations.example` も入力に使う。
+
+手動検証はubuntu-2で `sudo systemctl start colorstats-backup.service` を実行し、ubuntu-0の転送された健全な各媒体の `daily/`（日曜は `weekly/` も）のダンプとアーカイブのSHA-256が一致すること、監視・保持serviceの `Result=success` を確認する。サイドカーは送信元の絶対パスを記録するため、受信先ではファイル本体のハッシュ値とサイドカー先頭の値を比較する。
 
 ## 復元試験
 
