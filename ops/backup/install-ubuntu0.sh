@@ -5,6 +5,7 @@ mountpoint=/srv/colorstats/backup-wd750
 uuid=3f9a319f-394c-4cca-805d-fc88d782d644
 test "$(findmnt -n -o UUID --target "$mountpoint")" = "$uuid"
 sudo install -o colorstats-backup -g colorstats-backup -m 644 /tmp/retention.py /var/lib/colorstats-backup/retention.py
+sudo install -o root -g root -m 755 /tmp/retention.sh /usr/local/sbin/colorstats-backup-retention
 sudo install -o root -g root -m 644 /tmp/colorstats-backup-retention.service /etc/systemd/system/colorstats-backup-retention.service
 sudo install -o root -g root -m 644 /tmp/colorstats-backup-retention.timer /etc/systemd/system/colorstats-backup-retention.timer
 
@@ -17,5 +18,6 @@ fi
 sudo chmod 600 "$authorized"
 sudo chown colorstats-backup:colorstats-backup "$authorized"
 sudo rm -f /tmp/colorstats-backup.pub /tmp/retention.py /tmp/colorstats-backup-retention.service /tmp/colorstats-backup-retention.timer
+sudo rm -f /tmp/retention.sh
 sudo systemctl daemon-reload
 sudo systemctl enable --now colorstats-backup-retention.timer
