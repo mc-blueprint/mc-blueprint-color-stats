@@ -1,6 +1,12 @@
 # ストレージ監視
 
-`monitor.py` は UUID ごとにSMARTのCRC・代替セクタ・温度を前回値と比較し、journal cursorからkernelログの増分を読み、BadCRC・I/O error・リンクresetを探します。SMART値の増加、60°C以上で異常、raw媒体のシリアル不一致、kernel異常を検出すると記録し、該当するraw mountだけをreadonlyへremountします。初回はSMART基準値を保存し、kernelログは現在のbootから読みます。状態は `/var/lib/colorstats-storage/state.json` と `/var/lib/colorstats-storage/kernel.cursor`、異常記録は `/var/log/colorstats-storage/events.jsonl` です。
+`monitor.py` は UUID ごとにSMARTのCRC・代替セクタ・保留セクタ・温度を前回値と比較し、journal cursorからkernelログの増分を読み、BadCRC・I/O error・リンクresetを探します。カウンタの増加、温度の停止状態、raw媒体のシリアル不一致、kernel異常を検出すると記録し、該当するraw mountだけをreadonlyへremountします。初回も温度と健康状態は判定し、カウンタだけ基準値を保存します。状態は `/var/lib/colorstats-storage/state.json` と `/var/lib/colorstats-storage/kernel.cursor`、異常記録は `/var/log/colorstats-storage/events.jsonl` です。
+
+UUIDのpartitionから `lsblk` で親ディスク、sysfsでATAポートを解決し、serialをSMARTで照合します。ORICOなら `sda2`・`sda`・`ata1` が照合名です。SMARTは `smartctl -i -H -A` のみ取得し、NVMeの未対応自己試験ログなどは要求しません。終了ビット0〜2は取得失敗、3は健康異常、4〜5は属性別のしきい値異常として扱い、6〜7のログ履歴だけでは媒体の健康異常としません。4〜5が温度属性だけの場合は恒久的な健康異常にしません。終了値と該当属性は `smart_exit`・`failed_attributes` に保存します。UUID欠落・SMART取得や解析失敗・journal取得失敗も媒体ごとの異常とし、後続媒体の監視を続けます。
+
+温度は60°C以上で `temperature_blocked` を立て、55°C未満で解除します。バックアップの転送・保持はこの状態に従い自動復帰し、温度履歴だけでは恒久除外しません。CRC・代替セクタ・保留セクタの増分、I/Oエラー、SMART健康ビット等は媒体異常として履歴を残し、手動解除まで除外します。rawのreadonly・blocked解除は従来どおり手動です。
+
+rawの異常時はremountより先に `/var/lib/colorstats-storage/blocked/<UUID>` を作り、mount失敗・取り違えでも取得を止めます。readonly化はmountのUUIDが一致する場合だけ行い、失敗も記録します。ワーカーとの契約と復帰手順は [queue.md](../../docs/queue.md) を参照してください。監視・healthはPython標準ライブラリと既存のLinuxツールを再利用し、依存は増やしていません。
 
 ## ホスト別ディスク設定
 
@@ -22,11 +28,11 @@ systemctl list-timers colorstats-storage.timer --no-pager
 systemctl show colorstats-storage.service -p Result -p ExecMainStatus
 ```
 
-`/var/lib/colorstats-storage/state.json` に全UUIDのSMART値が記録され、`/var/lib/colorstats-storage/kernel.cursor` にkernel journalの読取位置が保存され、serviceの `Result=success`、timerが `active` であることを確認します。初回は起動時点からkernelログを読み、SMARTは比較元がないため異常判定せず基準値を記録します。
+`/var/lib/colorstats-storage/state.json` に全UUIDのSMART値または取得失敗の `error` が記録され、`/var/lib/colorstats-storage/kernel.cursor` にkernel journalの読取位置が保存され、serviceの `Result=success`、timerが `active` であることを確認します。serviceの成功は全媒体が健全という意味ではありません。異常は状態・イベントとblockedファイルも確認します。
 
 ## readonly動作の安全な確認
 
-実媒体に異常を発生させず確認するには、一時的な `journalctl` wrapperから `I/O error, dev <対象partition>` を監視へ渡します。`<対象partition>` はUUID symlinkの実体名（例: `sda2`）と完全一致させます。テスト用wrapperをPATHの先頭に置いてrootで `monitor.py` を一度実行し、該当raw mountの `findmnt -no SOURCE,OPTIONS --target <mount>` が `ro`、他のraw mountが `rw` であることを確認します。確認後は `mount -o remount,rw <mount>` で元に戻し、一時wrapperを削除してください。イベントログに対象UUIDの `kernel` と `remounted_readonly` が残ることも確認します。
+稼働中のrawでは試験しません。隔離した一時tmpfsまたは一時ループデバイスを使い、CONFIG・STATE・LOG・BLOCKEDも一時ディレクトリへ分けます。ディスクとATAの異常ログをそれぞれ注入し、対象mountがro、対照mountがrw、対象UUIDのblockedファイルとkernel/remounted_readonlyイベントが作られることを確認します。tmpfsにはUUIDがないため、UUID照合だけは試験内で注入し、その制約を記録します。実媒体のUUID・serial・親ディスク・ATA対応は読み取りだけで別途確認します。復旧後のキュー取得は一時DBと同じ隔離mountで確認します。
 
 readonlyからの通常復帰は自動化せず、原因確認後に手動で行います。再起動後はrawのUUID mount、`colorstats-storage.timer` のactive状態、直近のservice結果を確認してください。
 
