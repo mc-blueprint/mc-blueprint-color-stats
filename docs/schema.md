@@ -67,13 +67,17 @@ JSON内の色・座標の構造、分類版に対応したラベル、閉じた�
 `license_class` はopen/noncommercial/academic_only/restricted。欠損時にopenへ既定化しない。
 後続のパック生成はasset/sourceと、region・観測・関係・統計・block_colorのrunおよび全入力runを確認し、open以外を除外する。processing_run_inputは生成時に保存し、呼び出し元が循環と入力の記録漏れを防ぐ。
 これは監査履歴でありジョブキューではない。成功runはfinished_atあり・failure_reasonなし、失敗runはfinished_atとfailure_reasonを保存する。
-#6でキーの一意性と結果確定の境界を定める。
+#6のジョブキー・試行所有権・結果確定の境界は[ジョブとワーカーの契約](queue.md)を参照。
+revision `0002` で `job` を追加し、成功した `processing_run` と1対1で結ぶ。
+同revisionで `processing_run.output_paths`（JSONB、既定は空辞書）を追加する。
+出力名→採用済み不変パスの辞書で、解析結果の参照列もこの値を使う。
+キュー経由の失敗理由はjobに保持し、成功取引だけがrunと解析結果を登録する。
 
 ## 適用と検証
 
 リポジトリルートから `uv run alembic upgrade head`、巻戻しは `uv run alembic downgrade base`。
 接続URLは `DATABASE_URL`（`postgresql+psycopg://...`）で渡す。未指定時はlocalhost/colorstats。認証情報をファイル・ログ・Gitに保存しない。
-`uv run alembic upgrade head --sql` と `uv run alembic downgrade 0001:base --sql` はDBへ接続しない。
+`uv run alembic upgrade head --sql` と `uv run alembic downgrade 0002:base --sql` はDBへ接続しない。
 初期revisionは独立した列定義を保持し、将来のモデル変更によって過去の適用内容を変えない。
 
 ローカルは `uv run pytest` でYAMLの構造・親子・参照整合とSQL生成を検証する。
