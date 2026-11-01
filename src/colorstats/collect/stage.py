@@ -8,12 +8,14 @@ from collections.abc import Callable
 from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
+from urllib.error import HTTPError
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
 from colorstats.collect import Candidate, SearchRequest
 from colorstats.collect.commons import CommonsAdapter, check_commons_policy
+from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import license_class, load_policy
 from colorstats.queue import RunInfo
 from colorstats.queue.worker import Prepared
@@ -29,6 +31,15 @@ MIME_EXTENSIONS = {
     "image/svg+xml": "svg",
 }
 logger = logging.getLogger(__name__)
+
+
+def _adapter(provider, policy):
+    if provider == "wikimedia_commons":
+        check_commons_policy(policy)
+        return CommonsAdapter(policy)
+    if provider == "openverse":
+        return OpenverseAdapter(policy)
+    raise ValueError("未登録の収集アダプターです")
 
 
 def enqueue_collect(
@@ -47,12 +58,10 @@ def enqueue_collect(
     ポリシーはpayloadへ固定する。保存先設定は絶対パスと内容ハッシュを保存し、
     ワーカーで変更を検出する。保存先は実行ホストからローカル参照可能であること。
     """
-    if request.provider != "wikimedia_commons":
-        raise ValueError("未登録の収集アダプターです")
     if domain not in ("real_building", "real_terrain"):
-        raise ValueError("Commons収集は実建築・地形が対象です")
+        raise ValueError("収集は実建築・地形が対象です")
     policy = load_policy(policy_path, request.provider)
-    check_commons_policy(policy)
+    _adapter(request.provider, policy)
     payload = {
         "request": asdict(request),
         "policy": policy,
@@ -81,9 +90,7 @@ def prepare(claim, *, decide: Callable[[SearchRequest, Candidate], str | None] |
         raise ValueError("投入後に保存先設定が変更されました")
     storage = Storage(config)
     request = SearchRequest(**payload["request"])
-    if request.provider != "wikimedia_commons":
-        raise ValueError("未登録の収集アダプターです")
-    adapter = CommonsAdapter(payload["policy"])
+    adapter = _adapter(request.provider, payload["policy"])
     files, records, skipped = [], [], []
     temporary = None
     try:
@@ -116,7 +123,29 @@ def prepare(claim, *, decide: Callable[[SearchRequest, Candidate], str | None] |
                 payload["host"]
             )
             temporary = temporary_path(provisional, str(claim.token))
-            adapter.download(candidate, temporary)
+            try:
+                adapter.download(candidate, temporary)
+            except HTTPError as error:
+                if not 400 <= error.code < 500 or error.code == 429:
+                    raise
+                error.close()
+                temporary.unlink(missing_ok=True)
+                temporary = None
+                reason = f"download_http_{error.code}"
+                skipped.append(
+                    {
+                        "source_url": candidate.source_url,
+                        "rank": candidate.rank,
+                        "reason": reason,
+                    }
+                )
+                logger.info(
+                    "原本取得候補を除外: %s rank=%s reason=%s",
+                    candidate.source_url,
+                    candidate.rank,
+                    reason,
+                )
+                continue
             with temporary.open("rb") as stream:
                 digest = hashlib.file_digest(stream, "sha256").hexdigest()
             logical = f"raw/{digest[:2]}/{digest}.{extension}"
