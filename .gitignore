@@ -1,0 +1,23 @@
+# AI 作業用 worktree
+worktrees/
+
+# 収集・解析データ（保存先は configs/ の論理保存先で管理する）
+data/
+*.parquet
+*.jar
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
