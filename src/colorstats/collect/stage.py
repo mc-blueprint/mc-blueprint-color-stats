@@ -33,7 +33,8 @@ MIME_EXTENSIONS = {
 logger = logging.getLogger(__name__)
 
 
-def _adapter(provider, policy):
+def adapter_for(provider, policy):
+    """providerに対応するアダプターを返し、その利用ポリシーを検証する。通信は行わない。"""
     if provider == "wikimedia_commons":
         check_commons_policy(policy)
         return CommonsAdapter(policy)
@@ -61,7 +62,7 @@ def enqueue_collect(
     if domain not in ("real_building", "real_terrain"):
         raise ValueError("収集は実建築・地形が対象です")
     policy = load_policy(policy_path, request.provider)
-    _adapter(request.provider, policy)
+    adapter_for(request.provider, policy)
     payload = {
         "request": asdict(request),
         "policy": policy,
@@ -78,10 +79,16 @@ def enqueue_collect(
     return queue.enqueue("collect", None, config_hash, payload)
 
 
-def prepare(claim, *, decide: Callable[[SearchRequest, Candidate], str | None] | None = None):
+def prepare(
+    claim,
+    *,
+    decide: Callable[[SearchRequest, Candidate], str | None] | None = None,
+    discard: Callable[[SearchRequest, Candidate], None] | None = None,
+):
     """原本準備を行う。decideは取得直前に順次呼び、除外理由または採用のNoneを返す。
 
     省略時は許可候補を全採用する。層・集中上限の判断と同一バッチ内の予約は呼出し側の責務。
+    discardは採用後の原本取得4xx除外時に呼び、次候補の判断前に予約を解放できる。
     例外は伝播し、一時出力を清掃する。確定ファイル・DBの登録は行わない。
     """
     payload = claim.payload
@@ -90,7 +97,7 @@ def prepare(claim, *, decide: Callable[[SearchRequest, Candidate], str | None] |
         raise ValueError("投入後に保存先設定が変更されました")
     storage = Storage(config)
     request = SearchRequest(**payload["request"])
-    adapter = _adapter(request.provider, payload["policy"])
+    adapter = adapter_for(request.provider, payload["policy"])
     files, records, skipped = [], [], []
     temporary = None
     try:
@@ -131,6 +138,8 @@ def prepare(claim, *, decide: Callable[[SearchRequest, Candidate], str | None] |
                 error.close()
                 temporary.unlink(missing_ok=True)
                 temporary = None
+                if discard is not None:
+                    discard(request, candidate)
                 reason = f"download_http_{error.code}"
                 skipped.append(
                     {
