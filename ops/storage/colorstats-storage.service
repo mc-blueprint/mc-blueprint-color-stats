@@ -1,0 +1,7 @@
+[Unit]
+Description=MCBlueprint配色統計 ストレージ監視
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/lib/colorstats-storage/monitor.py

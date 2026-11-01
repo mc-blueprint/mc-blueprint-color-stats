@@ -1,0 +1,87 @@
+# 分類・DBスキーマ初版
+
+Issue #5の対象は分類体系 `0.1.0` とPostgreSQL 16向け初期revision `0001`。
+キュー・収集器・解析器・パック生成器は後続Issueで実装する。DB接続のための本番ホスト変更は行わない。
+
+## 採用した既存機能
+
+起点の依存はMCBlueprintのみで、DB管理と分類検証の既存実装はなかった。
+SQLAlchemy 2.0の宣言的モデルで列・外部キー・制約を共有し、同じSQLAlchemyメタデータを扱えるAlembicでrevision管理と接続なしのSQL生成を行う。
+psycopg 3をPostgreSQLドライバーにする。生SQL＋独自revision管理は差分検出・履歴管理を再実装するため採用しない。SQLiteは分散ライターとJSONBという要件に合わない。
+YAML読取りにはPyYAMLのSafeLoader、構造検証にはjsonschemaのDraft202012Validatorを用いる。既存機能で扱えない文書間参照だけを小さなローダーで検証する。
+DBサーバー以外のサービス追加は不要。追加依存のライセンスはSQLAlchemy・Alembic・PyYAML・jsonschemaがMIT、psycopgがLGPL-3.0-only（binary同梱物には別ライセンスもある）。公開成果物は統計JSONで、ドライバーや画像を同梱しない。依存の更新は `uv.lock` で固定する。
+
+一次情報:
+[SQLAlchemyの宣言的モデル](https://docs.sqlalchemy.org/en/20/orm/declarative_tables.html)、
+[AlembicのSQL生成](https://alembic.sqlalchemy.org/en/latest/offline.html)、
+[jsonschemaの検証API](https://python-jsonschema.readthedocs.io/en/stable/validate/)、
+[psycopgのライセンス](https://github.com/psycopg/psycopg/blob/master/LICENSE.txt)、
+[SQLAlchemy](https://github.com/sqlalchemy/sqlalchemy/blob/main/LICENSE)・
+[Alembic](https://github.com/sqlalchemy/alembic/blob/main/LICENSE)・
+[PyYAML](https://github.com/yaml/pyyaml/blob/main/LICENSE)・
+[jsonschema](https://github.com/python-jsonschema/jsonschema/blob/main/COPYING)のライセンス。
+
+## モデルと後続処理の契約
+
+公開モデルは `colorstats.schema.models`。UUID主キーはSQLAlchemyのINSERT時に生成する。
+直接SQLで挿入する場合はUUIDを明示する。日時はタイムゾーン付き、ハッシュはSHA-256の16進文字列。
+外部キーは削除を連鎖させず、由来が参照されるレコードの削除を拒否する。
+
+| 表 | 責務・主なデータ |
+| --- | --- |
+| source | 出典ページURL（一意）、サイト、作者、ライセンス表記・区分、帰属、取得日時、サイト別policyのスナップショット |
+| asset | 取得イベントごとの出典、任意の確定subject、収集時のタイトル・撮影地点、原本URL・SHA-256・pHash・寸法・論理保存先、domain、license_class、品質、分類版・シーン属性、選ばれ方 |
+| subject | 同一建築・場所・作品の集約単位。domain、地域・年代、分類版・シーン属性。画像数と独立subject数を分けて集計する |
+| subject_candidate | 未確定assetのsubject候補と信頼度・根拠。候補があっても確定するまではasset.subject_idをNULLに保つ |
+| processing_run | stage、モデル・重みハッシュ・license_class、設定ハッシュ・パラメーター、コード版・分類版、ノード、開始・終了日時・失敗理由 |
+| processing_run_input | 解析・集計runが使用した入力runの有向関係。複数モデル工程のライセンス由来を失わないための補助表 |
+| region | assetと生成run、分類版・第2階層部位または地形ラベル、instance_id、マスク論理参照、bbox、面積比・信頼度、正規化高さ、面方向・地形属性、label_source |
+| color_observation | assetまたはregionと生成run、観測OKLab、任意の素材OKLabと信頼度、面積比。補正しない場合は素材色と信頼度をともにSQL NULLにする |
+| relation | 同一assetの2領域と生成run、隣接・包含・上下・左右・共起、OKLCh差分、ΔE_ok、相対面積。領域の順序を保存し、同じrunで同じ組・typeを重複させない |
+| block_color | Minecraft版、ブロックID、top/side/bottom、OKLab分布、材質タグ、抽出run。run別に再計算結果を残す |
+| rule_stat | 条件キー、対象部位、分布、入力件数・subject数・実効サンプル数・重み、品質・信頼区間、分類版、集計run |
+
+assetは取得イベントごとに記録し、`source_id` は出典ページ、`search_provider` は検索元API・アダプターの安定した識別子（例: `commons`、`openverse`）として区別する。
+収集時に `search_provider`、`search_query`、`search_parameters`、`result_rank`、`result_page`、`retrieved_at`、`source_id` を保存する。
+`search_parameters` は順位を解釈できる実効検索条件の辞書とし、エンドポイント・API版、並び順、フィルター、言語、ページサイズ、順位とページの起算基準・順位の範囲（ページ内か検索全体か）、使用したカーソル・オフセットを該当する範囲で保存する。APIの既定値も解決して保存し、認証情報は含めない。
+順位・ページはAPIの基準をそのまま保存し、0も許容する。APIが返さない順位・ページはNULLにする。検索によらない直接入力は検索元・検索語・検索条件・順位・ページをSQL NULLにし、後で値を捏造しない。これらの整合性は収集側が検証する。
+同じ内容を異なる出典・検索で選ぶ場合も記録できるよう、SHA-256に一意制約は置かない。重複判定・採否はprepの責務。
+`collected_title` と `collected_location` は収集元のタイトルと撮影地点の原情報を保存し、`subject_id` がNULLでも保持する。撮影地点は元の地名表記または座標表記を文字列で保存する。元情報がない場合のみNULLとし、subjectの推定値で補完・上書きしない。推定・確定した建築名や所在地は `subject.name/location` へ保存する。
+テキスト資料の寸法はNULL可。scene_attributesはtaxonomyの属性名→値の辞書で、画像の撮影条件をsubjectの恒久属性に混ぜない。
+
+JSONBを用いる可変長データの形:
+
+- `bbox`: 元画像ピクセルの `[x_min, y_min, x_max, y_max]`（右・下端は含まない）。
+- `orientation`: `{"direction": "front", "estimated": true}` 等の推定結果。真の方位とは区別する。
+- `terrain_attributes`: `{"relative_elevation": "high", "slope": "steep", "estimated": true}`。画像内の相対値。
+- OKLab分布（observed_oklab・material_oklab・block_color.oklab）: `{"dominant": [L, a, b], "quantiles": [{"q": 0.5, "value": [L, a, b]}]}`。Lは0〜1、a/bは符号付き、qは0〜1。チャネル別分位点であり、実在する単一ピクセルを意味しない。
+- `material_tags`・`target_parts`: 文字列配列。`conditions`: domainやtaxonomyのシーン条件の辞書。
+- `distribution`・`quality`・`confidence_interval`・`parameters`・`policy`・`evidence`: 手法別の辞書。手法と設定はrunで識別する。品質・統計手法の詳細は後続Issueで確定する。
+
+関係の差分はB−A、`area_ratio` はB/A。Δhは度で最短の符号付き差分（−180〜180）、無彩色で未定義ならNULL。ΔE_okはOKLabのユークリッド距離。
+regionの面積比は画像全体に対する比。color_observationは `asset_id` と `region_id` の一方だけを必須とし、DB制約で両方指定・両方未指定を拒否する。
+画像全体の観測（#12）はassetへ直接関連付け、regionや便宜的な分類ラベルを作らない。部位・地形の観測はregionへ関連付ける。
+color_observationの面積比は対象assetの画像全体または対象region内に対する比。
+JSON内の色・座標の構造、分類版に対応したラベル、閉じたシーン語彙は書込側が検証する。DBは参照・列挙区分・数値の基本範囲を保証する。分類の正本をDBへ複製しない。
+
+`license_class` はopen/noncommercial/academic_only/restricted。欠損時にopenへ既定化しない。
+後続のパック生成はasset/sourceと、region・観測・関係・統計・block_colorのrunおよび全入力runを確認し、open以外を除外する。processing_run_inputは生成時に保存し、呼び出し元が循環と入力の記録漏れを防ぐ。
+これは監査履歴でありジョブキューではない。成功runはfinished_atあり・failure_reasonなし、失敗runはfinished_atとfailure_reasonを保存する。
+#6のジョブキー・試行所有権・結果確定の境界は[ジョブとワーカーの契約](queue.md)を参照。
+revision `0002` で `job` を追加し、成功した `processing_run` と1対1で結ぶ。
+同revisionで `processing_run.output_paths`（JSONB、既定は空辞書）を追加する。
+出力名→採用済み不変パスの辞書で、解析結果の参照列もこの値を使う。
+キュー経由の失敗理由はjobに保持し、成功取引だけがrunと解析結果を登録する。
+
+## 適用と検証
+
+リポジトリルートから `uv run alembic upgrade head`、巻戻しは `uv run alembic downgrade base`。
+接続URLは `DATABASE_URL`（`postgresql+psycopg://...`）で渡す。未指定時はlocalhost/colorstats。認証情報をファイル・ログ・Gitに保存しない。
+`uv run alembic upgrade head --sql` と `uv run alembic downgrade 0002:base --sql` はDBへ接続しない。
+初期revisionは独立した列定義を保持し、将来のモデル変更によって過去の適用内容を変えない。
+
+ローカルは `uv run pytest` でYAMLの構造・親子・参照整合とSQL生成を検証する。
+実DBテストはCIのPostgreSQL 16サービスに `TEST_DATABASE_URL` を渡し、空のテストDBへ適用→メタデータ比較・制約確認→巻戻し→再適用→Alembic差分なしを確認する。
+テストは空でないDBを拒否する。本番DBでは実行しない。ローカルで実DBテストがskipになることは適用成功を意味しない。
+
+初版は既存保存データの移行なし。`downgrade base` は全対象テーブルとそのデータを削除するため、本番の運用巻戻し前にはバックアップと影響確認が必要。

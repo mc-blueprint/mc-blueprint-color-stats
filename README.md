@@ -3,6 +3,8 @@
 [MCBlueprint](https://github.com/rs0325/MCBlueprint) 向けに、建築・地形の画像と資料から配色の統計を作り、MCBlueprint に同梱する配色パックを生成する。MCBlueprint が生成時に LLM を呼ばずに、建築の部位ごとの配色を決められるようにすることが目的。
 
 設計は [docs/design.md](docs/design.md) を参照する。
+ジョブの投入・ワーカーの起動と停止・保存先の契約は [docs/queue.md](docs/queue.md) を参照する。
+Commons収集・ソースポリシーと後続アダプターの共有契約は [docs/collect.md](docs/collect.md) を参照する。
 
 ## 構成
 
