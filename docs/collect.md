@@ -133,6 +133,8 @@ assetにはprovider・query・全検索条件（言語、層、ページ、offse
 取得日時・収集時タイトル・地点・解像度・ライセンスを保持する。
 後日のライセンス・作者変更もasset.qualityの取得時スナップショットに残る。
 run.parametersは継続offset、除外理由、登録asset_idsも保持する。
+原本取得の4xx（429を除く）は候補単位で除外し、理由・出典URL・順位をskippedへ記録する。
+429・5xx・通信失敗はジョブの再試行に任せる。
 runのlicense_classはopenのみならopen、非open区分が一種類ならその区分、
 noncommercialとacademic_onlyの混在時は保守的にrestrictedとする。
 出典・asset・run・job成功はキューの同一取引で確定し、失敗はまとめてロールバックする。
@@ -157,3 +159,13 @@ DBテストはTEST_DATABASE_URLの専用schemaを使用し、実通信なしで�
 手動実取得は`uv run python scripts/check-collect.py`。1件のみローカルの一時rawへ保存し、
 作者・ライセンス・サイズ・ハッシュを表示して自動清掃する。fixtureを更新する場合だけ
 `--record-fixture`を付ける。ubuntu-1停止中もリモート保存・転送はしない。
+
+## Openverse
+
+`OpenverseAdapter` は匿名の Openverse Images API v1 を使用し、認証キーは導入しない。Openverseは認証時に標準・拡張など異なるスロットリング階層を設けている。API規約とスロットリングに従い、本アダプターはsource_policyの`min_interval`で要求を直列化する。
+
+検索結果の `foreign_landing_url` を `source_url` として保存する。Openverse は第三者サイト上のライセンス情報を保証しないため、元サイトのページから作者名とライセンス識別子を照合できない候補、作者またはライセンスURLが欠ける候補は除外し、理由を記録する。許可ライセンスは CC0、PDM、CC BY、CC BY-SA に限定する。元画像URLは `original_url` に保持し、Commons 由来の同一画像でも出典ページを区別する。
+
+認証・スロットリング階層: [Authentication and Throttling](https://docs.openverse.org/api/reference/authentication_and_throttling.html)。個別作品のライセンス情報の非保証: [Openverse API利用例と注意](https://docs.openverse.org/api/reference/made_with_ov.html)。規約はレート制限遵守、適切な帰属、ホスティング元の条件遵守、および元サイトでの権利確認を利用者に求める: [Openverse Terms of Service](https://github.com/WordPress/openverse/blob/main/documentation/terms_of_service.md)。匿名アクセス先は[Openverse Images API v1](https://api.openverse.org/v1/images/)。
+
+`tests/fixtures/openverse.json`は2026-11-01に匿名APIから`Himeji Castle`を2件取得した記録。テストではこの検索JSONを再生し、元サイト応答を照合成功・失敗の記録値に置き換える。画像バイト列はfixtureに含めない。

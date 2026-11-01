@@ -28,3 +28,22 @@ sources:
       - https://foundation.wikimedia.org/wiki/Policy:User-Agent_policy
       - https://www.mediawiki.org/wiki/API:Etiquette
       - https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia
+  openverse:
+    enabled: true
+    user_agent: "MCBlueprintColorStatsBot/0.1 (https://github.com/rs0325/mc-blueprint-color-stats; https://github.com/rs0325)"
+    min_interval: 1.0
+    retries: 2
+    backoff: 5.0
+    attribution: "作者・元サイトページ・ライセンス名・ライセンスURLを保存し、元サイトで作者とライセンスを照合できない候補は取得しない"
+    redistribution: "open のみ。Openverse の集約情報を元サイトで照合し、元サイトの利用条件を優先する"
+    license_rules:
+      open:
+        - cc0
+        - pdm
+        - by
+        - by-sa
+    references:
+      - https://api.openverse.org/v1/
+      - https://docs.openverse.org/api/reference/made_with_ov.html
+      - https://docs.openverse.org/api/reference/authentication_and_throttling.html
+      - https://github.com/WordPress/openverse/blob/main/documentation/terms_of_service.md

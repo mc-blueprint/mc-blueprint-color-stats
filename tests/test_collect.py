@@ -15,7 +15,7 @@ import yaml
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
-from colorstats.collect import SearchRequest
+from colorstats.collect import Candidate, SearchRequest, SearchResult
 from colorstats.collect.commons import CommonsAdapter
 from colorstats.collect.policy import check_policy, license_class, load_policy
 from colorstats.collect.stage import enqueue_collect, prepare, register
@@ -443,6 +443,90 @@ def test_通信途中の失敗では原本一時ファイルを掃除する(
     monkeypatch.setattr("colorstats.collect.stage.CommonsAdapter", lambda policy: adapter)
     with pytest.raises(OSError, match="通信失敗"):
         prepare(claim_for(payload, config_hash))
+    assert not list((tmp_path / "raw").rglob("*.tmp"))
+
+
+@pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason="CIのPostgreSQL専用")
+def test_原本403だけを除外して次候補をDBへ登録する(
+    queue, policy, tmp_path, monkeypatch  # noqa: F811
+):
+    payload, config_hash = payload_for(tmp_path)
+    recorded = copy.deepcopy(RECORDED)
+    recorded[0]["query"]["search"] *= 2
+    job_id = queue.enqueue("collect", None, config_hash, payload)
+    claim = queue.claim(["collect"])
+    adapter, _ = adapter_for(
+        policy,
+        [
+            Response(recorded[0]),
+            Response(recorded[1]),
+            Response(recorded[1]),
+            HTTPError("https://example.test/denied.jpg", 403, "Forbidden", {}, None),
+            Response(b"available image"),
+        ],
+    )
+    monkeypatch.setattr("colorstats.collect.stage.CommonsAdapter", lambda policy: adapter)
+    prepared = prepare(claim)
+    assert len(prepared.data["records"]) == 1
+    skipped = prepared.info.parameters["skipped"]
+    assert len(skipped) == 1
+    assert skipped[0]["rank"] == 0 and skipped[0]["reason"] == "download_http_403"
+    assert skipped[0]["source_url"].startswith("https://")
+    assert len(prepared.files) == 1
+    assert len(list((tmp_path / "raw").rglob("*.tmp"))) == 1
+    assert prepared.files[0][0].read_bytes() == b"available image"
+    run_id = queue.complete(
+        claim,
+        prepared.info,
+        lambda session, run: register(session, run, prepared.data),
+        prepared.files,
+    )
+    with Session(queue.engine) as session:
+        assert session.get(Job, job_id).status == "succeeded"
+        assert session.scalar(select(func.count()).select_from(Asset)) == 1
+        assert session.get(ProcessingRun, run_id).parameters["skipped"] == skipped
+
+
+def test_原本のHTTP503はジョブ例外として伝播する(policy, tmp_path, monkeypatch):
+    payload, config_hash = payload_for(tmp_path)
+
+    class Adapter:
+        def search(self, request):
+            return SearchResult(
+                [
+                    Candidate(
+                        source_url="https://example.test/source",
+                        original_url="https://example.test/image.jpg",
+                        rank=0,
+                        page=0,
+                        title="Example",
+                        author="Author",
+                        license="cc0",
+                        license_url=None,
+                        description=None,
+                        location=None,
+                        width=1,
+                        height=1,
+                        mime="image/jpeg",
+                        metadata={},
+                        attribution="Author",
+                    )
+                ],
+                {},
+                None,
+            )
+
+        def download(self, candidate, target):
+            raise HTTPError(candidate.original_url, 503, "Unavailable", {}, None)
+
+        def finish(self):
+            pass
+
+    adapter = Adapter()
+    monkeypatch.setattr("colorstats.collect.stage.CommonsAdapter", lambda policy: adapter)
+    with pytest.raises(HTTPError) as error:
+        prepare(claim_for(payload, config_hash))
+    assert error.value.code == 503
     assert not list((tmp_path / "raw").rglob("*.tmp"))
 
 
