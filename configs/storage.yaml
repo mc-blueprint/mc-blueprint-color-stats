@@ -21,3 +21,12 @@ storage:
   backup:
     host: ubuntu-0
     path: /srv/colorstats/backup-wd750
+    uuid: 3f9a319f-394c-4cca-805d-fc88d782d644
+    serial: WD-WX81A82T3509
+    replicas:
+      - path: /srv/colorstats/backup-st500a
+        uuid: 71cefe86-d90a-4caa-be51-54cc5f8d6ebc
+        serial: 9QG4GD0M
+      - path: /srv/colorstats/backup-st500b
+        uuid: e53f78c3-2918-4a64-bc50-807a38249da1
+        serial: 9QG4B26Z

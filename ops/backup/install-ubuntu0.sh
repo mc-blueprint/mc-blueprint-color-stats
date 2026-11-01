@@ -10,7 +10,7 @@ sudo install -o root -g root -m 644 /tmp/colorstats-backup-retention.timer /etc/
 
 key=$(cat /tmp/colorstats-backup.pub)
 authorized=/var/lib/colorstats-backup/.ssh/authorized_keys
-entry="command=\"/usr/bin/rrsync -wo $mountpoint\",restrict $key"
+entry="command=\"/usr/local/sbin/colorstats-receive-st500 $mountpoint $uuid\",restrict $key"
 if ! sudo grep -Fqx -- "$entry" "$authorized"; then
     printf '%s\n' "$entry" | sudo tee -a "$authorized" >/dev/null
 fi

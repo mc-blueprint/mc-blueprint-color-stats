@@ -1,4 +1,4 @@
-"""日次・週次ダンプの保持世代を決める。"""
+"""日次・週次のDBダンプとデータアーカイブの保持世代を決める。"""
 
 from __future__ import annotations
 
@@ -7,11 +7,11 @@ import re
 from datetime import date
 from pathlib import Path, PurePosixPath
 
-_DUMP_NAME = re.compile(r"([A-Za-z0-9_-]+)-(\d{4}-\d{2}-\d{2})\.dump\Z")
+_DUMP_NAME = re.compile(r"([A-Za-z0-9_-]+)-(\d{4}-\d{2}-\d{2})\.(dump|tar\.gz)\Z")
 
 
 def dated_dumps(names: list[str]) -> list[tuple[date, str]]:
-    """日付形式が正しいダンプ名だけを日付順で返す。"""
+    """日付形式が正しいダンプ・アーカイブ名だけを日付順で返す。"""
     result = []
     for name in names:
         match = _DUMP_NAME.fullmatch(PurePosixPath(name).name)
@@ -26,11 +26,12 @@ def dated_dumps(names: list[str]) -> list[tuple[date, str]]:
 def retention_plan(
     names: list[str], daily_generations: int = 7, weekly_generations: int = 4
 ) -> tuple[set[str], set[str]]:
-    """日次と週次の各ディレクトリで保持するダンプ名を返す。"""
+    """日次・週次で、名前と形式ごとに保持するファイル名を返す。"""
     dumps = dated_dumps(names)
     by_database: dict[str, list[tuple[date, str]]] = {}
     for day, name in dumps:
-        database = _DUMP_NAME.fullmatch(PurePosixPath(name).name).group(1)
+        match = _DUMP_NAME.fullmatch(PurePosixPath(name).name)
+        database = f"{match[1]}.{match[3]}"
         by_database.setdefault(database, []).append((day, name))
 
     daily = {
@@ -42,7 +43,8 @@ def retention_plan(
     newest_by_week: dict[tuple[str, int, int], str] = {}
     for day, name in dumps:
         iso = day.isocalendar()
-        database = _DUMP_NAME.fullmatch(PurePosixPath(name).name).group(1)
+        match = _DUMP_NAME.fullmatch(PurePosixPath(name).name)
+        database = f"{match[1]}.{match[3]}"
         newest_by_week[(database, iso.year, iso.week)] = name
     by_database_weekly: dict[str, list[str]] = {}
     for (database, _, _), name in newest_by_week.items():
@@ -61,13 +63,17 @@ def main() -> None:
     parser.add_argument("--generations", type=int, required=True)
     args = parser.parse_args()
 
-    names = [path.name for path in args.directory.glob("*.dump") if path.is_file()]
+    names = [
+        path.name
+        for path in args.directory.iterdir()
+        if path.is_file() and _DUMP_NAME.fullmatch(path.name)
+    ]
     keep, _ = retention_plan(names, daily_generations=args.generations, weekly_generations=0)
     for name in names:
         if name not in keep and _DUMP_NAME.fullmatch(name):
             dump = args.directory / name
             dump.unlink()
-            dump.with_suffix(".dump.sha256").unlink(missing_ok=True)
+            dump.with_name(f"{dump.name}.sha256").unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

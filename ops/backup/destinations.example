@@ -1,2 +1,4 @@
 # 1行につき user@host:path。複数行で保存先を追加できる。
 colorstats-backup@192.168.1.46:.
+colorstats-backup-st500a@192.168.1.46:.
+colorstats-backup-st500b@192.168.1.46:.
