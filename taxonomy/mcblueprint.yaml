@@ -1,0 +1,26 @@
+taxonomy_version: 0.1.0
+kind: mcblueprint
+upstream_commit: 6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774
+status: provisional
+# 本リポジトリの暫定対応。配色パックの契約・語彙の正本はMCBlueprint側。
+# 役割ごとの候補部位であり、一意変換や素材の同一性を保証しない。
+presets:
+  medieval:
+    stone_wall: [wall_main, wall_secondary, gable_wall]
+    foundation: [plinth, stairs_entry]
+    plaster: [wall_main, wall_secondary, gable_wall]
+    timber: [column, beam, half_timber]
+    floor: [floor_visible]
+    roof_tile: [roof_surface]
+  japanese:
+    plaster: [wall_main, wall_secondary]
+    timber: [column, beam, gable_wall]
+    floor: [floor_visible]
+    foundation: [plinth, stairs_entry]
+    gravel_garden: [rock_scree, path_natural]
+  modern:
+    concrete: [wall_main, wall_secondary]
+    dark_concrete: [wall_secondary, accent_other]
+    floor: [floor_visible, roof_surface]
+    deck: [floor_visible]
+    foundation: [plinth, stairs_entry]
