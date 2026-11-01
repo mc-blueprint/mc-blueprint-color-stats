@@ -1,0 +1,10 @@
+taxonomy_version: 0.1.0
+kind: parts
+groups:
+  foundation: [plinth, stairs_entry]
+  wall: [wall_main, wall_secondary, gable_wall]
+  frame: [column, beam, corner_quoin, half_timber]
+  opening: [window_glass, window_frame, door, shutter, arch]
+  roof: [roof_surface, eave, ridge, gable_trim, chimney, dormer]
+  ornament: [cornice, band_course, railing, relief, accent_other]
+  context: [path, fence, vegetation_attached, light_fixture, floor_visible]

@@ -10,7 +10,12 @@ readme = "README.md"
 requires-python = ">=3.12"
 authors = [{ name = "rs0325" }]
 dependencies = [
+  "alembic>=1.13,<2",
+  "jsonschema>=4.23,<5",
   "mcblueprint @ git+https://github.com/rs0325/MCBlueprint@6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774",
+  "psycopg[binary]>=3.2,<4",
+  "pyyaml>=6,<7",
+  "sqlalchemy>=2.0,<2.1",
 ]
 
 [dependency-groups]

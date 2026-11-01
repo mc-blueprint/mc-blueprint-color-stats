@@ -1,0 +1,18 @@
+taxonomy_version: 0.1.0
+kind: terrain
+labels:
+  - ground_soil
+  - ground_grass
+  - rock_face
+  - rock_scree
+  - sand
+  - snow_ice
+  - water
+  - vegetation_low
+  - vegetation_tree_canopy
+  - tree_trunk
+  - path_natural
+attributes:
+  relative_elevation: [low, middle, high]
+  slope: [flat, gentle, steep, cliff]
+  estimated: [true, false]
