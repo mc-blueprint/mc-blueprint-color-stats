@@ -16,6 +16,7 @@ dependencies = [
   "ImageHash>=4.3,<5",
   "Pillow>=11,<13",
   "colour-science>=0.4.6,<0.5",
+  "opencv-python-headless>=4.13,<5",
   "psycopg[binary]>=3.2,<4",
   "pyyaml>=6,<7",
   "sqlalchemy>=2.0,<2.1",
