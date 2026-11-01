@@ -1,18 +1,15 @@
 """Commons Action APIでファイルを検索し、原本とメタデータを取得する。"""
 
 import json
-import shutil
-from datetime import UTC, datetime
-from email.utils import parsedate_to_datetime
 from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from time import monotonic, sleep
-from urllib.error import HTTPError
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.request import urlopen
 
 from colorstats.collect import Candidate, SearchRequest, SearchResult
+from colorstats.collect.http import HttpClient, RetryResponse
 from colorstats.collect.policy import check_policy, license_class
 
 ENDPOINT = "https://commons.wikimedia.org/w/api.php"
@@ -40,7 +37,7 @@ def check_commons_policy(policy: dict) -> None:
         raise ValueError("正のmaxlagが必要です")
 
 
-class CommonsAdapter:
+class CommonsAdapter(HttpClient):
     """単一スロットで直列に呼び、通信終了後の取得間隔を制限する。
 
     HTTP 429/503とAPI負荷制限はRetry-Afterと指数待機を尊重する。
@@ -49,58 +46,21 @@ class CommonsAdapter:
 
     def __init__(self, policy: dict, *, opener=urlopen, clock=monotonic, wait=sleep):
         check_commons_policy(policy)
-        self.policy = policy
-        self.opener = opener
-        self.clock = clock
-        self.wait = wait
-        self.next_request = 0.0
-
-    def _delay(self, headers, attempt):
-        delay = self.policy["backoff"] * 2**attempt
-        value = headers.get("Retry-After")
-        if value:
-            try:
-                seconds = float(value)
-            except ValueError:
-                seconds = (parsedate_to_datetime(value) - datetime.now(UTC)).total_seconds()
-            delay = max(delay, seconds)
-        self.next_request = max(self.next_request, self.clock() + delay)
+        super().__init__(policy, opener=opener, clock=clock, wait=wait)
 
     def _get(self, url: str, *, target: Path | None = None):
         check_commons_policy(self.policy)
-        for attempt in range(self.policy["retries"] + 1):
-            self.wait(max(0, self.next_request - self.clock()))
-            try:
-                request = Request(url, headers={"User-Agent": self.policy["user_agent"]})
-                with self.opener(request, timeout=60) as response:
-                    if target is not None:
-                        with target.open("wb") as output:
-                            shutil.copyfileobj(response, output)
-                        length = response.headers.get("Content-Length")
-                        if length is not None and target.stat().st_size != int(length):
-                            raise OSError("原本の受信が途中で終了しました")
-                        return None
-                    data = json.load(response)
-                    error = data.get("error")
-                    if error is None:
-                        return data
-                    if error.get("code") not in (
-                        "maxlag", "ratelimited", "cirrussearch-too-busy-error"
-                    ):
-                        raise RuntimeError(f"Commons APIエラー: {error.get('code')}")
-                    self._delay(response.headers, attempt)
-            except HTTPError as error:
-                if error.code not in (429, 503):
-                    raise
-                self._delay(error.headers, attempt)
-                error.close()
-            finally:
-                self.next_request = max(
-                    self.next_request, self.clock() + self.policy["min_interval"]
-                )
-        # 最終試行の指示も守り、次のキュージョブによる即時再試行を防ぐ。
-        self.wait(max(0, self.next_request - self.clock()))
-        raise RuntimeError("Commonsの負荷制限により取得を中断しました")
+        return self.get(url, target=target, read=self._read)
+
+    @staticmethod
+    def _read(response):
+        data = json.load(response)
+        error = data.get("error")
+        if error is None:
+            return data
+        if error.get("code") not in ("maxlag", "ratelimited", "cirrussearch-too-busy-error"):
+            raise RuntimeError(f"Commons APIエラー: {error.get('code')}")
+        raise RetryResponse(response.headers)
 
     def search(self, request: SearchRequest) -> SearchResult:
         if request.provider != "wikimedia_commons":
@@ -251,7 +211,3 @@ class CommonsAdapter:
         if candidate.exclusion_reason:
             raise ValueError(candidate.exclusion_reason)
         self._get(candidate.original_url, target=target)
-
-    def finish(self) -> None:
-        """次ジョブが別プロセスでも取得間隔を保つため、残りの待機を済ませる。"""
-        self.wait(max(0, self.next_request - self.clock()))
