@@ -8,16 +8,16 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 
-import colour
 import numpy as np
 from mcblueprint.blockdata import load_block_data, supported_versions
 from PIL import Image
 from sqlalchemy.orm import Session
 
+from colorstats.colors import QUANTILES, rgb_to_oklab
 from colorstats.schema.models import BlockColor
 
 FACES = ("top", "side", "bottom")
-QUANTILES = (0.05, 0.25, 0.5, 0.75, 0.95)
+
 
 def _resource(value: str, directory: str) -> str:
     if ":" in value:
@@ -75,12 +75,7 @@ def _pixels(image: Image.Image) -> np.ndarray:
     rgb = rgba[rgba[:, :, 3] == 1.0, :3]
     if not len(rgb):
         return np.empty((0, 3), dtype=np.float64)
-    xyz = colour.RGB_to_XYZ(
-        rgb,
-        colourspace=colour.RGB_COLOURSPACES["sRGB"],
-        apply_cctf_decoding=True,
-    )
-    return np.asarray(colour.XYZ_to_Oklab(xyz))
+    return rgb_to_oklab(rgb)
 
 
 def _distribution(pixels: np.ndarray) -> dict:
