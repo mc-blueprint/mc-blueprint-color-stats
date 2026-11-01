@@ -277,7 +277,7 @@ def test_HTTP日時のRetryAfterを守る(policy, monkeypatch):
         def now(tz):
             return datetime(2026, 11, 1, tzinfo=UTC)
 
-    monkeypatch.setattr("colorstats.collect.commons.datetime", FixedDateTime)
+    monkeypatch.setattr("colorstats.collect.http.datetime", FixedDateTime)
     adapter, requests = adapter_for(
         policy,
         [

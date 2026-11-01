@@ -34,7 +34,7 @@ sources:
     min_interval: 1.0
     retries: 2
     backoff: 5.0
-    attribution: "作者・元サイトページ・ライセンス名・ライセンスURLを保存し、元サイトで作者とライセンスを照合できない候補は取得しない"
+    attribution: "作者・元サイトページ・ライセンス名・ライセンスURLを保存し、元サイトの対象画像で作者とライセンス識別子・版・URLを照合できない候補はreviewとして取得しない"
     redistribution: "open のみ。Openverse の集約情報を元サイトで照合し、元サイトの利用条件を優先する"
     license_rules:
       open:

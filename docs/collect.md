@@ -136,7 +136,7 @@ assetにはprovider・query・全検索条件（言語、層、ページ、offse
 後日のライセンス・作者変更もasset.qualityの取得時スナップショットに残る。
 run.parametersは継続offset、除外理由、登録asset_idsも保持する。
 原本取得の4xx（429を除く）は候補単位で除外し、理由・出典URL・順位をskippedへ記録する。
-429・5xx・通信失敗はジョブの再試行に任せる。
+429・503は共通HTTP処理で再試行し、上限到達・その他の5xx・通信失敗はジョブの再試行に任せる。
 runのlicense_classはopenのみならopen、非open区分が一種類ならその区分、
 noncommercialとacademic_onlyの混在時は保守的にrestrictedとする。
 出典・asset・run・job成功はキューの同一取引で確定し、失敗はまとめてロールバックする。
@@ -164,10 +164,18 @@ DBテストはTEST_DATABASE_URLの専用schemaを使用し、実通信なしで�
 
 ## Openverse
 
-`OpenverseAdapter` は匿名の Openverse Images API v1 を使用し、認証キーは導入しない。Openverseは認証時に標準・拡張など異なるスロットリング階層を設けている。API規約とスロットリングに従い、本アダプターはsource_policyの`min_interval`で要求を直列化する。
+`OpenverseAdapter` は匿名の Openverse Images API v1 を使用し、認証キーは導入しない。Openverseは認証時に標準・拡張など異なるスロットリング階層を設けている。Commons・Openverseは`collect/http.py`の共通処理で検索・元ページ・原本の取得を直列化する。source_policyの`min_interval`、`retries`（初回を除く回数）、`backoff * 2**attempt`とRetry-After（秒数またはHTTP日時）の長い方を守る。不正なRetry-Afterではbackoffを使用し、最終試行でも待機してから失敗する。Commons固有のmaxlag・ratelimited・cirrussearch-too-busy-errorも同じ待機処理へ渡す。
 
-検索結果の `foreign_landing_url` を `source_url` として保存する。Openverse は第三者サイト上のライセンス情報を保証しないため、元サイトのページから作者名とライセンス識別子を照合できない候補、作者またはライセンスURLが欠ける候補は除外し、理由を記録する。許可ライセンスは CC0、PDM、CC BY、CC BY-SA に限定する。元画像URLは `original_url` に保持し、Commons 由来の同一画像でも出典ページを区別する。
+検索結果の `foreign_landing_url` を `source_url` として保存する。Openverse は第三者サイト上のライセンス情報を保証しないため、元ページのJSON-LDにあるSchema.orgのImageObjectで対象原本URLと一致する`contentUrl`（未指定時は`url`）を探し、その画像の`creator`（未指定時は`author`）と`license`を照合する。作者名は前後空白・大文字小文字を除いて完全一致、ライセンスはAPIの識別子・版から決まるCreative Commons URLとAPI・元ページの両URLの完全一致を必要とする。HTTP/HTTPSと末尾スラッシュだけを同一視し、CC0はpublicdomain/zero、PDMはpublicdomain/markを使う。
+
+同一原本のImageObjectに矛盾がある場合、画像との対応・作者・識別子・版・URLが判別できない場合、未対応の構造化形式では取得しない。ページ全体の文字列や別画像・ページ自体のライセンスは根拠にしない。未確認候補は`metadata.source_verification.status=review`、確認済みは`verified`とし、確認方法も残す。除外理由`source_license_or_author_unverified`はログとrun.parameters.skippedへ記録し、未確認候補をsource・assetへ登録しない。DBのlicense_classや共有Candidate型は変更しない。許可ライセンスは CC0、PDM、CC BY、CC BY-SA に限定する。元画像URLは `original_url` に保持し、Commons 由来の同一画像でも出典ページを区別する。
+
+照合には標準ライブラリのHTMLParser・json・urllibを使用する。既存の依存にはHTML・JSON-LD抽出機能がなく、必要なImageObjectの読み取りだけで足りるため依存は追加しない。対応する構造化データの意味は[ImageObject](https://schema.org/ImageObject)と[license](https://schema.org/license)に従う。参照解決や任意のJSON-LDコンテキスト展開は行わず、確認できない形式はreviewへ回す。
 
 認証・スロットリング階層: [Authentication and Throttling](https://docs.openverse.org/api/reference/authentication_and_throttling.html)。個別作品のライセンス情報の非保証: [Openverse API利用例と注意](https://docs.openverse.org/api/reference/made_with_ov.html)。規約はレート制限遵守、適切な帰属、ホスティング元の条件遵守、および元サイトでの権利確認を利用者に求める: [Openverse Terms of Service](https://github.com/WordPress/openverse/blob/main/documentation/terms_of_service.md)。匿名アクセス先は[Openverse Images API v1](https://api.openverse.org/v1/images/)。
 
-`tests/fixtures/openverse.json`は2026-11-01に匿名APIから`Himeji Castle`を2件取得した記録。テストではこの検索JSONを再生し、元サイト応答を照合成功・失敗の記録値に置き換える。画像バイト列はfixtureに含めない。
+`tests/fixtures/openverse.json`は2026-11-01に匿名APIから`Himeji Castle`を2件取得した記録。テストではこの検索JSONを再生し、元サイト応答はImageObjectの成功・不一致・判別不能を模したHTMLに置き換える。NC・ND・版違い・別画像・同一画像の矛盾を検証し、実DBでも不一致候補がsource・assetへ入らないことを確認する。画像バイト列はfixtureに含めない。
+
+2026-11-02の実API確認では同じ検索を2件に限定して実行し、APIは応答した。
+両候補とも元ページで照合根拠を確認できずreviewとして除外し、実画像は取得していない。
+確認済み候補の原本取得とHTTP再試行は、記録済み検索JSONとモックの元ページ・原本で検証した。
