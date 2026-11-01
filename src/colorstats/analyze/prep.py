@@ -106,7 +106,7 @@ def register(session: Session, run, data: dict) -> None:
     asset.phash = data["phash"]
     asset.width = data["width"]
     asset.height = data["height"]
-    asset.quality = _quality(data)
+    asset.quality = {**asset.quality, **_quality(data)}
 
     candidates = []
     for other in session.scalars(select(Asset).where(Asset.id != asset.id)):

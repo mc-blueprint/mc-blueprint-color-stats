@@ -237,7 +237,9 @@ def test_取得禁止とポリシー欠落では通信しない(policy, tmp_path
     assert len(requests) == 2 and not (tmp_path / "denied").exists()
 
 
-@pytest.mark.parametrize("failure", ["429", "503", "maxlag", "ratelimited"])
+@pytest.mark.parametrize(
+    "failure", ["429", "503", "maxlag", "ratelimited", "cirrussearch-too-busy-error"]
+)
 def test_負荷制限のRetryAfterと指数待機を守る(policy, failure):
     def error():
         if failure.isdigit():
@@ -251,9 +253,10 @@ def test_負荷制限のRetryAfterと指数待機を守る(policy, failure):
     assert [time for _, time in requests] == [0, 12, 24, 25]
 
 
-def test_負荷制限の最終試行も待機してから失敗する(policy):
+@pytest.mark.parametrize("code", ["maxlag", "cirrussearch-too-busy-error"])
+def test_負荷制限の最終試行も待機してから失敗する(policy, code):
     adapter, requests = adapter_for(
-        policy, [Response({"error": {"code": "maxlag"}}) for _ in range(3)]
+        policy, [Response({"error": {"code": code}}) for _ in range(3)]
     )
     with pytest.raises(RuntimeError, match="負荷制限"):
         adapter.search(SearchRequest("wikimedia_commons", "castle"))
@@ -340,6 +343,22 @@ def claim_for(payload, config_hash):
     return Claim(
         uuid.uuid4(), uuid.uuid4(), "collect", None, config_hash, payload, 1, datetime.now(UTC)
     )
+
+
+def test_SVGは予約と取得の前に除外理由を記録する(policy, tmp_path, monkeypatch):
+    recorded = copy.deepcopy(RECORDED)
+    recorded[1]["query"]["pages"][0]["imageinfo"][0]["mime"] = "image/svg+xml"
+    adapter, requests = adapter_for(policy, [Response(r) for r in recorded])
+    monkeypatch.setattr("colorstats.collect.stage.CommonsAdapter", lambda policy: adapter)
+    payload, config_hash = payload_for(tmp_path)
+
+    def decide(request, candidate):
+        pytest.fail("非対応形式を予約してはいけません")
+
+    prepared = prepare(claim_for(payload, config_hash), decide=decide)
+    assert not prepared.files and not prepared.data["records"]
+    assert prepared.info.parameters["skipped"][0]["reason"] == "mime"
+    assert len(requests) == 2
 
 
 def test_原本はハッシュ名の一時出力になりrestrictedは取得しない(policy, tmp_path, monkeypatch):

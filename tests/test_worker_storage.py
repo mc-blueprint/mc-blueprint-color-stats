@@ -9,9 +9,10 @@ from colorstats.queue.worker import Worker
 
 def test_readonly_stage_is_not_claimed_but_other_stage_continues(tmp_path, monkeypatch):
     monkeypatch.setattr(storage, "CONFIG", tmp_path / "missing")
+    monkeypatch.setattr(storage.os, "ST_RDONLY", 1, raising=False)
     monkeypatch.setattr(storage.os, "statvfs", lambda path: SimpleNamespace(
         f_flag=storage.os.ST_RDONLY if path == tmp_path else 0
-    ))
+    ), raising=False)
     other = tmp_path / "other"
     other.mkdir()
     queue = Mock()
