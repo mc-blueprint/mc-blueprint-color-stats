@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mc-blueprint-color-stats"
+version = "0.1.0"
+description = "MCBlueprint 向けに建築・地形の配色を収集・解析・統計化し、配色パックを生成する。"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [{ name = "rs0325" }]
+dependencies = [
+  "mcblueprint @ git+https://github.com/rs0325/MCBlueprint@6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.5",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/colorstats"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+# 既存の SSH 補助スクリプトは原本のまま保つ
+extend-exclude = ["scripts/ssh.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
