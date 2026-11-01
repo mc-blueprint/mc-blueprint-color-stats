@@ -11,14 +11,13 @@ if __name__ == "__main__":
         r"SCRAM-SHA-256\$4096:[A-Za-z0-9+/=]+\$[A-Za-z0-9+/=]+:[A-Za-z0-9+/=]+", verifier
     ):
         raise ValueError("SCRAM-SHA-256検証子が必要です")
+    grants = Path(__file__).with_name("worker_grants.sql").read_text(encoding="utf-8")
     sql = f"""
 BEGIN;
 CREATE ROLE colorstats_worker LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION;
 ALTER ROLE colorstats_worker PASSWORD '{verifier}';
 GRANT CONNECT ON DATABASE colorstats TO colorstats_worker;
-GRANT USAGE ON SCHEMA public TO colorstats_worker;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO colorstats_worker;
-REVOKE INSERT, UPDATE, DELETE ON alembic_version FROM colorstats_worker;
+{grants}
 COMMIT;
 """
     subprocess.run(

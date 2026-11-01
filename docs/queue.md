@@ -59,7 +59,8 @@ payloadはJSON辞書で、秘密情報を保存しない。
 取得時に試行数を増やす。通常失敗、計算プロセス異常終了、停止フラグによる中断、
 リース期限切れは1失敗と数え、3試行で理由付きfailedとなる。
 期限切れは次の対応stageのclaimで回収するため、そのstageのワーカーが最低1台必要。
-エラーの直後はpendingへ戻り、追加の待機・バックオフは設けない。
+通常失敗の直後はpendingへ戻り、追加の待機・バックオフは設けない。
+pendingは`available_at`がDB時計の現在時刻以下の場合だけ取得する。
 
 `Queue.renew(claim)` と `fail(claim, reason)` はトークンと期限を検査し、
 権利を失った試行にはLeaseLostを返す。リースはworkerが期間の約1/3ごとに更新する。
@@ -83,7 +84,12 @@ Pythonからは `Worker(..., storage_paths={"prep": (Path("/srv/colorstats/deriv
 取得済みの計算中に異常を検出すると子プロセスを終了して `Queue.defer(claim, reason)` で
 pendingへ戻し、今回の試行数を1減らす。EROFS・ENODEV・ESTALE・EIOは子のerrnoを親へ伝え、
 監視記録の作成より先に書込みが失敗した場合も保留する。完了ファイル公開時の同じ例外も対象。
-deferは既存のトークンと期限を検査し、旧試行はLeaseLostとなる。スキーマ変更はない。
+deferは既存のトークンと期限を検査し、旧試行はLeaseLostとなる。
+Issue #35のrevision `0005`でjobに`available_at`（タイムゾーン付き・非NULL）を追加する。
+新規・既存ジョブの初期値はDBの現在時刻。deferはこれをDB時計の30秒後に設定する。
+待機中のpendingはclaimから除外し、作成日時が後のprep/colorなどを取得できるようにする。
+保存先を復旧してもこの待機は短縮しない。異常が続く場合も各保留後に30秒待ち、試行数は消費しない。
+既存のPostgreSQL日時列とSQLAlchemyの取得条件で対応し、依存追加や別のスケジューラは使わない。
 通常失敗・手動stop-file・リース切れの既存契約は維持する。DBへ返せなかった場合はリース切れで
 回収されるため、その場合まで試行数を返したことにはならない。
 

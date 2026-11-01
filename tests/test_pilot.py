@@ -17,6 +17,7 @@ from colorstats.queue.worker import Worker
 from colorstats.schema.models import Asset, Job, ProcessingRun
 from tests.test_queue import asset as asset
 from tests.test_queue import database as database
+from tests.test_queue import make_available
 from tests.test_queue import queue as queue
 
 pytestmark = pytest.mark.skipif(
@@ -133,6 +134,8 @@ def test_publication_io_error_defers_without_consuming_attempt_and_resumes(
         job = session.get(Job, job_id)
         assert job.status == "pending" and job.attempts == 0 and job.run_id is None
         assert session.scalars(select(ProcessingRun)).all() == []
+    assert queue.claim(["prep"]) is None
+    make_available(queue, job_id)
     worker.run(once=True)
     with Session(queue.engine) as session:
         job = session.get(Job, job_id)

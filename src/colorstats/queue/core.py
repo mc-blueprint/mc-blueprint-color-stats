@@ -107,7 +107,8 @@ class Queue:
                     .where(
                         Job.stage.in_(stages),
                         or_(
-                            Job.status == "pending",
+                            (Job.status == "pending")
+                            & (Job.available_at <= func.clock_timestamp()),
                             (Job.status == "running") & (Job.lease_until <= func.clock_timestamp()),
                         ),
                     )
@@ -163,11 +164,14 @@ class Queue:
             job.lease_token = job.lease_until = None
 
     def defer(self, claim: Claim, reason: str) -> None:
-        """保存先の復旧待ちとしてpendingへ戻し、今回の試行数を返す。失効時はLeaseLost。"""
+        """試行数を返し、DB時計で30秒後に再取得可能にする。失効時はLeaseLost。"""
         with self._transaction() as session:
             job = self._owned(session, claim)
             job.status = "pending"
             job.attempts -= 1
+            job.available_at = session.scalar(select(func.clock_timestamp())) + timedelta(
+                seconds=30
+            )
             job.failure_reason = reason
             job.lease_token = job.lease_until = None
 

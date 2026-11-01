@@ -11,9 +11,17 @@ Issue #27。ubuntu-1で単一のcollectとprep/colorを動かし、ubuntu-2にDB
 1. 対象のコード・設定・taxonomy・`uv.lock`・`pyproject.toml`・`alembic.ini`を、
    `/opt/colorstats/releases/<版>/`に展開する。アーカイブのSHA-256と基準commitを記録する。
    未コミット修正を含む場合はcommit版と呼ばずスナップショットとする。
-2. `uv run alembic upgrade head --sql`で0001〜0003のSQLを生成し、空のDBを確認してから
+2. 初回は`uv run alembic upgrade head --sql`で0001〜0005のSQLを生成し、空のDBを確認してから
    ubuntu-2で`sudo -u postgres psql -v ON_ERROR_STOP=1 -d colorstats -f <SQL>`を実行する。
-   既に適用済みなら再実行せず`alembic_version`を確認する。SQL生成・転送・適用もコマンド記録を残す。
+   既存DBは`alembic_version`を確認し、例えば0003なら
+   `uv run alembic upgrade 0003:head --sql`で未適用分だけを生成する。
+   適用後は0005を確認する。0005は既存jobに再取得可能時刻を追加し、既存ジョブはすぐ取得できる。
+   ワーカーはmigrationと権限付与の完了後に新版へ切り替える。
+   既存の`colorstats_worker`がある場合は、同じDB所有者で
+   `sudo -u postgres psql -v ON_ERROR_STOP=1 -1 -d colorstats -f <版>/ops/deploy/worker_grants.sql`
+   を実行する。0004の`asset_duplicate`を含む全表へ既存と同じDML権限を付与し、
+   `alembic_version`は読取りだけに戻す。今後もmigration後にはこのSQLで権限をそろえる。
+   default privilegesは使わない。SQL生成・転送・適用もコマンド記録を残す。
 3. ubuntu-1で`bash <版>/ops/deploy/install.sh <版の絶対パス>`を実行する。
    uv 0.13.6、Python 3.12、`uv sync --frozen --no-dev`を使う。
    媒体ルートだけをtoumokorosiへ委譲し、既存ファイルの所有権や内容には触れない。
@@ -22,6 +30,7 @@ Issue #27。ubuntu-1で単一のcollectとprep/colorを動かし、ubuntu-2にDB
    `/var/lib/colorstats/pilot/database.json`（mode 600）を他ホストへ転送・表示しない。
    同ディレクトリの`worker.scram`だけをubuntu-2へ転送し、
    `python3 <版>/ops/deploy/worker_role.py <検証子ファイル>`でロールを作る。
+   新設時も同梱の`worker_grants.sql`で同じ権限を付与する。
    既存ロールや認証ファイルは上書きしない。再配備は既存の所有者専用ファイルを利用する。
 5. ubuntu-2のpg_hba.confに次の1行を追加し、`SELECT pg_reload_conf()`で反映する。
    `host colorstats colorstats_worker 192.168.1.85/32 scram-sha-256`
