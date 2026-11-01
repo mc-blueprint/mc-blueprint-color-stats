@@ -31,6 +31,11 @@ subjectの画像上限と割合枠は一意に一致した候補だけに適用�
 subject不明は重複を除いたsubject数や目標達成数に算入せず、レポートで件数・割合を出す。
 未同定候補が多ければsubject目標が未達でも画像予算で停止する。収集後のsubject推定は後続工程で扱う。
 
+prepも確定subjectを保持し、pHash近似は`subject_candidate`と`asset_duplicate`に留める。
+SHA-256完全一致群に確定subjectが一意に存在する場合だけ、未同定assetへ引き継ぐ。
+確定値が競合する完全一致群では未同定を保つ。重複クラスタ数はsubject数・網羅率に算入しない。
+詳細は[スキーマのprep契約](schema.md#prepの重複同定契約revision-0004)を参照する。
+
 地域の集中枠はsubject.location、候補の撮影地点candidate.location、意図した層のregionの順で決める。
 空の値は使わず、どれもなければ不明とする。regionとregion_basisを予約と
 asset.search_parameters.collection_biasへ記録する（subject.location / candidate.location /
