@@ -32,7 +32,8 @@ DBサーバー以外のサービス追加は不要。追加依存のライセン
 | source | 出典ページURL（一意）、サイト、作者、ライセンス表記・区分、帰属、取得日時、サイト別policyのスナップショット |
 | asset | 取得イベントごとの出典、任意の確定subject、収集時のタイトル・撮影地点、原本URL・SHA-256・pHash・寸法・論理保存先、domain、license_class、品質、分類版・シーン属性、選ばれ方 |
 | subject | 同一建築・場所・作品の集約単位。domain、地域・年代、分類版・シーン属性。画像数と独立subject数を分けて集計する |
-| subject_candidate | 未確定assetのsubject候補と信頼度・根拠。候補があっても確定するまではasset.subject_idをNULLに保つ |
+| subject_candidate | assetのsubject候補と信頼度・根拠。候補があっても確定するまではasset.subject_idをNULLに保つ。確定済みassetの競合候補・同定根拠も保持する |
+| asset_duplicate | subjectと独立した画像重複の辺。UUID昇順のasset_a・asset_bを複合主キーにし、sha256完全一致またはphash近似と信頼度を保存する |
 | processing_run | stage、モデル・重みハッシュ・license_class、設定ハッシュ・パラメーター、コード版・分類版、ノード、開始・終了日時・失敗理由 |
 | processing_run_input | 解析・集計runが使用した入力runの有向関係。複数モデル工程のライセンス由来を失わないための補助表 |
 | region | assetと生成run、分類版・第2階層部位または地形ラベル、instance_id、マスク論理参照、bbox、面積比・信頼度、正規化高さ、面方向・地形属性、label_source |
@@ -46,6 +47,30 @@ assetは取得イベントごとに記録し、`source_id` は出典ページ、
 `search_parameters` は順位を解釈できる実効検索条件の辞書とし、エンドポイント・API版、並び順、フィルター、言語、ページサイズ、順位とページの起算基準・順位の範囲（ページ内か検索全体か）、使用したカーソル・オフセットを該当する範囲で保存する。APIの既定値も解決して保存し、認証情報は含めない。
 順位・ページはAPIの基準をそのまま保存し、0も許容する。APIが返さない順位・ページはNULLにする。検索によらない直接入力は検索元・検索語・検索条件・順位・ページをSQL NULLにし、後で値を捏造しない。これらの整合性は収集側が検証する。
 同じ内容を異なる出典・検索で選ぶ場合も記録できるよう、SHA-256に一意制約は置かない。重複判定・採否はprepの責務。
+
+### prepの重複・同定契約（revision 0004）
+
+prepはsubjectを新設せず、既存の確定subjectを変更しない。未同定画像は原則NULLのままにする。
+例外はSHA-256完全一致群に確定subjectが1種類だけある場合で、同じ原本を表す未同定assetへ
+その値を引き継ぐ。未同定側と確定側のどちらを後からprepしても同じ扱いとする。
+完全一致群に複数の確定subjectがある場合は既存値を保持し、未同定assetはNULLのまま候補を残す。
+pHashの距離6以下は近似の根拠に留め、subjectを自動確定しない。
+
+重複クラスタは`asset_duplicate`の辺でつながる連結群として表す。完全一致だけの群と
+近似を含む群は`method`で区別でき、クラスタの件数を独立subject数に使わない。
+単独画像には辺がなく、重複画像が未同定同士なら辺だけを保存する。
+いずれかに確定subjectがあれば相手側の`subject_candidate`へ根拠asset ID・手法・ハッシュを保存する。
+候補は双方向に記録し、同じasset・subjectの候補は最大信頼度を保持する。
+確定済みassetにも競合の確認や同定に使った根拠を残せるが、候補の存在は確定値を変更しない。
+信頼度はSHA-256で1、pHashで`1 - distance / 64`であり、同定確率ではない。
+
+既存のSQLAlchemy・PostgreSQL機能を再利用し、依存追加はしない。
+prepの登録はREAD COMMITTED取引内で`pg_advisory_xact_lock(29, 1)`を取得して直列化し、
+assetをUUID順に行ロック・再読込みして、後から確定した値も保持する。
+画像解析・ファイル出力はこの排他区間の外で行う。辺の順序制約と複合主キーで逆向き・二重登録を防ぐ。
+現在の全asset走査に合わせた排他範囲であり、大規模化時の探索・ロック範囲の最適化は別途扱う。
+同定を変更する将来の処理もasset行ロックを守る必要がある。
+revision 0004は表追加だけを行い、既存subject・候補・assetの値は自動補正しない。
 `collected_title` と `collected_location` は収集元のタイトルと撮影地点の原情報を保存し、`subject_id` がNULLでも保持する。撮影地点は元の地名表記または座標表記を文字列で保存する。元情報がない場合のみNULLとし、subjectの推定値で補完・上書きしない。推定・確定した建築名や所在地は `subject.name/location` へ保存する。
 テキスト資料の寸法はNULL可。scene_attributesはtaxonomyの属性名→値の辞書で、画像の撮影条件をsubjectの恒久属性に混ぜない。
 

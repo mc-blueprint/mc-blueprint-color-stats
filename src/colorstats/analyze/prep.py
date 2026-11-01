@@ -5,12 +5,12 @@ from pathlib import Path
 
 import imagehash
 from PIL import Image, ImageFilter, ImageStat
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from colorstats.queue.core import Claim, RunInfo
 from colorstats.queue.worker import Prepared
-from colorstats.schema.models import Asset, Subject, SubjectCandidate
+from colorstats.schema.models import Asset, AssetDuplicate, SubjectCandidate
 
 MAX_SIZE = (512, 512)
 PHASH_DISTANCE = 6
@@ -101,6 +101,15 @@ def _quality(data: dict) -> dict:
 
 
 def register(session: Session, run, data: dict) -> None:
+    """同一取引で重複関係と候補を登録する。確定subjectは保持する。
+
+    PostgreSQLのREAD COMMITTEDで呼び出す。完全一致群の確定subjectが一意の
+    場合だけ未同定assetへ引き継ぎ、近似一致や確定値の競合では自動同定しない。
+    """
+    session.execute(text("SELECT pg_advisory_xact_lock(29, 1)"))
+    assets = session.scalars(
+        select(Asset).order_by(Asset.id).with_for_update().execution_options(populate_existing=True)
+    ).all()
     asset = session.get(Asset, data["asset_id"])
     asset.sha256 = data["sha256"]
     asset.phash = data["phash"]
@@ -109,7 +118,9 @@ def register(session: Session, run, data: dict) -> None:
     asset.quality = {**asset.quality, **_quality(data)}
 
     candidates = []
-    for other in session.scalars(select(Asset).where(Asset.id != asset.id)):
+    for other in assets:
+        if other.id == asset.id:
+            continue
         if other.sha256 == asset.sha256:
             candidates.append((other, 1.0, "sha256"))
         elif other.phash:
@@ -117,27 +128,45 @@ def register(session: Session, run, data: dict) -> None:
             if distance <= PHASH_DISTANCE:
                 candidates.append((other, 1 - distance / 64, "phash"))
 
-    subject_ids = {other.subject_id for other, _, _ in candidates if other.subject_id}
-    if not subject_ids:
-        subject = Subject(
-            name=asset.collected_title or asset.url,
-            domain=asset.domain,
-            taxonomy_version=asset.taxonomy_version,
-            scene_attributes=asset.scene_attributes or {},
-        )
-        session.add(subject)
-        session.flush()
-        subject_ids.add(subject.id)
-    asset.subject_id = sorted(subject_ids, key=str)[0]
+    exact = [asset] + [other for other, _, method in candidates if method == "sha256"]
+    subject_ids = {item.subject_id for item in exact if item.subject_id is not None}
+    if len(subject_ids) == 1:
+        subject_id = next(iter(subject_ids))
+        for item in exact:
+            if item.subject_id is None:
+                item.subject_id = subject_id
     for other, confidence, method in candidates:
-        subject_id = other.subject_id or asset.subject_id
-        if other.subject_id is None:
-            other.subject_id = subject_id
+        first, second = sorted((asset.id, other.id))
         session.merge(
-            SubjectCandidate(
-                asset_id=asset.id,
-                subject_id=subject_id,
+            AssetDuplicate(
+                asset_a=first,
+                asset_b=second,
+                method=method,
                 confidence=confidence,
-                evidence={"method": method, "sha256": asset.sha256, "phash": asset.phash},
             )
         )
+        for target, origin in ((asset, other), (other, asset)):
+            if origin.subject_id is not None:
+                previous = session.get(SubjectCandidate, (target.id, origin.subject_id))
+                if (
+                    previous is None
+                    or confidence > previous.confidence
+                    or (
+                        confidence == previous.confidence
+                        and method == "sha256"
+                        and previous.evidence.get("method") == "phash"
+                    )
+                ):
+                    session.merge(
+                        SubjectCandidate(
+                            asset_id=target.id,
+                            subject_id=origin.subject_id,
+                            confidence=confidence,
+                            evidence={
+                                "method": method,
+                                "asset_id": str(origin.id),
+                                "sha256": asset.sha256,
+                                "phash": asset.phash,
+                            },
+                        )
+                    )
