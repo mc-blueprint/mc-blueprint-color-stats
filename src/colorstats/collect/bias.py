@@ -141,7 +141,7 @@ def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None
         }
         if len(layer_subjects) >= layer["subjects"]:
             return "target_reached"
-        reason = quota_reason(rows, config, subject_id, author, request.provider, region)
+        reason = quota_reason(rows, config, subject_id, author, request.provider, region, layer)
         if reason:
             return reason
         session.add(
@@ -161,8 +161,8 @@ def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None
     return None
 
 
-def quota_reason(rows, config, subject_id, author, source, region):
-    """固定画像予算に対する集中枠。小数は切り捨て、subjectには画像数上限も課す。"""
+def quota_reason(rows, config, subject_id, author, source, region, layer):
+    """全体予算と層目標の集中枠を検査する。端数は切り捨てる。"""
     budget, limits = config["image_budget"], config["limits"]
     if len(rows) >= budget:
         return "image_budget"
@@ -180,6 +180,12 @@ def quota_reason(rows, config, subject_id, author, source, region):
             cap = min(cap, limits["subject_images"])
         if sum(row[key] == value for row in rows) >= cap:
             return f"{limit_key}_limit"
+        if key in ("author", "source"):
+            layer_cap = int(Decimal(str(limits[f"{key}_share"])) * layer["subjects"])
+            if sum(
+                row[key] == value and matches(row["attributes"], layer) for row in rows
+            ) >= min(cap, layer_cap):
+                return f"stratum_{key}_limit"
     return None
 
 

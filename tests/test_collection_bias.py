@@ -122,11 +122,50 @@ def test_層の語彙と必要属性を検証する(config, tmp_path, key, value
 def test_各割合上限とsubject画像上限を適用する(config, dimension):
     config["limits"][f"{dimension}_share"] = 0.1
     row = dict(subject_id=uuid.uuid4(), author="a", source="s", region="r")
-    assert bias.quota_reason([], config, *row.values()) is None
-    assert bias.quota_reason([row], config, *row.values()) == f"{dimension}_limit"
+    layer = config["strata"][0]
+    values = tuple(row.values())
+    row["attributes"] = layer["attributes"]
+    assert bias.quota_reason([], config, *values, layer) is None
+    assert bias.quota_reason([row], config, *values, layer) == f"{dimension}_limit"
     config["limits"][f"{dimension}_share"] = 1
     config["limits"]["subject_images"] = 1
-    assert bias.quota_reason([row], config, *row.values()) == "subject_limit"
+    assert bias.quota_reason([row], config, *values, layer) == "subject_limit"
+
+
+@pytest.mark.parametrize("dimension", ["author", "source"])
+def test_層内枠と全体枠の両方を守り他層だけで層内枠を消費しない(config, dimension):
+    config["image_budget"] = 100
+    config["limits"][f"{dimension}_share"] = 0.2
+    layer = config["strata"][0]
+    values = dict(subject_id=None, author="a", source="s", region=None)
+    row = {**values, "attributes": layer["attributes"]}
+    other = {**values, "attributes": {"domain": "real_terrain"}}
+    assert bias.quota_reason([row], config, *values.values(), layer) is None
+    assert bias.quota_reason([row] * 2, config, *values.values(), layer) == (
+        f"stratum_{dimension}_limit"
+    )
+    assert bias.quota_reason([other] * 19, config, *values.values(), layer) is None
+    assert bias.quota_reason([other] * 20, config, *values.values(), layer) == (
+        f"{dimension}_limit"
+    )
+
+
+@DB
+@pytest.mark.parametrize("dimension", ["author", "source"])
+def test_層内枠も並行予約で超えない(queue, config, dimension):
+    config["image_budget"] = 100
+    config["limits"][f"{dimension}_share"] = 0.1
+    workers = claims(queue, config)
+    barrier = threading.Barrier(2)
+
+    def decide(index):
+        barrier.wait(timeout=5)
+        return bias.reserve(queue, workers[index], config, request(), candidate(index))
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        result = list(pool.map(decide, range(2)))
+    assert result.count(None) == 1
+    assert f"stratum_{dimension}_limit" in result
 
 
 @DB
