@@ -15,11 +15,24 @@ def exclusion_reason(uuid, state, events, disks):
     """異常理由を返す。空文字は転送可能。旧UUIDの記録も原因確認まで引き継ぐ。"""
     disk = next(disk for disk in disks if disk["uuid"] == uuid)
     current = state[uuid]
-    if current["temperature"] >= 60:
-        return f"temperature={current['temperature']}C (>=60C)"
+    if current.get("error"):
+        return f"inspection_failed: {current['error']}"
+    if current["temperature"] >= 60 or current.get("temperature_blocked"):
+        return f"temperature={current['temperature']}C (60C以上で停止、55C未満で復帰)"
     identities = {uuid, *disk.get("previous_uuids", [])}
     for event in events:
         if event["uuid"] in identities:
+            if event["reason"] in ("temperature", "temperature_history"):
+                continue
+            if event["reason"] == "smart_increase":
+                previous = event.get("previous")
+                sample = event.get("current", {})
+                if (previous and not previous.get("error") and sample.get("temperature", 0) >= 60
+                        and all(key in previous and key in sample
+                                and sample[key] <= previous[key]
+                                for key in ("crc", "reallocated"))
+                        and sample.get("pending", 0) <= previous.get("pending", 0)):
+                    continue
             return json.dumps(event, ensure_ascii=False, separators=(",", ":"))
     return ""
 

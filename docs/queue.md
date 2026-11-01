@@ -67,6 +67,32 @@ Jobのfailure_reasonは直近の失敗理由を保持し、後の成功時も履
 成功runのfailure_reasonはNULL。失敗試行にはprocessing_runや解析結果を作らない。
 例外文は保存されるため、stageの例外にも認証情報を含めない。
 
+### 保存先の異常による保留（Issue #30）
+
+Linuxのcollect/prepワーカーは `/etc/colorstats-storage/disks.json` のraw媒体を
+取得前・計算中・完了前に確認する。UUIDデバイスの欠落、mountの欠落・取り違え、
+readonly、`/var/lib/colorstats-storage/blocked/<UUID>` の存在時は該当stageを取得しない。
+他のstageは取得を続ける。監視設定がない開発環境ではrawの自動確認は行わない。
+
+raw以外の保存先は、ワーカー起動時に `--storage-path STAGE=/絶対パス` を繰り返して
+入出力rootを指定する。欠落したディレクトリ・readonlyを同じ間隔で確認する。
+Pythonからは `Worker(..., storage_paths={"prep": (Path("/srv/colorstats/derived"),)})` を使う。
+例えばNFSのderivedを使うprep/colorには両stageを指定する。パスは各ホストで到達できる
+既存rootを指定し、共有mount自体の状態は配置側でも監視する。
+
+取得済みの計算中に異常を検出すると子プロセスを終了して `Queue.defer(claim, reason)` で
+pendingへ戻し、今回の試行数を1減らす。EROFS・ENODEV・ESTALE・EIOは子のerrnoを親へ伝え、
+監視記録の作成より先に書込みが失敗した場合も保留する。完了ファイル公開時の同じ例外も対象。
+deferは既存のトークンと期限を検査し、旧試行はLeaseLostとなる。スキーマ変更はない。
+通常失敗・手動stop-file・リース切れの既存契約は維持する。DBへ返せなかった場合はリース切れで
+回収されるため、その場合まで試行数を返したことにはならない。
+
+監視の停止記録は自動解除しない。原因確認、UUID/mount照合、手動rw復旧と監視再実行を行い、
+管理者が対象UUIDのblockedファイルを除去すると、稼働中の対応ワーカーが取得を再開する。
+監視状態には取得失敗時の `error` とSMARTの `smart_exit` が加わる。旧形式の正常値も読める。
+配置済みの監視だけでは既に起動中の旧ワーカーコードは変わらないため、新版ワーカーの配置・起動を
+別途そろえる。#27の稼働中パイロットをこの作業で停止・再起動してはならない。
+
 ## 結果確定の境界
 
 `Queue.complete(claim, info, register, files)` の順序:
