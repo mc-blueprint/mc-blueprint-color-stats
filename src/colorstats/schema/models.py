@@ -115,6 +115,20 @@ class Asset(Identity, Base):
     quality: Mapped[dict] = mapped_column(JSONB)
 
 
+class AssetDuplicate(Base):
+    __tablename__ = "asset_duplicate"
+    __table_args__ = (
+        CheckConstraint("asset_a < asset_b", name="ordered_assets"),
+        CheckConstraint("method IN ('sha256', 'phash')", name="method"),
+        CheckConstraint("confidence BETWEEN 0 AND 1", name="confidence"),
+    )
+
+    asset_a: Mapped[uuid.UUID] = mapped_column(ForeignKey("asset.id"), primary_key=True)
+    asset_b: Mapped[uuid.UUID] = mapped_column(ForeignKey("asset.id"), primary_key=True)
+    method: Mapped[str] = mapped_column(Text)
+    confidence: Mapped[float] = mapped_column(Float)
+
+
 class SubjectCandidate(Base):
     __tablename__ = "subject_candidate"
     __table_args__ = (CheckConstraint("confidence BETWEEN 0 AND 1", name="confidence"),)
