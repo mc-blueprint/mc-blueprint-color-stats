@@ -1,0 +1,256 @@
+{
+  "result_count": 240,
+  "page_count": 120,
+  "page_size": 2,
+  "page": 1,
+  "results": [
+    {
+      "id": "6c58e2f1-e479-4d2f-86be-e624b583990b",
+      "title": "Rain, Typhoon in Himeji Castle, Japan",
+      "indexed_on": "2020-03-05T10:32:15.257219Z",
+      "foreign_landing_url": "https://www.flickr.com/photos/61533954@N00/37899156685",
+      "url": "https://live.staticflickr.com/4536/37899156685_2c6c010453_b.jpg",
+      "creator": "Dimitry B",
+      "creator_url": "https://www.flickr.com/photos/61533954@N00",
+      "license": "by",
+      "license_version": "2.0",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/",
+      "provider": "flickr",
+      "source": "flickr",
+      "category": null,
+      "filesize": null,
+      "filetype": null,
+      "tags": [
+        {
+          "name": "asia",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "castle",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "ceramic",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "hanshin",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "hideyoshi",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "himeji",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "hyogo",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "japan",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "rain",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "roof",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "torrent",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "typhoon",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "water",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "white",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "wood",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        }
+      ],
+      "attribution": "\"Rain, Typhoon in Himeji Castle, Japan\" by Dimitry B is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/.",
+      "fields_matched": [
+        "description",
+        "title",
+        "tags.name"
+      ],
+      "mature": false,
+      "height": 1024,
+      "width": 683,
+      "thumbnail": "https://api.openverse.org/v1/images/6c58e2f1-e479-4d2f-86be-e624b583990b/thumb/",
+      "detail_url": "https://api.openverse.org/v1/images/6c58e2f1-e479-4d2f-86be-e624b583990b/",
+      "related_url": "https://api.openverse.org/v1/images/6c58e2f1-e479-4d2f-86be-e624b583990b/related/",
+      "unstable__sensitivity": []
+    },
+    {
+      "id": "d34ebc50-4200-4618-88c5-4f1ef809bcbf",
+      "title": "Himeji Castle Himeji-Japan 日本 Jul/2006",
+      "indexed_on": "2020-05-06T02:46:31.256781Z",
+      "foreign_landing_url": "https://www.flickr.com/photos/41692261@N00/214825444",
+      "url": "https://live.staticflickr.com/72/214825444_dbd44bfa02_b.jpg",
+      "creator": "Freakland - フリークランド",
+      "creator_url": "https://www.flickr.com/photos/41692261@N00",
+      "license": "by",
+      "license_version": "2.0",
+      "license_url": "https://creativecommons.org/licenses/by/2.0/",
+      "provider": "flickr",
+      "source": "flickr",
+      "category": null,
+      "filesize": null,
+      "filetype": null,
+      "tags": [
+        {
+          "name": "asia",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "castillodehimeji",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "himeji",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "himejicastle",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "japan",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "japon",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "japon2006",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "u59ebu8defu57ce",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "u65e5u672c",
+          "accuracy": null,
+          "unstable__provider": "flickr"
+        },
+        {
+          "name": "architecture",
+          "accuracy": 0.98099,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "building",
+          "accuracy": 0.94012,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "culture",
+          "accuracy": 0.91552,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "house",
+          "accuracy": 0.90227,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "outdoors",
+          "accuracy": 0.94916,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "roof",
+          "accuracy": 0.90102,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "samurai",
+          "accuracy": 0.91497,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "sky",
+          "accuracy": 0.91679,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "temple",
+          "accuracy": 0.96024,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "traditional",
+          "accuracy": 0.96393,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "travel",
+          "accuracy": 0.96534,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "tree",
+          "accuracy": 0.9899,
+          "unstable__provider": "clarifai"
+        },
+        {
+          "name": "Zen",
+          "accuracy": 0.90352,
+          "unstable__provider": "clarifai"
+        }
+      ],
+      "attribution": "\"Himeji Castle Himeji-Japan 日本 Jul/2006\" by Freakland - フリークランド is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/.",
+      "fields_matched": [
+        "title",
+        "tags.name"
+      ],
+      "mature": false,
+      "height": 679,
+      "width": 1024,
+      "thumbnail": "https://api.openverse.org/v1/images/d34ebc50-4200-4618-88c5-4f1ef809bcbf/thumb/",
+      "detail_url": "https://api.openverse.org/v1/images/d34ebc50-4200-4618-88c5-4f1ef809bcbf/",
+      "related_url": "https://api.openverse.org/v1/images/d34ebc50-4200-4618-88c5-4f1ef809bcbf/related/",
+      "unstable__sensitivity": []
+    }
+  ]
+}
