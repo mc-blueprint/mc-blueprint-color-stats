@@ -47,3 +47,98 @@ strata:
     queries:
       ja: [秋 森 風景, 紅葉 森林]
       en: [autumn forest landscape, fall woodland landscape]
+  - id: modern-house
+    attributes:
+      domain: real_building
+      style: modern
+      building_type: house
+      region: north_america
+      era: modern
+    subjects: 100
+    queries:
+      en: [modern house exterior America, modern residential architecture Canada]
+      fr: [maison moderne Canada]
+  - id: medieval-house
+    attributes:
+      domain: real_building
+      style: medieval
+      building_type: house
+      region: europe
+      era: medieval
+    subjects: 100
+    queries:
+      en: [medieval timber framed house, medieval house exterior]
+      de: [Fachwerkhaus Altstadt]
+  - id: japanese-temple
+    attributes:
+      domain: real_building
+      style: japanese
+      building_type: temple
+      region: japan
+      era: early_modern
+    subjects: 100
+    queries:
+      ja: [日本 寺 本堂, 日本 神社 社殿]
+      en: [Japanese Buddhist temple exterior]
+  - id: islamic-temple
+    attributes:
+      domain: real_building
+      style: islamic
+      building_type: temple
+      region: west_asia
+      era: early_modern
+    subjects: 100
+    queries:
+      en: [Ottoman mosque exterior, Persian mosque facade]
+      tr: [cami dış görünüm]
+  - id: chinese-house
+    attributes:
+      domain: real_building
+      style: chinese
+      building_type: house
+      region: east_asia
+      era: early_modern
+    subjects: 100
+    queries:
+      en: [traditional Chinese courtyard house, Chinese vernacular house]
+      zh: [中国 传统 民居]
+  - id: mountains-summer-day
+    attributes:
+      domain: real_terrain
+      biome_like: mountains
+      season: summer
+      time_of_day: day
+    subjects: 100
+    queries:
+      en: [rocky mountain landscape summer, Andes mountain landscape]
+      es: [paisaje montañas Andes]
+  - id: plains-summer-day
+    attributes:
+      domain: real_terrain
+      biome_like: plains
+      season: summer
+      time_of_day: day
+    subjects: 100
+    queries:
+      en: [prairie grassland landscape, steppe grassland landscape]
+      fr: [prairie paysage été]
+  - id: desert-summer-day
+    attributes:
+      domain: real_terrain
+      biome_like: desert
+      season: summer
+      time_of_day: day
+    subjects: 100
+    queries:
+      en: [Sahara sand dunes landscape, Australian desert landscape]
+      ar: [الصحراء كثبان رملية]
+  - id: snowy-winter-day
+    attributes:
+      domain: real_terrain
+      biome_like: snowy
+      season: winter
+      time_of_day: day
+    subjects: 100
+    queries:
+      en: [snow covered landscape winter, arctic tundra snow landscape]
+      ja: [雪原 冬 風景]

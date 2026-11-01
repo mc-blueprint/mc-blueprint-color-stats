@@ -43,7 +43,7 @@ def check_commons_policy(policy: dict) -> None:
 class CommonsAdapter:
     """単一スロットで直列に呼び、通信終了後の取得間隔を制限する。
 
-    HTTP 429/503とAPI maxlag/ratelimitedはRetry-Afterと指数待機を尊重する。
+    HTTP 429/503とAPI負荷制限はRetry-Afterと指数待機を尊重する。
     openerはurllib互換で、記録済みレスポンスをテストに注入できる。
     """
 
@@ -84,7 +84,9 @@ class CommonsAdapter:
                     error = data.get("error")
                     if error is None:
                         return data
-                    if error.get("code") not in ("maxlag", "ratelimited"):
+                    if error.get("code") not in (
+                        "maxlag", "ratelimited", "cirrussearch-too-busy-error"
+                    ):
                         raise RuntimeError(f"Commons APIエラー: {error.get('code')}")
                     self._delay(response.headers, attempt)
             except HTTPError as error:

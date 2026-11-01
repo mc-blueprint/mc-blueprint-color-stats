@@ -71,6 +71,9 @@
 
 - `raw`の論理パスは`raw/<sha256[0:2]>/<sha256>.<ext>`。ORICO／SUNEASTへの振り分けは設定で行い、媒体の交換・追加時に設定だけ変える。
 - 正解データ（CVAT）と評価セットの原本は再取得できない可能性があるため、`backup`にも置く。
+- M1パイロットはubuntu-1からrawを読み、ubuntu-2のderivedをNFS共有している暫定配置。
+  M2で複数GPUノードの入出力を測定し、derivedのNFS共有の継続とrawの共有・複製方式を決める。
+  再取得・再計算と障害時の制御は[配備手順](../ops/deploy/README.md)に従う。
 
 ### 4.2 バックアップ
 
@@ -92,19 +95,22 @@
 ### 5.1 採用方針
 
 - PostgreSQL 16をubuntu-2に置き、ジョブは**`FOR UPDATE SKIP LOCKED`＋リース期限**で取得する。
-- 既存ライブラリの第一候補はProcrastinate（PostgreSQLベースのPythonタスクキュー）。リース・再試行・キュー分割・Windows（WSL2）からの接続を満たすかをM1の最初のIssueで一次情報から確認する。満たさない点だけを自作の`job`テーブルで補う。Ray Dataは、実測でスループットが足りないと判明した場合だけ検討する。
+- Procrastinateの適合性はIssue #6で確認済み。旧試行による結果更新を防ぐ所有権境界に別のjob行が必要になるため、既存SQLAlchemyとPostgreSQLによる単一の`job`テーブルを採用した（[調査と選定](queue.md)）。Ray Dataは、実測でスループットが足りないと判明した場合だけ検討する。
 
 ### 5.2 キュー
 
 | queue | 単位 | 実行ノード | 出力 |
 |---|---|---|---|
 | `collect` | 検索クエリ／ソースページ1件 | ubuntu-1 | `source`, `asset`, `raw` |
-| `prep` | 64件バッチ | ubuntu-1 CPU | SHA-256、pHash、品質指標、縮小画像 |
-| `segment` | 16件バッチ | GPU（12GB優先） | `region`、マスク |
-| `shade` | 16件バッチ | GPU | 陰影推定、補正の信頼度 |
-| `color` | 64件バッチ | CPU | `color_observation`, `relation` |
+| `prep` | 1 asset／job（実装済み） | ubuntu-1 CPU | SHA-256、pHash、品質指標、縮小画像 |
+| `segment` | M2で決定（当初目標16件バッチ） | GPU（12GB優先） | `region`、マスク |
+| `shade` | M2で決定（当初目標16件バッチ） | GPU | 陰影推定、補正の信頼度 |
+| `color` | 1 asset／job（実装済み） | CPU | `color_observation`, `relation` |
 | `review` | 低信頼度サンプル | 人手（CVAT）／VLM（任意・明示時のみ） | ラベル修正、教師データ |
 | `aggregate` | 統計バージョン1件 | Windows | `rule_stat` |
+
+現行ワーカーは1スロットで、jobごとに計算用プロセスをspawnする。
+prep/colorの64件バッチは投入目標であり、M2で速度・メモリとモデル常駐方式を実測して採否を決める。
 
 ### 5.3 冪等性と障害時の挙動
 
@@ -112,6 +118,7 @@
 - 出力は一時パスに書き、取引外で試行・公開ごとに固有の不変パスへrenameする。
   採用するファイル参照・結果・成功を所有権付きDB取引で確定する（[詳細](queue.md)）。
 - リース期限（既定10分）切れで`pending`へ戻す。3回失敗したら`failed`にして理由を保存する。
+- 保存先異常中は対象stageの取得を止め、処理中の試行は回数を消費せず保留する（Issue #30）。
 - Windowsワーカーは停止フラグで即時停止でき、残りのジョブは他ノードが引き継ぐ。
 
 ## 6. データスキーマと分類体系
@@ -218,8 +225,8 @@ MCBlueprintはMITで公開・無料配布される。MITは利用者の商用利
 
 | 項目 | 方法 |
 |---|---|
-| 構成 | 実建築600（Commons／Openverse）、地形200、バニラMinecraft200（自作スクリーンショット） |
-| 正解セット | うち100枚をCVATで部位ポリゴン付け（建築70・地形30） |
+| 構成 | 当初案は実建築600（Commons／Openverse）、地形200、バニラMinecraft200。M1は実画像の収集・prep/color実測までとし、自作Minecraft200枚はM2へ延期。M1の予算1,000は上限であり、層目標・集中上限・取得可否により未達になりうる |
+| 正解セット | M2で100枚をCVATで部位ポリゴン付け（建築70・地形30）。M1の完成条件には含めない |
 | 比較対象 | 分割：SAM 2＋Grounding DINO／SAM 3.1（テキスト指定）。補正：補正なし／Gray-World WB／Intrinsic（評価専用） |
 | 精度 | 部位別IoU・適合率・再現率（細部装飾は別集計）、バニラ画像でのブロック既知色とのΔE_ok |
 | 速度 | ノード×stage別の枚/秒、GPU使用率・VRAM最大値、CPU待ち、ディスクI/O |
