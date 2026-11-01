@@ -183,6 +183,23 @@ class Job(Identity, Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
+class CollectionReservation(Identity, Base):
+    __tablename__ = "collection_reservation"
+    __table_args__ = (UniqueConstraint("job_id", "lease_token", "source_url"),)
+
+    job_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.id"), index=True)
+    lease_token: Mapped[uuid.UUID] = mapped_column(Uuid)
+    stratum: Mapped[str] = mapped_column(Text, index=True)
+    subject_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("subject.id"))
+    author: Mapped[str] = mapped_column(Text)
+    source: Mapped[str] = mapped_column(Text)
+    region: Mapped[str | None] = mapped_column(Text)
+    region_basis: Mapped[str] = mapped_column(Text)
+    attributes: Mapped[dict] = mapped_column(JSONB)
+    source_url: Mapped[str] = mapped_column(Text)
+    asset_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("asset.id"), unique=True)
+
+
 class ProcessingRunInput(Base):
     __tablename__ = "processing_run_input"
     __table_args__ = (CheckConstraint("run_id <> input_run_id", name="not_self"),)

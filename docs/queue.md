@@ -114,6 +114,13 @@ stageモジュールは次の二つを実装する。
 - `register(session, run, data)`: 親プロセスの完了取引内でDB結果を登録する。
 
 PreparedはRunInfo、pickle可能な小さいdata、`[(temporary_path, target_path)]` を保持する。
+
+例外として#9の専用ハンドラー`colorstats.collect.bias`だけは、取得前の集中枠を
+複数ワーカー間で確保するためprepareから専用予約テーブルへ書き込む。
+予約はjobのリーストークンと結び付け、失敗・トークン変更・期限切れ後は次の採否/計画で回収する。
+完了中のjobは行ロックで回収から除外し、成功時は結果登録と同じ取引で予約を確定する。
+通信・確定ファイルへの書込みはこの例外に含めない。詳細は[偏り制御](collection-bias.md)を参照。
+
 target_pathは出力の識別名で、実際の保存先はregister時のrun.output_pathsから取得する。
 画像本体・モデルはpipeへ流さず、ファイル参照を返す。
 モデル初期化もprepare側で行う。並列数はワーカープロセス数で調整する。
