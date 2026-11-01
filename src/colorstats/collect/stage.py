@@ -28,7 +28,6 @@ MIME_EXTENSIONS = {
     "image/webp": "webp",
     "image/tiff": "tif",
     "image/gif": "gif",
-    "image/svg+xml": "svg",
 }
 logger = logging.getLogger(__name__)
 

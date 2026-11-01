@@ -69,7 +69,8 @@ HTMLを含む作者・説明はテキスト化し、元のimageinfoもasset.qual
 単一collectワーカーに割り当てる**。複数ワーカーによるレートの共有・分散制御は実装しない。
 ジョブ末尾にも残りの間隔を待ち、次のspawnプロセスへ切り替わっても間隔を保つ。
 GET・JSON、非対話用`maxlag=5`、連絡先付きBot User-Agentを使用する。
-HTTP 429/503とAPI maxlag/ratelimitedはRetry-After（秒数・HTTP日時）と5秒からの指数待機の
+HTTP 429/503とAPI maxlag/ratelimited/cirrussearch-too-busy-errorは
+Retry-After（秒数・HTTP日時）と5秒からの指数待機の
 長い方を守って最大2回再試行する。最終試行でも待機してから失敗し、キュー側の最大3試行へ返す。
 それ以外のHTTP/APIエラー、通信失敗はそのまま試行を失敗させる。
 Content-Lengthがある原本は受信サイズを照合し、途中で切れた応答を成功にしない。
@@ -119,7 +120,8 @@ uv run python -m colorstats.queue --handler collect=colorstats.collect.stage --s
 `prepare`は検索→候補の許可判定→原本取得→SHA-256計算を行う。
 rawのハッシュ確定前はURLのハッシュで仮の媒体を選び、確定後に必要なら媒体間コピーを行う。
 論理名は`raw/<sha先頭2桁>/<sha>.<MIMEに対応する拡張子>`。
-JPEG・PNG・WebP・TIFF・GIF・SVGが対象で、それ以外は理由mimeでスキップする。
+prepが読めるラスター形式のJPEG・PNG・WebP・TIFF・GIFが対象。
+SVGなどそれ以外は予約・原本取得前に理由mimeでスキップする。
 同一ジョブ内の同内容は出力を共有し、候補ごとの順位・メタデータは保持する。
 
 `Prepared.files`でキューへ渡し、`register`は`run.output_paths[str(target)]`を

@@ -45,6 +45,11 @@ stratum.region / unknown）。撮影地点は提供された文字列のまま�
 
 開始時の1枚は必ず実測占有率100%となるため、採否は固定した`image_budget`に対する
 枠で判定する。例えば予算1,000枚、author_share=0.05なら作者ごとに最大50枚。
+作者とソースは全体枠に加え、層の`subjects`を固定分母とする層内枠も検査し、
+全体枠と層内枠の小さい方まで取得できる。目標100・author_share=0.05なら層内で同作者は5枚。
+層内集計にも確定画像と未確定予約を含め、属性の一致を既存の層判定で調べる。
+層内枠による除外は`stratum_author_limit`・`stratum_source_limit`として記録する。
+これはIssue #27のパイロットで確認された層内作者集中を抑えるための契約修正。
 source_shareは出典ページ単位ではなく検索provider単位、region_shareは
 上記の地域文字列単位。subjectには割合枠に加えてsubject_imagesも課し、小さい方を使う。
 採否・予約はrequest.provider、確定後の集計はasset.search_providerを使う。
