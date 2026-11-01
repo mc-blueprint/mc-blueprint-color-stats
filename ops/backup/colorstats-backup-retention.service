@@ -1,0 +1,10 @@
+[Unit]
+Description=Prune PostgreSQL colorstats backup generations
+After=local-fs.target
+
+[Service]
+Type=oneshot
+User=colorstats-backup
+Group=colorstats-backup
+ExecStart=/usr/bin/python3 /var/lib/colorstats-backup/retention.py /srv/colorstats/backup-wd750/daily --generations 7
+ExecStart=/usr/bin/python3 /var/lib/colorstats-backup/retention.py /srv/colorstats/backup-wd750/weekly --generations 4
