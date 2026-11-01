@@ -478,3 +478,56 @@ def test_計算プロセスの突然終了後も別ワーカーで完了する(q
     assert read_job(queue, job_id).status == "pending"
     Worker(queue, {"prep": "tests.queue_handler"}, tmp_path / "other-stop").run(once=True)
     assert read_job(queue, job_id).status == "succeeded"
+
+
+def test_保存先の保留は試行数を消費せず古い所有権を拒否する(queue):
+    job_id = queue.enqueue("prep", None, "a" * 64, {})
+    old = queue.claim(["prep"])
+    queue.defer(old, "保存先の復旧待ち")
+    job = read_job(queue, job_id)
+    assert job.status == "pending" and job.attempts == 0
+    current = queue.claim(["prep"])
+    assert current.attempt == 1 and current.token != old.token
+    with pytest.raises(LeaseLost):
+        queue.defer(old, "旧試行")
+    queue.complete(current, INFO, lambda session, run: None)
+    assert read_job(queue, job_id).status == "succeeded"
+
+
+def test_子のreadonly例外は監視記録に先行しても失敗を消費しない(queue, tmp_path):
+    job_id = queue.enqueue("prep", None, "a" * 64,
+                           {"started": str(tmp_path / "started"), "readonly": True})
+    worker = Worker(queue, {"prep": "tests.queue_handler"}, tmp_path / "stop")
+    for _ in range(3):
+        worker.run(once=True)
+    job = read_job(queue, job_id)
+    assert job.status == "pending" and job.attempts == 0
+    assert "readonly" in job.failure_reason
+
+
+def test_計算中の保存先異常は保留し復旧後に再開する(queue, tmp_path, monkeypatch):
+    started = tmp_path / "started"
+    job_id = queue.enqueue("prep", None, "a" * 64, {"started": str(started), "delay": 1})
+    worker = Worker(queue, {"prep": "tests.queue_handler"}, tmp_path / "stop", poll_interval=0.02)
+    available = threading.Event()
+    available.set()
+    monkeypatch.setattr(worker, "_available", lambda stage: available.is_set())
+    thread = threading.Thread(target=worker.run, kwargs={"once": True}, daemon=True)
+    thread.start()
+    try:
+        deadline = monotonic() + 15
+        while not started.exists() and monotonic() < deadline:
+            sleep(0.02)
+        assert started.exists()
+        available.clear()
+        thread.join(timeout=5)
+        assert not thread.is_alive()
+        assert read_job(queue, job_id).attempts == 0
+        assert read_job(queue, job_id).status == "pending"
+        available.set()
+        worker.run(once=True)
+        assert read_job(queue, job_id).status == "succeeded"
+        assert read_job(queue, job_id).attempts == 1
+    finally:
+        available.clear()
+        thread.join(timeout=5)

@@ -1,5 +1,6 @@
 """計算を子プロセスに分離し、停止フラグで中断する単一スロットワーカー。"""
 
+import errno
 import importlib
 import multiprocessing
 import threading
@@ -10,6 +11,7 @@ from time import monotonic, sleep
 from sqlalchemy.exc import SQLAlchemyError
 
 from colorstats.queue.core import Claim, LeaseLost, Queue, RunInfo
+from colorstats.queue.storage import storage_available
 
 
 @dataclass
@@ -29,7 +31,10 @@ def _prepare(module_name, claim, pipe):
         module = importlib.import_module(module_name)
         pipe.send((True, module.prepare(claim)))
     except Exception as error:
-        pipe.send((False, f"{type(error).__name__}: {error}"))
+        pipe.send((False, (
+            f"{type(error).__name__}: {error}",
+            error.errno if isinstance(error, OSError) else None,
+        )))
     finally:
         pipe.close()
 
@@ -42,7 +47,13 @@ class Worker:
     """
 
     def __init__(
-        self, queue: Queue, handlers: dict[str, str], stop_file: Path, poll_interval: float = 0.2
+        self,
+        queue: Queue,
+        handlers: dict[str, str],
+        stop_file: Path,
+        poll_interval: float = 0.2,
+        *,
+        storage_paths: dict[str, tuple[Path, ...]] | None = None,
     ):
         if poll_interval <= 0:
             raise ValueError("ポーリング間隔は正の値が必要です")
@@ -50,11 +61,16 @@ class Worker:
         self.handlers = handlers
         self.stop_file = stop_file
         self.poll_interval = poll_interval
+        self.storage_paths = storage_paths or {}
+
+    def _available(self, stage):
+        return storage_available(stage, self.storage_paths.get(stage, ()))
 
     def run(self, *, once: bool = False) -> None:
         """停止ファイル存在時に取得・計算を止める。onceは最大1件を処理して戻る。"""
         while not self.stop_file.exists():
-            claim = self.queue.claim(tuple(self.handlers))
+            stages = tuple(stage for stage in self.handlers if self._available(stage))
+            claim = self.queue.claim(stages) if stages else None
             if claim is None:
                 if once:
                     return
@@ -69,10 +85,17 @@ class Worker:
         receiver, sender = context.Pipe(duplex=False)
         process = context.Process(target=_prepare, args=(self.handlers[claim.stage], claim, sender))
         try:
+            if not self._available(claim.stage):
+                self.queue.defer(claim, "保存先の復旧待ち")
+                return
             process.start()
             sender.close()
             renew_at = monotonic() + self.queue.lease.total_seconds() / 3
             while True:
+                if not self._available(claim.stage):
+                    self._stop(process)
+                    self.queue.defer(claim, "保存先の復旧待ち")
+                    return
                 if self.stop_file.exists():
                     self._stop(process)
                     self._return(claim)
@@ -84,7 +107,15 @@ class Worker:
                     except EOFError:
                         raise RuntimeError("計算プロセスが結果を返さず終了しました") from None
                     if not success:
-                        raise RuntimeError(result)
+                        message, number = result
+                        if number in (errno.EROFS, errno.ENODEV, errno.ESTALE, errno.EIO):
+                            self.queue.defer(claim, message)
+                            return
+                        raise RuntimeError(message)
+                    if not self._available(claim.stage):
+                        self._stop(process)
+                        self.queue.defer(claim, "保存先の復旧待ち")
+                        return
                     if self.stop_file.exists():
                         self._stop(process)
                         self._return(claim)
@@ -110,7 +141,13 @@ class Worker:
             pass
         except Exception as error:
             try:
-                self.queue.fail(claim, f"{type(error).__name__}: {error}")
+                if not self._available(claim.stage) or (
+                    isinstance(error, OSError)
+                    and error.errno in (errno.EROFS, errno.ENODEV, errno.ESTALE, errno.EIO)
+                ):
+                    self.queue.defer(claim, "保存先の復旧待ち")
+                else:
+                    self.queue.fail(claim, f"{type(error).__name__}: {error}")
             except LeaseLost:
                 pass
         finally:

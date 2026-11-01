@@ -162,6 +162,15 @@ class Queue:
             job.failure_reason = reason
             job.lease_token = job.lease_until = None
 
+    def defer(self, claim: Claim, reason: str) -> None:
+        """保存先の復旧待ちとしてpendingへ戻し、今回の試行数を返す。失効時はLeaseLost。"""
+        with self._transaction() as session:
+            job = self._owned(session, claim)
+            job.status = "pending"
+            job.attempts -= 1
+            job.failure_reason = reason
+            job.lease_token = job.lease_until = None
+
     def complete(
         self,
         claim: Claim,
