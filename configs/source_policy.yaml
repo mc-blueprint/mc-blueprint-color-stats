@@ -1,0 +1,49 @@
+# 公式確認日: 2026-11-01。数値は公式の固定上限ではなく本プロジェクトの制限。
+sources:
+  wikimedia_commons:
+    enabled: true
+    user_agent: "MCBlueprintColorStatsBot/0.1 (https://github.com/rs0325/mc-blueprint-color-stats; https://github.com/rs0325)"
+    min_interval: 1.0
+    maxlag: 5
+    retries: 2
+    backoff: 5.0
+    attribution: "指定帰属（なければ作者・Credit）、出典ページ、ライセンス名・URL、改変の有無をprovenanceへ記載"
+    redistribution: "openのみライセンス条件を満たして可。配布パックには画像を含めない"
+    license_rules:
+      open:
+        - cc0
+        - pd
+        - cc-by-1.0
+        - cc-by-2.0
+        - cc-by-2.5
+        - cc-by-3.0
+        - cc-by-4.0
+        - cc-by-sa-1.0
+        - cc-by-sa-2.0
+        - cc-by-sa-2.5
+        - cc-by-sa-3.0
+        - cc-by-sa-4.0
+    references:
+      - https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_API_Usage_Guidelines
+      - https://foundation.wikimedia.org/wiki/Policy:User-Agent_policy
+      - https://www.mediawiki.org/wiki/API:Etiquette
+      - https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia
+  openverse:
+    enabled: true
+    user_agent: "MCBlueprintColorStatsBot/0.1 (https://github.com/rs0325/mc-blueprint-color-stats; https://github.com/rs0325)"
+    min_interval: 1.0
+    retries: 2
+    backoff: 5.0
+    attribution: "作者・元サイトページ・ライセンス名・ライセンスURLを保存し、元サイトで作者とライセンスを照合できない候補は取得しない"
+    redistribution: "open のみ。Openverse の集約情報を元サイトで照合し、元サイトの利用条件を優先する"
+    license_rules:
+      open:
+        - cc0
+        - pdm
+        - by
+        - by-sa
+    references:
+      - https://api.openverse.org/v1/
+      - https://docs.openverse.org/api/reference/made_with_ov.html
+      - https://docs.openverse.org/api/reference/authentication_and_throttling.html
+      - https://github.com/WordPress/openverse/blob/main/documentation/terms_of_service.md
