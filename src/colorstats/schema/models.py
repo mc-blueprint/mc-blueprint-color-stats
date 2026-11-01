@@ -10,6 +10,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     ForeignKeyConstraint,
+    Index,
     Integer,
     MetaData,
     String,
@@ -136,12 +137,50 @@ class ProcessingRun(Identity, Base):
     license_class: Mapped[str] = mapped_column(LICENSE_CLASS)
     config_hash: Mapped[str] = mapped_column(String(64))
     parameters: Mapped[dict] = mapped_column(JSONB)
+    output_paths: Mapped[dict] = mapped_column(JSONB, default=dict, server_default="{}")
     code_version: Mapped[str] = mapped_column(Text)
     taxonomy_version: Mapped[str] = mapped_column(String(32))
     node: Mapped[str] = mapped_column(Text)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     failure_reason: Mapped[str | None] = mapped_column(Text)
+
+
+class Job(Identity, Base):
+    __tablename__ = "job"
+    __table_args__ = (
+        UniqueConstraint(
+            "stage",
+            "asset_id",
+            "stage_config_hash",
+            name="uq_job_key",
+            postgresql_nulls_not_distinct=True,
+        ),
+        CheckConstraint(
+            "stage IN ('collect','prep','segment','shade','color','review','aggregate')",
+            name="stage",
+        ),
+        CheckConstraint("status IN ('pending','running','succeeded','failed')", name="status"),
+        CheckConstraint("attempts BETWEEN 0 AND 3", name="attempts"),
+        CheckConstraint(
+            "(status = 'running') = (lease_token IS NOT NULL AND lease_until IS NOT NULL)",
+            name="lease",
+        ),
+        CheckConstraint("(status = 'succeeded') = (run_id IS NOT NULL)", name="result"),
+        Index("ix_job_poll", "stage", "status", "lease_until"),
+    )
+
+    stage: Mapped[str] = mapped_column(Text)
+    asset_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("asset.id"))
+    stage_config_hash: Mapped[str] = mapped_column(String(64))
+    payload: Mapped[dict] = mapped_column(JSONB)
+    status: Mapped[str] = mapped_column(Text, default="pending")
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    lease_token: Mapped[uuid.UUID | None] = mapped_column(Uuid)
+    lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    failure_reason: Mapped[str | None] = mapped_column(Text)
+    run_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("processing_run.id"), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class ProcessingRunInput(Base):
