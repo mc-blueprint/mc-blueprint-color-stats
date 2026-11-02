@@ -1,0 +1,36 @@
+{
+  "unit": "建築（対応を保って5建築を復元抽出）",
+  "procedure": "5^5=3125通りを全列挙し、建築間平均差の2.5・97.5百分位（線形補間）を求める。",
+  "difference": "各手法 - none（負なら一致度が改善）",
+  "resamples": 3125,
+  "methods": {
+    "gray-world": {
+      "by_subject_difference": {
+        "dome-of-the-rock": -0.001684956426720348,
+        "duelmen-st-viktor": -0.007376914840133086,
+        "kakegawa-keep": 0.026441971580974,
+        "muenster-st-paulus": -0.0006485802868796131,
+        "strasbourg-cathedral": 0.028031951456545467
+      },
+      "mean_difference": 0.008952694296757284,
+      "percentile_95": [
+        -0.0037544645641172957,
+        0.02177057390477801
+      ]
+    },
+    "intrinsic": {
+      "by_subject_difference": {
+        "dome-of-the-rock": -0.02359566274741412,
+        "duelmen-st-viktor": -0.023859459541875433,
+        "kakegawa-keep": -0.011969524783769642,
+        "muenster-st-paulus": -0.03416592080317288,
+        "strasbourg-cathedral": 0.03455830826674566
+      },
+      "mean_difference": -0.011806451921897282,
+      "percentile_95": [
+        -0.027929284687502148,
+        0.011507895842658895
+      ]
+    }
+  }
+}
