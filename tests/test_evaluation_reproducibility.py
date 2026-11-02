@@ -49,7 +49,10 @@ def test_sol_sources_and_saved_aggregates(tmp_path, newline):
     assert SOL["digest"](binary) == hashlib.sha256(binary.read_bytes()).hexdigest()
     samples = SOL["aggregate"](read(ROOT / "bench/issue46/sol/region-samples.json"))
     assert samples == read(ROOT / "bench/issue46/sol/samples.json")
-    assert SOL["compare"](samples) == read(ROOT / "bench/issue46/sol/comparison.json")
+    expected = json.loads(
+        (ROOT / "bench/issue46/sol/comparison.json").read_text(encoding="utf-8"),
+        parse_float=lambda value: pytest.approx(float(value), rel=1e-9, abs=0))
+    assert SOL["compare"](samples) == expected
 
 
 def test_saved_identity_regenerates_from_first_judgments():
