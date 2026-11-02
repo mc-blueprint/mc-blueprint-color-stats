@@ -77,6 +77,6 @@ def test_合成jarから面別分位点を抽出する(tmp_path: Path, version, 
     assert records[0]["oklab"]["quantiles"][2]["q"] == 0.5
 
 
-def test_MCBlueprint非対応版を拒否する(tmp_path: Path):
+def test_mc_blueprint非対応版を拒否する(tmp_path: Path):
     with pytest.raises(ValueError, match="非対応"):
         extract_block_colors(tmp_path / "missing.jar", "1.20")
