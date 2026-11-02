@@ -1,0 +1,747 @@
+{
+  "batch_id": "batch-09",
+  "model": "gpt-6.1-sol",
+  "execution_id": "issue41-b09-run1",
+  "repeat_of": null,
+  "images": [
+    {
+      "asset_id": "4dcb1280-f075-4f51-aa3e-c7f7724e1dcb",
+      "regions": [
+        {
+          "draft_id": "80:0",
+          "verdict": "not_present",
+          "evidence": "乾いた砂礫地で、草の被覆は確認できない。"
+        },
+        {
+          "draft_id": "80:1",
+          "verdict": "wrong_label",
+          "evidence": "土と砂の区別には不確かさがあるが、マスクの主体は砂質の砂漠地面と判断する。"
+        },
+        {
+          "draft_id": "80:2",
+          "verdict": "wrong_label",
+          "evidence": "左端に踏み跡状の通路が見えるが、赤色はその右側の広い砂地を覆う。"
+        },
+        {
+          "draft_id": "80:3",
+          "verdict": "wrong_label",
+          "evidence": "前景に小さな露出石はあるが、このマスクは平坦な砂地を指す。"
+        },
+        {
+          "draft_id": "80:4",
+          "verdict": "correct",
+          "evidence": "前景の直立した小さな石の表面に一致する。材質は小さく不鮮明だが岩と判断する。"
+        },
+        {
+          "draft_id": "80:5",
+          "verdict": "wrong_label",
+          "evidence": "砂礫は周囲にあるが、マスクはばらばらの礫ではなく一つの直立石を指す。"
+        },
+        {
+          "draft_id": "80:6",
+          "verdict": "correct",
+          "evidence": "前景の黄褐色の砂地をおおむね覆っている。"
+        },
+        {
+          "draft_id": "80:7",
+          "verdict": "not_present",
+          "evidence": "砂漠景観で、雪や氷は見えない。"
+        },
+        {
+          "draft_id": "80:8",
+          "verdict": "not_present",
+          "evidence": "小さな直立物は石に見え、樹木の幹は確認できない。"
+        },
+        {
+          "draft_id": "80:9",
+          "verdict": "not_present",
+          "evidence": "赤色は裸地に広がり、低木や草本は確認できない。"
+        },
+        {
+          "draft_id": "80:10",
+          "verdict": "not_present",
+          "evidence": "直立石に樹冠はなく、画像内にも樹冠を確認できない。"
+        },
+        {
+          "draft_id": "80:11",
+          "verdict": "not_present",
+          "evidence": "前景は乾いた砂地で、水面はない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "path_natural",
+          "evidence": "左端から奥へ続く踏み跡状の通路は、対応する候補では右側の砂地が主に選択されている。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "原画像は砂地と小さな石列のある砂漠。titleとsource_urlはSahara44という景観名で、遠景の小物にも建築を同定できる形状はない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ]
+    },
+    {
+      "asset_id": "50c02049-7900-4366-be07-e727819a1fed",
+      "regions": [
+        {
+          "draft_id": "81:0",
+          "verdict": "wrong_label",
+          "evidence": "草は道の縁に見えるが、マスクの主体は落葉の積もった道である。"
+        },
+        {
+          "draft_id": "81:1",
+          "verdict": "correct",
+          "evidence": "落葉に覆われた林床の地面を覆い、林床としておおむね一致する。"
+        },
+        {
+          "draft_id": "81:2",
+          "verdict": "correct",
+          "evidence": "手前から奥へ続く未舗装の林道に沿っている。"
+        },
+        {
+          "draft_id": "81:3",
+          "verdict": "not_present",
+          "evidence": "小さな奥の明るい部分を含め、露出した岩壁は確認できない。"
+        },
+        {
+          "draft_id": "81:4",
+          "verdict": "not_present",
+          "evidence": "道には落葉が積もり、礫や崩れた岩の堆積は見えない。"
+        },
+        {
+          "draft_id": "81:5",
+          "verdict": "not_present",
+          "evidence": "手前の褐色の模様は落葉で、岩屑とは見えない。"
+        },
+        {
+          "draft_id": "81:6",
+          "verdict": "not_present",
+          "evidence": "砂地は確認できず、落葉の林道である。"
+        },
+        {
+          "draft_id": "81:7",
+          "verdict": "not_present",
+          "evidence": "積雪や氷はなく、明るい道と落葉である。"
+        },
+        {
+          "draft_id": "81:8",
+          "verdict": "spill",
+          "evidence": "左下の低い茂みを含むが、上方の高い樹冠と幹まで広く覆う。"
+        },
+        {
+          "draft_id": "81:9",
+          "verdict": "spill",
+          "evidence": "左上の枝葉を含むが、下方の幹や林床近くまで大きく広がる。"
+        },
+        {
+          "draft_id": "81:10",
+          "verdict": "correct",
+          "evidence": "右側を占める暗い密な樹冠とおおむね一致する。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "tree_trunk",
+          "evidence": "左側から中央の林内に複数の太い幹が見えるが、幹の候補がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "原画像は落葉の林道と樹木。titleとsource_urlのBelhus Woodsという場所名に整合し、同定対象となる建築は見えない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ]
+    },
+    {
+      "asset_id": "b084f6a0-0be8-49c3-8634-a2d127e59fcf",
+      "regions": [
+        {
+          "draft_id": "82:0",
+          "verdict": "correct",
+          "evidence": "道路左側の緑の草地に沿う。"
+        },
+        {
+          "draft_id": "82:1",
+          "verdict": "not_present",
+          "evidence": "赤色は舗装路で、画像内に明確な露出土壌は確認できない。"
+        },
+        {
+          "draft_id": "82:2",
+          "verdict": "not_present",
+          "evidence": "中央線のある舗装道路で、自然の未舗装路はない。"
+        },
+        {
+          "draft_id": "82:3",
+          "verdict": "not_present",
+          "evidence": "舗装面は連続しており、岩屑の堆積は見えない。"
+        },
+        {
+          "draft_id": "82:4",
+          "verdict": "not_present",
+          "evidence": "赤色は舗装面で、砂地は見えない。"
+        },
+        {
+          "draft_id": "82:5",
+          "verdict": "not_present",
+          "evidence": "雪や氷はなく、暗い舗装面である。"
+        },
+        {
+          "draft_id": "82:6",
+          "verdict": "wrong_label",
+          "evidence": "道路脇の細い柵柱を指す。右の樹木の幹との区別は小さく不鮮明だが、当該柱は柵と判断する。"
+        },
+        {
+          "draft_id": "82:7",
+          "verdict": "correct",
+          "evidence": "道路左側の草本の帯をおおむね覆う。"
+        },
+        {
+          "draft_id": "82:8",
+          "verdict": "correct",
+          "evidence": "右上から張り出す樹木の枝葉に一致する。"
+        },
+        {
+          "draft_id": "82:9",
+          "verdict": "correct",
+          "evidence": "左上の画面端に張り出す樹冠に一致する。"
+        },
+        {
+          "draft_id": "82:10",
+          "verdict": "not_present",
+          "evidence": "光沢のある道路だが、水域や水面は確認できない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "path",
+          "evidence": "中央線のある舗装道路が画面下半分を占めるが、自然路など別ラベルしかない。"
+        },
+        {
+          "label": "fence",
+          "evidence": "道路左側の草地沿いに柱と横線からなる柵が続くが、柵の候補がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "原画像は中央線のある舗装道路と草地・樹木。titleとsource_urlは田園景観を示し、固有の建築を同定できる情報はない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ]
+    },
+    {
+      "asset_id": "f17e0c67-58ab-46ee-ab2f-cee1211fe94e",
+      "regions": [
+        {
+          "draft_id": "83:0",
+          "verdict": "spill",
+          "evidence": "奥の緑の草地を含むが、手前の広い落葉の林床も覆う。"
+        },
+        {
+          "draft_id": "83:1",
+          "verdict": "correct",
+          "evidence": "手前の落葉で覆われた林床地面に一致する。"
+        },
+        {
+          "draft_id": "83:2",
+          "verdict": "spill",
+          "evidence": "落葉の地面に加えて奥の明瞭な緑の草地まで覆う。"
+        },
+        {
+          "draft_id": "83:3",
+          "verdict": "not_present",
+          "evidence": "草地と落葉の林床で、独立した通路は判別できないため未舗装路なしと判断する。"
+        },
+        {
+          "draft_id": "83:4",
+          "verdict": "not_present",
+          "evidence": "前景の粒状模様は落葉で、岩屑の堆積は見えない。"
+        },
+        {
+          "draft_id": "83:5",
+          "verdict": "not_present",
+          "evidence": "草地と落葉の林床で、砂地はない。"
+        },
+        {
+          "draft_id": "83:6",
+          "verdict": "not_present",
+          "evidence": "雪や氷は見えない。"
+        },
+        {
+          "draft_id": "83:7",
+          "verdict": "not_present",
+          "evidence": "赤色は林床と草地で、積雪ではない。"
+        },
+        {
+          "draft_id": "83:8",
+          "verdict": "correct",
+          "evidence": "右上から斜めに伸びる木の幹・太い枝を覆っている。"
+        },
+        {
+          "draft_id": "83:9",
+          "verdict": "spill",
+          "evidence": "奥の草本と岸の緑を含むが、手前の広い落葉層まで覆う。"
+        },
+        {
+          "draft_id": "83:10",
+          "verdict": "correct",
+          "evidence": "右寄りの岸の間に見える小さな流れに一致する。暗く細部は不鮮明だが水面と判断する。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "原画像は落葉林と草地、小さな水路。titleとsource_urlはRu de Chawionの自然保護区を示し、建築は見えない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ]
+    },
+    {
+      "asset_id": "d925fa2e-6863-4e3f-a38b-6b815ddd9930",
+      "regions": [
+        {
+          "draft_id": "84:0",
+          "verdict": "correct",
+          "evidence": "左岸の黄緑色の草の茂る斜面に一致する。"
+        },
+        {
+          "draft_id": "84:1",
+          "verdict": "wrong_label",
+          "evidence": "遠景に裸地状の斜面はあるが、当該マスクは青い湖面を指す。"
+        },
+        {
+          "draft_id": "84:2",
+          "verdict": "not_present",
+          "evidence": "湖と岸の斜面で、通路は確認できない。"
+        },
+        {
+          "draft_id": "84:3",
+          "verdict": "spill",
+          "evidence": "右岸の露岩を含むが、草本・低木の茂る斜面全体まで覆う。"
+        },
+        {
+          "draft_id": "84:4",
+          "verdict": "spill",
+          "evidence": "左岸の小さな露岩を含むが、主体は草で覆われた斜面である。"
+        },
+        {
+          "draft_id": "84:5",
+          "verdict": "not_present",
+          "evidence": "右岸には露岩と草本が見えるが、明瞭な岩屑の堆積は確認できない。"
+        },
+        {
+          "draft_id": "84:6",
+          "verdict": "not_present",
+          "evidence": "左岸に明瞭な岩屑の堆積は確認できない。"
+        },
+        {
+          "draft_id": "84:7",
+          "verdict": "not_present",
+          "evidence": "湖面と植生の岸で、砂地は見えない。"
+        },
+        {
+          "draft_id": "84:8",
+          "verdict": "wrong_label",
+          "evidence": "遠景中央左の山頂に小さな白い雪が見えるが、マスクは湖面である。"
+        },
+        {
+          "draft_id": "84:9",
+          "verdict": "wrong_label",
+          "evidence": "雪は遠景の山頂にあり、このマスクは手前の湖面を覆う。"
+        },
+        {
+          "draft_id": "84:10",
+          "verdict": "correct",
+          "evidence": "右岸の低い草本・低木に覆われた斜面をおおむね覆う。"
+        },
+        {
+          "draft_id": "84:11",
+          "verdict": "correct",
+          "evidence": "左岸の草本が茂る斜面に一致する。"
+        },
+        {
+          "draft_id": "84:12",
+          "verdict": "not_present",
+          "evidence": "右岸の植生は低い茂みで、樹木の樹冠と認められるものは見えない。"
+        },
+        {
+          "draft_id": "84:13",
+          "verdict": "correct",
+          "evidence": "両岸の間に広がる青い湖面を覆う。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "snow_ice",
+          "evidence": "遠景中央左の山頂に小さな白い積雪が見えるが、雪候補はすべて湖面を指す。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "原画像は湖と草本の岸、遠景の山並み。titleとsource_urlのLaguna del OtunとNevado Santa Isabelは地形名で、建築の同定根拠ではない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ]
+    },
+    {
+      "asset_id": "6f80a29e-5fda-43eb-92c2-864eccd6c4ed",
+      "regions": [
+        {
+          "draft_id": "85:0",
+          "verdict": "correct",
+          "evidence": "中央から手前に広がる緑褐色の草地に一致する。"
+        },
+        {
+          "draft_id": "85:1",
+          "verdict": "correct",
+          "evidence": "最前景の茶色い露出地面を覆う。"
+        },
+        {
+          "draft_id": "85:2",
+          "verdict": "correct",
+          "evidence": "最前景を横切る裸地の通路状の帯に一致する。道か裸地かは不鮮明だが通路と判断する。"
+        },
+        {
+          "draft_id": "85:3",
+          "verdict": "not_present",
+          "evidence": "奥の小さな明るい物体は不鮮明だが、岩壁や露岩として識別できるものはない。"
+        },
+        {
+          "draft_id": "85:4",
+          "verdict": "not_present",
+          "evidence": "最前景は平坦な土の帯で、露出岩面は確認できない。"
+        },
+        {
+          "draft_id": "85:5",
+          "verdict": "not_present",
+          "evidence": "粒状の土は見えるが、岩屑の堆積として識別できるものはない。"
+        },
+        {
+          "draft_id": "85:6",
+          "verdict": "not_present",
+          "evidence": "最前景は褐色の土と判断し、明瞭な砂地は見えない。"
+        },
+        {
+          "draft_id": "85:7",
+          "verdict": "not_present",
+          "evidence": "草原に雪や氷はない。"
+        },
+        {
+          "draft_id": "85:8",
+          "verdict": "correct",
+          "evidence": "中景の草本と低い茂みの帯をおおむね覆う。"
+        },
+        {
+          "draft_id": "85:9",
+          "verdict": "correct",
+          "evidence": "地平線付近の点在する低い樹木の樹冠に沿う。"
+        },
+        {
+          "draft_id": "85:10",
+          "verdict": "not_present",
+          "evidence": "最前景は露出した土で、水面はない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "原画像は草原と遠景の点在する樹木。titleとsource_urlはLake Mburo National Parkの草原を示し、同定できる建築はない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ]
+    },
+    {
+      "asset_id": "2354e33e-1798-443d-8478-4dfc02ce52cf",
+      "regions": [
+        {
+          "draft_id": "86:0",
+          "verdict": "not_present",
+          "evidence": "平地は雪で覆われ、露出した草地は確認できない。"
+        },
+        {
+          "draft_id": "86:1",
+          "verdict": "not_present",
+          "evidence": "平地は雪面で、山肌も岩質に見え、明確な露出土壌は確認できない。"
+        },
+        {
+          "draft_id": "86:2",
+          "verdict": "spill",
+          "evidence": "雪上の踏み跡状の通路を含むが、周囲の広い雪原全体まで覆う。"
+        },
+        {
+          "draft_id": "86:3",
+          "verdict": "spill",
+          "evidence": "山腹の岩肌を含むが、雪で覆われた斜面まで広く取り込む。"
+        },
+        {
+          "draft_id": "86:4",
+          "verdict": "not_present",
+          "evidence": "斜めに続く列は雪を被った石積みか植生にも見え不鮮明で、自然の岩屑堆積としては確認できない。"
+        },
+        {
+          "draft_id": "86:5",
+          "verdict": "not_present",
+          "evidence": "白い平地は雪で、砂地ではない。"
+        },
+        {
+          "draft_id": "86:6",
+          "verdict": "correct",
+          "evidence": "前景に広がる雪原におおむね一致する。"
+        },
+        {
+          "draft_id": "86:7",
+          "verdict": "correct",
+          "evidence": "樹木を除いた広い雪面を覆う。"
+        },
+        {
+          "draft_id": "86:8",
+          "verdict": "not_present",
+          "evidence": "中央の赤色は単独の樹木で、低い草本・低木は雪中に明瞭には見えない。"
+        },
+        {
+          "draft_id": "86:9",
+          "verdict": "correct",
+          "evidence": "中央の一本の木の樹冠に一致する。"
+        },
+        {
+          "draft_id": "86:10",
+          "verdict": "wrong_label",
+          "evidence": "樹冠は中央の一本の木にあるが、このマスクは遠景の山腹を指す。"
+        },
+        {
+          "draft_id": "86:11",
+          "verdict": "wrong_label",
+          "evidence": "中央の木とは別に、左右の山腹を広く指している。"
+        },
+        {
+          "draft_id": "86:12",
+          "verdict": "not_present",
+          "evidence": "雪原に見え、露出した水面は確認できない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "原画像は雪原、一本の木、雪の山並み。titleとsource_urlのWakhan, Badakhshanは地域名であり、建築は同定できない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ]
+    },
+    {
+      "asset_id": "453c3ef0-07ae-4ec5-a8c2-eb7bc884dc9a",
+      "regions": [
+        {
+          "draft_id": "87:0",
+          "verdict": "not_present",
+          "evidence": "砂丘と露岩・低木の景観で、草地は確認できない。"
+        },
+        {
+          "draft_id": "87:1",
+          "verdict": "not_present",
+          "evidence": "右の小さな植物は枝分かれする低木で、草地ではない。"
+        },
+        {
+          "draft_id": "87:2",
+          "verdict": "not_present",
+          "evidence": "地表は砂と岩で、砂と区別できる土壌面は確認できない。"
+        },
+        {
+          "draft_id": "87:3",
+          "verdict": "not_present",
+          "evidence": "砂丘の稜線は見えるが、明瞭な通路はない。"
+        },
+        {
+          "draft_id": "87:4",
+          "verdict": "spill",
+          "evidence": "前景の大きな岩塊を含むが、その間と手前の砂地まで覆う。"
+        },
+        {
+          "draft_id": "87:5",
+          "verdict": "spill",
+          "evidence": "細かな砕石も前景に見えるが、巨大な連続岩塊と砂地を大幅に含む。"
+        },
+        {
+          "draft_id": "87:6",
+          "verdict": "wrong_label",
+          "evidence": "小礫は周囲に見えるが、当該マスクは一つの大きな岩塊の側面を指す。"
+        },
+        {
+          "draft_id": "87:7",
+          "verdict": "spill",
+          "evidence": "背景の砂丘を含むが、手前の大きな露岩群まで広く覆う。"
+        },
+        {
+          "draft_id": "87:8",
+          "verdict": "not_present",
+          "evidence": "明るい地表は砂で、雪や氷はない。"
+        },
+        {
+          "draft_id": "87:9",
+          "verdict": "not_present",
+          "evidence": "砂丘景観で積雪は見られない。"
+        },
+        {
+          "draft_id": "87:10",
+          "verdict": "not_present",
+          "evidence": "赤色は岩塊と砂地で、樹木の幹は見えない。"
+        },
+        {
+          "draft_id": "87:11",
+          "verdict": "correct",
+          "evidence": "岩の右側に生える枝分かれした低木に一致する。"
+        },
+        {
+          "draft_id": "87:12",
+          "verdict": "correct",
+          "evidence": "中央の岩の背後にある低い茂みを覆う。"
+        },
+        {
+          "draft_id": "87:13",
+          "verdict": "not_present",
+          "evidence": "右の植物は低木と判断し、樹木の樹冠は確認できない。"
+        },
+        {
+          "draft_id": "87:14",
+          "verdict": "not_present",
+          "evidence": "赤色の主体は岩塊で、樹木の樹冠はない。"
+        },
+        {
+          "draft_id": "87:15",
+          "verdict": "not_present",
+          "evidence": "砂丘と岩の乾燥景観で、水面はない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "原画像は砂丘、前景の岩塊と低木。titleとsource_urlはLSRA Dunes Landscapeを示し、建築は見えない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ]
+    },
+    {
+      "asset_id": "c769314c-15b6-4945-9089-242e31a6b431",
+      "regions": [
+        {
+          "draft_id": "88:0",
+          "verdict": "not_present",
+          "evidence": "裸の砂漠と崖で、草地は見えない。"
+        },
+        {
+          "draft_id": "88:1",
+          "verdict": "wrong_label",
+          "evidence": "細部の土と岩屑の区別には不確かさがあるが、赤色の斜面は崖の岩肌と崩積物と判断する。"
+        },
+        {
+          "draft_id": "88:2",
+          "verdict": "not_present",
+          "evidence": "赤色は崖の斜面で、通路は確認できない。"
+        },
+        {
+          "draft_id": "88:3",
+          "verdict": "correct",
+          "evidence": "左上から右下へ続く露出した崖の斜面に沿っている。"
+        },
+        {
+          "draft_id": "88:4",
+          "verdict": "spill",
+          "evidence": "崖下の砕けた岩屑を含むが、上側の連続した崖面まで覆う。細かな材質区分には不確かさがある。"
+        },
+        {
+          "draft_id": "88:5",
+          "verdict": "wrong_label",
+          "evidence": "砂は右側に広く見えるが、当該マスクは崖の斜面を指す。"
+        },
+        {
+          "draft_id": "88:6",
+          "verdict": "not_present",
+          "evidence": "白っぽい斜面は岩と砂で、雪や氷はない。"
+        },
+        {
+          "draft_id": "88:7",
+          "verdict": "not_present",
+          "evidence": "奥の小領域も地形であり、木の幹は見えない。"
+        },
+        {
+          "draft_id": "88:8",
+          "verdict": "not_present",
+          "evidence": "斜面と砂地に低い植生は確認できない。"
+        },
+        {
+          "draft_id": "88:9",
+          "verdict": "not_present",
+          "evidence": "樹木の樹冠は見えない。"
+        },
+        {
+          "draft_id": "88:10",
+          "verdict": "not_present",
+          "evidence": "右の平坦な面は砂漠で、水面は見えない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "sand",
+          "evidence": "画像右側の大部分に平坦な黄褐色の砂地が広がるが、砂候補は左側の崖斜面のみを指す。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "原画像は砂漠の崖と広い砂地。titleとsource_urlのWestern Desert, Sahara Desert, Egyptは撮影地域であり、建築は見えない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ]
+    },
+    {
+      "asset_id": "eda96dec-7a0e-473c-ad97-e4546d8e0d92",
+      "regions": [
+        {
+          "draft_id": "89:0",
+          "verdict": "not_present",
+          "evidence": "前景は砂丘で、草地はない。"
+        },
+        {
+          "draft_id": "89:1",
+          "verdict": "not_present",
+          "evidence": "砂と岩山の景観で、独立した土壌面は確認できない。"
+        },
+        {
+          "draft_id": "89:2",
+          "verdict": "not_present",
+          "evidence": "砂丘の斜面と稜線であり、明瞭な通路はない。"
+        },
+        {
+          "draft_id": "89:3",
+          "verdict": "correct",
+          "evidence": "中央から右の褐色の岩山に一致する。砂が部分的に載るが、主体は露出した岩肌である。"
+        },
+        {
+          "draft_id": "89:4",
+          "verdict": "spill",
+          "evidence": "岩山裾の小さな砕石を含むが、主に連続した岩山全体を覆っている。砕石の細部は不鮮明である。"
+        },
+        {
+          "draft_id": "89:5",
+          "verdict": "correct",
+          "evidence": "手前の滑らかな黄褐色の砂丘を覆う。"
+        },
+        {
+          "draft_id": "89:6",
+          "verdict": "not_present",
+          "evidence": "明るい斜面は砂で、雪や氷はない。"
+        },
+        {
+          "draft_id": "89:7",
+          "verdict": "not_present",
+          "evidence": "赤色は岩山で、木の幹は見えない。"
+        },
+        {
+          "draft_id": "89:8",
+          "verdict": "not_present",
+          "evidence": "岩山の暗い斑点は岩と影に見え、植生は確認できない。"
+        },
+        {
+          "draft_id": "89:9",
+          "verdict": "not_present",
+          "evidence": "遠景の鋸歯状の輪郭は山稜であり、樹冠はない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "原画像は砂丘と暗褐色の岩山。titleとsource_urlのTadrart Acacusは地形の撮影地であり、建築は見えない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ]
+    }
+  ]
+}
