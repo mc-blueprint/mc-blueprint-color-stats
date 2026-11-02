@@ -77,6 +77,8 @@ revision 0004は表追加だけを行い、既存subject・候補・assetの値�
 JSONBを用いる可変長データの形:
 
 - `bbox`: 元画像ピクセルの `[x_min, y_min, x_max, y_max]`（右・下端は含まない）。
+- CVAT人手注釈の`region.mask_path`: runの`output_paths.masks`をrootとする`<asset UUID>/<region UUID>.json`の相対参照。JSONは`{"format":"polygon-pixels-v1","points":[[x,y],...]}`（元画像ピクセル座標、3点以上）を保存する。`label_source`は正解を`human`、未確定下書きを`model`として別runで区別し、既存領域を更新しない。この形式はCVAT取込みに限る。
+- CVATの比較用下書きは`cvat-draft-v1` JSON（`label_source=model`）として元の縮小座標RLEを保持し、人手runの`output_paths.draft`から参照する。`parameters.draft_sha256`と`parameters.annotation_diff`に下書きの入力SHA・画像/ID別の追加削除・ラベル変更・面積差を保存する。既存のsegment run・model領域は更新しない。polygonの原画像座標は注釈座標に原画像幅/注釈幅・原画像高さ/注釈高さをそれぞれ乗じる。詳細と面積差の限界は[CVAT手順](../ops/cvat/README.md)を参照。
 - `orientation`: `{"direction": "front", "estimated": true}` 等の推定結果。真の方位とは区別する。
 - `terrain_attributes`: `{"relative_elevation": "high", "slope": "steep", "estimated": true}`。画像内の相対値。
 - OKLab分布（observed_oklab・material_oklab・block_color.oklab）: `{"dominant": [L, a, b], "quantiles": [{"q": 0.5, "value": [L, a, b]}]}`。Lは0〜1、a/bは符号付き、qは0〜1。チャネル別分位点であり、実在する単一ピクセルを意味しない。
