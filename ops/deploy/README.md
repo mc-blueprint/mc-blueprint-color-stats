@@ -64,8 +64,9 @@ scheduler継続を実機確認した。NFSのhard→soft変更は自動権限審
 ## 実行と停止
 
 rawをGPUノードへ渡す配備案は[共有方式と実機記録](../../docs/storage-sharing.md)を参照する。
-`raw-replica.py`は監視確認付きのstageとSHA-256確認後のpublishを行う。
-原本2枚の一時複製だけを確認済みで、恒久配備・サービスへの組込みは未適用。
+`raw-replica.py`は監視確認付きのstage、SHA-256確認後のpublish、容量確認、保持削除を行う。
+ubuntu-2の`/mnt/data/raw-cache`へ150GB上限で本番配備済み。
+手動運用の手順は[raw事前複製の本番運用](#raw事前複製の本番運用)を参照する。
 
 `/var/lib/colorstats/pilot/targets.yaml`は配備時点の収集目標のコピー。
 予算1,000、集中枠は既存値のまま。Openverse応答を既存アダプターで確認し、
@@ -118,6 +119,118 @@ rawの件数は検索機会ごとのasset数とユニークSHA-256数を併記�
 欠損rawはassetのURL・SHA-256とsourceの権利情報を確認して一時パスに再取得し、ハッシュ一致後に参照先を復旧する。
 取得不能なら欠損として記録を残す。derivedはraw復旧後、新しい解析版を明示してprep/colorを再投入する。
 成功runと既存ジョブを初期化せず、不変参照を上書きしない。旧版だけが参照する欠損は履歴として残す。
+
+## raw事前複製の本番運用
+
+ユーザー判断（2026-11-02、#42）に基づく手動配備。原本の正本はubuntu-1。
+両ホストの固定スナップショットは`/opt/colorstats/releases/raw-replica-cd70dda-20261102a/`。
+基準`cd70dda`と未コミット修正を含み、既存releaseの差替えやcurrent切替はしていない。
+ubuntu-2の同releaseに次の新規`raw-cache.json`を配置した。
+
+```json
+{"root":"/mnt/data/raw-cache","max_bytes":150000000000}
+```
+
+`staging/<バッチ名>`へ転送し、`batches/<バッチ名>`へ公開する。
+150GBは10進byteで、staging・公開済み・付属ファイルを含む論理容量の上限。
+追加依存・systemd・exports・fstab設定は不要。パイロットは停止状態を維持する。
+以下のコマンドは監査付きSSH、転送は`run_logged.py`経由で実行する。
+転送・公開・投入・削除は単一担当が直列に実施し、既存バッチ名を再利用しない。
+
+1. DBを読取り専用取引で参照し、必要なassetだけを選ぶ。`asset.id/sha256/storage_path/license_class`と、
+   そのstorage_pathを`output_paths`に含む成功済みcollectのjob/run（finished_atあり、failure_reasonなし）を照合する。
+   由来JSONは次の形でcache外の運用記録へ保存する。同じ原本の複数assetも全て記録する。
+
+   ```json
+   {"files":[{"asset_id":"<UUID>","source_run_id":"<collect run UUID>",
+   "source_stage":"collect","input_run_id":null,"sha256":"<64桁SHA>",
+   "source":"/srv/colorstats/raw-orico/<不変パス>.jpg","license_class":"open"}]}
+   ```
+
+2. ubuntu-1で既存の配備Pythonと媒体監視実装を使い、新規の転送専用ディレクトリへstageする。
+   次は今回確認した配備環境の例。由来JSONのsourceと原本引数を一致させる。
+
+   ```sh
+   release=/opt/colorstats/releases/raw-replica-cd70dda-20261102a
+   PYTHONDONTWRITEBYTECODE=1 \
+   PYTHONPATH=/opt/colorstats/releases/b2a7241-issue37-20261102/src \
+   /opt/colorstats/releases/cf166b9-06a615d-issue27-20261102f/.venv/bin/python \
+     "$release/raw-replica.py" stage --provenance <由来JSON> \
+     --destination <新規転送ディレクトリ> <原本パス>...
+   ```
+
+   媒体停止・SHA不一致・由来不一致は投入前の保留とする。不完全なstageは転送しない。
+   manifestの各画像には元パス・SHA・byteと`origins`（assetとcollect runの由来）が入る。
+
+3. manifestを含めた転送元ディレクトリの全ファイル容量を求め、ubuntu-2で事前判定する。
+
+   ```sh
+   release=/opt/colorstats/releases/raw-replica-cd70dda-20261102a
+   python3 "$release/raw-replica.py" capacity --config "$release/raw-cache.json" \
+     --incoming-bytes <転送する全byte数>
+   ```
+
+   失敗時は転送を保留する。既存のstagingも容量に含むため、再転送時に二重に見積もらない。
+   これはfilesystem quota・容量予約ではない。他の転送を並行実行しない。
+   成功後、Windows上に画像を保存せず、登録済み接続先間を記録付きSCPで転送する。
+
+   ```sh
+   scp -3 -r -o BatchMode=yes -o ConnectTimeout=15 \
+     -o ServerAliveInterval=15 -o ServerAliveCountMax=2 \
+     toumokorosi@192.168.1.85:<新規転送ディレクトリ> \
+     toumokorosi@192.168.1.86:/mnt/data/raw-cache/staging/<新規バッチ名>
+   ```
+
+4. ubuntu-2で公開し、cache計上を確認する。
+
+   ```sh
+   python3 "$release/raw-replica.py" publish --config "$release/raw-cache.json" \
+     --staging /mnt/data/raw-cache/staging/<バッチ名> \
+     --destination /mnt/data/raw-cache/batches/<バッチ名>
+   python3 "$release/raw-replica.py" capacity --config "$release/raw-cache.json"
+   ```
+
+   公開時も全cache容量・SHA・byteを確認し、同一filesystem内のrenameで公開する。
+   過容量・破損時はstagingを保全し、公開・投入を保留する。別バッチの自動削除はしない。
+
+5. **本番投入は今回実行していない。** 今後の投入時は、公開manifestをDBと再照合し、
+   segmentのasset_idに対応する原本のローカルパスを`payload.input_path`へ渡す。
+   `license_class`はassetの値を維持し、`input_run_id`は省略またはnullにする。
+   prep以外のrunをprep専用の入力runへ流用しない。
+   `payload.raw_origin`に`asset_id/source_run_id/sha256/source/manifest_sha256`を記録してから
+   既存`segment.config_hash(payload)`で計算・enqueueする。
+   payload全体は既存の成功runの`parameters.payload`へ保存されるため、DB形式変更は不要。
+   公開manifestと、バッチに予定した全GPU stage・全job IDの投入計画をcache外へ保全する。
+   後続stageを追加した場合も計画を更新し、削除判定から漏らさない。
+
+6. 全GPU stage成功後にだけ削除する。新規投入・読取り開始を止め、投入計画の全jobが
+   `succeeded`で成功runを持つことを読取り専用DB照合で確認する。
+   実行中・再試行待ち・手動処理を含め公開パスの参照がないことを確認し、完了JSONをcache外に保存する。
+
+   ```json
+   {"batch":"<バッチ名>","manifest_sha256":"<公開manifestのSHA>",
+   "expected_gpu_jobs":["<投入計画の全job UUID>"],
+   "gpu_jobs":[{"job_id":"<同じUUID>","status":"succeeded"}],"references":[]}
+   ```
+
+   `expected_gpu_jobs`は保全した投入計画の全件と照合し、成功した一部だけに縮めない。
+   `gpu_jobs`は同じ全件の最新状態とし、未成功・件数不足・重複・参照ありではpruneが拒否する。
+   参照有無やDB状態をツールが自動取得するわけではなく、運用者の証跡を検証する。
+   照合後も削除終了まで新規参照を開始しない。由来manifest・計画・完了JSONはcache外に残す。
+
+   ```sh
+   python3 "$release/raw-replica.py" prune --config "$release/raw-cache.json" \
+     --destination /mnt/data/raw-cache/batches/<バッチ名> --completion <完了JSON>
+   ```
+
+   日数・容量逼迫だけでは未成功・参照中の公開バッチを削除しない。
+   `.lock`が残ったときは転送・操作PID・参照停止を確認してから空のlockディレクトリだけを手動解除する。
+
+本番で5枚のSHA・読取り・容量計上・模擬GPU成功による保持削除を確認した。
+確認用公開バッチは削除済みで、cache計上は0 byte。証跡はubuntu-2の
+`/mnt/data/work/issue-42/production-check-2-proof/`。
+配置のSHA・確認結果・監査ログは[本番配置の記録](../../docs/storage-sharing.md#本番配置と確認2026-11-02)を参照する。
+本番DBへの書込み、GPU推論、パイロット起動は行っていない。
 
 ## 次回再配置の確認順序
 
