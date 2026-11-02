@@ -183,5 +183,9 @@ localhost:55440であり、既存PostgreSQLのデータ・設定・サービス�
 - [Transformers SAM 2](https://huggingface.co/docs/transformers/v4.57.1/en/model_doc/sam2)
 - [Transformers Grounding DINO](https://huggingface.co/docs/transformers/v4.57.1/en/model_doc/grounding-dino)
 
-CVATサーバーへの実取込みは未実施。RLEとマスクの往復は単体テストで確認済み。
+RLEとマスクの往復は単体テストで確認済み。#41の統合作業では上記実出力の6マスクを
+ローカルCVAT v2.81.0へ取り込み、APIでpolygonへ編集して一時DBのhuman領域へ登録した。
+`colorstats.cvat prepare-draft`はRLEを保持してCVAT XMLとmodel下書きJSONを作り、
+`import-cvat --draft`は修正polygonを原画像座標へ戻して下書きとの差分を記録する。
+既存segment出力の形式・runは変更しない。操作は[CVAT手順](../ops/cvat/README.md)を参照。
 正解セット作成は#41、正解セットによる精度評価は#47で扱う。
