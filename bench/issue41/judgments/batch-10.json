@@ -1,0 +1,723 @@
+{
+  "batch_id": "batch-10",
+  "model": "gpt-6.1-sol",
+  "execution_id": "issue41-b10-run1",
+  "repeat_of": null,
+  "images": [
+    {
+      "asset_id": "3af9b8d9-a05d-4eeb-b960-0ee6db1af809",
+      "regions": [
+        {
+          "draft_id": "90:0",
+          "verdict": "not_present",
+          "evidence": "砂地に孤立する低木であり、芝状に覆う草地は見えない。"
+        },
+        {
+          "draft_id": "90:1",
+          "verdict": "not_present",
+          "evidence": "前景は橙色の砂原で、草地は見えない。"
+        },
+        {
+          "draft_id": "90:2",
+          "verdict": "not_present",
+          "evidence": "小さな低木を覆っており、草地は見えない。"
+        },
+        {
+          "draft_id": "90:3",
+          "verdict": "wrong_label",
+          "evidence": "マスクは細粒の砂原を覆っており、土の露出面というより砂に対応する。"
+        },
+        {
+          "draft_id": "90:4",
+          "verdict": "not_present",
+          "evidence": "砂原全体であり、独立した自然の小道は確認できない。"
+        },
+        {
+          "draft_id": "90:5",
+          "verdict": "correct",
+          "evidence": "層状の岩壁とその岩山の輪郭をおおむね捉えている。"
+        },
+        {
+          "draft_id": "90:6",
+          "verdict": "spill",
+          "evidence": "山裾に崩落物らしい斜面はあるが、マスクの大半は一体の切り立った岩壁である。"
+        },
+        {
+          "draft_id": "90:7",
+          "verdict": "correct",
+          "evidence": "低木をおおむね除いて、前景の橙色の砂地を覆う。"
+        },
+        {
+          "draft_id": "90:8",
+          "verdict": "not_present",
+          "evidence": "前景は砂であり、雪や氷は見えない。"
+        },
+        {
+          "draft_id": "90:9",
+          "verdict": "not_present",
+          "evidence": "日照を受けた岩山で、雪や氷は見えない。"
+        },
+        {
+          "draft_id": "90:10",
+          "verdict": "not_present",
+          "evidence": "同じ岩山のマスクで、雪や氷は見えない。"
+        },
+        {
+          "draft_id": "90:11",
+          "verdict": "not_present",
+          "evidence": "上部の岩壁を覆っており、樹木の幹は見えない。"
+        },
+        {
+          "draft_id": "90:12",
+          "verdict": "not_present",
+          "evidence": "岩山全体であり、樹木の幹は見えない。"
+        },
+        {
+          "draft_id": "90:13",
+          "verdict": "correct",
+          "evidence": "砂原に生える右寄りの低い緑色の茂みに一致する。"
+        },
+        {
+          "draft_id": "90:14",
+          "verdict": "correct",
+          "evidence": "右端近くに孤立する小さな低木に一致する。"
+        },
+        {
+          "draft_id": "90:15",
+          "verdict": "not_present",
+          "evidence": "マスクは岩山であり、樹冠は見えない。"
+        },
+        {
+          "draft_id": "90:16",
+          "verdict": "not_present",
+          "evidence": "左奥の低い岩山であり、樹冠は見えない。"
+        },
+        {
+          "draft_id": "90:17",
+          "verdict": "not_present",
+          "evidence": "平坦な前景は乾いた砂原で、水面は見えない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "原画像は砂原と層状の岩山で、titleのWadi Rumとも整合する。建築物は見えず、建築の同定対象はない。"
+      ]
+    },
+    {
+      "asset_id": "491555cc-d4ec-4bd8-9e4f-e41ea603aaff",
+      "regions": [
+        {
+          "draft_id": "91:0",
+          "verdict": "not_present",
+          "evidence": "下半分は森林を映した水面で、明確な草地は見えない。"
+        },
+        {
+          "draft_id": "91:1",
+          "verdict": "correct",
+          "evidence": "池の対岸に横たわる、落葉を含む露出した地面の細い帯に一致する。"
+        },
+        {
+          "draft_id": "91:2",
+          "verdict": "not_present",
+          "evidence": "対岸の土の縁は見えるが、通行する小道としては確認できない。"
+        },
+        {
+          "draft_id": "91:3",
+          "verdict": "not_present",
+          "evidence": "対岸の落葉した地面であり、岩壁は見えない。"
+        },
+        {
+          "draft_id": "91:4",
+          "verdict": "not_present",
+          "evidence": "対岸に明確な岩屑の堆積は見えない。"
+        },
+        {
+          "draft_id": "91:5",
+          "verdict": "not_present",
+          "evidence": "対岸は暗い土と落葉に見え、砂地は確認できない。"
+        },
+        {
+          "draft_id": "91:6",
+          "verdict": "not_present",
+          "evidence": "樹木が反射した池であり、雪や氷は見えない。"
+        },
+        {
+          "draft_id": "91:7",
+          "verdict": "not_present",
+          "evidence": "下部の光沢のある面は液体の水で、雪や氷ではない。"
+        },
+        {
+          "draft_id": "91:8",
+          "verdict": "correct",
+          "evidence": "画面右寄りに直立する細長い樹幹の形に沿っている。"
+        },
+        {
+          "draft_id": "91:9",
+          "verdict": "wrong_label",
+          "evidence": "マスクは水面の反射である。実際の低木は岸辺にある。"
+        },
+        {
+          "draft_id": "91:10",
+          "verdict": "correct",
+          "evidence": "左岸の低く密集する茂みをおおむね覆う。"
+        },
+        {
+          "draft_id": "91:11",
+          "verdict": "wrong_label",
+          "evidence": "下半分の樹木像は水面の反射であり、実際の樹冠は上半分にある。"
+        },
+        {
+          "draft_id": "91:12",
+          "verdict": "correct",
+          "evidence": "対岸の森林の葉群と樹冠の広がりをおおむね覆う。幹の細かな混入はある。"
+        },
+        {
+          "draft_id": "91:13",
+          "verdict": "correct",
+          "evidence": "対岸より下の池の水面と反射の領域に一致する。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "原画像は秋の森林と反射する池で、titleの森林名と整合するが建築物は見えない。"
+      ]
+    },
+    {
+      "asset_id": "acd2822b-d35e-4e7c-94d1-33d649be7007",
+      "regions": [
+        {
+          "draft_id": "92:0",
+          "verdict": "not_present",
+          "evidence": "全画面は緑と黄葉の樹冠で、草地は見えない。"
+        },
+        {
+          "draft_id": "92:1",
+          "verdict": "not_present",
+          "evidence": "樹木が密に重なり、露出した土は見えない。"
+        },
+        {
+          "draft_id": "92:2",
+          "verdict": "not_present",
+          "evidence": "中央の黄葉した樹冠であり、砂は見えない。"
+        },
+        {
+          "draft_id": "92:3",
+          "verdict": "not_present",
+          "evidence": "森林の葉群であり、雪や氷は見えない。"
+        },
+        {
+          "draft_id": "92:4",
+          "verdict": "not_present",
+          "evidence": "中央も周囲も高木の葉群で、独立した低層植生は確認できない。"
+        },
+        {
+          "draft_id": "92:5",
+          "verdict": "not_present",
+          "evidence": "中央の黄色い部分は高木の樹冠で、低層植生は確認できない。"
+        },
+        {
+          "draft_id": "92:6",
+          "verdict": "correct",
+          "evidence": "中央の黄葉した木と周囲の常緑樹の樹冠がほぼ画面全体を占める。"
+        },
+        {
+          "draft_id": "92:7",
+          "verdict": "correct",
+          "evidence": "中央の黄色い葉群と枝の広がりにおおむね沿っている。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "中央の黄葉樹を常緑の森林が囲む画像で、建築物は見えない。titleから特定の建築を示す情報もない。"
+      ]
+    },
+    {
+      "asset_id": "97fa50a7-e283-4975-a3f7-d10c11bfd234",
+      "regions": [
+        {
+          "draft_id": "93:0",
+          "verdict": "correct",
+          "evidence": "左上の森林に囲まれた明るい草地の帯を捉えている。"
+        },
+        {
+          "draft_id": "93:1",
+          "verdict": "spill",
+          "evidence": "道路沿いの露出地は一部あるが、ほぼ全画面の森林と草地まで覆っている。"
+        },
+        {
+          "draft_id": "93:2",
+          "verdict": "not_present",
+          "evidence": "下部の曲線は整備された車道であり、自然の小道は確認できない。"
+        },
+        {
+          "draft_id": "93:3",
+          "verdict": "not_present",
+          "evidence": "山腹は樹冠に覆われており、独立した露岩の壁はこの解像度では確認できない。"
+        },
+        {
+          "draft_id": "93:4",
+          "verdict": "not_present",
+          "evidence": "黄葉した森林であり、明確な岩屑斜面は見えない。"
+        },
+        {
+          "draft_id": "93:5",
+          "verdict": "not_present",
+          "evidence": "全体は森林と草地で、岩屑の堆積面は確認できない。"
+        },
+        {
+          "draft_id": "93:6",
+          "verdict": "not_present",
+          "evidence": "明るい細帯は山腹を走る道路で、砂地は確認できない。"
+        },
+        {
+          "draft_id": "93:7",
+          "verdict": "not_present",
+          "evidence": "山腹の白い帯は道路であり、雪や氷は見えない。"
+        },
+        {
+          "draft_id": "93:8",
+          "verdict": "not_present",
+          "evidence": "同じ道路の帯で、雪や氷は見えない。"
+        },
+        {
+          "draft_id": "93:9",
+          "verdict": "wrong_label",
+          "evidence": "マスクの大半は高木の樹冠である。低い植生は左上の草地などにある。"
+        },
+        {
+          "draft_id": "93:10",
+          "verdict": "correct",
+          "evidence": "道路などの細部をほぼ除き、谷と山腹の森林の広がりを捉えている。"
+        },
+        {
+          "draft_id": "93:11",
+          "verdict": "not_present",
+          "evidence": "対象の細帯は道路であり、水面は確認できない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "path",
+          "evidence": "森林を横切る整備された車道と手前のヘアピンカーブが見えるが、車道に対応する領域がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "titleのDilijanの秋の森林と、樹林に覆われた谷と道路の景観は整合する。個別建築を同定できる外観はない。"
+      ]
+    },
+    {
+      "asset_id": "16bcbb47-9b41-4ff2-8f8d-4631e05b49ee",
+      "regions": [
+        {
+          "draft_id": "94:0",
+          "verdict": "spill",
+          "evidence": "緑の草地を含むが、湖面と裸岩・岩屑の広い範囲も覆っている。"
+        },
+        {
+          "draft_id": "94:1",
+          "verdict": "spill",
+          "evidence": "裸地らしい部分はあるものの、湖・雪・岩山・植生までほぼ全画面を覆う。"
+        },
+        {
+          "draft_id": "94:2",
+          "verdict": "spill",
+          "evidence": "背景の露岩を捉える一方、雪や岩屑斜面、湖面の一部まで大きく含む。"
+        },
+        {
+          "draft_id": "94:3",
+          "verdict": "spill",
+          "evidence": "灰色の岩屑斜面は存在するが、湖と草地、雪を含むほぼ全画面を覆う。"
+        },
+        {
+          "draft_id": "94:4",
+          "verdict": "spill",
+          "evidence": "上部に残雪はあるが、湖・草地・裸岩までほぼ全画面を覆う。"
+        },
+        {
+          "draft_id": "94:5",
+          "verdict": "not_present",
+          "evidence": "中央の小さな樹木群の葉群を覆っており、個別の幹はこの縮尺では確認できない。"
+        },
+        {
+          "draft_id": "94:6",
+          "verdict": "correct",
+          "evidence": "湖の手前に広がる低い緑色の植生の帯におおむね一致する。"
+        },
+        {
+          "draft_id": "94:7",
+          "verdict": "spill",
+          "evidence": "低い植生を含むが、湖面と岩の斜面を広く含んでいる。"
+        },
+        {
+          "draft_id": "94:8",
+          "verdict": "correct",
+          "evidence": "対岸の斜面にまとまった小さな樹冠群をおおむね捉えている。"
+        },
+        {
+          "draft_id": "94:9",
+          "verdict": "correct",
+          "evidence": "右下寄りの青緑色の湖面の輪郭をおおむね捉えている。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "岩山と残雪に囲まれた青緑色の山上湖はtitleのDrachenseeと整合する。湖名は建築名ではなく、同定できる建築物はない。"
+      ]
+    },
+    {
+      "asset_id": "15633280-9c10-442c-8606-65757d5bbf02",
+      "regions": [
+        {
+          "draft_id": "95:0",
+          "verdict": "correct",
+          "evidence": "手前の黄褐色の乾いた牧草地をおおむね覆っている。土や金網の細かな混入はある。"
+        },
+        {
+          "draft_id": "95:1",
+          "verdict": "spill",
+          "evidence": "露出した土は草の間に見えるが、マスクは草に覆われた牧草地全体に広がっている。"
+        },
+        {
+          "draft_id": "95:2",
+          "verdict": "not_present",
+          "evidence": "広い牧草地であり、独立した自然の小道は確認できない。"
+        },
+        {
+          "draft_id": "95:3",
+          "verdict": "not_present",
+          "evidence": "小領域は草を食べる動物に見え、岩壁は確認できない。"
+        },
+        {
+          "draft_id": "95:4",
+          "verdict": "not_present",
+          "evidence": "黄褐色の面は枯れ草の牧草地で、砂地は確認できない。"
+        },
+        {
+          "draft_id": "95:5",
+          "verdict": "not_present",
+          "evidence": "牧草地に雪や氷は見えない。"
+        },
+        {
+          "draft_id": "95:6",
+          "verdict": "not_present",
+          "evidence": "上端の斜めの人工的な柵の横材であり、識別可能な樹幹は見えない。"
+        },
+        {
+          "draft_id": "95:7",
+          "verdict": "correct",
+          "evidence": "手前に広がる低い草の被覆をおおむね捉えている。"
+        },
+        {
+          "draft_id": "95:8",
+          "verdict": "wrong_label",
+          "evidence": "マスクは背後の雲霧と山の帯を覆う。実際の樹冠は牧草地の奥の列にある。"
+        },
+        {
+          "draft_id": "95:9",
+          "verdict": "correct",
+          "evidence": "牧草地の奥に孤立する丸い樹冠におおむね一致する。"
+        },
+        {
+          "draft_id": "95:10",
+          "verdict": "correct",
+          "evidence": "奥の細身の樹木の葉群におおむね一致する。"
+        },
+        {
+          "draft_id": "95:11",
+          "verdict": "not_present",
+          "evidence": "背後の白い部分は雲霧で、明確な水面は見えない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "fence",
+          "evidence": "手前全体を斜めの菱形金網と上端の横材が横切っているが、柵の領域がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "原画像は金網越しの牧草地と雲霧に覆われた山で、titleの地名のみから特定建築は同定できない。"
+      ]
+    },
+    {
+      "asset_id": "6f578009-ac0d-448b-b812-014874d03257",
+      "regions": [
+        {
+          "draft_id": "96:0",
+          "verdict": "not_present",
+          "evidence": "山肌は雪と露岩であり、草地は見えない。"
+        },
+        {
+          "draft_id": "96:1",
+          "verdict": "not_present",
+          "evidence": "雪と硬い岩の山肌で、土の地表として識別できる部分は見えない。"
+        },
+        {
+          "draft_id": "96:2",
+          "verdict": "not_present",
+          "evidence": "雪山の斜面を覆っており、自然の小道は見えない。"
+        },
+        {
+          "draft_id": "96:3",
+          "verdict": "spill",
+          "evidence": "露出した岩の山肌を含むが、大きな積雪面もまとめて覆っている。"
+        },
+        {
+          "draft_id": "96:4",
+          "verdict": "not_present",
+          "evidence": "露岩と雪の縞は見えるが、独立した岩屑の堆積はこの画像では確認できない。"
+        },
+        {
+          "draft_id": "96:5",
+          "verdict": "not_present",
+          "evidence": "山肌は雪と岩で、砂地は見えない。"
+        },
+        {
+          "draft_id": "96:6",
+          "verdict": "spill",
+          "evidence": "積雪を含むが、稜線から下の広い裸岩も一括して覆っている。"
+        },
+        {
+          "draft_id": "96:7",
+          "verdict": "spill",
+          "evidence": "雪の帯を含むものの、雪のない岩面まで広く含んでいる。"
+        },
+        {
+          "draft_id": "96:8",
+          "verdict": "not_present",
+          "evidence": "雪山の山腹であり、樹木や樹幹は見えない。"
+        },
+        {
+          "draft_id": "96:9",
+          "verdict": "not_present",
+          "evidence": "手前の暗い稜線を覆っており、識別可能な樹幹は見えない。"
+        },
+        {
+          "draft_id": "96:10",
+          "verdict": "not_present",
+          "evidence": "雪と露岩の斜面であり、低層植生は見えない。"
+        },
+        {
+          "draft_id": "96:11",
+          "verdict": "not_present",
+          "evidence": "マスクは雪山全体で、樹冠は見えない。"
+        },
+        {
+          "draft_id": "96:12",
+          "verdict": "not_present",
+          "evidence": "白い部分は斜面の積雪で、液体の水面は見えない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "titleどおり雪をまとった山脈の景観であり、建築物は見えない。"
+      ]
+    },
+    {
+      "asset_id": "7e83f9a3-fa47-470b-82a4-e5a7ac2e7742",
+      "regions": [
+        {
+          "draft_id": "97:0",
+          "verdict": "correct",
+          "evidence": "案内標識の下と奥に広がる乾いた草原におおむね一致する。"
+        },
+        {
+          "draft_id": "97:1",
+          "verdict": "spill",
+          "evidence": "手前には土の小さな露出があるが、マスクの大半は草の覆う平原である。"
+        },
+        {
+          "draft_id": "97:2",
+          "verdict": "not_present",
+          "evidence": "標識の周囲は草原であり、線状に続く自然の小道は確認できない。"
+        },
+        {
+          "draft_id": "97:3",
+          "verdict": "correct",
+          "evidence": "標識の左下の草地にある小さな明るい露出岩を覆う。岩壁状ではないが単体の岩面として判定する。"
+        },
+        {
+          "draft_id": "97:4",
+          "verdict": "wrong_label",
+          "evidence": "マスクは標識の白い長方形パネルである。実際の露出岩は足元の草地にある。"
+        },
+        {
+          "draft_id": "97:5",
+          "verdict": "not_present",
+          "evidence": "マスクは単独の石であり、岩屑の集積した面は確認できない。"
+        },
+        {
+          "draft_id": "97:6",
+          "verdict": "not_present",
+          "evidence": "黄褐色の地表は草原であり、砂地は確認できない。"
+        },
+        {
+          "draft_id": "97:7",
+          "verdict": "not_present",
+          "evidence": "乾いた草原で、雪や氷は見えない。"
+        },
+        {
+          "draft_id": "97:8",
+          "verdict": "not_present",
+          "evidence": "赤い領域は標識を支える人工的な直線の支柱であり、樹木の幹は見えない。"
+        },
+        {
+          "draft_id": "97:9",
+          "verdict": "correct",
+          "evidence": "広い平原を覆う背の低い草におおむね対応する。"
+        },
+        {
+          "draft_id": "97:10",
+          "verdict": "not_present",
+          "evidence": "標識の上部パネルであり、樹冠は見えない。"
+        },
+        {
+          "draft_id": "97:11",
+          "verdict": "not_present",
+          "evidence": "標識の上縁であり、樹冠は見えない。"
+        },
+        {
+          "draft_id": "97:12",
+          "verdict": "not_present",
+          "evidence": "細いマスクは草原と空の境界付近で、明確な水面は見えない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "案内標識と平坦な草原が写り、titleのBitter Creek WSAと整合するが、標識は建築物の同定根拠にならない。"
+      ]
+    },
+    {
+      "asset_id": "0fbe3f50-b64f-4733-bd11-1f352cfc8e19",
+      "regions": [
+        {
+          "draft_id": "98:0",
+          "verdict": "spill",
+          "evidence": "下部に草の露出はあるが、マスクは手前の雪面と針葉樹林まで広く含む。"
+        },
+        {
+          "draft_id": "98:1",
+          "verdict": "spill",
+          "evidence": "下部の褐色の裸地らしい小部分は判別が難しいが、明瞭な雪面と草の被覆まで大きく含む。"
+        },
+        {
+          "draft_id": "98:2",
+          "verdict": "not_present",
+          "evidence": "対象は遠景の樹林に覆われた山腹であり、裸岩の壁はこの縮尺では確認できない。"
+        },
+        {
+          "draft_id": "98:3",
+          "verdict": "not_present",
+          "evidence": "前景の白い地表は積雪であり、砂地は見えない。"
+        },
+        {
+          "draft_id": "98:4",
+          "verdict": "correct",
+          "evidence": "前景の雪の積もった空地を、樹木をおおむね避けて捉えている。"
+        },
+        {
+          "draft_id": "98:5",
+          "verdict": "spill",
+          "evidence": "低い草や小さな茂みを含むが、雪面と高い針葉樹の樹冠まで広く覆う。"
+        },
+        {
+          "draft_id": "98:6",
+          "verdict": "not_present",
+          "evidence": "左手前の明るい部分は雪の斜面であり、液体の水面は確認できない。"
+        },
+        {
+          "draft_id": "98:7",
+          "verdict": "not_present",
+          "evidence": "樹木の間の明るい部分は雪面で、水面は確認できない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "vegetation_tree_canopy",
+          "evidence": "中景の針葉樹林と遠景の山腹の樹冠が大きな面積を占めるが、樹冠ラベルの領域がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "雪原と針葉樹の山岳景観はtitleのRugovaの冬景色と整合する。個別建築を識別できる外観はない。"
+      ]
+    },
+    {
+      "asset_id": "8281076e-ce63-46f2-8cc8-fd4da401523f",
+      "regions": [
+        {
+          "draft_id": "99:0",
+          "verdict": "not_present",
+          "evidence": "前景は密な針葉樹の樹冠であり、草地は見えない。"
+        },
+        {
+          "draft_id": "99:1",
+          "verdict": "not_present",
+          "evidence": "対象は遠景の雪と露岩の稜線であり、土の地表は確認できない。"
+        },
+        {
+          "draft_id": "99:2",
+          "verdict": "not_present",
+          "evidence": "雪をまとった山腹で、自然の小道は見えない。"
+        },
+        {
+          "draft_id": "99:3",
+          "verdict": "spill",
+          "evidence": "露岩の山肌を含むが、広い雪の被覆も一括して覆っている。"
+        },
+        {
+          "draft_id": "99:4",
+          "verdict": "not_present",
+          "evidence": "遠景の岩肌は見えるものの、岩屑の堆積面はこの縮尺では判別できない。"
+        },
+        {
+          "draft_id": "99:5",
+          "verdict": "not_present",
+          "evidence": "山の明るい部分は雪であり、砂地は見えない。"
+        },
+        {
+          "draft_id": "99:6",
+          "verdict": "spill",
+          "evidence": "稜線の積雪を含むが、雪のない暗い岩肌も広く含む。"
+        },
+        {
+          "draft_id": "99:7",
+          "verdict": "spill",
+          "evidence": "前景に細い幹らしい縦線は一部見えるが、マスクは針葉樹の樹冠全体まで覆っている。"
+        },
+        {
+          "draft_id": "99:8",
+          "verdict": "not_present",
+          "evidence": "手前は背の高い針葉樹林であり、独立した低層植生は見えない。"
+        },
+        {
+          "draft_id": "99:9",
+          "verdict": "correct",
+          "evidence": "前景の連続した針葉樹の樹冠の輪郭におおむね一致する。"
+        },
+        {
+          "draft_id": "99:10",
+          "verdict": "wrong_label",
+          "evidence": "マスクは遠景の雪と岩の山腹であり、実際の樹冠はその手前の暗い森林にある。"
+        },
+        {
+          "draft_id": "99:11",
+          "verdict": "not_present",
+          "evidence": "遠景の稜線と山腹を覆っており、水面は見えない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "雪の稜線と手前の針葉樹林はtitleのヒマラヤ山岳景観と整合する。建築物は見えない。"
+      ]
+    }
+  ]
+}

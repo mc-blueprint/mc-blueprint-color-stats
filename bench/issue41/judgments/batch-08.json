@@ -1,0 +1,212 @@
+{
+  "batch_id": "batch-08",
+  "model": "gpt-6.1-sol",
+  "execution_id": "issue41-b08-run1",
+  "repeat_of": null,
+  "images": [
+    {
+      "asset_id": "e0bc0047-3799-404b-adbf-82474f1510b9",
+      "regions": [
+        {"draft_id":"70:0","verdict":"spill","evidence":"前景の草を含むが、中央の大きな低木群まで一括して覆っている。"},
+        {"draft_id":"70:1","verdict":"not_present","evidence":"前景は草と低木に覆われ、露出した土面は確認できない。"},
+        {"draft_id":"70:2","verdict":"not_present","evidence":"草原に連続した踏み道は見えない。"},
+        {"draft_id":"70:3","verdict":"not_present","evidence":"赤い前景は草と低木で、礫の堆積は見えない。"},
+        {"draft_id":"70:4","verdict":"not_present","evidence":"右端の小領域も植生に見え、低解像度で不確かだが礫は確認できない。"},
+        {"draft_id":"70:5","verdict":"not_present","evidence":"前景に露出した砂地は見えない。"},
+        {"draft_id":"70:6","verdict":"not_present","evidence":"明るい低木は見えるが、雪や氷は確認できない。"},
+        {"draft_id":"70:7","verdict":"wrong_label","evidence":"右奥の小木の葉を含む外形を覆い、幹単独の領域ではない。"},
+        {"draft_id":"70:8","verdict":"correct","evidence":"前景の草本と低木のまとまりに沿っている。"},
+        {"draft_id":"70:9","verdict":"correct","evidence":"右奥に立つ小さな針葉樹状の樹冠と一致する。"}
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": ["山並みを背景にした草原と低木で、同定対象となる建築は見えない。"]
+    },
+    {
+      "asset_id": "2a2b81a6-ebb8-4e78-8ce0-53a7a30411e7",
+      "regions": [
+        {"draft_id":"71:0","verdict":"correct","evidence":"下端の草地をおおむね覆っている。"},
+        {"draft_id":"71:1","verdict":"not_present","evidence":"斜面を流れる滝であり、通行する自然道は確認できない。"},
+        {"draft_id":"71:2","verdict":"spill","evidence":"岩盤も含むが、中央の白い滝まで広く覆っている。"},
+        {"draft_id":"71:3","verdict":"not_present","evidence":"露出しているのは一体の岩盤で、崩れた礫の堆積は見えない。"},
+        {"draft_id":"71:4","verdict":"not_present","evidence":"白い部分は落下する水で、砂地は見えない。"},
+        {"draft_id":"71:5","verdict":"not_present","evidence":"白い筋は滝の飛沫と水流で、雪氷は確認できない。"},
+        {"draft_id":"71:6","verdict":"not_present","evidence":"同じ白い滝の領域で、雪や氷ではない。"},
+        {"draft_id":"71:7","verdict":"not_present","evidence":"マスクは滝を指す。周辺の植生にも明瞭な露出樹幹は確認できない。"},
+        {"draft_id":"71:8","verdict":"spill","evidence":"低い植生を含むが、滝と岩盤、上部の樹冠まで画像全体に広がる。"},
+        {"draft_id":"71:9","verdict":"wrong_label","evidence":"上部のまとまった森林樹冠を指し、手前の草本や低木の領域ではない。"},
+        {"draft_id":"71:10","verdict":"correct","evidence":"上部の密な緑の樹冠帯とおおむね一致する。"},
+        {"draft_id":"71:11","verdict":"correct","evidence":"中央を落下する白い水流の主要部分を捉えている。"}
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": ["Vilcabambaの経路を示す題名と滝の画像で、建築は確認できない。"]
+    },
+    {
+      "asset_id": "b16fea9c-3ae6-4e4c-83e6-71c486c61909",
+      "regions": [
+        {"draft_id":"72:0","verdict":"correct","evidence":"薄雪の間に草が広く見える前景の草地と一致する。"},
+        {"draft_id":"72:1","verdict":"not_present","evidence":"前景は草と薄雪で、裸地として識別できる土面はない。"},
+        {"draft_id":"72:2","verdict":"not_present","evidence":"前景に明瞭な自然道は見えない。"},
+        {"draft_id":"72:3","verdict":"not_present","evidence":"中景の町並みを覆っており、露岩は確認できない。"},
+        {"draft_id":"72:4","verdict":"not_present","evidence":"前景は雪のある草地で岩盤はない。"},
+        {"draft_id":"72:5","verdict":"not_present","evidence":"町並みの白い屋根や壁で、礫の集積は見えない。"},
+        {"draft_id":"72:6","verdict":"not_present","evidence":"前景に礫地は確認できない。"},
+        {"draft_id":"72:7","verdict":"not_present","evidence":"前景は草と薄雪で砂地はない。"},
+        {"draft_id":"72:8","verdict":"correct","evidence":"草が透ける薄い積雪が前景斜面全体に分布し、領域もその斜面に沿う。"},
+        {"draft_id":"72:9","verdict":"correct","evidence":"薄雪に覆われた手前の斜面をおおむね捉えている。"},
+        {"draft_id":"72:10","verdict":"correct","evidence":"前景の草本に覆われた斜面を捉えている。"},
+        {"draft_id":"72:11","verdict":"correct","evidence":"低解像度で境界は曖昧だが、町の背後の暗い森林帯に沿う。"},
+        {"draft_id":"72:12","verdict":"not_present","evidence":"前景は陸上の雪草地で、水面は見えない。"},
+        {"draft_id":"72:13","verdict":"not_present","evidence":"中景は家屋群であり、水域は確認できない。"}
+      ],
+      "missed_major_parts": [
+        {"label":"roof_surface","evidence":"中景に多数の家屋の傾斜屋根が見えるが、対応する候補がない。"},
+        {"label":"wall_main","evidence":"町並みには明るい家屋外壁がまとまって見えるが、外壁候補がない。"}
+      ],
+      "building_name": null,
+      "evidence": ["Unterbalbachの冬景色という地名情報はあるが、遠景の家屋群から特定の一棟は同定できない。"]
+    },
+    {
+      "asset_id": "390d2c1b-5025-45ad-bf05-742744627509",
+      "regions": [
+        {"draft_id":"73:0","verdict":"not_present","evidence":"手前は橙褐色の落葉床で、草地は確認できない。"},
+        {"draft_id":"73:1","verdict":"correct","evidence":"落葉で覆われた林床の地表領域に沿っている。"},
+        {"draft_id":"73:2","verdict":"not_present","evidence":"林床全体が落葉で覆われ、独立した通行道は識別できない。"},
+        {"draft_id":"73:3","verdict":"not_present","evidence":"左側の幹や紅葉を指しており、岩壁は見えない。"},
+        {"draft_id":"73:4","verdict":"not_present","evidence":"森林と幹の領域で、露岩は確認できない。"},
+        {"draft_id":"73:5","verdict":"not_present","evidence":"林床は落葉であり、礫地は見えない。"},
+        {"draft_id":"73:6","verdict":"not_present","evidence":"橙色の地表は落葉で、砂地ではない。"},
+        {"draft_id":"73:7","verdict":"not_present","evidence":"秋の林床に積雪は見えない。"},
+        {"draft_id":"73:8","verdict":"correct","evidence":"中央右の細長い直立樹幹に沿う。"},
+        {"draft_id":"73:9","verdict":"correct","evidence":"右寄りの太い樹幹を根元まで捉えている。"},
+        {"draft_id":"73:10","verdict":"correct","evidence":"右端近くの暗い太い樹幹と一致する。"},
+        {"draft_id":"73:11","verdict":"correct","evidence":"中央付近の細い直立樹幹に沿っている。"},
+        {"draft_id":"73:12","verdict":"correct","evidence":"左側の幹の見えている断片を捉えている。"},
+        {"draft_id":"73:13","verdict":"correct","evidence":"左中央の葉に隠れた幹の可視部分を捉えている。"},
+        {"draft_id":"73:14","verdict":"not_present","evidence":"地面は落葉床で、低い生きた植生は明瞭でない。"},
+        {"draft_id":"73:15","verdict":"not_present","evidence":"広いマスクは高木と林床であり、低木や草本の群落は確認できない。"},
+        {"draft_id":"73:16","verdict":"spill","evidence":"紅葉した樹冠を含むが、太い幹と奥の空隙まで広く塗り込んでいる。"},
+        {"draft_id":"73:17","verdict":"not_present","evidence":"青みのある奥は林内の霞と光で、水面は見えない。"}
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": ["Bruderwaldの紅葉した森林であり、建築は見えない。"]
+    },
+    {
+      "asset_id": "c87899e8-9d00-4d2d-adfc-697f59e5bffc",
+      "regions": [
+        {"draft_id":"74:0","verdict":"correct","evidence":"手前の黄緑色の牧草地におおむね沿っている。"},
+        {"draft_id":"74:1","verdict":"wrong_label","evidence":"主に手前の草地を覆い、露出した土の領域ではない。"},
+        {"draft_id":"74:2","verdict":"spill","evidence":"土の見える斜面を含むが、草地、樹木、石積みまで一括して覆う。"},
+        {"draft_id":"74:3","verdict":"correct","evidence":"画面を横切る細い土と石の通路に沿っている。"},
+        {"draft_id":"74:4","verdict":"not_present","evidence":"奥は段状の草地や石積みで、連続した露出岩盤は確認できない。"},
+        {"draft_id":"74:5","verdict":"correct","evidence":"中央の通路に集まった灰色の小石をおおむね捉えている。石積みとの区別はやや不確か。"},
+        {"draft_id":"74:6","verdict":"wrong_label","evidence":"小石は手前の通路に見えるが、マスクは奥の牧草斜面全体を指している。"},
+        {"draft_id":"74:7","verdict":"not_present","evidence":"明るい斜面は草地や土で、砂の堆積は確認できない。"},
+        {"draft_id":"74:8","verdict":"not_present","evidence":"日照下の草地であり、雪や氷は見えない。"},
+        {"draft_id":"74:9","verdict":"spill","evidence":"奥の樹木も含むが、段状の草地や土の斜面まで大きく覆う。"}
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": ["Vilcabamba周辺の牧草斜面と石積みが主体。小さな構造物も見えるが特定建築を裏付ける形状情報は不足する。"]
+    },
+    {
+      "asset_id": "75ba40eb-8144-43b9-9e7c-d948f70f58f7",
+      "regions": [
+        {"draft_id":"75:0","verdict":"not_present","evidence":"下端まで積雪しており、露出した草地は見えない。"},
+        {"draft_id":"75:1","verdict":"not_present","evidence":"下端は雪で覆われ、土面は確認できない。"},
+        {"draft_id":"75:2","verdict":"not_present","evidence":"林間の雪面に、通路と確実に識別できる筋は見えない。"},
+        {"draft_id":"75:3","verdict":"not_present","evidence":"白い部分は着雪した木々で、岩壁ではない。"},
+        {"draft_id":"75:4","verdict":"not_present","evidence":"下端は積雪で、砂地はない。"},
+        {"draft_id":"75:5","verdict":"spill","evidence":"着雪した枝と地面を含むが、左の裸出した幹や中央上部の明るい空隙まで塗る。"},
+        {"draft_id":"75:6","verdict":"correct","evidence":"右側の暗い直立樹幹に沿っている。"},
+        {"draft_id":"75:7","verdict":"correct","evidence":"左端近くの太い樹幹を捉えている。"},
+        {"draft_id":"75:8","verdict":"correct","evidence":"右中央に立つ細い樹幹に沿っている。"},
+        {"draft_id":"75:9","verdict":"not_present","evidence":"地表と高木は雪に覆われ、独立した低木・草本は確認できない。"},
+        {"draft_id":"75:10","verdict":"spill","evidence":"着雪した針葉樹冠を含むが、左の樹幹列や中央の空隙まで広く覆う。"},
+        {"draft_id":"75:11","verdict":"not_present","evidence":"雪の森林であり、液体の水面は見えない。"}
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": ["Taunuskammの冬の森林という題名と着雪した樹木が対応し、建築は見えない。"]
+    },
+    {
+      "asset_id": "74ab03e8-7d5c-4d1f-8b6d-552c90ad9035",
+      "regions": [
+        {"draft_id":"76:0","verdict":"not_present","evidence":"見上げた着雪樹冠で、草地は画面にない。"},
+        {"draft_id":"76:1","verdict":"not_present","evidence":"空と樹木のみで土面は見えない。"},
+        {"draft_id":"76:2","verdict":"not_present","evidence":"地上の道は画面に写っていない。"},
+        {"draft_id":"76:3","verdict":"not_present","evidence":"白い枝を持つ樹木で、岩壁はない。"},
+        {"draft_id":"76:4","verdict":"not_present","evidence":"樹冠の画像で、礫地は見えない。"},
+        {"draft_id":"76:5","verdict":"not_present","evidence":"空と着雪樹木で、砂地はない。"},
+        {"draft_id":"76:6","verdict":"correct","evidence":"枝全体が白く着雪しており、その樹冠の外形におおむね沿う。細枝間の小さな空隙は含む。"},
+        {"draft_id":"76:7","verdict":"correct","evidence":"着雪で白くなった樹冠の範囲に沿っている。枝の細部までは区別しづらい。"},
+        {"draft_id":"76:8","verdict":"spill","evidence":"幹や太枝も含むが、樹冠の細枝と雪まで全体を覆っている。"},
+        {"draft_id":"76:9","verdict":"not_present","evidence":"高い樹木を見上げた画像で、低い草本や低木は確認できない。"},
+        {"draft_id":"76:10","verdict":"correct","evidence":"青空に接する着雪樹冠の輪郭とおおむね一致する。"},
+        {"draft_id":"76:11","verdict":"not_present","evidence":"白い部分は雪を載せた枝で、水面ではない。"}
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": ["Kentuckyの降雪後という題名に対応する着雪樹木で、建築は写っていない。"]
+    },
+    {
+      "asset_id": "1c8d5ee3-a534-4bd6-a64a-da22461c0ce3",
+      "regions": [
+        {"draft_id":"77:0","verdict":"correct","evidence":"一面に広がる乾いた草原をおおむね覆っている。"},
+        {"draft_id":"77:1","verdict":"spill","evidence":"赤土の露出を含むが、草の茂みまで地表全体を一括して覆っている。"},
+        {"draft_id":"77:2","verdict":"not_present","evidence":"赤土の隙間はあるが、連続した自然道の形は確認できない。"},
+        {"draft_id":"77:3","verdict":"not_present","evidence":"草原と赤土で、露出岩盤は見えない。"},
+        {"draft_id":"77:4","verdict":"not_present","evidence":"草の株と土の隙間で、礫の堆積は確認できない。"},
+        {"draft_id":"77:5","verdict":"spill","evidence":"赤い地面は砂質にも見えるが不確かで、いずれにしても大部分の草まで覆っている。"},
+        {"draft_id":"77:6","verdict":"not_present","evidence":"乾燥草原に雪や氷は見えない。"},
+        {"draft_id":"77:7","verdict":"correct","evidence":"地平線下の乾いた草本群落と一致する。"},
+        {"draft_id":"77:8","verdict":"wrong_label","evidence":"遠方にごく小さな木は見えるが、この広いマスクは手前の草原を指す。"},
+        {"draft_id":"77:9","verdict":"correct","evidence":"遠方の小さな樹冠状の影に一致する。非常に小さく輪郭の確信は低い。"},
+        {"draft_id":"77:10","verdict":"not_present","evidence":"乾いた地表と草のみで水面は見えない。"}
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": ["Gibson Desertの草原という題名と乾燥地の景観が対応するが、同定できる建築はない。"]
+    },
+    {
+      "asset_id": "268912c7-2dc1-44ca-91d8-0db40a9e761f",
+      "regions": [
+        {"draft_id":"78:0","verdict":"not_present","evidence":"下半分は樹木を映す池の水面で、まとまった草地は見えない。"},
+        {"draft_id":"78:1","verdict":"not_present","evidence":"池の水面と岸の樹木で、露出した土面は確認できない。"},
+        {"draft_id":"78:2","verdict":"not_present","evidence":"奥の山は森林に覆われ、明瞭な露岩は見えない。"},
+        {"draft_id":"78:3","verdict":"not_present","evidence":"反射のある水面であり、砂地は確認できない。"},
+        {"draft_id":"78:4","verdict":"not_present","evidence":"水面の反射が見え、雪氷はない。"},
+        {"draft_id":"78:5","verdict":"not_present","evidence":"同じ池の領域で、凍結や積雪は確認できない。"},
+        {"draft_id":"78:6","verdict":"wrong_label","evidence":"岸と背後の山の高木樹冠を指す。手前に低い草の葉は見えるがこの帯とは別。"},
+        {"draft_id":"78:7","verdict":"correct","evidence":"右岸の黄橙色の樹冠群に沿っている。"},
+        {"draft_id":"78:8","verdict":"correct","evidence":"上下反転した木々と空が映る池の水面と一致する。"}
+      ],
+      "missed_major_parts": [
+        {"label":"vegetation_low","evidence":"手前の下端と左端に細長い草葉が見えるが、それを捉えた低植生候補がない。"}
+      ],
+      "building_name": null,
+      "evidence": ["Kropsbachweiherの池と紅葉の景観で、同定可能な建築は見えない。"]
+    },
+    {
+      "asset_id": "e871df57-68a8-41d7-92c3-18d6199e8b59",
+      "regions": [
+        {"draft_id":"79:0","verdict":"correct","evidence":"手前から奥まで続く緑の草地を捉えている。"},
+        {"draft_id":"79:1","verdict":"not_present","evidence":"地表は緑の草で覆われ、明瞭な裸地は見えない。"},
+        {"draft_id":"79:2","verdict":"not_present","evidence":"手前には草丈の違いがあるが、通行道と識別できる筋は見えない。"},
+        {"draft_id":"79:3","verdict":"not_present","evidence":"草原であり、岩盤は写っていない。"},
+        {"draft_id":"79:4","verdict":"not_present","evidence":"緑の草地で砂地はない。"},
+        {"draft_id":"79:5","verdict":"not_present","evidence":"緑の草原に積雪は見えない。"},
+        {"draft_id":"79:6","verdict":"wrong_label","evidence":"遠方の樹林の葉を含む帯全体で、幹部分の領域ではない。"},
+        {"draft_id":"79:7","verdict":"wrong_label","evidence":"左奥の丸い樹冠を指しており、幹単独ではない。"},
+        {"draft_id":"79:8","verdict":"correct","evidence":"広く連続する草本の群落をおおむね覆っている。"},
+        {"draft_id":"79:9","verdict":"correct","evidence":"地平線沿いの樹冠帯の外形に沿っている。"},
+        {"draft_id":"79:10","verdict":"not_present","evidence":"地面は草原で、水面は確認できない。"}
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": ["草原と地平線の樹林帯が写っている。題名からも特定建築を裏付ける情報は得られない。"]
+    }
+  ]
+}

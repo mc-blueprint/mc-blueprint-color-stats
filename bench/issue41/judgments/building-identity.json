@@ -1,0 +1,1990 @@
+{
+  "comparison_definition": "同名（非null）のasset集合と既存building_idのasset集合を比較。matchは群構成の一致であり、名称の意味的一致や人手確認ではない。単独同士はnot_grouped、候補あり未同定はunresolved。",
+  "assets": {
+    "152cadd8-7323-4de2-ba65-fce95747d576": {
+      "building_name": "岩のドーム",
+      "evidence": [
+        "title・source_urlのDome of the Rockという固有名と、金色ドーム、装飾された胴部、青いタイル貼りの八角形外壁が整合する。",
+        "78f5d063-b33b-4808-b31a-8d441737484d、b95b59ef-83ed-41ab-a211-cbddcead59f3と金色ドーム、中央アーチ入口、青い窓列が一致する。既存候補の同一群とも整合する。"
+      ],
+      "building_id": "dome-of-the-rock",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Dome of the Rock (\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"個別建築名と全画像のFacade of the Dome of the Rockカテゴリ一致。金色ドーム、タイル貼りの八角形外壁を画像照合。2015/2019/2020年の異なる空・照明状態。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Dome of the Rock (11).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Dome_of_the_Rock_(11).jpg",
+      "candidate_group": [
+        "152cadd8-7323-4de2-ba65-fce95747d576",
+        "78f5d063-b33b-4808-b31a-8d441737484d",
+        "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+      ],
+      "judged_group": [
+        "152cadd8-7323-4de2-ba65-fce95747d576",
+        "78f5d063-b33b-4808-b31a-8d441737484d",
+        "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+      ],
+      "comparison": "match"
+    },
+    "43e514be-8b23-48a9-b70b-2f4dd2b3edf5": {
+      "building_name": "聖ヴィクトル教会（デュルメン）",
+      "evidence": [
+        "titleとsource_urlがデュルメンのSt.-Viktor-Kircheを示す。淡色石造塔、対になった尖頭アーチ窓、暗色の急な金属屋根が既存候補の塔・石造外装の説明と整合する。",
+        "構図は塔上部に限られ、既存同一群の別assetの画像は未確認だが、今回画像の特徴と固有名に矛盾はない。"
+      ],
+      "building_id": "duelmen-st-viktor",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Dülmen, St.-Viktor-Kirche --\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"同一のSt. Viktor教会名、全画像同一座標51.828800,7.278100、個別建築カテゴリExterior of St. Viktor (Dülmen)。塔・屋根・石造外装を画像照合。夕夜間照明と昼間・積雪を含む。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Dülmen, St.-Viktor-Kirche -- 2014 -- 0056.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_St.-Viktor-Kirche_--_2014_--_0056.jpg",
+      "candidate_group": [
+        "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+        "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+      ],
+      "judged_group": [
+        "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+        "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+      ],
+      "comparison": "match"
+    },
+    "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0": {
+      "building_name": "掛川城天守",
+      "evidence": [
+        "titleとsource_urlが掛川市の掛川城を示し、丘上の白い天守と重層の瓦屋根・曲線破風が一致する。",
+        "b2a4d9a0-a875-42c3-933e-d158784b3a69と、上層の張り出し、重なった破風、丘上の白壁天守の輪郭が一致する。遠景で細部は小さいが既存候補の同一群と整合する。"
+      ],
+      "building_id": "kakegawa-keep",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Kakegawa Castle\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"掛川城天守を指定する2タイトルとKeep Tower/Remote viewsカテゴリ。近傍座標と天守外観を画像照合。同日の11:10/11:53、異なる構図・日照面。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Kakegawa Castle, Kakegawa City.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Kakegawa_Castle,_Kakegawa_City.jpg",
+      "candidate_group": [
+        "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+        "b2a4d9a0-a875-42c3-933e-d158784b3a69"
+      ],
+      "judged_group": [
+        "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+        "b2a4d9a0-a875-42c3-933e-d158784b3a69"
+      ],
+      "comparison": "match"
+    },
+    "5fe4bf8c-bc24-4838-80b2-261f412d48e8": {
+      "building_name": "聖パウルス大聖堂（ミュンスター）",
+      "evidence": [
+        "titleとsource_urlはミュンスターのSt.-Paulus-Domを示す。夜間に照らされた角形双塔と中央切妻壁が既存候補の説明に一致する。",
+        "9d176920-0aac-4077-95b1-a5aef5677aacの左側の角形双塔と低い屋根、窓段の構成に共通性があり、昼夜と撮影方向は異なるが同一大聖堂と判断する。"
+      ],
+      "building_id": "muenster-st-paulus",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Münster, St.-Paulus-Dom --\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"同一のSt.-Paulus-Dom名と全画像同一座標51.963100,7.625560。双塔と身廊・石造外装を画像照合。2014年夜景と昼景、2020年早朝の斜光を含む。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Münster, St.-Paulus-Dom -- 2014 -- 00972.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:M%C3%BCnster,_St.-Paulus-Dom_--_2014_--_00972.jpg",
+      "candidate_group": [
+        "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+        "9d176920-0aac-4077-95b1-a5aef5677aac"
+      ],
+      "judged_group": [
+        "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+        "9d176920-0aac-4077-95b1-a5aef5677aac"
+      ],
+      "comparison": "match"
+    },
+    "78f5d063-b33b-4808-b31a-8d441737484d": {
+      "building_name": "岩のドーム",
+      "evidence": [
+        "title・source_urlのDome of the Rockと、金色ドーム、青い装飾タイルの八角形外壁、柱で縁取られた中央入口が整合する。",
+        "152cadd8-7323-4de2-ba65-fce95747d576、b95b59ef-83ed-41ab-a211-cbddcead59f3と、ドーム裾の胴部・アーチ窓列・中央入口の形が一致し、既存の同一群と整合する。"
+      ],
+      "building_id": "dome-of-the-rock",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Dome of the Rock (\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"個別建築名と全画像のFacade of the Dome of the Rockカテゴリ一致。金色ドーム、タイル貼りの八角形外壁を画像照合。2015/2019/2020年の異なる空・照明状態。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Dome of the Rock (5).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Dome_of_the_Rock_(5).jpg",
+      "candidate_group": [
+        "152cadd8-7323-4de2-ba65-fce95747d576",
+        "78f5d063-b33b-4808-b31a-8d441737484d",
+        "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+      ],
+      "judged_group": [
+        "152cadd8-7323-4de2-ba65-fce95747d576",
+        "78f5d063-b33b-4808-b31a-8d441737484d",
+        "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+      ],
+      "comparison": "match"
+    },
+    "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b": {
+      "building_name": "ストラスブール大聖堂",
+      "evidence": [
+        "titleとsource_urlがStrasbourg Cathedralを指定し、赤褐色石造の西正面、大きな中央バラ窓、向かって左だけの高い透かし尖塔が一致する。",
+        "a86f43ed-fdc4-4cea-8335-76d67291002dは下から見上げた中央入口の彫刻アーチで、今回の西正面中央入口の尖頭形と密な彫刻列と整合する。近接画像との細部の直接一致は限られるが、固有名・西正面中央portalという入力の位置情報も併せて同一建築と判断する。"
+      ],
+      "building_id": "strasbourg-cathedral",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Strasbourg Cathedral\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"Strasbourg Cathedral名、西正面/中央portalカテゴリを照合。西正面の全景とその中央portalを同一建築として採用。2009年夜景と2014年昼景。画角・範囲の違いが大きい。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Strasbourg Cathedral Exterior - Diliff.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Strasbourg_Cathedral_Exterior_-_Diliff.jpg",
+      "candidate_group": [
+        "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+        "a86f43ed-fdc4-4cea-8335-76d67291002d"
+      ],
+      "judged_group": [
+        "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+        "a86f43ed-fdc4-4cea-8335-76d67291002d"
+      ],
+      "comparison": "match"
+    },
+    "9d176920-0aac-4077-95b1-a5aef5677aac": {
+      "building_name": "聖パウルス大聖堂（ミュンスター）",
+      "evidence": [
+        "titleとsource_urlがミュンスターのSt.-Paulus-Domを指定し、角形の双塔、低いピラミッド状屋根、石造身廊が整合する。",
+        "5fe4bf8c-bc24-4838-80b2-261f412d48e8の夜景と撮影方向は異なるが、左側に見える双塔の輪郭、屋根、アーチ窓の段構成が共通する。既存候補の同一群と一致する。"
+      ],
+      "building_id": "muenster-st-paulus",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Münster, St.-Paulus-Dom --\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"同一のSt.-Paulus-Dom名と全画像同一座標51.963100,7.625560。双塔と身廊・石造外装を画像照合。2014年夜景と昼景、2020年早朝の斜光を含む。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Münster, St.-Paulus-Dom -- 2014 -- 6847.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:M%C3%BCnster,_St.-Paulus-Dom_--_2014_--_6847.jpg",
+      "candidate_group": [
+        "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+        "9d176920-0aac-4077-95b1-a5aef5677aac"
+      ],
+      "judged_group": [
+        "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+        "9d176920-0aac-4077-95b1-a5aef5677aac"
+      ],
+      "comparison": "match"
+    },
+    "a86f43ed-fdc4-4cea-8335-76d67291002d": {
+      "building_name": "ストラスブール大聖堂",
+      "evidence": [
+        "title・source_urlはストラスブール大聖堂西正面中央入口を指定する。見上げ構図の幾重もの尖頭アーチと密集した石造人物彫刻がその入口の説明と整合する。",
+        "87dd50e2-64b3-47c7-8d56-e5d0b795ae2bの正面中央入口と尖頭形・彫刻の密度が整合する。全景との細部の直接照合には限界があるが、同一の固有名と中央portalという位置情報を併用して同一建築と判断する。"
+      ],
+      "building_id": "strasbourg-cathedral",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Strasbourg Cathedral\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"Strasbourg Cathedral名、西正面/中央portalカテゴリを照合。西正面の全景とその中央portalを同一建築として採用。2009年夜景と2014年昼景。画角・範囲の違いが大きい。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Strasbourg Cathedral, central portal of west facade, looking up from below.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Strasbourg_Cathedral,_central_portal_of_west_facade,_looking_up_from_below.jpg",
+      "candidate_group": [
+        "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+        "a86f43ed-fdc4-4cea-8335-76d67291002d"
+      ],
+      "judged_group": [
+        "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+        "a86f43ed-fdc4-4cea-8335-76d67291002d"
+      ],
+      "comparison": "match"
+    },
+    "b2a4d9a0-a875-42c3-933e-d158784b3a69": {
+      "building_name": "掛川城天守",
+      "evidence": [
+        "titleとsource_urlが掛川城を示し、白壁の重層天守、上層の張り出し、曲線破風と瓦屋根が一致する。",
+        "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0の奥の天守と、頂部屋根・層の構成・大きな曲線破風が一致する。こちらは接近した構図で、既存候補の同一群と整合する。"
+      ],
+      "building_id": "kakegawa-keep",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Kakegawa Castle\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"掛川城天守を指定する2タイトルとKeep Tower/Remote viewsカテゴリ。近傍座標と天守外観を画像照合。同日の11:10/11:53、異なる構図・日照面。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Kakegawa Castle.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Kakegawa_Castle.jpg",
+      "candidate_group": [
+        "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+        "b2a4d9a0-a875-42c3-933e-d158784b3a69"
+      ],
+      "judged_group": [
+        "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+        "b2a4d9a0-a875-42c3-933e-d158784b3a69"
+      ],
+      "comparison": "match"
+    },
+    "b95b59ef-83ed-41ab-a211-cbddcead59f3": {
+      "building_name": "岩のドーム",
+      "evidence": [
+        "title・source_urlのDome of the Rockという固有名と、金色ドーム、タイル貼りの八角形外壁、中央アーチ入口、下部柱列が一致する。",
+        "152cadd8-7323-4de2-ba65-fce95747d576、78f5d063-b33b-4808-b31a-8d441737484dと、胴部の模様・上部アーチ窓列・中央入口の形が共通し、既存候補の同一群と整合する。"
+      ],
+      "building_id": "dome-of-the-rock",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Dome of the Rock (\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"個別建築名と全画像のFacade of the Dome of the Rockカテゴリ一致。金色ドーム、タイル貼りの八角形外壁を画像照合。2015/2019/2020年の異なる空・照明状態。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Dome of the Rock (4).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Dome_of_the_Rock_(4).jpg",
+      "candidate_group": [
+        "152cadd8-7323-4de2-ba65-fce95747d576",
+        "78f5d063-b33b-4808-b31a-8d441737484d",
+        "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+      ],
+      "judged_group": [
+        "152cadd8-7323-4de2-ba65-fce95747d576",
+        "78f5d063-b33b-4808-b31a-8d441737484d",
+        "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+      ],
+      "comparison": "match"
+    },
+    "e6ebd198-c97c-4fb8-be9e-c5d25d34e219": {
+      "building_name": "聖ヴィクトル教会（デュルメン）",
+      "evidence": [
+        "尖塔を載せた角塔、細長い身廊、右側の大きな尖頭窓と石造控壁が、DülmenのSt.-Viktor-Kircheを示すtitle・URL・撮影地情報と整合する。",
+        "identity-candidatesの43e514be-8b23-48a9-b70b-2f4dd2b3edf5は名称・座標による候補だが、その原画像は今回の入力外のため画像間の同一性は確定しない。"
+      ],
+      "building_id": "duelmen-st-viktor",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。\", \"title_match\": \"Dülmen, St.-Viktor-Kirche --\", \"visual_review\": \"担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。\", \"reason\": \"同一のSt. Viktor教会名、全画像同一座標51.828800,7.278100、個別建築カテゴリExterior of St. Viktor (Dülmen)。塔・屋根・石造外装を画像照合。夕夜間照明と昼間・積雪を含む。\", \"reviewer\": \"complex_worker-issue46 (AI)\", \"human_confirmation\": false}",
+      "title": "File:Dülmen, St.-Viktor-Kirche -- 2013 -- 5351.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_St.-Viktor-Kirche_--_2013_--_5351.jpg",
+      "candidate_group": [
+        "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+        "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+      ],
+      "judged_group": [
+        "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+        "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+      ],
+      "comparison": "match"
+    },
+    "42debd18-3658-4024-83d3-70f4553022af": {
+      "building_name": "ケルン大聖堂",
+      "evidence": [
+        "高く積層した尖頭アーチ、密集した石造小尖塔、細い縦材の塔外壁がtitle・URLのCologne Cathedralと整合する。上部は画面外で、双塔全体の比較はできない。"
+      ],
+      "building_id": "commons:Gothic façade of Cologne Cathedral under a summer sky.jpg",
+      "building_evidence": "{\"title\": \"File:Gothic façade of Cologne Cathedral under a summer sky.jpg\", \"location\": null, \"categories\": [\"Category:All media needing categories as of 2026\", \"Category:CC-BY-4.0\", \"Category:Creative Commons Attribution 4.0 missing SDC copyright license\", \"Category:Creative Commons Attribution missing SDC copyright status\", \"Category:Media needing categories as of 21 June 2026\", \"Category:Self-published work\", \"Category:Self-published work missing SDC copyright license\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Gothic façade of Cologne Cathedral under a summer sky.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Gothic_fa%C3%A7ade_of_Cologne_Cathedral_under_a_summer_sky.jpg",
+      "candidate_group": [
+        "42debd18-3658-4024-83d3-70f4553022af"
+      ],
+      "judged_group": [
+        "42debd18-3658-4024-83d3-70f4553022af"
+      ],
+      "comparison": "not_grouped"
+    },
+    "f15d1706-9298-420a-a52f-e5f7cc6194f1": {
+      "building_name": "トプカプ宮殿・黒人宦官のモスク",
+      "evidence": [
+        "青緑のタイル壁、糸杉文様、上部の円形書装飾、上下に並ぶ格子窓が見える。title・URLのTopkapi Palaceと、撮影座標および黒人宦官のモスク南外壁という出典情報に整合する。"
+      ],
+      "building_id": "commons:Topkapi Palace, Istanbul 2.jpg",
+      "building_evidence": "{\"title\": \"File:Topkapi Palace, Istanbul 2.jpg\", \"location\": \"41.010789, 28.979242\", \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Ottoman cypress ornament\", \"Category:Photographs taken on 2022-10-13\", \"Category:Self-published work\", \"Category:South exterior of Mosque of the Black Eunuchs in Hall of the Ablution Fountain (Topkapı Palace)\", \"Category:Tiles in Topkapı Palace\", \"Category:Uploaded with Mobile/Android\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Topkapi Palace, Istanbul 2.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Topkapi_Palace,_Istanbul_2.jpg",
+      "candidate_group": [
+        "f15d1706-9298-420a-a52f-e5f7cc6194f1"
+      ],
+      "judged_group": [
+        "f15d1706-9298-420a-a52f-e5f7cc6194f1"
+      ],
+      "comparison": "not_grouped"
+    },
+    "1a77c325-feb8-4f70-8ee5-74e50b2e9dbb": {
+      "building_name": "大牟田熊野神社 拝殿",
+      "evidence": [
+        "朱塗りの格子戸・丸柱、曲線を持つ向拝、白い提灯と青い幕が見え、title・URLの大牟田熊野神社拝殿という出典と整合する。正面近景のため屋根全体の照合には限界がある。"
+      ],
+      "building_id": "commons:大牟田熊野神社拝殿.jpg",
+      "building_evidence": "{\"title\": \"File:大牟田熊野神社拝殿.jpg\", \"location\": null, \"categories\": [\"Category:CC-Zero\", \"Category:Self-published work\", \"Category:Shrines in Fukuoka prefecture\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:大牟田熊野神社拝殿.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E7%89%9F%E7%94%B0%E7%86%8A%E9%87%8E%E7%A5%9E%E7%A4%BE%E6%8B%9D%E6%AE%BF.jpg",
+      "candidate_group": [
+        "1a77c325-feb8-4f70-8ee5-74e50b2e9dbb"
+      ],
+      "judged_group": [
+        "1a77c325-feb8-4f70-8ee5-74e50b2e9dbb"
+      ],
+      "comparison": "not_grouped"
+    },
+    "0969919d-870b-4b25-9601-4b8296cfe578": {
+      "building_name": null,
+      "evidence": [
+        "石畳の狭い路地、連続する石造の跨道アーチ、青い左壁はRhodesの路地という撮影地・カテゴリに整合する。titleは一般語の列挙で個別建築名がなく、特定の建物を同定できない。"
+      ],
+      "building_id": "commons:Tree-sun-road-street-house-town-1063073-pxhere.jpg",
+      "building_evidence": "{\"title\": \"File:Tree-sun-road-street-house-town-1063073-pxhere.jpg\", \"location\": \"36.441703, 28.224520\", \"categories\": [\"Category:Arches in Rhodes\", \"Category:CC-Zero\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Images from Pxhere\", \"Category:Medieval streets and alleys in Rhodes\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Tree-sun-road-street-house-town-1063073-pxhere.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Tree-sun-road-street-house-town-1063073-pxhere.jpg",
+      "candidate_group": [
+        "0969919d-870b-4b25-9601-4b8296cfe578"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "dbb97cc3-14aa-440b-bd89-9d07982f4717": {
+      "building_name": "Koerner House（パームスプリングス）",
+      "evidence": [
+        "平屋の低い横長屋根、中央が後退した中庭状の正面、左右の壁面とヤシの前庭が見える。title・URLのKoerner House、Palm Springsの座標、mid-century modernという出典情報と整合する。外観だけによる固有性には限界がある。"
+      ],
+      "building_id": "commons:Koerner House 01.jpg",
+      "building_evidence": "{\"title\": \"File:Koerner House 01.jpg\", \"location\": \"33.806229, -116.532571\", \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Koerner House\", \"Category:May 2018 in California\", \"Category:Mid-century modern\", \"Category:National Register of Historic Places with known IDs\", \"Category:Photographs of Palm Springs, California by Farragutful\", \"Category:Self-published work\", \"Category:United States photographs taken on 2018-05-17\", \"Category:Uploaded via Campaign:wlm-us\", \"Category:Wiki Loves Monuments 2017 in the United States unreviewed\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Koerner House 01.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Koerner_House_01.jpg",
+      "candidate_group": [
+        "dbb97cc3-14aa-440b-bd89-9d07982f4717"
+      ],
+      "judged_group": [
+        "dbb97cc3-14aa-440b-bd89-9d07982f4717"
+      ],
+      "comparison": "not_grouped"
+    },
+    "0bec8585-bdc5-4856-9bde-8bd6b4e6e52e": {
+      "building_name": null,
+      "evidence": [
+        "木の板壁、格子状の入口、深い瓦軒、灰色の煉瓦基壇が見え、石屏古城の伝統民居というtitle・撮影地と整合する。複数住宅をまとめた出典で個別の家名がなく、この建物の固有名は確定できない。"
+      ],
+      "building_id": "commons:2026-04-30 石屏古城区传统民居建筑群.jpg",
+      "building_evidence": "{\"title\": \"File:2026-04-30 石屏古城区传统民居建筑群.jpg\", \"location\": \"23.713300, 102.491234\", \"categories\": [\"Category:CC-BY-4.0\", \"Category:China photographs taken on 2026-04-30\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Images from Wiki Loves Monuments 2026\", \"Category:Images from Wiki Loves Monuments 2026 in China\", \"Category:Images from Wiki Loves Monuments missing SDC creator\", \"Category:Images from Wiki Loves Monuments missing SDC depicts\", \"Category:Images from Wiki Loves Monuments missing SDC inception\", \"Category:Images from Wiki Loves Monuments missing SDC location of creation\", \"Category:Images from Wiki Loves Monuments missing SDC participant in\", \"Category:Images from Wiki Loves Monuments missing SDC source of file\", \"Category:Photographs by 源義信\", \"Category:Residential houses in Shiping Ancient City\", \"Category:Self-published work\", \"Category:Signs of cultural heritage monuments in Yunnan\", \"Category:Uploaded via Campaign:wlm-cn\", \"Category:WLM 2026 China unreviewed\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:2026-04-30 石屏古城区传统民居建筑群.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:2026-04-30_%E7%9F%B3%E5%B1%8F%E5%8F%A4%E5%9F%8E%E5%8C%BA%E4%BC%A0%E7%BB%9F%E6%B0%91%E5%B1%85%E5%BB%BA%E7%AD%91%E7%BE%A4.jpg",
+      "candidate_group": [
+        "0bec8585-bdc5-4856-9bde-8bd6b4e6e52e"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "48582fbc-428f-4cac-aff7-e19e53749ecc": {
+      "building_name": "サン・フロラン参事会教会（ニーデラースラッハ）",
+      "evidence": [
+        "赤褐色の石造正面、両端の細い八角塔、中央の大きな円窓、上部の尖頭アーチと急勾配屋根、右へ続く身廊が、title・URL・撮影座標およびCollégiale Saint-Florent de Niederhaslachというカテゴリに整合する。"
+      ],
+      "building_id": "commons:Niederhaslach Church full frontal.jpg",
+      "building_evidence": "{\"title\": \"File:Niederhaslach Church full frontal.jpg\", \"location\": \"48.543100, 7.341517\", \"categories\": [\"Category:Base Mérimée\", \"Category:CC-BY-SA-3.0\", \"Category:Collégiale Saint-Florent de Niederhaslach\", \"Category:Cultural heritage monuments in France with known IDs\", \"Category:France photographs taken on 2008-06-27\", \"Category:GFDL\", \"Category:Gothic Revival church towers in Alsace\", \"Category:Gothic church facades in Bas-Rhin\", \"Category:Gothic west facades in France\", \"Category:License migration redundant\", \"Category:Mérimée with PA parameter\", \"Category:Mérimée without type parameter\", \"Category:Quality images\", \"Category:Quality images by Taxiarchos228\", \"Category:Quality images of Niederhaslach\", \"Category:Self-published work\", \"Category:Taken with Nikon D80\", \"Category:Valued images by Taxiarchos228\", \"Category:Valued images of Niederhaslach\", \"Category:Valued images of churches\", \"Category:Valued images promoted 2012-05\", \"Category:Valued images sorted by promotion date\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Niederhaslach Church full frontal.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Niederhaslach_Church_full_frontal.jpg",
+      "candidate_group": [
+        "48582fbc-428f-4cac-aff7-e19e53749ecc"
+      ],
+      "judged_group": [
+        "48582fbc-428f-4cac-aff7-e19e53749ecc"
+      ],
+      "comparison": "not_grouped"
+    },
+    "4bb9c00c-5ea7-4902-b897-dc72a17d762e": {
+      "building_name": "秋月城 裏門",
+      "evidence": [
+        "長い石段の上にある低い瓦屋根の門、右側の折れた高い石垣、門脇の樹木が見える。title・URLのUra mon gate Chikuzen Akizuki Castle、秋月城のカテゴリ、撮影座標と整合する。"
+      ],
+      "building_id": "commons:Ura mon gate Chikuzen Akizuki Castle.jpg",
+      "building_evidence": "{\"title\": \"File:Ura mon gate Chikuzen Akizuki Castle.jpg\", \"location\": \"33.466000, 130.694500\", \"categories\": [\"Category:Akizuki Castle\", \"Category:CC-BY-SA-3.0\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Self-published work\", \"Category:Taken with iPhone 4S\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Ura mon gate Chikuzen Akizuki Castle.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Ura_mon_gate_Chikuzen_Akizuki_Castle.jpg",
+      "candidate_group": [
+        "4bb9c00c-5ea7-4902-b897-dc72a17d762e"
+      ],
+      "judged_group": [
+        "4bb9c00c-5ea7-4902-b897-dc72a17d762e"
+      ],
+      "comparison": "not_grouped"
+    },
+    "387e2ba9-cd21-41f5-a470-2d9b09417610": {
+      "building_name": "金剛證寺 本堂（三重県）",
+      "evidence": [
+        "大きな反りのある寄棟系の屋根、朱塗りの正面と柱、右隣の切妻屋根の白壁・朱の木組、前庭の石灯籠と石段が見える。Kongoshoji(Mie)というtitle・URLとMain Hall, Kongōshō-jiの出典情報に整合する。"
+      ],
+      "building_id": "commons:Kongoshoji(Mie) 06.JPG",
+      "building_evidence": "{\"title\": \"File:Kongoshoji(Mie) 06.JPG\", \"location\": null, \"categories\": [\"Category:Assumed own work\", \"Category:CC-BY-2.5\", \"Category:CC-BY-SA-3.0-migrated\", \"Category:Files with no machine-readable source\", \"Category:GFDL\", \"Category:License migration redundant\", \"Category:Main Hall, Kongōshō-ji\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Kongoshoji(Mie) 06.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Kongoshoji(Mie)_06.JPG",
+      "candidate_group": [
+        "387e2ba9-cd21-41f5-a470-2d9b09417610"
+      ],
+      "judged_group": [
+        "387e2ba9-cd21-41f5-a470-2d9b09417610"
+      ],
+      "comparison": "not_grouped"
+    },
+    "40e6cdac-535b-4852-b17c-977a2bf02fef": {
+      "building_name": null,
+      "evidence": [
+        "主被写体は六角形の灯籠を束ねた黒い装飾街灯で、背景は青黒い木骨と白い縦長窓の建物。",
+        "title・source_urlはCelleの街灯を示すが背景建物の固有名や番地は示さず、建築の同定根拠が不足する。"
+      ],
+      "building_id": "commons:Celle - Kandelaber.jpg",
+      "building_evidence": "{\"title\": \"File:Celle - Kandelaber.jpg\", \"location\": null, \"categories\": [\"Category:Brackets (lamp post components)\", \"Category:CC-BY-SA-3.0\", \"Category:Electric lanterns\", \"Category:Exterior lanterns in Lower Saxony\", \"Category:Hexagonal lanterns\", \"Category:Self-published work\", \"Category:Street lights in Lower Saxony\", \"Category:Streets in Celle\", \"Category:Timber framing in Celle\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Celle - Kandelaber.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Celle_-_Kandelaber.jpg",
+      "candidate_group": [
+        "40e6cdac-535b-4852-b17c-977a2bf02fef"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "0b2cd407-bb8e-4b6b-b06e-659f7de531bb": {
+      "building_name": "リンブルク大聖堂",
+      "evidence": [
+        "赤褐色の縁取りと白い壁面、左右の多層塔、中央の大きな円形窓と深いアーチ入口が見える。",
+        "title・source_urlのLimburg Cathedral、西正面カテゴリ、位置50.388731, 8.066508と正面構成が整合する。"
+      ],
+      "building_id": "commons:Limburg an der Lahn - Domplatz - View East & Up on Limburger Dom (Limburg Cathedral) 1180 - Late Romanesque architecture - Early Gothic architecture.jpg",
+      "building_evidence": "{\"title\": \"File:Limburg an der Lahn - Domplatz - View East & Up on Limburger Dom (Limburg Cathedral) 1180 - Late Romanesque architecture - Early Gothic architecture.jpg\", \"location\": \"50.388731, 8.066508\", \"categories\": [\"Category:1180s architecture\", \"Category:CC-BY-SA-4.0\", \"Category:Domplatz (Limburg an der Lahn)\", \"Category:Hesse photographs taken on 2011-03-27\", \"Category:Limburg an der Lahn in the 21st century\", \"Category:Photographs of Limburg an der Lahn\", \"Category:Self-published work\", \"Category:West facade of the Limburg Cathedral\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Limburg an der Lahn - Domplatz - View East & Up on Limburger Dom (Limburg Cathedral) 1180 - Late Romanesque architecture - Early Gothic architecture.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Limburg_an_der_Lahn_-_Domplatz_-_View_East_%26_Up_on_Limburger_Dom_(Limburg_Cathedral)_1180_-_Late_Romanesque_architecture_-_Early_Gothic_architecture.jpg",
+      "candidate_group": [
+        "0b2cd407-bb8e-4b6b-b06e-659f7de531bb"
+      ],
+      "judged_group": [
+        "0b2cd407-bb8e-4b6b-b06e-659f7de531bb"
+      ],
+      "comparison": "not_grouped"
+    },
+    "16ebd1da-48f4-4a13-bed7-26898cc25e85": {
+      "building_name": "甲府城の石垣",
+      "evidence": [
+        "大小の不整形石を積んだ長い石垣と、上部の白い塀・灰色の瓦状の水平縁が見える。",
+        "title・source_urlの甲府城石垣およびKofu Castleカテゴリと被写体が整合する。ただし石垣形状だけで城内の区間までは特定できない。"
+      ],
+      "building_id": "commons:甲府城石垣 - panoramio.jpg",
+      "building_evidence": "{\"title\": \"File:甲府城石垣 - panoramio.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-3.0\", \"Category:Dry stone walls of castles in Japan\", \"Category:Japan photographs taken on 2007-09-26\", \"Category:Kofu Castle\", \"Category:Panoramio files uploaded by Panoramio upload bot\", \"Category:Panoramio images reviewed by trusted users\", \"Category:Photos from Panoramio\", \"Category:September 2007 in Yamanashi prefecture\", \"Category:Taken with KDDI Toshiba W51T\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:甲府城石垣 - panoramio.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:%E7%94%B2%E5%BA%9C%E5%9F%8E%E7%9F%B3%E5%9E%A3_-_panoramio.jpg",
+      "candidate_group": [
+        "16ebd1da-48f4-4a13-bed7-26898cc25e85"
+      ],
+      "judged_group": [
+        "16ebd1da-48f4-4a13-bed7-26898cc25e85"
+      ],
+      "comparison": "not_grouped"
+    },
+    "f9eae5ad-ae90-4127-9400-136f6bb5bc98": {
+      "building_name": "Mittlere Holdergasse 42（マールバッハ・アム・ネッカー）",
+      "evidence": [
+        "中央に急な三角破風、赤い木骨の斜材と白い充填壁、中央上階の窓、右下の入口をもつ小住宅が見える。",
+        "title・source_urlの番地、位置48.941397, 9.255533、同番地の木骨住宅カテゴリが中央の住宅の形状と整合する。"
+      ],
+      "building_id": "commons:Marbach a.N. - Altstadt - Mittlere Holdergasse 42.jpg",
+      "building_evidence": "{\"title\": \"File:Marbach a.N. - Altstadt - Mittlere Holdergasse 42.jpg\", \"location\": \"48.941397, 9.255533\", \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Clouds and blue sky in Landkreis Ludwigsburg\", \"Category:Files with coordinates missing SDC location of creation (48° N, 9° E)\", \"Category:Images from Wiki Loves Monuments 2018\", \"Category:Images from Wiki Loves Monuments 2018, DE-BW\", \"Category:Images from Wiki Loves Monuments 2018 in Germany\", \"Category:Images from Wiki Loves Monuments missing SDC depicts\", \"Category:Images from Wiki Loves Monuments missing SDC location of creation\", \"Category:Information field template with formatting\", \"Category:Marbach am Neckar photographs taken on 2018-06-18\", \"Category:Mittlere Holdergasse 42 (Marbach am Neckar)\", \"Category:Photographs by Aristeas - by ID\", \"Category:Photographs by Aristeas - by name\", \"Category:Photographs of Marbach am Neckar by Aristeas\", \"Category:Photographs taken by Aristeas in 2018\", \"Category:Quality images\", \"Category:Quality images by Aristeas\", \"Category:Quality images from Wiki Loves Monuments 2018 in Germany\", \"Category:Quality images missing SDC depicts\", \"Category:Quality images of Marbach am Neckar\", \"Category:Quality images of cultural heritage monuments in Landkreis Ludwigsburg\", \"Category:Quality images of timber framed houses in Baden-Württemberg\", \"Category:Quality images of timber framed houses in Germany\", \"Category:SRGB images\", \"Category:Self-published work\", \"Category:Taken with Sony ILCE-7M2 and Zeiss Loxia 21mm F2.8\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Marbach a.N. - Altstadt - Mittlere Holdergasse 42.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Marbach_a.N._-_Altstadt_-_Mittlere_Holdergasse_42.jpg",
+      "candidate_group": [
+        "f9eae5ad-ae90-4127-9400-136f6bb5bc98"
+      ],
+      "judged_group": [
+        "f9eae5ad-ae90-4127-9400-136f6bb5bc98"
+      ],
+      "comparison": "not_grouped"
+    },
+    "3fcf5929-cc75-453f-a95e-7c47aa745076": {
+      "building_name": "スルタン・イブラヒム・ハン・モスク（レティムノ）",
+      "evidence": [
+        "淡い大きな半球ドームを載せた方形の粗石造建築で、小窓と低い入口、手前左隅の突出部と隅石が見える。",
+        "title・source_urlのSultan Ibrahim Khan mosque, Rethymnoおよび外観・隅石カテゴリと、このドームと方形石造壁の構成が整合する。"
+      ],
+      "building_id": "commons:Sultan Ibrahim Khan mosque, Rethymno.jpg",
+      "building_evidence": "{\"title\": \"File:Sultan Ibrahim Khan mosque, Rethymno.jpg\", \"location\": null, \"categories\": [\"Category:2009 in Rethymno\", \"Category:April 2009 Greece photographs\", \"Category:CC-BY-SA-3.0\", \"Category:Exterior of mosque of Sultan Ibrahim\", \"Category:GFDL\", \"Category:License migration redundant\", \"Category:Quoins (architecture) in Rethymno\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Sultan Ibrahim Khan mosque, Rethymno.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Sultan_Ibrahim_Khan_mosque,_Rethymno.jpg",
+      "candidate_group": [
+        "3fcf5929-cc75-453f-a95e-7c47aa745076"
+      ],
+      "judged_group": [
+        "3fcf5929-cc75-453f-a95e-7c47aa745076"
+      ],
+      "comparison": "not_grouped"
+    },
+    "3b1e801f-0278-430b-b2d1-47bf8e6f3c5a": {
+      "building_name": "慈眼寺（野崎観音）本堂",
+      "evidence": [
+        "灰色瓦の大屋根、白壁と木柱、三つ巴などの紋を付けた紫の幕が側面から正面へ連続する堂が見える。",
+        "title・source_urlのNozaki-kannonと、慈眼寺本堂を示すカテゴリが寺院建築と紫幕の外観に整合する。"
+      ],
+      "building_id": "commons:Nozaki-kannon.jpg",
+      "building_evidence": "{\"title\": \"File:Nozaki-kannon.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-3.0-migrated\", \"Category:GFDL\", \"Category:Hon-dō in Fukujuzan Jigenji Nozaki Kannon (Daito Osaka)\", \"Category:Jigenji (Daito, Osaka)\", \"Category:License migration completed\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Nozaki-kannon.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Nozaki-kannon.jpg",
+      "candidate_group": [
+        "3b1e801f-0278-430b-b2d1-47bf8e6f3c5a"
+      ],
+      "judged_group": [
+        "3b1e801f-0278-430b-b2d1-47bf8e6f3c5a"
+      ],
+      "comparison": "not_grouped"
+    },
+    "854143c0-659e-4546-9723-f00bd05e94a4": {
+      "building_name": null,
+      "evidence": [
+        "道路の向こうに横長の茶色い一階建て、暗い切妻屋根、中央の白い煙突と複数の白い格子窓が見える。",
+        "titleはLihulaと煙突の推測を示すだけで番地・固有名がなく、位置情報だけではこの一般住宅の固有名を確定できない。"
+      ],
+      "building_id": "commons:Lihula mantelkorsten?.jpg",
+      "building_evidence": "{\"title\": \"File:Lihula mantelkorsten?.jpg\", \"location\": \"58.685987, 23.832411\", \"categories\": [\"Category:Buildings in Lihula\", \"Category:CC-BY-SA-4.0\", \"Category:Elav vana linn\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Self-published work\", \"Category:Uploaded via Campaign:Elav vana linn\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Lihula mantelkorsten?.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Lihula_mantelkorsten%3F.jpg",
+      "candidate_group": [
+        "854143c0-659e-4546-9723-f00bd05e94a4"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "2c774ca1-3139-4797-9d34-3c3bf08d3544": {
+      "building_name": "富強胡同6号の門",
+      "evidence": [
+        "灰色煉瓦の門柱と壁、赤い木製門枠、灰色瓦の庇、奥の白い面と下部の石彫状部分が見える。",
+        "title・source_urlがNo.6 Fuqiang Hutongを示し、門脇の表示と胡同住宅の門構えが整合する。表示の全文は小さく判読困難で、奥の建築や所有者名までは同定しない。"
+      ],
+      "building_id": "commons:No.6 Fuqiang Hutong.JPG",
+      "building_evidence": "{\"title\": \"File:No.6 Fuqiang Hutong.JPG\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-4.0,3.0,2.5,2.0,1.0\", \"Category:December 2009 in Beijing\", \"Category:GFDL\", \"Category:Hutong in Beijing\", \"Category:License migration redundant\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:No.6 Fuqiang Hutong.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:No.6_Fuqiang_Hutong.JPG",
+      "candidate_group": [
+        "2c774ca1-3139-4797-9d34-3c3bf08d3544"
+      ],
+      "judged_group": [
+        "2c774ca1-3139-4797-9d34-3c3bf08d3544"
+      ],
+      "comparison": "not_grouped"
+    },
+    "f331a956-ff98-4a04-9083-55323fafa77e": {
+      "building_name": "新宮神社（大津市）拝殿",
+      "evidence": [
+        "中央の唐破風屋根をもつ赤茶色の社殿、正面の石階段、左右の石灯籠と文字入りの提灯が対称に並ぶ。",
+        "title・source_urlのShingu-jinja, Otsuおよび拝殿・新宮神社カテゴリが社殿と石段の構成に整合する。"
+      ],
+      "building_id": "commons:Shingu-jinja, Otsu 202601-7.jpg",
+      "building_evidence": "{\"title\": \"File:Shingu-jinja, Otsu 202601-7.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Haiden in Shiga prefecture\", \"Category:January 2026 in Shiga prefecture\", \"Category:Self-published work\", \"Category:Shingu-jinja (Otsu)\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Shingu-jinja, Otsu 202601-7.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Shingu-jinja,_Otsu_202601-7.jpg",
+      "candidate_group": [
+        "f331a956-ff98-4a04-9083-55323fafa77e"
+      ],
+      "judged_group": [
+        "f331a956-ff98-4a04-9083-55323fafa77e"
+      ],
+      "comparison": "not_grouped"
+    },
+    "3c9776c3-bb29-4e64-b583-0db13aa1bf51": {
+      "building_name": null,
+      "evidence": [
+        "灰色煉瓦と赤い門柱、重なった灰色瓦の門屋根、奥へ続く細い路地が見える。",
+        "title・source_urlとカテゴリは北京の胡同の門という一般的説明に留まり、番地や固有名を示さない。形状だけで特定建築やbatch内の別の門との同一性を確定できない。"
+      ],
+      "building_id": "commons:Hutong Jiemen (Snowyowls).jpg",
+      "building_evidence": "{\"title\": \"File:Hutong Jiemen (Snowyowls).jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-1.0\", \"Category:Chinese gates in Beijing\", \"Category:Files tagged CC-by-sa-old\", \"Category:Hutong in Beijing\", \"Category:Photographs taken on 2004-09-19\", \"Category:Pictures of the day (2005)\", \"Category:Siheyuan in China\", \"Category:Taken with Nikon Coolpix 4500\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Hutong Jiemen (Snowyowls).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Hutong_Jiemen_(Snowyowls).jpg",
+      "candidate_group": [
+        "3c9776c3-bb29-4e64-b583-0db13aa1bf51"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "b0a15697-a70b-4282-b5b8-a5e1e7660e48": {
+      "building_name": "ララ・ムスタファ・パシャ・モスク（旧聖ニコラオス大聖堂、ファマグスタ）",
+      "evidence": [
+        "原画像は三つの尖頭入口と中央の大きな尖頭トレーサリー窓、上端に切れた二塔を持つ黄褐色のゴシック正面である。",
+        "title・source_urlがLalaMustafaPasaMosqueを明示し、個別カテゴリもファマグスタの旧聖ニコラオス大聖堂を指す。三連入口と中央窓を持つ旧大聖堂の外観と整合する。外部照合や人手確認は行っていない。"
+      ],
+      "building_id": "commons:LalaMustafaPasaMosque.jpg",
+      "building_evidence": "{\"title\": \"File:LalaMustafaPasaMosque.jpg\", \"location\": null, \"categories\": [\"Category:14th-century architecture\", \"Category:Gothic facades\", \"Category:Lala Mustafa Pasha Mosque (Saint Nicholas Cathedral, Famagusta)\", \"Category:PD-author\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:LalaMustafaPasaMosque.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:LalaMustafaPasaMosque.jpg",
+      "candidate_group": [
+        "b0a15697-a70b-4282-b5b8-a5e1e7660e48"
+      ],
+      "judged_group": [
+        "b0a15697-a70b-4282-b5b8-a5e1e7660e48"
+      ],
+      "comparison": "not_grouped"
+    },
+    "d6731faf-a8ff-4341-a6d3-a6f499e90bca": {
+      "building_name": "ヤズドのジャーメ・モスク時計塔",
+      "evidence": [
+        "原画像は矩形の細長い塔で、頂部近くに白い時計文字盤、その下に高い尖頭形の装飾壁がある。",
+        "titleと個別カテゴリがヤズドのジャーメ・モスク時計塔を指し、入力座標31.899036,54.371786と時計を持つ塔の画像が整合する。モスク本体とは区別した。"
+      ],
+      "building_id": "commons:میدان ساعت مسجد جامع یزد1.jpg",
+      "building_evidence": "{\"title\": \"File:میدان ساعت مسجد جامع یزد1.jpg\", \"location\": \"31.899036, 54.371786\", \"categories\": [\"Category:2012 in Yazd\", \"Category:Automobiles in Yazd\", \"Category:CC-BY-SA-4.0\", \"Category:Images from Wiki Loves Monuments 2018\", \"Category:Images from Wiki Loves Monuments 2018 in Iran\", \"Category:Jameh Mosque Clock Tower (Yazd)\", \"Category:Self-published work\", \"Category:Streets in Yazd\", \"Category:Trees in Yazd\", \"Category:Uploaded via Campaign:wlm-ir\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:میدان ساعت مسجد جامع یزد1.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:%D9%85%DB%8C%D8%AF%D8%A7%D9%86_%D8%B3%D8%A7%D8%B9%D8%AA_%D9%85%D8%B3%D8%AC%D8%AF_%D8%AC%D8%A7%D9%85%D8%B9_%DB%8C%D8%B2%D8%AF1.jpg",
+      "candidate_group": [
+        "d6731faf-a8ff-4341-a6d3-a6f499e90bca"
+      ],
+      "judged_group": [
+        "d6731faf-a8ff-4341-a6d3-a6f499e90bca"
+      ],
+      "comparison": "not_grouped"
+    },
+    "a895d199-82eb-4f0a-aeb8-be7cbd3e2702": {
+      "building_name": "下照姫神社（福岡市）の拝殿",
+      "evidence": [
+        "原画像は正面から見上げた小規模な木造社殿で、左右の長い柱、深い妻屋根、注連縄と幕、前面石段が見える。",
+        "title・source_urlが福岡市博多区祇園町のShitateruhime Shrine Honden Haidenを明示し、個別神社カテゴリと座標33.590861,130.411917が一致する。画像では手前の拝殿を主対象とし、奥の本殿の形状は推測しない。"
+      ],
+      "building_id": "commons:Shitateruhime Shrine Honden Haiden 8 Gionmachi Hakata-ku Fukuoka 20240416.jpg",
+      "building_evidence": "{\"title\": \"File:Shitateruhime Shrine Honden Haiden 8 Gionmachi Hakata-ku Fukuoka 20240416.jpg\", \"location\": \"33.590861, 130.411917\", \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Self-published work\", \"Category:Shitateruhime-jinja, Fukuoka\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Shitateruhime Shrine Honden Haiden 8 Gionmachi Hakata-ku Fukuoka 20240416.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Shitateruhime_Shrine_Honden_Haiden_8_Gionmachi_Hakata-ku_Fukuoka_20240416.jpg",
+      "candidate_group": [
+        "a895d199-82eb-4f0a-aeb8-be7cbd3e2702"
+      ],
+      "judged_group": [
+        "a895d199-82eb-4f0a-aeb8-be7cbd3e2702"
+      ],
+      "comparison": "not_grouped"
+    },
+    "59017535-7ec5-4407-a9c8-85799c3fd173": {
+      "building_name": null,
+      "evidence": [
+        "原画像は赤瓦の急勾配屋根、正面の三角形妻壁と露出木骨、隣接する大きな車庫扉を持つ住宅である。",
+        "出典はObermodernのrue de la moderの住宅を指すが、固有建築名や識別できる標示は確認できない。カテゴリと一般的な木骨構造だけでは個体同定できず、building_nameはnullとした。"
+      ],
+      "building_id": "commons:Obermodern maison rue de la moder73.jpg",
+      "building_evidence": "{\"title\": \"File:Obermodern maison rue de la moder73.jpg\", \"location\": \"48.844355, 7.542730\", \"categories\": [\"Category:CC-Zero\", \"Category:Creative Commons CC0 1.0 Universal Public Domain Dedication missing SDC copyright license\", \"Category:Files with coordinates missing SDC location of creation (48° N, 7° E)\", \"Category:Portes-cochères in Obermodern\", \"Category:Self-published work\", \"Category:Self-published work missing SDC copyright license\", \"Category:Timber framed houses in Obermodern\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Obermodern maison rue de la moder73.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Obermodern_maison_rue_de_la_moder73.jpg",
+      "candidate_group": [
+        "59017535-7ec5-4407-a9c8-85799c3fd173"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "914bee76-4a56-437e-9fff-eafbdbfa33e5": {
+      "building_name": null,
+      "evidence": [
+        "原画像は多層の木造回廊が円形中庭を囲み、中央に低い瓦屋根の小棟を置く土楼内部である。",
+        "title・building_idとidentity-candidates.jsonは懐遠楼を候補とするが、円形回廊と中庭だけでは類似する土楼と区別できず、個体名を裏付ける可読な標示も確認できない。",
+        "候補asset_id=26e3b86b-8deb-4244-8b60-0f487ce9ebf9は同名出典の候補として参照したが、この入力には比較画像がなく、同一建築とは確定しない。"
+      ],
+      "building_id": "huaiyuan-lou",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと個別建築カテゴリを照合。AI画像点検は補助。\", \"reason\": \"選定画像はいずれもCategory:Huaiyuan Louに属し、タイトルも同じ建築を指す。\", \"human_confirmation\": false, \"reviewer\": \"complex_worker-issue41c (AI)\"}",
+      "title": "File:怀远楼内部 - Inner Structure of Huaiyuan Lou - 2013.11 - panoramio.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:%E6%80%80%E8%BF%9C%E6%A5%BC%E5%86%85%E9%83%A8_-_Inner_Structure_of_Huaiyuan_Lou_-_2013.11_-_panoramio.jpg",
+      "candidate_group": [
+        "26e3b86b-8deb-4244-8b60-0f487ce9ebf9",
+        "914bee76-4a56-437e-9fff-eafbdbfa33e5"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "673d2e20-09dc-4b9a-8765-a6e4b9e1ec0e": {
+      "building_name": "熊本城天守",
+      "evidence": [
+        "原画像には大小二つの天守、高い石垣、黒い壁帯と白い三角形破風、重層の灰色瓦屋根が見える。",
+        "title・source_urlのKumamotojoと個別カテゴリKumamoto Castle Keep Tower in 2005が一致し、並び立つ大小天守と黒白の破風構成が熊本城天守という候補を支持する。"
+      ],
+      "building_id": "commons:Kumamotojo.jpg",
+      "building_evidence": "{\"title\": \"File:Kumamotojo.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-3.0-migrated-with-disclaimers\", \"Category:Files moved to Commons from ja.wikipedia\", \"Category:GFDL-ja\", \"Category:Kumamoto Castle Keep Tower in 2005\", \"Category:License migration completed\", \"Category:Picture of the month on the Japanese Wikipedia\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Kumamotojo.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Kumamotojo.jpg",
+      "candidate_group": [
+        "673d2e20-09dc-4b9a-8765-a6e4b9e1ec0e"
+      ],
+      "judged_group": [
+        "673d2e20-09dc-4b9a-8765-a6e4b9e1ec0e"
+      ],
+      "comparison": "not_grouped"
+    },
+    "3707541e-0b97-4643-a595-1d30e268b740": {
+      "building_name": "津島神社（愛知県津島市）の拝殿",
+      "evidence": [
+        "原画像は朱色の柱を持つ横長の社殿で、右の大きく反り上がった妻屋根、正面中央の紋、左へ続く低い回廊が見える。",
+        "title・source_urlは天王総社津島神社拝殿、カテゴリは愛知県津島市の津島神社拝殿を明示する。拝殿と連続回廊の配置、朱の柱と大きな曲面屋根の画像が整合する。"
+      ],
+      "building_id": "commons:天王総社津島神社拝殿.JPG",
+      "building_evidence": "{\"title\": \"File:天王総社津島神社拝殿.JPG\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-3.0-migrated-with-disclaimers\", \"Category:Files moved to Commons from ja.wikipedia\", \"Category:GFDL-ja\", \"Category:Haiden, Tsushima-jinja (Tsushima, Aichi)\", \"Category:License migration completed\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:天王総社津島神社拝殿.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:%E5%A4%A9%E7%8E%8B%E7%B7%8F%E7%A4%BE%E6%B4%A5%E5%B3%B6%E7%A5%9E%E7%A4%BE%E6%8B%9D%E6%AE%BF.JPG",
+      "candidate_group": [
+        "3707541e-0b97-4643-a595-1d30e268b740"
+      ],
+      "judged_group": [
+        "3707541e-0b97-4643-a595-1d30e268b740"
+      ],
+      "comparison": "not_grouped"
+    },
+    "f3c8152c-2346-4d4d-abdd-974656bc1afb": {
+      "building_name": null,
+      "evidence": [
+        "原画像は上階全面の交差木骨、張出した階間、一階の石壁、赤瓦の低い屋根を持つ住宅である。",
+        "titleは交差木骨の家という一般的な説明で、カテゴリと座標はTougetを示すにとどまる。固有建築名や可読な識別標示がなく、個体同定はできない。"
+      ],
+      "building_id": "commons:Maison à colombages en croisillons.jpg",
+      "building_evidence": "{\"title\": \"File:Maison à colombages en croisillons.jpg\", \"location\": \"43.690494, 0.914917\", \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Photographs taken on 2025-08-03\", \"Category:Self-published work\", \"Category:Touget\", \"Category:Uploaded with Mobile/Android\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Maison à colombages en croisillons.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Maison_%C3%A0_colombages_en_croisillons.jpg",
+      "candidate_group": [
+        "f3c8152c-2346-4d4d-abdd-974656bc1afb"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "a4490929-6042-4aeb-ab78-58057a0734d3": {
+      "building_name": null,
+      "evidence": [
+        "原画像は灰色煉瓦壁に挟まれた赤い両開き門で、左右の赤い提灯と対聯、彫刻門墩、手前の石段が見える。",
+        "title・source_urlは北京市の前鼓楼苑胡同7号の四合院を候補とし、座標39.937719,116.395982が付くが、画像から番地を読めず、門の形も一般的である。住所文字列だけで個体を確定せずnullとした。"
+      ],
+      "building_id": "commons:北京四合院典型代表-前鼓楼苑胡同7号 - panoramio.jpg",
+      "building_evidence": "{\"title\": \"File:北京四合院典型代表-前鼓楼苑胡同7号 - panoramio.jpg\", \"location\": \"39.937719, 116.395982\", \"categories\": [\"Category:CC-BY-SA-3.0\", \"Category:China photographs taken on 2013-07-29\", \"Category:Cultural heritage monuments in Beijing\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Panoramio files uploaded by Panoramio upload bot\", \"Category:Panoramio images reviewed by trusted users\", \"Category:Photos from Panoramio\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:北京四合院典型代表-前鼓楼苑胡同7号 - panoramio.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:%E5%8C%97%E4%BA%AC%E5%9B%9B%E5%90%88%E9%99%A2%E5%85%B8%E5%9E%8B%E4%BB%A3%E8%A1%A8-%E5%89%8D%E9%BC%93%E6%A5%BC%E8%8B%91%E8%83%A1%E5%90%8C7%E5%8F%B7_-_panoramio.jpg",
+      "candidate_group": [
+        "a4490929-6042-4aeb-ab78-58057a0734d3"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "b763e852-ab11-4431-adb3-1bfa0ae832ac": {
+      "building_name": "トゥールのサン＝テティエンヌ大聖堂",
+      "evidence": [
+        "原画像は正面の細い切り取りで、上部に大きな円形薔薇窓、中央に透かし細工を伴う三角形装飾、下部に深い尖頭アーチと左右の扉が見える。",
+        "title・source_urlがCathédrale de Toulを示し、個別カテゴリはCathédrale Saint-Étienne de Toulの外観を指す。薔薇窓・三角形装飾・尖頭入口を縦に重ねた石造正面がこの候補と整合する。"
+      ],
+      "building_id": "commons:Façade Cathédrale de Toul.jpg",
+      "building_evidence": "{\"title\": \"File:Façade Cathédrale de Toul.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Exterior of Cathédrale Saint-Étienne de Toul\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Façade Cathédrale de Toul.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Fa%C3%A7ade_Cath%C3%A9drale_de_Toul.jpg",
+      "candidate_group": [
+        "b763e852-ab11-4431-adb3-1bfa0ae832ac"
+      ],
+      "judged_group": [
+        "b763e852-ab11-4431-adb3-1bfa0ae832ac"
+      ],
+      "comparison": "not_grouped"
+    },
+    "d139bff8-3dee-4cbb-b89d-88dd1ec7a08c": {
+      "building_name": "アヤソフィア",
+      "evidence": [
+        "titleのコンスタンティノープルの聖ソフィアという名称と、中央大ドーム・半ドーム・細長いミナレットの組合せが一致する。"
+      ],
+      "building_id": "commons:Света София (Константинопол).jpg",
+      "building_evidence": "{\"title\": \"File:Света София (Константинопол).jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:SW exterior of the of Hagia Sophia\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Света София (Константинопол).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:%D0%A1%D0%B2%D0%B5%D1%82%D0%B0_%D0%A1%D0%BE%D1%84%D0%B8%D1%8F_(%D0%9A%D0%BE%D0%BD%D1%81%D1%82%D0%B0%D0%BD%D1%82%D0%B8%D0%BD%D0%BE%D0%BF%D0%BE%D0%BB).jpg",
+      "candidate_group": [
+        "d139bff8-3dee-4cbb-b89d-88dd1ec7a08c"
+      ],
+      "judged_group": [
+        "d139bff8-3dee-4cbb-b89d-88dd1ec7a08c"
+      ],
+      "comparison": "not_grouped"
+    },
+    "70368a88-5d0b-4110-a247-3cfe5a049f88": {
+      "building_name": "八王子城 御主殿の曳橋",
+      "evidence": [
+        "titleの八王子城曳橋と、谷を渡る木橋・入口の二本の高い親柱・奥の石段と土塁という景観が整合する。"
+      ],
+      "building_id": "commons:Hachioji Castle Hikibashi.JPG",
+      "building_evidence": "{\"title\": \"File:Hachioji Castle Hikibashi.JPG\", \"location\": null, \"categories\": [\"Category:Files moved to Commons from ja.wikipedia\", \"Category:Hachioji Castle\", \"Category:PD-user\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Hachioji Castle Hikibashi.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Hachioji_Castle_Hikibashi.JPG",
+      "candidate_group": [
+        "70368a88-5d0b-4110-a247-3cfe5a049f88"
+      ],
+      "judged_group": [
+        "70368a88-5d0b-4110-a247-3cfe5a049f88"
+      ],
+      "comparison": "not_grouped"
+    },
+    "7f54d2ab-574b-4cb6-91c8-e0517c963b66": {
+      "building_name": "野田恵美須神社 拝殿",
+      "evidence": [
+        "titleの野田恵美須神社拝殿と、正面の大きな唐破風・注連縄・左右の狛犬・灰色瓦屋根の配置が整合する。"
+      ],
+      "building_id": "commons:NodaEbisu-jinja-haiden.jpg",
+      "building_evidence": "{\"title\": \"File:NodaEbisu-jinja-haiden.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-2.1-JP\", \"Category:CC-BY-SA-3.0-migrated\", \"Category:GFDL\", \"Category:License migration completed\", \"Category:Noda-Ebisu-jinja\", \"Category:Taken with Casio QV-R40\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:NodaEbisu-jinja-haiden.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:NodaEbisu-jinja-haiden.jpg",
+      "candidate_group": [
+        "7f54d2ab-574b-4cb6-91c8-e0517c963b66"
+      ],
+      "judged_group": [
+        "7f54d2ab-574b-4cb6-91c8-e0517c963b66"
+      ],
+      "comparison": "not_grouped"
+    },
+    "96ad64b7-ca77-4254-9e99-e3d4a87eb372": {
+      "building_name": null,
+      "evidence": [
+        "titleはゴスラーのObere Mühlenstraße 7を指す。板状の外壁被覆・大きな木戸・小窓と屋根窓は確認できるが、番地表示や個体固有の照合根拠が乏しく名称は保留。"
+      ],
+      "building_id": "commons:Oberemühlenstraße7 goslar2.JPG",
+      "building_evidence": "{\"title\": \"File:Oberemühlenstraße7 goslar2.JPG\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Images from Wiki Loves Monuments 2015\", \"Category:Images from Wiki Loves Monuments 2015, DE-NI\", \"Category:Images from Wiki Loves Monuments 2015 in Germany\", \"Category:Images from Wiki Loves Monuments missing SDC depicts\", \"Category:Images from Wiki Loves Monuments missing SDC location of creation\", \"Category:Obere Mühlenstraße 7 (Goslar)\", \"Category:Photos by Z thomas\", \"Category:Self-published work\", \"Category:Uploaded via Campaign:wlm-de-ni\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Oberemühlenstraße7 goslar2.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Oberem%C3%BChlenstra%C3%9Fe7_goslar2.JPG",
+      "candidate_group": [
+        "96ad64b7-ca77-4254-9e99-e3d4a87eb372"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "26e3b86b-8deb-4244-8b60-0f487ce9ebf9": {
+      "building_name": null,
+      "evidence": [
+        "titleと候補building_idは懐遠楼を指す。手前の円形井戸・右の曲面煉瓦壁・奥の木造回廊は土楼内部と整合するが、固有の銘や比較画像の外観を確認できず、懐遠楼との個体同定は保留。",
+        "identity-candidatesの914bee76-4a56-437e-9fff-eafbdbfa33e5は同一群の候補だが、画像自体は本バッチにないため同一建築と確定しない。"
+      ],
+      "building_id": "huaiyuan-lou",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと個別建築カテゴリを照合。AI画像点検は補助。\", \"reason\": \"選定画像はいずれもCategory:Huaiyuan Louに属し、タイトルも同じ建築を指す。\", \"human_confirmation\": false, \"reviewer\": \"complex_worker-issue41c (AI)\"}",
+      "title": "File:怀远楼20210407 01.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:%E6%80%80%E8%BF%9C%E6%A5%BC20210407_01.jpg",
+      "candidate_group": [
+        "26e3b86b-8deb-4244-8b60-0f487ce9ebf9",
+        "914bee76-4a56-437e-9fff-eafbdbfa33e5"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "14be4d6a-4eee-400e-bbc9-bb6c7da375d0": {
+      "building_name": "シャンベリ大聖堂",
+      "evidence": [
+        "titleがシャンベリ大聖堂の正面上部を指し、中央の大きな尖頭窓・細密なトレーサリー・下部の透かし石欄干・左右の小開口という形態が整合する。"
+      ],
+      "building_id": "commons:Chambéry Cathédrale PA00118223 façade partie haute.jpg",
+      "building_evidence": "{\"title\": \"File:Chambéry Cathédrale PA00118223 façade partie haute.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-3.0\", \"Category:Cathédrale Saint-François-de-Sales de Chambéry\", \"Category:Church windows in Savoie\", \"Category:Gothic windows in France\", \"Category:Self-published work\", \"Category:Taken with Canon PowerShot SX20 IS\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Chambéry Cathédrale PA00118223 façade partie haute.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Chamb%C3%A9ry_Cath%C3%A9drale_PA00118223_fa%C3%A7ade_partie_haute.jpg",
+      "candidate_group": [
+        "14be4d6a-4eee-400e-bbc9-bb6c7da375d0"
+      ],
+      "judged_group": [
+        "14be4d6a-4eee-400e-bbc9-bb6c7da375d0"
+      ],
+      "comparison": "not_grouped"
+    },
+    "bf39a4f2-28b3-4616-a82d-232588f8b531": {
+      "building_name": "伊予松山城 大天守・小天守",
+      "evidence": [
+        "titleの伊予松山城の大小天守と、右の重層天守・左の低い小天守・連結する黒白の壁と高い石垣の構成が一致する。"
+      ],
+      "building_id": "commons:MEIN&SMALL CASTLE TOWER ,MATSUYAMA CASTLE(IYO).JPG",
+      "building_evidence": "{\"title\": \"File:MEIN&SMALL CASTLE TOWER ,MATSUYAMA CASTLE(IYO).JPG\", \"location\": null, \"categories\": [\"Category:CC-BY-3.0\", \"Category:December 2007 in Ehime prefecture\", \"Category:Dry stone walls of castles in Japan\", \"Category:GFDL\", \"Category:Japan photographs taken on 2007-12-23\", \"Category:License migration redundant\", \"Category:Matsuyama Castle Keep Tower\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:MEIN&SMALL CASTLE TOWER ,MATSUYAMA CASTLE(IYO).JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:MEIN%26SMALL_CASTLE_TOWER_,MATSUYAMA_CASTLE(IYO).JPG",
+      "candidate_group": [
+        "bf39a4f2-28b3-4616-a82d-232588f8b531"
+      ],
+      "judged_group": [
+        "bf39a4f2-28b3-4616-a82d-232588f8b531"
+      ],
+      "comparison": "not_grouped"
+    },
+    "4b7aa7db-6a4a-4f08-8142-9c9bdf4f7203": {
+      "building_name": "阿蘇神社 拝殿",
+      "evidence": [
+        "titleが阿蘇神社拝殿を示し、中央の高い三角破風・広い銅色屋根・左右の狛犬・正面の低い石段と石参道の配置が整合する。"
+      ],
+      "building_id": "commons:Aso Jinja Haiden 20251005-1.jpg",
+      "building_evidence": "{\"title\": \"File:Aso Jinja Haiden 20251005-1.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Haiden, Aso-jinja\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Aso Jinja Haiden 20251005-1.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Aso_Jinja_Haiden_20251005-1.jpg",
+      "candidate_group": [
+        "4b7aa7db-6a4a-4f08-8142-9c9bdf4f7203"
+      ],
+      "judged_group": [
+        "4b7aa7db-6a4a-4f08-8142-9c9bdf4f7203"
+      ],
+      "comparison": "not_grouped"
+    },
+    "75854a4c-5c10-45f8-aceb-efd0c41352e0": {
+      "building_name": null,
+      "evidence": [
+        "titleとカテゴリはAn der Mauer 47を指す。赤煉瓦の高い妻壁・屋根中央の煙突・茶色の木骨と白い充填壁・白枠窓の配置は確認できるが、所在地や番地を画像から照合できず名称は保留。"
+      ],
+      "building_id": "commons:HLAnderMauer47.JPG",
+      "building_evidence": "{\"title\": \"File:HLAnderMauer47.JPG\", \"location\": null, \"categories\": [\"Category:An der Mauer 47\", \"Category:PD-self\", \"Category:Self-published work\", \"Category:Taken with Canon Digital IXUS 80 IS\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:HLAnderMauer47.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:HLAnderMauer47.JPG",
+      "candidate_group": [
+        "75854a4c-5c10-45f8-aceb-efd0c41352e0"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01": {
+      "building_name": "レオン大聖堂",
+      "evidence": [
+        "titleと西正面の候補群に加えて、左右で異なる尖塔形状の二塔・中央の大きなバラ窓・三連の尖頭入口・右へ続く扶壁の構成がレオン大聖堂と整合する。",
+        "候補5a1dabcb-511a-4b7c-8ec2-130da1732871は本バッチ外のため、画像間の同一性はここでは確定しない。"
+      ],
+      "building_id": "leon-cathedral-west",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと個別建築カテゴリを照合。AI画像点検は補助。\", \"reason\": \"選定画像はいずれもCategory:West facade of the Cathedral of Leónに属し、タイトルも同じ建築を指す。\", \"human_confirmation\": false, \"reviewer\": \"complex_worker-issue41c (AI)\"}",
+      "title": "File:Cathedral leon.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Cathedral_leon.jpg",
+      "candidate_group": [
+        "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+        "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01"
+      ],
+      "judged_group": [
+        "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+        "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01"
+      ],
+      "comparison": "match"
+    },
+    "58c1f736-0d7a-4b0f-8eef-451d81bf0b88": {
+      "building_name": "鶴丸城御楼門",
+      "evidence": [
+        "タイトルの鶴丸城とGoromon Gateカテゴリに、白い上層壁・横長の格子窓列・二重の瓦屋根・木造の大きな門扉が一致する。"
+      ],
+      "building_id": "commons:Tsurumaru Castle Gates.jpg",
+      "building_evidence": "{\"title\": \"File:Tsurumaru Castle Gates.jpg\", \"location\": \"31.760867, 130.756182\", \"categories\": [\"Category:April 2021 in Kagoshima prefecture\", \"Category:CC-BY-SA-4.0\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Goromon Gate\", \"Category:Japan photographs taken on 2021-04-16\", \"Category:Self-published work\", \"Category:Uploaded with Mobile/Android\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Tsurumaru Castle Gates.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Tsurumaru_Castle_Gates.jpg",
+      "candidate_group": [
+        "58c1f736-0d7a-4b0f-8eef-451d81bf0b88"
+      ],
+      "judged_group": [
+        "58c1f736-0d7a-4b0f-8eef-451d81bf0b88"
+      ],
+      "comparison": "not_grouped"
+    },
+    "04a55453-192e-491c-b687-46db0f13c440": {
+      "building_name": null,
+      "evidence": [
+        "山裾の土色の矩形土楼、上部の小窓列と横長の瓦屋根がタイトルの土楼景観と整合する。",
+        "ただしDingri Lou and Hengji Louのどちらが個々の棟かを識別する固有の細部が不足するため、名称は確定しない。"
+      ],
+      "building_id": "commons:Dingri Lou - DSCF3745.JPG",
+      "building_evidence": "{\"title\": \"File:Dingri Lou - DSCF3745.JPG\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-3.0,2.5,2.0,1.0\", \"Category:Dingri Lou and Hengji Lou\", \"Category:GFDL\", \"Category:License migration redundant\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Dingri Lou - DSCF3745.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Dingri_Lou_-_DSCF3745.JPG",
+      "candidate_group": [
+        "04a55453-192e-491c-b687-46db0f13c440"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "3f4fea5f-b6a4-4851-90f1-9ae2e5ef6bff": {
+      "building_name": null,
+      "evidence": [
+        "灰色の煉瓦塀、石段、朱色の両開き扉、彩色した梁と反りのある瓦屋根が北京胡同の門というタイトルと整合する。",
+        "個別の門を特定する建築名や固有の所在情報がない。"
+      ],
+      "building_id": "commons:Colorful hutong gate in Beijing.jpg",
+      "building_evidence": "{\"title\": \"File:Colorful hutong gate in Beijing.jpg\", \"location\": \"39.936598, 116.393121\", \"categories\": [\"Category:CC-BY-SA-3.0\", \"Category:Doors in Beijing\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Gates in Beijing\", \"Category:Hutong in Beijing\", \"Category:Photographs taken on 2018-03-24\", \"Category:Self-published work\", \"Category:Uploaded with Mobile/Android\", \"Category:Uploaded with Mobile/Android (Nov 2017-Aug 2019)\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Colorful hutong gate in Beijing.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Colorful_hutong_gate_in_Beijing.jpg",
+      "candidate_group": [
+        "3f4fea5f-b6a4-4851-90f1-9ae2e5ef6bff"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "ff20b1a7-1490-4f35-81f5-54575a28da9f": {
+      "building_name": null,
+      "evidence": [
+        "山間の村に複数の円形・矩形の土楼が見え、タイトルとHongkeng Villageの記載に整合する。",
+        "遠景で複数棟が写り、個別土楼を区別する入口や窓配置は確認できない。"
+      ],
+      "building_id": "commons:Tulou birds eye view fujian china.jpg",
+      "building_evidence": "{\"title\": \"File:Tulou birds eye view fujian china.jpg\", \"location\": \"24.652561, 117.050837\", \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Hongkeng Village\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Tulou birds eye view fujian china.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Tulou_birds_eye_view_fujian_china.jpg",
+      "candidate_group": [
+        "ff20b1a7-1490-4f35-81f5-54575a28da9f"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "4e1c1726-882c-4428-8179-4391275ae469": {
+      "building_name": null,
+      "evidence": [
+        "瓦屋根、木製の格子建具、中央入口と石段、左右の壁画が中庭形式の中国家屋というタイトルと整合する。",
+        "Baiyuという名称以外に宿の固有名や所在を裏付ける情報がない。"
+      ],
+      "building_id": "commons:Baiyu-courtyard-guesthouse.JPG",
+      "building_evidence": "{\"title\": \"File:Baiyu-courtyard-guesthouse.JPG\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-1.0\", \"Category:Files by Wikivoyage user Leneleth\", \"Category:Files from Wikivoyage wts\", \"Category:Houses in China\", \"Category:Self-published work\", \"Category:Taken with Sony DSC-T30\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Baiyu-courtyard-guesthouse.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Baiyu-courtyard-guesthouse.JPG",
+      "candidate_group": [
+        "4e1c1726-882c-4428-8179-4391275ae469"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "5a1dabcb-511a-4b7c-8ec2-130da1732871": {
+      "building_name": "レオン大聖堂",
+      "evidence": [
+        "タイトルのLeónと西正面カテゴリに、二本の高さ・頂部形状が異なる塔、中央の大きなバラ窓、三連の尖頭入口が一致する。",
+        "identity-candidatesの8f6b6fed-cfb5-4bbc-b27f-098cec40cf01は同名建築候補だが、その画像は今回の入力に含まれず、画像間の同一性までは確定しない。"
+      ],
+      "building_id": "leon-cathedral-west",
+      "building_evidence": "{\"rule\": \"個別建築名を含むタイトルと個別建築カテゴリを照合。AI画像点検は補助。\", \"reason\": \"選定画像はいずれもCategory:West facade of the Cathedral of Leónに属し、タイトルも同じ建築を指す。\", \"human_confirmation\": false, \"reviewer\": \"complex_worker-issue41c (AI)\"}",
+      "title": "File:Catedral Gótica de León.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Catedral_G%C3%B3tica_de_Le%C3%B3n.jpg",
+      "candidate_group": [
+        "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+        "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01"
+      ],
+      "judged_group": [
+        "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+        "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01"
+      ],
+      "comparison": "match"
+    },
+    "9fccd38d-e7f8-4e20-bd89-7a687161e89b": {
+      "building_name": "ピーターバラ大聖堂",
+      "evidence": [
+        "タイトルと撮影座標・西正面カテゴリに、三つの巨大な尖頭アーチと三つの切妻、その間の細い尖塔という特徴的な西正面が一致する。",
+        "色彩は建築表面への投影で、輪郭と三連アーチの配置を根拠に同定した。"
+      ],
+      "building_id": "commons:The Beginning on the Gothic west façade of Peterborough cathedral - geograph.org.uk - 7351428.jpg",
+      "building_evidence": "{\"title\": \"File:The Beginning on the Gothic west façade of Peterborough cathedral - geograph.org.uk - 7351428.jpg\", \"location\": \"52.572642, -0.241223\", \"categories\": [\"Category:CC-BY-SA-2.0\", \"Category:Images from Geograph Britain and Ireland\", \"Category:West facade of Peterborough Cathedral\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:The Beginning on the Gothic west façade of Peterborough cathedral - geograph.org.uk - 7351428.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:The_Beginning_on_the_Gothic_west_fa%C3%A7ade_of_Peterborough_cathedral_-_geograph.org.uk_-_7351428.jpg",
+      "candidate_group": [
+        "9fccd38d-e7f8-4e20-bd89-7a687161e89b"
+      ],
+      "judged_group": [
+        "9fccd38d-e7f8-4e20-bd89-7a687161e89b"
+      ],
+      "comparison": "not_grouped"
+    },
+    "160954cd-7e99-4085-b14e-4e7535a89b8f": {
+      "building_name": null,
+      "evidence": [
+        "タイトルと出典カテゴリはウィーンのシュテファン大聖堂を指す。",
+        "画像では華やかな石造トレーサリーと尖頭窓、突出した三角形の装飾が確認できるが、塔や屋根の全容がなく、名称の独立した照合には固有の識別材料が不足する。"
+      ],
+      "building_id": "commons:Stephansdom Gothic facade architectural detail Vienna.jpg",
+      "building_evidence": "{\"title\": \"File:Stephansdom Gothic facade architectural detail Vienna.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Churches in Vienna photographed in 2024\", \"Category:Exterior of St. Stephen's Cathedral, Vienna\", \"Category:Gothic tracery in Vienna\", \"Category:Images from Wiki Loves Monuments 2026\", \"Category:Images from Wiki Loves Monuments 2026 in Austria\", \"Category:Images from Wiki Loves Monuments in Austria\", \"Category:Images from Wiki Loves Monuments missing SDC creator\", \"Category:Images from Wiki Loves Monuments missing SDC depicts\", \"Category:Images from Wiki Loves Monuments missing SDC location of creation\", \"Category:Images from Wiki Loves Monuments missing SDC participant in\", \"Category:Images from Wiki Loves Monuments missing SDC source of file\", \"Category:Self-published work\", \"Category:Vienna photographs taken on 2024-04-08\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Stephansdom Gothic facade architectural detail Vienna.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Stephansdom_Gothic_facade_architectural_detail_Vienna.jpg",
+      "candidate_group": [
+        "160954cd-7e99-4085-b14e-4e7535a89b8f"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "19823cb9-3881-4336-8d0e-a9cbf1c37621": {
+      "building_name": "カレンデルハーネ・モスク",
+      "evidence": [
+        "タイトル・カテゴリのKalenderhane Mosqueに、石と煉瓦の帯状壁、丸屋根、張り出した多角形の後陣と尖頭の細いミナレットの配置が整合する。",
+        "前景の樹木で一部が遮られるが、後陣の縦長の盲アーチと上部のドーム状屋根が確認できる。"
+      ],
+      "building_id": "commons:Kalenderhane Mosque-Exterior.jpg",
+      "building_evidence": "{\"title\": \"File:Kalenderhane Mosque-Exterior.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Kalenderhane Mosque\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Kalenderhane Mosque-Exterior.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Kalenderhane_Mosque-Exterior.jpg",
+      "candidate_group": [
+        "19823cb9-3881-4336-8d0e-a9cbf1c37621"
+      ],
+      "judged_group": [
+        "19823cb9-3881-4336-8d0e-a9cbf1c37621"
+      ],
+      "comparison": "not_grouped"
+    },
+    "be5e7fb9-fee4-4df1-9875-002c0f22b654": {
+      "building_name": null,
+      "evidence": [
+        "オスマン風の半円アーチ、渦巻き彫刻と楕円形の紋章、金色の文字パネルがOrtaköy Mosqueという出典カテゴリと整合する。",
+        "入口装飾の接写だけでドーム・ミナレット・全体配置を照合できず、他のオスマン建築と区別する材料が不足するため名称は確定しない。"
+      ],
+      "building_id": "commons:Istanbul-ortaköy-bosphour - panoramio - HALUK COMERTEL (16).jpg",
+      "building_evidence": "{\"title\": \"File:Istanbul-ortaköy-bosphour - panoramio - HALUK COMERTEL (16).jpg\", \"location\": \"41.047487, 29.026308\", \"categories\": [\"Category:CC-BY-3.0\", \"Category:Exterior of Ortaköy Mosque\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:October 2008 in Istanbul\", \"Category:Ottoman inscriptions in Istanbul\", \"Category:Panoramio files uploaded by Panoramio upload bot\", \"Category:Panoramio images reviewed by trusted users\", \"Category:Photos from Panoramio\", \"Category:Turkey photographs taken on 2008-10-06\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Istanbul-ortaköy-bosphour - panoramio - HALUK COMERTEL (16).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Istanbul-ortak%C3%B6y-bosphour_-_panoramio_-_HALUK_COMERTEL_(16).jpg",
+      "candidate_group": [
+        "be5e7fb9-fee4-4df1-9875-002c0f22b654"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "7e4b611b-fc37-4c2e-ae69-f88cb8806dcc": {
+      "building_name": "イェニ・モスク（イスタンブール）",
+      "evidence": [
+        "二本の細長いミナレット、中央の段状ドーム群、三連の尖頭アーチ回廊と前景のドーム付き泉亭がYeni Camiというtitleと整合する。",
+        "カテゴリにはYeni ValideとNew Mosqueが混在するためカテゴリだけでは確定せず、回廊と塔の構成を優先した。"
+      ],
+      "building_id": "commons:Yeni Cami cephe.jpg",
+      "building_evidence": "{\"title\": \"File:Yeni Cami cephe.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-3.0\", \"Category:Courtyard of Yeni Valide Mosque\", \"Category:New Mosque (İstanbul) in 2012\", \"Category:Self-published work\", \"Category:Taken with BlackBerry 9900\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Yeni Cami cephe.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Yeni_Cami_cephe.jpg",
+      "candidate_group": [
+        "7e4b611b-fc37-4c2e-ae69-f88cb8806dcc"
+      ],
+      "judged_group": [
+        "7e4b611b-fc37-4c2e-ae69-f88cb8806dcc"
+      ],
+      "comparison": "not_grouped"
+    },
+    "379a69a4-db2c-460a-ba24-faa1273745bd": {
+      "building_name": "バヤズィト1世モスク（ブルサ）",
+      "evidence": [
+        "高い石造ポーチの縦長アーチ列、右側壁の小窓、背後の一本の赤褐色ミナレットが画像で確認できる。",
+        "Bayezid I Mosqueというtitle、ブルサを示す座標40.187222, 29.082222と外観構成が整合する。"
+      ],
+      "building_id": "commons:Bayezid I Mosque - Yıldırım Camii (7).jpg",
+      "building_evidence": "{\"title\": \"File:Bayezid I Mosque - Yıldırım Camii (7).jpg\", \"location\": \"40.187222, 29.082222\", \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Exterior of Bayezid I Mosque\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Bayezid I Mosque - Yıldırım Camii (7).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Bayezid_I_Mosque_-_Y%C4%B1ld%C4%B1r%C4%B1m_Camii_(7).jpg",
+      "candidate_group": [
+        "379a69a4-db2c-460a-ba24-faa1273745bd"
+      ],
+      "judged_group": [
+        "379a69a4-db2c-460a-ba24-faa1273745bd"
+      ],
+      "comparison": "not_grouped"
+    },
+    "87348653-ce91-4878-bc3b-3708944b6b11": {
+      "building_name": "スレイマニエ・モスク",
+      "evidence": [
+        "巨大な平坦な石壁の中央に、ムカルナスの尖った冠、横長の碑文帯、尖頭アーチの入口が縦に重なる。",
+        "この入口構成はtitleのSüleymaniye Mosqueおよびイスタンブールの座標と整合し、building_evidenceのムカルナス・北西側入口という記載も画像に対応する。"
+      ],
+      "building_id": "commons:Exterior of the Süleymaniye Mosque in Istanbul, Turkey 001.JPG",
+      "building_evidence": "{\"title\": \"File:Exterior of the Süleymaniye Mosque in Istanbul, Turkey 001.JPG\", \"location\": \"41.016676, 28.963274\", \"categories\": [\"Category:CC-BY-SA-3.0\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Images by Moonik\", \"Category:Muqarnas in Turkey\", \"Category:Northwest side of the Süleymaniye Mosque\", \"Category:Ottoman inscriptions in Istanbul\", \"Category:Portals in Istanbul\", \"Category:Quality Images by Moonik\", \"Category:Quality images\", \"Category:Quality images missing SDC depicts\", \"Category:Quality images of Istanbul\", \"Category:Quality images of mosques in Turkey\", \"Category:Quality images of portals\", \"Category:Self-published work\", \"Category:Taken with Nikon D90\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Exterior of the Süleymaniye Mosque in Istanbul, Turkey 001.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Exterior_of_the_S%C3%BCleymaniye_Mosque_in_Istanbul,_Turkey_001.JPG",
+      "candidate_group": [
+        "87348653-ce91-4878-bc3b-3708944b6b11"
+      ],
+      "judged_group": [
+        "87348653-ce91-4878-bc3b-3708944b6b11"
+      ],
+      "comparison": "not_grouped"
+    },
+    "3c74d027-c729-4618-ab5f-f41b7c669445": {
+      "building_name": "コタキナバル市立モスク",
+      "evidence": [
+        "水面に接した白い横長のモスク、青い模様の大ドーム、四本のミナレットと連続アーチ、その水面反射が見える。",
+        "titleのKota Kinabalu City Mosque、サバ州を示す座標5.995578, 116.107732と、特徴的な水際の外観が整合する。"
+      ],
+      "building_id": "commons:KotaKinabalu Sabah CityMosque-08.jpg",
+      "building_evidence": "{\"title\": \"File:KotaKinabalu Sabah CityMosque-08.jpg\", \"location\": \"5.995578, 116.107732\", \"categories\": [\"Category:CC-BY-SA-3.0\", \"Category:Featured pictures by Cccefalon\", \"Category:Featured pictures of mosques in Malaysia\", \"Category:Featured pictures on Wikimedia Commons\", \"Category:Featured pictures on Wikipedia, Arabic\", \"Category:Featured pictures on Wikipedia, English\", \"Category:Featured pictures on Wikipedia, Indonesian\", \"Category:Featured pictures on Wikipedia, Persian\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:FoP-Malaysia\", \"Category:Images by Cccefalon\", \"Category:Images of Sabah by User:Cccefalon\", \"Category:Images of mosques by User:Cccefalon\", \"Category:Information field template with formatting\", \"Category:Kota Kinabalu City Mosque\", \"Category:Malaysia photographs taken on 2014-01-05\", \"Category:Pictures of the Year/2014 (finalist)\", \"Category:Pictures of the Year (2014)\", \"Category:Pictures of the Year (candidate)\", \"Category:Pictures of the Year (finalist)\", \"Category:Pictures of the day (2015)\", \"Category:Quality images\", \"Category:Quality images by Cccefalon\", \"Category:Quality images of Sabah\", \"Category:Quality images of mosques in Malaysia\", \"Category:Quality images of water reflections\", \"Category:Self-published work\", \"Category:Taken with Canon EOS 5D Mark III and Canon EF 24-105mm F4L IS USM\", \"Category:Water reflections of mosques\", \"Category:Water reflections of towers\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:KotaKinabalu Sabah CityMosque-08.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:KotaKinabalu_Sabah_CityMosque-08.jpg",
+      "candidate_group": [
+        "3c74d027-c729-4618-ab5f-f41b7c669445"
+      ],
+      "judged_group": [
+        "3c74d027-c729-4618-ab5f-f41b7c669445"
+      ],
+      "comparison": "not_grouped"
+    },
+    "1b0d7678-9f76-4618-8dde-010302ad3f5f": {
+      "building_name": "丸亀城天守",
+      "evidence": [
+        "白漆喰の三重天守、二重目正面の曲線的な唐破風、上段の小さな千鳥破風と低い黒板張りが見える。",
+        "この三重の構成とtitleのThree-story tower of Marugame Castle、天守カテゴリが整合する。"
+      ],
+      "building_id": "commons:Three-story tower of Marugame Castle in 2018.jpg",
+      "building_evidence": "{\"title\": \"File:Three-story tower of Marugame Castle in 2018.jpg\", \"location\": null, \"categories\": [\"Category:CC-BY-SA-4.0\", \"Category:Japan photographs taken on 2019-05-04\", \"Category:Marugame Castle Keep Tower\", \"Category:May 2019 in Kagawa prefecture\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Three-story tower of Marugame Castle in 2018.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Three-story_tower_of_Marugame_Castle_in_2018.jpg",
+      "candidate_group": [
+        "1b0d7678-9f76-4618-8dde-010302ad3f5f"
+      ],
+      "judged_group": [
+        "1b0d7678-9f76-4618-8dde-010302ad3f5f"
+      ],
+      "comparison": "not_grouped"
+    },
+    "0c5a381a-0e26-45d3-bd42-74773d792f7c": {
+      "building_name": "広島城天守",
+      "evidence": [
+        "堀越しに、暗い板張りの壁、重なる瓦屋根、白い縁の複数の千鳥破風を備えた多層天守が見える。",
+        "天守と石垣・樹木・堀の配置はHiroshima Castleというtitleおよび34.402778, 132.459167の撮影地情報と整合する。"
+      ],
+      "building_id": "commons:Hiroshima Castle Aug 24 459pm.jpg",
+      "building_evidence": "{\"title\": \"File:Hiroshima Castle Aug 24 459pm.jpg\", \"location\": \"34.402778, 132.459167\", \"categories\": [\"Category:CC-Zero\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Hiroshima Castle Keep Tower\", \"Category:Self-published work\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Hiroshima Castle Aug 24 459pm.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Hiroshima_Castle_Aug_24_459pm.jpg",
+      "candidate_group": [
+        "0c5a381a-0e26-45d3-bd42-74773d792f7c"
+      ],
+      "judged_group": [
+        "0c5a381a-0e26-45d3-bd42-74773d792f7c"
+      ],
+      "comparison": "not_grouped"
+    },
+    "ac920479-c5b3-4965-9a1e-2b39b03e64f2": {
+      "building_name": "仙台城大手門脇櫓",
+      "evidence": [
+        "高い暗色の石垣の左奥に白漆喰の二重櫓があり、正面に白い縁の唐破風と細い格子窓が見える。",
+        "石垣に一部が隠れた脇櫓の配置と二重の形状はSendaiJoOtemonSumiYaguraというtitle、Waki-yagura (Sendai Castle)というカテゴリと整合する。"
+      ],
+      "building_id": "commons:SendaiJoOtemonSumiYagura2003-11.jpg",
+      "building_evidence": "{\"title\": \"File:SendaiJoOtemonSumiYagura2003-11.jpg\", \"location\": null, \"categories\": [\"Category:PD-self\", \"Category:Photographs taken on 2003-11-20\", \"Category:Self-published work\", \"Category:Taken with Olympus C-1Z / D-150Z\", \"Category:Waki-yagura (Sendai Castle)\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:SendaiJoOtemonSumiYagura2003-11.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:SendaiJoOtemonSumiYagura2003-11.jpg",
+      "candidate_group": [
+        "ac920479-c5b3-4965-9a1e-2b39b03e64f2"
+      ],
+      "judged_group": [
+        "ac920479-c5b3-4965-9a1e-2b39b03e64f2"
+      ],
+      "comparison": "not_grouped"
+    },
+    "067f7474-79a8-4794-8c5d-b8747d54acc3": {
+      "building_name": null,
+      "evidence": [
+        "長い白壁と黒い下見板、瓦屋根の小門、右上の大きな切妻屋根、前景の堀が見える。",
+        "titleは松本城だが、カテゴリにMoats of Matsue Castleが混在する。画像だけで門の場所を固有名に結び付ける決め手は不足するため、建築名を確定しない。"
+      ],
+      "building_id": "commons:Matsumoto Castle - Matsumoto6540.jpg",
+      "building_evidence": "{\"title\": \"File:Matsumoto Castle - Matsumoto6540.jpg\", \"location\": \"36.238635, 137.968870\", \"categories\": [\"Category:CC-Zero\", \"Category:Creative Commons CC0 1.0 Universal Public Domain Dedication missing SDC copyright license\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Flickr images missing SDC copyright status\", \"Category:Flickr images reviewed by FlickreviewR 2\", \"Category:Gates of Matsumoto Castle\", \"Category:Japan photographs taken on 2025-11-03\", \"Category:Leaves in autumn 2025\", \"Category:Leaves in autumn in Nagano prefecture\", \"Category:Moats of Matsue Castle\", \"Category:November 2025 in Nagano prefecture\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Matsumoto Castle - Matsumoto6540.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Matsumoto_Castle_-_Matsumoto6540.jpg",
+      "candidate_group": [
+        "067f7474-79a8-4794-8c5d-b8747d54acc3"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "b9fb78d5-19c7-4384-80a2-c17c9f957dc2": {
+      "building_name": null,
+      "evidence": [
+        "白い充填壁と暗い木柱、低い瓦屋根、中央のガラス戸、鈴緒、入口の石段を備えた小社が見える。",
+        "titleと座標は大月市の貴船神社を示すが、画像には社名を確実に読める要素や固有の外観特徴が不足する。一般的な小社の外観だけで名称を確定しない。"
+      ],
+      "building_id": "commons:Kifune Shrine in Otsuki city.jpg",
+      "building_evidence": "{\"title\": \"File:Kifune Shrine in Otsuki city.jpg\", \"location\": \"35.601980, 139.035700\", \"categories\": [\"Category:CC-BY-4.0\", \"Category:Files with coordinates missing SDC location of creation\", \"Category:Self-published work\", \"Category:Shrines in Yamanashi prefecture\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Kifune Shrine in Otsuki city.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Kifune_Shrine_in_Otsuki_city.jpg",
+      "candidate_group": [
+        "b9fb78d5-19c7-4384-80a2-c17c9f957dc2"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "047884e4-a2cf-408f-a6e7-a085ba2f363d": {
+      "building_name": null,
+      "evidence": [
+        "赤褐色の急勾配屋根と白い充填壁、黒い木骨の格子、角を回る窓列を備えた住宅が見える。",
+        "titleはBüdingenのKirchgasse 15を示すが、写真内で住所を確認できず、一般的な木骨造の形状のみではその住所への独立した同定根拠が不足する。"
+      ],
+      "building_id": "commons:Büdingen, Kirchgasse 15.jpg",
+      "building_evidence": "{\"title\": \"File:Büdingen, Kirchgasse 15.jpg\", \"location\": \"50.292034, 9.117623\", \"categories\": [\"Category:Buildings in Büdingen\", \"Category:CC-BY-SA-4.0\", \"Category:Cultural heritage monuments in Hesse with known ID\", \"Category:Gesamtanlage Altstadt Büdingen\", \"Category:Kirchgasse (Büdingen)\", \"Category:Self-published work\", \"Category:Timber framing in Büdingen\"], \"rule\": \"個別出典の主被写体。複数画像との同一性は主張しない。人手確認未実施。\"}",
+      "title": "File:Büdingen, Kirchgasse 15.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:B%C3%BCdingen,_Kirchgasse_15.jpg",
+      "candidate_group": [
+        "047884e4-a2cf-408f-a6e7-a085ba2f363d"
+      ],
+      "judged_group": [],
+      "comparison": "unresolved"
+    },
+    "e0bc0047-3799-404b-adbf-82474f1510b9": {
+      "building_name": null,
+      "evidence": [
+        "山並みを背景にした草原と低木で、同定対象となる建築は見えない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Rocky Mountain Sky 8-12 (15005599477).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Rocky_Mountain_Sky_8-12_(15005599477).jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "2a2b81a6-ebb8-4e78-8ce0-53a7a30411e7": {
+      "building_name": null,
+      "evidence": [
+        "Vilcabambaの経路を示す題名と滝の画像で、建築は確認できない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Tramo Huancacalle - Vilcabamba, Vilcabamba 23.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Tramo_Huancacalle_-_Vilcabamba,_Vilcabamba_23.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "b16fea9c-3ae6-4e4c-83e6-71c486c61909": {
+      "building_name": null,
+      "evidence": [
+        "Unterbalbachの冬景色という地名情報はあるが、遠景の家屋群から特定の一棟は同定できない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Unterbalbach Winter 28. Dez. 2005.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Unterbalbach_Winter_28._Dez._2005.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "390d2c1b-5025-45ad-bf05-742744627509": {
+      "building_name": null,
+      "evidence": [
+        "Bruderwaldの紅葉した森林であり、建築は見えない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Bamberg Bruderwald Herbst-20151102-RM-110637.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Bamberg_Bruderwald_Herbst-20151102-RM-110637.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "c87899e8-9d00-4d2d-adfc-697f59e5bffc": {
+      "building_name": null,
+      "evidence": [
+        "Vilcabamba周辺の牧草斜面と石積みが主体。小さな構造物も見えるが特定建築を裏付ける形状情報は不足する。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Tramo Vilcabamba - Abra de Ccollpaccasa, Vilcabamba 14.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Tramo_Vilcabamba_-_Abra_de_Ccollpaccasa,_Vilcabamba_14.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "75ba40eb-8144-43b9-9e7c-d948f70f58f7": {
+      "building_name": null,
+      "evidence": [
+        "Taunuskammの冬の森林という題名と着雪した樹木が対応し、建築は見えない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:MK55525 Winter auf dem Taunuskamm.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:MK55525_Winter_auf_dem_Taunuskamm.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "74ab03e8-7d5c-4d1f-8b6d-552c90ad9035": {
+      "building_name": null,
+      "evidence": [
+        "Kentuckyの降雪後という題名に対応する着雪樹木で、建築は写っていない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Snow from Winter Storm Skylar (12 March 2018) (near Frenchburg, Menifee County, Kentucky, USA) 14.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Snow_from_Winter_Storm_Skylar_(12_March_2018)_(near_Frenchburg,_Menifee_County,_Kentucky,_USA)_14.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "1c8d5ee3-a534-4bd6-a64a-da22461c0ce3": {
+      "building_name": null,
+      "evidence": [
+        "Gibson Desertの草原という題名と乾燥地の景観が対応するが、同定できる建築はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Gunbarrel Hwy, Gibson Desert Nature Reserve, Western Australia, Australia.June2017.IMG1228.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Gunbarrel_Hwy,_Gibson_Desert_Nature_Reserve,_Western_Australia,_Australia.June2017.IMG1228.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "268912c7-2dc1-44ca-91d8-0db40a9e761f": {
+      "building_name": null,
+      "evidence": [
+        "Kropsbachweiherの池と紅葉の景観で、同定可能な建築は見えない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Kropsbachweiher IMG 7606.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Kropsbachweiher_IMG_7606.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "e871df57-68a8-41d7-92c3-18d6199e8b59": {
+      "building_name": null,
+      "evidence": [
+        "草原と地平線の樹林帯が写っている。題名からも特定建築を裏付ける情報は得られない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Mobilvɛla.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Mobilv%C9%9Bla.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "4dcb1280-f075-4f51-aa3e-c7f7724e1dcb": {
+      "building_name": null,
+      "evidence": [
+        "原画像は砂地と小さな石列のある砂漠。titleとsource_urlはSahara44という景観名で、遠景の小物にも建築を同定できる形状はない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Sahara44.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Sahara44.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "50c02049-7900-4366-be07-e727819a1fed": {
+      "building_name": null,
+      "evidence": [
+        "原画像は落葉の林道と樹木。titleとsource_urlのBelhus Woodsという場所名に整合し、同定対象となる建築は見えない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Late Autumn - Belhus Woods - geograph.org.uk - 607632.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Late_Autumn_-_Belhus_Woods_-_geograph.org.uk_-_607632.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "b084f6a0-0be8-49c3-8634-a2d127e59fcf": {
+      "building_name": null,
+      "evidence": [
+        "原画像は中央線のある舗装道路と草地・樹木。titleとsource_urlは田園景観を示し、固有の建築を同定できる情報はない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Paisaje vereda del carmen.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Paisaje_vereda_del_carmen.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "f17e0c67-58ab-46ee-ab2f-cee1211fe94e": {
+      "building_name": null,
+      "evidence": [
+        "原画像は落葉林と草地、小さな水路。titleとsource_urlはRu de Chawionの自然保護区を示し、建築は見えない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Réserve naturelle domaniale du Ru de Chawion - bois de Staneux - Theux.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:R%C3%A9serve_naturelle_domaniale_du_Ru_de_Chawion_-_bois_de_Staneux_-_Theux.JPG",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "d925fa2e-6863-4e3f-a38b-6b815ddd9930": {
+      "building_name": null,
+      "evidence": [
+        "原画像は湖と草本の岸、遠景の山並み。titleとsource_urlのLaguna del OtunとNevado Santa Isabelは地形名で、建築の同定根拠ではない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:LAGUNA DEL OTUN y NEVADO SANTA ISABEL.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:LAGUNA_DEL_OTUN_y_NEVADO_SANTA_ISABEL.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "6f80a29e-5fda-43eb-92c2-864eccd6c4ed": {
+      "building_name": null,
+      "evidence": [
+        "原画像は草原と遠景の点在する樹木。titleとsource_urlはLake Mburo National Parkの草原を示し、同定できる建築はない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Vast Grasslands of Lake Mburo National Park.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Vast_Grasslands_of_Lake_Mburo_National_Park.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "2354e33e-1798-443d-8478-4dfc02ce52cf": {
+      "building_name": null,
+      "evidence": [
+        "原画像は雪原、一本の木、雪の山並み。titleとsource_urlのWakhan, Badakhshanは地域名であり、建築は同定できない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Wakhan, Badakhshan.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Wakhan,_Badakhshan.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "453c3ef0-07ae-4ec5-a8c2-eb7bc884dc9a": {
+      "building_name": null,
+      "evidence": [
+        "原画像は砂丘、前景の岩塊と低木。titleとsource_urlはLSRA Dunes Landscapeを示し、建築は見えない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:LSRA Dunes Landscape (49992096042).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:LSRA_Dunes_Landscape_(49992096042).jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "c769314c-15b6-4945-9089-242e31a6b431": {
+      "building_name": null,
+      "evidence": [
+        "原画像は砂漠の崖と広い砂地。titleとsource_urlのWestern Desert, Sahara Desert, Egyptは撮影地域であり、建築は見えない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Western Desert, Sahara Desert, Egypt.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Western_Desert,_Sahara_Desert,_Egypt.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "eda96dec-7a0e-473c-ad97-e4546d8e0d92": {
+      "building_name": null,
+      "evidence": [
+        "原画像は砂丘と暗褐色の岩山。titleとsource_urlのTadrart Acacusは地形の撮影地であり、建築は見えない。",
+        "building_idとbuilding_evidenceは空で、identity-candidatesにも候補はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Libya 4983 Tadrart Acacus Luca Galuzzi 2007.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Libya_4983_Tadrart_Acacus_Luca_Galuzzi_2007.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "3af9b8d9-a05d-4eeb-b960-0ee6db1af809": {
+      "building_name": null,
+      "evidence": [
+        "原画像は砂原と層状の岩山で、titleのWadi Rumとも整合する。建築物は見えず、建築の同定対象はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Wadi Rum landscape (12465078394).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Wadi_Rum_landscape_(12465078394).jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "491555cc-d4ec-4bd8-9e4f-e41ea603aaff": {
+      "building_name": null,
+      "evidence": [
+        "原画像は秋の森林と反射する池で、titleの森林名と整合するが建築物は見えない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Puszcza Bukowa kz03.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Puszcza_Bukowa_kz03.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "acd2822b-d35e-4e7c-94d1-33d649be7007": {
+      "building_name": null,
+      "evidence": [
+        "中央の黄葉樹を常緑の森林が囲む画像で、建築物は見えない。titleから特定の建築を示す情報もない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Oksbakkshøst 02.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Oksbakksh%C3%B8st_02.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "97fa50a7-e283-4975-a3f7-d10c11bfd234": {
+      "building_name": null,
+      "evidence": [
+        "titleのDilijanの秋の森林と、樹林に覆われた谷と道路の景観は整合する。個別建築を同定できる外観はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Dilijan Autumn Forest, October 2024 M4 highway.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Dilijan_Autumn_Forest,_October_2024_M4_highway.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "16bcbb47-9b41-4ff2-8f8d-4631e05b49ee": {
+      "building_name": null,
+      "evidence": [
+        "岩山と残雪に囲まれた青緑色の山上湖はtitleのDrachenseeと整合する。湖名は建築名ではなく、同定できる建築物はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Drachensee.JPG",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Drachensee.JPG",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "15633280-9c10-442c-8606-65757d5bbf02": {
+      "building_name": null,
+      "evidence": [
+        "原画像は金網越しの牧草地と雲霧に覆われた山で、titleの地名のみから特定建築は同定できない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Paisaje Mucuchies.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Paisaje_Mucuchies.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "6f578009-ac0d-448b-b812-014874d03257": {
+      "building_name": null,
+      "evidence": [
+        "titleどおり雪をまとった山脈の景観であり、建築物は見えない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Cordillera de los Andes desde Chile.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Cordillera_de_los_Andes_desde_Chile.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "7e83f9a3-fa47-470b-82a4-e5a7ac2e7742": {
+      "building_name": null,
+      "evidence": [
+        "案内標識と平坦な草原が写り、titleのBitter Creek WSAと整合するが、標識は建築物の同定根拠にならない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Bitter Creek WSA (52344045663).jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Bitter_Creek_WSA_(52344045663).jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "0fbe3f50-b64f-4733-bd11-1f352cfc8e19": {
+      "building_name": null,
+      "evidence": [
+        "雪原と針葉樹の山岳景観はtitleのRugovaの冬景色と整合する。個別建築を識別できる外観はない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Rugova mountains in the east part of Kosovo covered with Snow during Winter.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Rugova_mountains_in_the_east_part_of_Kosovo_covered_with_Snow_during_Winter.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    },
+    "8281076e-ce63-46f2-8cc8-fd4da401523f": {
+      "building_name": null,
+      "evidence": [
+        "雪の稜線と手前の針葉樹林はtitleのヒマラヤ山岳景観と整合する。建築物は見えない。"
+      ],
+      "building_id": null,
+      "building_evidence": "",
+      "title": "File:Snow-capped Himalayan ridge and pine forest in Himachal Pradesh.jpg",
+      "source_url": "https://commons.wikimedia.org/wiki/File:Snow-capped_Himalayan_ridge_and_pine_forest_in_Himachal_Pradesh.jpg",
+      "candidate_group": [],
+      "judged_group": [],
+      "comparison": "no_candidate"
+    }
+  },
+  "groups": [
+    {
+      "building_name": "Koerner House（パームスプリングス）",
+      "asset_ids": [
+        "dbb97cc3-14aa-440b-bd89-9d07982f4717"
+      ]
+    },
+    {
+      "building_name": "Mittlere Holdergasse 42（マールバッハ・アム・ネッカー）",
+      "asset_ids": [
+        "f9eae5ad-ae90-4127-9400-136f6bb5bc98"
+      ]
+    },
+    {
+      "building_name": "アヤソフィア",
+      "asset_ids": [
+        "d139bff8-3dee-4cbb-b89d-88dd1ec7a08c"
+      ]
+    },
+    {
+      "building_name": "イェニ・モスク（イスタンブール）",
+      "asset_ids": [
+        "7e4b611b-fc37-4c2e-ae69-f88cb8806dcc"
+      ]
+    },
+    {
+      "building_name": "カレンデルハーネ・モスク",
+      "asset_ids": [
+        "19823cb9-3881-4336-8d0e-a9cbf1c37621"
+      ]
+    },
+    {
+      "building_name": "ケルン大聖堂",
+      "asset_ids": [
+        "42debd18-3658-4024-83d3-70f4553022af"
+      ]
+    },
+    {
+      "building_name": "コタキナバル市立モスク",
+      "asset_ids": [
+        "3c74d027-c729-4618-ab5f-f41b7c669445"
+      ]
+    },
+    {
+      "building_name": "サン・フロラン参事会教会（ニーデラースラッハ）",
+      "asset_ids": [
+        "48582fbc-428f-4cac-aff7-e19e53749ecc"
+      ]
+    },
+    {
+      "building_name": "シャンベリ大聖堂",
+      "asset_ids": [
+        "14be4d6a-4eee-400e-bbc9-bb6c7da375d0"
+      ]
+    },
+    {
+      "building_name": "ストラスブール大聖堂",
+      "asset_ids": [
+        "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+        "a86f43ed-fdc4-4cea-8335-76d67291002d"
+      ]
+    },
+    {
+      "building_name": "スルタン・イブラヒム・ハン・モスク（レティムノ）",
+      "asset_ids": [
+        "3fcf5929-cc75-453f-a95e-7c47aa745076"
+      ]
+    },
+    {
+      "building_name": "スレイマニエ・モスク",
+      "asset_ids": [
+        "87348653-ce91-4878-bc3b-3708944b6b11"
+      ]
+    },
+    {
+      "building_name": "トゥールのサン＝テティエンヌ大聖堂",
+      "asset_ids": [
+        "b763e852-ab11-4431-adb3-1bfa0ae832ac"
+      ]
+    },
+    {
+      "building_name": "トプカプ宮殿・黒人宦官のモスク",
+      "asset_ids": [
+        "f15d1706-9298-420a-a52f-e5f7cc6194f1"
+      ]
+    },
+    {
+      "building_name": "バヤズィト1世モスク（ブルサ）",
+      "asset_ids": [
+        "379a69a4-db2c-460a-ba24-faa1273745bd"
+      ]
+    },
+    {
+      "building_name": "ピーターバラ大聖堂",
+      "asset_ids": [
+        "9fccd38d-e7f8-4e20-bd89-7a687161e89b"
+      ]
+    },
+    {
+      "building_name": "ヤズドのジャーメ・モスク時計塔",
+      "asset_ids": [
+        "d6731faf-a8ff-4341-a6d3-a6f499e90bca"
+      ]
+    },
+    {
+      "building_name": "ララ・ムスタファ・パシャ・モスク（旧聖ニコラオス大聖堂、ファマグスタ）",
+      "asset_ids": [
+        "b0a15697-a70b-4282-b5b8-a5e1e7660e48"
+      ]
+    },
+    {
+      "building_name": "リンブルク大聖堂",
+      "asset_ids": [
+        "0b2cd407-bb8e-4b6b-b06e-659f7de531bb"
+      ]
+    },
+    {
+      "building_name": "レオン大聖堂",
+      "asset_ids": [
+        "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+        "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01"
+      ]
+    },
+    {
+      "building_name": "下照姫神社（福岡市）の拝殿",
+      "asset_ids": [
+        "a895d199-82eb-4f0a-aeb8-be7cbd3e2702"
+      ]
+    },
+    {
+      "building_name": "丸亀城天守",
+      "asset_ids": [
+        "1b0d7678-9f76-4618-8dde-010302ad3f5f"
+      ]
+    },
+    {
+      "building_name": "仙台城大手門脇櫓",
+      "asset_ids": [
+        "ac920479-c5b3-4965-9a1e-2b39b03e64f2"
+      ]
+    },
+    {
+      "building_name": "伊予松山城 大天守・小天守",
+      "asset_ids": [
+        "bf39a4f2-28b3-4616-a82d-232588f8b531"
+      ]
+    },
+    {
+      "building_name": "八王子城 御主殿の曳橋",
+      "asset_ids": [
+        "70368a88-5d0b-4110-a247-3cfe5a049f88"
+      ]
+    },
+    {
+      "building_name": "大牟田熊野神社 拝殿",
+      "asset_ids": [
+        "1a77c325-feb8-4f70-8ee5-74e50b2e9dbb"
+      ]
+    },
+    {
+      "building_name": "富強胡同6号の門",
+      "asset_ids": [
+        "2c774ca1-3139-4797-9d34-3c3bf08d3544"
+      ]
+    },
+    {
+      "building_name": "岩のドーム",
+      "asset_ids": [
+        "152cadd8-7323-4de2-ba65-fce95747d576",
+        "78f5d063-b33b-4808-b31a-8d441737484d",
+        "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+      ]
+    },
+    {
+      "building_name": "広島城天守",
+      "asset_ids": [
+        "0c5a381a-0e26-45d3-bd42-74773d792f7c"
+      ]
+    },
+    {
+      "building_name": "慈眼寺（野崎観音）本堂",
+      "asset_ids": [
+        "3b1e801f-0278-430b-b2d1-47bf8e6f3c5a"
+      ]
+    },
+    {
+      "building_name": "掛川城天守",
+      "asset_ids": [
+        "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+        "b2a4d9a0-a875-42c3-933e-d158784b3a69"
+      ]
+    },
+    {
+      "building_name": "新宮神社（大津市）拝殿",
+      "asset_ids": [
+        "f331a956-ff98-4a04-9083-55323fafa77e"
+      ]
+    },
+    {
+      "building_name": "津島神社（愛知県津島市）の拝殿",
+      "asset_ids": [
+        "3707541e-0b97-4643-a595-1d30e268b740"
+      ]
+    },
+    {
+      "building_name": "熊本城天守",
+      "asset_ids": [
+        "673d2e20-09dc-4b9a-8765-a6e4b9e1ec0e"
+      ]
+    },
+    {
+      "building_name": "甲府城の石垣",
+      "asset_ids": [
+        "16ebd1da-48f4-4a13-bed7-26898cc25e85"
+      ]
+    },
+    {
+      "building_name": "秋月城 裏門",
+      "asset_ids": [
+        "4bb9c00c-5ea7-4902-b897-dc72a17d762e"
+      ]
+    },
+    {
+      "building_name": "聖パウルス大聖堂（ミュンスター）",
+      "asset_ids": [
+        "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+        "9d176920-0aac-4077-95b1-a5aef5677aac"
+      ]
+    },
+    {
+      "building_name": "聖ヴィクトル教会（デュルメン）",
+      "asset_ids": [
+        "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+        "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+      ]
+    },
+    {
+      "building_name": "野田恵美須神社 拝殿",
+      "asset_ids": [
+        "7f54d2ab-574b-4cb6-91c8-e0517c963b66"
+      ]
+    },
+    {
+      "building_name": "金剛證寺 本堂（三重県）",
+      "asset_ids": [
+        "387e2ba9-cd21-41f5-a470-2d9b09417610"
+      ]
+    },
+    {
+      "building_name": "阿蘇神社 拝殿",
+      "asset_ids": [
+        "4b7aa7db-6a4a-4f08-8142-9c9bdf4f7203"
+      ]
+    },
+    {
+      "building_name": "鶴丸城御楼門",
+      "asset_ids": [
+        "58c1f736-0d7a-4b0f-8eef-451d81bf0b88"
+      ]
+    }
+  ],
+  "executions": [
+    {
+      "batch_id": "batch-01",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b01-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-02",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b02-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-03",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b03-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-04",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b04-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-05",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b05-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-06",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b06-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-07",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b07-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-08",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b08-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-09",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b09-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-10",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b10-run1",
+      "repeat_of": null
+    }
+  ],
+  "sources_sha256": {
+    "bench/issue41/judgment.schema.json": "aadc35b93357b90ef5ce543272042f9fa52a2ff31d375b19ebd3946d02679d99",
+    "data/issue41/gold100/selection.csv": "17542d2dd5800326c9744d3ba1a8e1570d737de4e1619d95d193b500a8e5b337",
+    "data/issue41/judge/batch-01/input.json": "a95125b7541edde82c18026c9575954f4d29b24d71b2aa58079704231b4300e7",
+    "data/issue41/judge/batch-01/judgment.json": "8125f1a22bdd79bb7e7ab3b1d4a650d77c8bb4b607536a3a9dab28b8ffd9b996",
+    "data/issue41/judge/batch-02/input.json": "dcb370b6cd41e8528ad0847c9b43990ea96677384e80d386ded582c25dfab59f",
+    "data/issue41/judge/batch-02/judgment.json": "7adbbd3a52dbca9f4dbc4a8a8dac3eb39ec8be725c8bf4d4684a32cba69ce16e",
+    "data/issue41/judge/batch-03/input.json": "9d438fac7036d0a259b1c1bfe18952526bfcc62fc2209ce5060307c70016ac96",
+    "data/issue41/judge/batch-03/judgment.json": "e17956b33afee00a36ea784565117f08c199d8ec8efad971b7cf30fa5fbc70af",
+    "data/issue41/judge/batch-04/input.json": "10390c83ae8ce488842b53cd9f90c74f0f643c328078f2b71f4c268ec65891cc",
+    "data/issue41/judge/batch-04/judgment.json": "1c7d9cc032a4f8393e6dee9008830ea25c361ca50f4712ddf1cbdb657c5f1620",
+    "data/issue41/judge/batch-05/input.json": "ae95340d3137bb05a6ac738ba6831965f6690095b69b5653a815b72ffdce575c",
+    "data/issue41/judge/batch-05/judgment.json": "b0ecdfc918c640c646464963426f3383b4df35d8ce5187ebf20aaff057d586ba",
+    "data/issue41/judge/batch-06/input.json": "a469f871068283ebb1345a648504e0b7f8cd32c8b681c2301cbd9d09f627a54e",
+    "data/issue41/judge/batch-06/judgment.json": "4c7baa461926a15e201514d989b4774744abd8fcacff03a78fa27c953756424f",
+    "data/issue41/judge/batch-07/input.json": "6c2298eb577dc1e2683d6acbb10d6067eaf166f6e636fb85ceb5126c5363f957",
+    "data/issue41/judge/batch-07/judgment.json": "59f3c558a3ea74c4842c477d3f732fd2f828c75324feb2a07b8a6352a715ca04",
+    "data/issue41/judge/batch-08/input.json": "0950154f1dff8d59c942f12eee194a04c6a7de4b608e35281ce68500bff6e4bb",
+    "data/issue41/judge/batch-08/judgment.json": "001e97bd7fc0000d32ace5755ed34b8f13ce037c4e09e5943ba85ce4d94ea0c7",
+    "data/issue41/judge/batch-09/input.json": "04dc0cec8bea9020654711f4b7280cc5d7c55d9d98ca82cb273ef45a54fc32eb",
+    "data/issue41/judge/batch-09/judgment.json": "3d71f1aafb5876e66ee893655656b5432d9640aa96c393251c1f4efc369966d1",
+    "data/issue41/judge/batch-10/input.json": "655668ae093f30d7ad811920cb871c370f51ac11576e45a13098a088a19ba253",
+    "data/issue41/judge/batch-10/judgment.json": "c9189f53dfdb8fa61d79d366106426494ce15c1047c6e52b910be2416b37c3b9",
+    "data/issue41/judge/repeat/input.json": "0b564a2d67690b8bcb541c5d3a95b3fd2dae453795dedc2a73fd3fee5c69f883",
+    "data/issue41/judge/repeat/judgment.json": "b1d4538d350df566db01d2376dfc1dc4996a629705a98cc90907056329ad1060",
+    "data/issue41/judge/repeat-plan.json": "f7caea1049a4e07be1d99785663ffb4aa214a41ac600d3d6289827ca2d91a0d5"
+  }
+}

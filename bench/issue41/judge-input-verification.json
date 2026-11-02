@@ -1,0 +1,9 @@
+{
+  "images": 100,
+  "regions": 2934,
+  "batches": 10,
+  "repeat_images": 10,
+  "schema_valid": true,
+  "coverage": "全画像・全領域・メタデータ・bbox・描画参照を照合済み",
+  "judgments_executed": false
+}
