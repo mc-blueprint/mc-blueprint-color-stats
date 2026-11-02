@@ -72,12 +72,15 @@ def pending(session) -> list[dict]:
 def resolve_subject(session, candidate, layer, aliases):
     """登録済みsubjectの名称・別名がタイトル内で一意に一致した候補だけを扱う。
 
-    別名は設定のsubject_aliases。一致しない候補も収集対象にできる。
+    別名は設定のsubject_aliases。空属性の旧prep生成行は同定根拠にしない。
+    一致しない候補も収集対象にできる。
     """
     found = []
     for subject in session.scalars(
         select(Subject).where(Subject.domain == layer["attributes"]["domain"])
     ):
+        if not subject.scene_attributes:
+            continue
         names = [subject.name, *aliases.get(subject.name, [])]
         if any(
             name
@@ -141,6 +144,10 @@ def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None
         }
         if len(layer_subjects) >= layer["subjects"]:
             return "target_reached"
+        if "images" in layer and sum(
+            matches(r["attributes"], layer) for r in rows
+        ) >= layer["images"]:
+            return "image_target_reached"
         reason = quota_reason(rows, config, subject_id, author, request.provider, region, layer)
         if reason:
             return reason
@@ -181,7 +188,9 @@ def quota_reason(rows, config, subject_id, author, source, region, layer):
         if sum(row[key] == value for row in rows) >= cap:
             return f"{limit_key}_limit"
         if key in ("author", "source"):
-            layer_cap = int(Decimal(str(limits[f"{key}_share"])) * layer["subjects"])
+            layer_cap = int(
+                Decimal(str(limits[f"{key}_share"])) * layer.get("images", layer["subjects"])
+            )
             if sum(
                 row[key] == value and matches(row["attributes"], layer) for row in rows
             ) >= min(cap, layer_cap):
@@ -201,7 +210,8 @@ def plan(
 ) -> list[uuid.UUID]:
     """不足率の大きい層から検索を投入する。同じseed・条件ではジョブを重複させない。
 
-    予約中subjectも不足判定に含む。投入後に満了した層はprepareのdecideで止める。
+    images指定時は予約を含む画像不足率、それ以外はsubject不足率を使う。
+    投入後に満了した層はprepareのdecideで止める。
     seedを変えると別のオフセットを探索できる。検索の終端・次offsetはrunに記録される。
     """
     with queue._transaction() as session:
@@ -222,6 +232,11 @@ def plan(
     rng = random.Random(seed)
     layers = []
     for layer in config["strata"]:
+        if "images" in layer:
+            count = sum(matches(r["attributes"], layer) for r in rows)
+            if count < layer["images"]:
+                layers.append(((layer["images"] - count) / layer["images"], layer))
+            continue
         count = len(
             {r["subject_id"] for r in rows if r["subject_id"] and matches(r["attributes"], layer)}
         )

@@ -43,6 +43,7 @@ def config():
     result = load_targets(ROOT / "configs/collection_targets.yaml", ROOT / "taxonomy")
     result["strata"] = [result["strata"][0]]
     result["strata"][0]["subjects"] = 10
+    result["strata"][0].pop("images")
     result["image_budget"] = 10
     result["subject_aliases"] = {f"城{i}": [f"Castle {i}"] for i in range(2)}
     result["limits"] = dict(
@@ -107,6 +108,7 @@ def test_多言語と複数ページのランダム探索を再現できる(conf
     assert {r.page for r in first} == {0, 1, 2}
     for language in ("ja", "en"):
         assert len({r.start for r in first if r.language == language}) == 3
+        assert next(r for r in first if r.language == language).start == 0
 
 
 @pytest.mark.parametrize("key,value", [("style", "invalid"), ("era", ""), ("domain", "text")])
@@ -130,6 +132,61 @@ def test_各割合上限とsubject画像上限を適用する(config, dimension)
     config["limits"][f"{dimension}_share"] = 1
     config["limits"]["subject_images"] = 1
     assert bias.quota_reason([row], config, *values, layer) == "subject_limit"
+
+
+def test_一万枚の集中枠はCommons八千枚で止まる():
+    config = load_targets(ROOT / "configs/collection_targets.yaml", ROOT / "taxonomy")
+    assert config["image_budget"] == 10000
+    assert sum(layer["images"] for layer in config["strata"]) == 10000
+    assert sum(int(layer["images"] * 0.8) for layer in config["strata"]) == 8000
+    layer = config["strata"][0]
+    row = dict(subject_id=None, author="", source="wikimedia_commons", region=None,
+               attributes=layer["attributes"])
+    values = (None, "", "wikimedia_commons", None, layer)
+    assert bias.quota_reason([row] * 667, config, *values) is None
+    assert bias.quota_reason([row] * 668, config, *values) == "stratum_source_limit"
+    assert bias.quota_reason([row] * 8000, config, *values) == "source_limit"
+
+
+@DB
+def test_旧prepの空属性subjectを収集で再同定しない(queue, config):
+    subjects(queue, 1)
+    with Session(queue.engine) as session, session.begin():
+        session.execute(update(Subject).values(scene_attributes={}))
+    claim = claims(queue, config, 1)[0]
+    assert bias.reserve(queue, claim, config, request(), candidate()) is None
+    with Session(queue.engine) as session:
+        assert session.scalars(select(CollectionReservation)).one().subject_id is None
+
+
+@DB
+def test_未同定でも画像目標で計画と予約を止める(queue, config, tmp_path):
+    config["strata"][0]["images"] = 1
+    claim = claims(queue, config, 1)[0]
+    assert bias.reserve(queue, claim, config, request(), replace(candidate(), title="未知")) is None
+    assert bias.reserve(queue, claim, config, request(), candidate(1)) == "image_target_reached"
+    storage = tmp_path / "storage.yaml"
+    storage.write_text("storage: {}", encoding="utf-8")
+    assert bias.plan(queue, config, policy_path=ROOT / "configs/source_policy.yaml",
+                     storage_config=storage, host="test", code_version="test") == []
+
+
+@DB
+def test_全件未同定でも画像不足率の高い層から計画する(queue, config, tmp_path):
+    layer = config["strata"][0]
+    layer["images"] = 10
+    empty = copy.deepcopy(layer)
+    empty["id"] = "empty"
+    empty["attributes"]["region"] = "elsewhere"
+    config["strata"].append(empty)
+    claim = claims(queue, config, 1)[0]
+    assert bias.reserve(queue, claim, config, request(), replace(candidate(), title="未知")) is None
+    storage = tmp_path / "storage.yaml"
+    storage.write_text("storage: {}", encoding="utf-8")
+    ids = bias.plan(queue, config, policy_path=ROOT / "configs/source_policy.yaml",
+                    storage_config=storage, host="test", code_version="test")
+    with Session(queue.engine) as session:
+        assert session.get(Job, ids[0]).payload["request"]["stratum"] == "empty"
 
 
 @pytest.mark.parametrize("dimension", ["author", "source"])
