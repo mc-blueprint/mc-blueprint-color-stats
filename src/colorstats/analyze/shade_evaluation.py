@@ -17,13 +17,16 @@ def compare(samples: list[dict]) -> dict:
     必須キーはsubject_id/asset_id/sha256/label_source/label/method/material_oklab。
     material_oklabは3成分。各キーは一意、同一SHAの別assetは拒否する。
     同じ意味ラベルの複数instanceは呼出し側で有効画素数による加重平均にする。
-    modelとhumanを混ぜず、共通する画像対だけを同じ母数で評価する。
+    model・human・sol-correctを混ぜず、由来ごとに手法共通の画像対を評価する。
+    sol-correctはモデルがcorrectと判定した領域であり、人手正解ではない。
     画像数の多い建築が支配しないよう部位内、建築内、建築間の順に平均する。
     """
     cells = defaultdict(lambda: defaultdict(dict))
     hashes = {}
     for row in samples:
-        if row["method"] not in METHODS or row["label_source"] not in {"model", "human"}:
+        if row["method"] not in METHODS or row["label_source"] not in {
+            "model", "human", "sol-correct",
+        }:
             raise ValueError("未知の手法またはマスク由来です")
         asset = row["asset_id"]
         owner = hashes.setdefault(row["sha256"], asset)
@@ -37,8 +40,11 @@ def compare(samples: list[dict]) -> dict:
         if vector.shape != (3,) or not np.isfinite(vector).all():
             raise ValueError("材質色は有限なOKLab 3成分です")
         values[asset] = vector
+    sources = ("model", "human")
+    if any(row["label_source"] == "sol-correct" for row in samples):
+        sources += ("sol-correct",)
     results = {source: {"cells": [], "methods": {}, "subjects": 0, "pairs": 0}
-               for source in ("model", "human")}
+               for source in sources}
     for (source, subject, label), methods in sorted(cells.items()):
         common = sorted(set.intersection(*(set(methods[method]) for method in METHODS)))
         pairs = list(combinations(common, 2))

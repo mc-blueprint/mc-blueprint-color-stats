@@ -1,0 +1,225 @@
+{
+  "dataset": "ade",
+  "completed": 617,
+  "selected": 617,
+  "complete": true,
+  "settings": {
+    "method": "sam2-dino",
+    "threshold": 0.35,
+    "text_threshold": 0.25,
+    "max_image_side": 512,
+    "truth_resize": "nearest",
+    "prompts": {
+      "column": "column",
+      "door": "door",
+      "fence": "fence",
+      "gable_wall": "gable wall",
+      "ground_grass": "grass",
+      "ground_soil": "soil",
+      "path": "paved path",
+      "path_natural": "dirt path",
+      "railing": "railing",
+      "rock_face": "rock cliff",
+      "rock_scree": "loose rocks",
+      "sand": "sand",
+      "stairs_entry": "entrance stairs",
+      "tree_trunk": "tree trunk",
+      "vegetation_tree_canopy": "tree canopy",
+      "wall_main": "building wall",
+      "wall_secondary": "secondary building wall",
+      "water": "water",
+      "window_frame": "window frame",
+      "window_glass": "window glass"
+    },
+    "mapping_sha256": "06ebe7814b8db2e2b0e2225b1c73350158e2d5db89e32eee12d4009c4a1a1cbd",
+    "overlap": "同一グループは和集合。異なるグループの重複は誤ラベル側のFP。",
+    "ignored": "未対応の正解IDの画素を全グループで無視。未対応予測ラベルも評価外。",
+    "model_sha256": {
+      "sam2/README.md": "dfa401b1b9358b9650ae487dd2f2bb336fd745c3609e3244adf2e97a22343857",
+      "sam2/config.json": "860aff9751b139d83a4ad7df1e5535416fded533e0ead02625edbefcb9953cce",
+      "sam2/model.safetensors": "48c14467e5cf9e51870511feb72c89688e82dd74523142c0538b663e193ac2a7",
+      "sam2/preprocessor_config.json": "6ebf229ee259368ce4a8d4f2fe893a72b053023710853e257253939e601f583d",
+      "sam2/processor_config.json": "f8a68e865cfad115c1c2763f3d93eca7b1c622da06da2a9273eb437fb2389b6d",
+      "sam2/source.json": "d85e211d9c15a306f07c719ffee7c799a073873839f565dd93d9d8314265a72b",
+      "sam2/video_preprocessor_config.json": "9fccfe5f464ec38c2f236d0e6a68e95511c80c22132fc2fa4b9f7b65f24fad95",
+      "dino/README.md": "cf46f74c7b6850f1d5cbe406028324d8798148726016d46a69a365b4a2d3e89f",
+      "dino/added_tokens.json": "909e96cb32d92ce728a01bc99850cbba26196d74115c17ebeb019275412588f2",
+      "dino/config.json": "eec82c5ab66e16df12a9a212e68ac011779927c2536cf9078658e35d85f0c67a",
+      "dino/model.safetensors": "1a2412ef99bd74bcd3c2a246fa1e48581f8889a1300c9051974741314fc042f3",
+      "dino/preprocessor_config.json": "8454179ba95e2ad22947835aad7b45862a601fc0055ab88bf1ee70892d3aea60",
+      "dino/source.json": "53f3336c67751b1becc189603249b8060f680d10bd900780db87c24127e57098",
+      "dino/special_tokens_map.json": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+      "dino/tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+      "dino/tokenizer_config.json": "d40ab645b68211910b9170d22433d43186a6ec8ee6fd10ba170524b25bf4fb56",
+      "dino/vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    }
+  },
+  "labels": {
+    "wall": {
+      "tp": 478993,
+      "fp": 4642418,
+      "fn": 291608,
+      "iou": 0.08848906682204515,
+      "precision": 0.09352754543620889,
+      "recall": 0.6215836730032792
+    },
+    "window": {
+      "tp": 18913,
+      "fp": 9991109,
+      "fn": 11893,
+      "iou": 0.0018871642794815163,
+      "precision": 0.00188940643686897,
+      "recall": 0.6139388430825163
+    },
+    "door": {
+      "tp": 14262,
+      "fp": 1619460,
+      "fn": 7076,
+      "iou": 0.008692112008912737,
+      "precision": 0.00872975940827142,
+      "recall": 0.6683850407723311
+    },
+    "column": {
+      "tp": 0,
+      "fp": 1429091,
+      "fn": 7307,
+      "iou": 0.0,
+      "precision": 0.0,
+      "recall": 0.0
+    },
+    "stairs": {
+      "tp": 170467,
+      "fp": 1686135,
+      "fn": 64336,
+      "iou": 0.08874154189255458,
+      "precision": 0.0918166629142918,
+      "recall": 0.7260000936955661
+    },
+    "railing": {
+      "tp": 36524,
+      "fp": 2071958,
+      "fn": 40497,
+      "iou": 0.016995978090060444,
+      "precision": 0.017322414893748205,
+      "recall": 0.47420833279235536
+    },
+    "fence": {
+      "tp": 259379,
+      "fp": 2782377,
+      "fn": 157719,
+      "iou": 0.08106923792184656,
+      "precision": 0.08527278322127087,
+      "recall": 0.6218658444777966
+    },
+    "path": {
+      "tp": 1892159,
+      "fp": 7028610,
+      "fn": 979232,
+      "iou": 0.19112715241139874,
+      "precision": 0.21210716251031722,
+      "recall": 0.6589694681079658
+    },
+    "path_natural": {
+      "tp": 254529,
+      "fp": 8366690,
+      "fn": 77559,
+      "iou": 0.02926031679392209,
+      "precision": 0.029523551135866053,
+      "recall": 0.7664504589145046
+    },
+    "ground_soil": {
+      "tp": 2722852,
+      "fp": 8081450,
+      "fn": 1456528,
+      "iou": 0.22207729819269983,
+      "precision": 0.2520155397359311,
+      "recall": 0.6514966334719504
+    },
+    "ground_grass": {
+      "tp": 4388762,
+      "fp": 5708123,
+      "fn": 838368,
+      "iou": 0.40134069143164774,
+      "precision": 0.4346649486450524,
+      "recall": 0.8396121772368393
+    },
+    "rock": {
+      "tp": 768378,
+      "fp": 4366367,
+      "fn": 129812,
+      "iou": 0.14595302130834562,
+      "precision": 0.14964287418362548,
+      "recall": 0.8554737861699641
+    },
+    "sand": {
+      "tp": 514352,
+      "fp": 10053644,
+      "fn": 157039,
+      "iou": 0.04795807193169999,
+      "precision": 0.048670722434035744,
+      "recall": 0.7660990391589998
+    },
+    "water": {
+      "tp": 3474353,
+      "fp": 4128140,
+      "fn": 520540,
+      "iou": 0.4277162237307173,
+      "precision": 0.4570018019089265,
+      "recall": 0.8696986377357291
+    },
+    "tree": {
+      "tp": 5812066,
+      "fp": 1142979,
+      "fn": 4905286,
+      "iou": 0.4900424785783803,
+      "precision": 0.8356618828490685,
+      "recall": 0.5423042930753791
+    }
+  },
+  "coverage": {
+    "valid_pixels": 30450789,
+    "total_pixels": 90107838,
+    "zero_valid_images": [
+      "ADEChallengeData2016/images/validation/ADE_val_00000024.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000203.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000352.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000545.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000617.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000757.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000760.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000762.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000765.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000766.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000767.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000823.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000873.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00000891.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001015.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001204.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001211.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001443.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001603.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001671.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001718.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001733.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001761.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001764.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001820.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001833.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001862.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001871.jpg",
+      "ADEChallengeData2016/images/validation/ADE_val_00001990.jpg"
+    ],
+    "predicted_regions": 11658,
+    "audit": "全選定画像・全チェックポイント・マスク寸法・TP/FP/FNの集積を照合"
+  },
+  "provenance": {
+    "base_commit": "3833e1a1334172fe80cbd01f1ee6556ccd6ba30b",
+    "predict_sha256": "1a8bbd53a97203f94675cfe09f9f878409a75096b1c41c9147c6e7317b8f1f3e",
+    "gpu": "NVIDIA GeForce RTX 4070",
+    "torch_version": "2.11.0+cu128",
+    "cuda_version": "12.8",
+    "node": "ubuntu-2",
+    "database_used": false
+  }
+}
