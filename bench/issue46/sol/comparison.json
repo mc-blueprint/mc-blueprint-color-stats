@@ -1,0 +1,408 @@
+{
+  "model": {
+    "cells": [
+      {
+        "subject_id": "dome-of-the-rock",
+        "label": "door",
+        "assets": [
+          "152cadd8-7323-4de2-ba65-fce95747d576",
+          "78f5d063-b33b-4808-b31a-8d441737484d",
+          "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+        ],
+        "pairs": 3,
+        "mean_delta_e_ok": {
+          "none": 0.08272800737525969,
+          "gray-world": 0.08286547962969211,
+          "intrinsic": 0.03691937525335786
+        }
+      },
+      {
+        "subject_id": "dome-of-the-rock",
+        "label": "roof_surface",
+        "assets": [
+          "152cadd8-7323-4de2-ba65-fce95747d576",
+          "78f5d063-b33b-4808-b31a-8d441737484d",
+          "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+        ],
+        "pairs": 3,
+        "mean_delta_e_ok": {
+          "none": 0.05315360703133141,
+          "gray-world": 0.05134937083924962,
+          "intrinsic": 0.021777525719169136
+        }
+      },
+      {
+        "subject_id": "dome-of-the-rock",
+        "label": "wall_main",
+        "assets": [
+          "152cadd8-7323-4de2-ba65-fce95747d576",
+          "78f5d063-b33b-4808-b31a-8d441737484d",
+          "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+        ],
+        "pairs": 3,
+        "mean_delta_e_ok": {
+          "none": 0.05093748651724367,
+          "gray-world": 0.04633860625394146,
+          "intrinsic": 0.027255067811824796
+        }
+      },
+      {
+        "subject_id": "dome-of-the-rock",
+        "label": "window_frame",
+        "assets": [
+          "152cadd8-7323-4de2-ba65-fce95747d576",
+          "78f5d063-b33b-4808-b31a-8d441737484d",
+          "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+        ],
+        "pairs": 3,
+        "mean_delta_e_ok": {
+          "none": 0.0537492125451875,
+          "gray-world": 0.053275031039257625,
+          "intrinsic": 0.060233693695014044
+        }
+      },
+      {
+        "subject_id": "duelmen-st-viktor",
+        "label": "door",
+        "assets": [
+          "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+          "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.05463423407375593,
+          "gray-world": 0.045750677266581004,
+          "intrinsic": 0.030024735737989923
+        }
+      },
+      {
+        "subject_id": "duelmen-st-viktor",
+        "label": "roof_surface",
+        "assets": [
+          "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+          "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.08316441279534102,
+          "gray-world": 0.07320303433542057,
+          "intrinsic": 0.22650634747478013
+        }
+      },
+      {
+        "subject_id": "duelmen-st-viktor",
+        "label": "wall_main",
+        "assets": [
+          "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+          "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.15533114752842397,
+          "gray-world": 0.14421447576385787,
+          "intrinsic": 0.17487919488431752
+        }
+      },
+      {
+        "subject_id": "duelmen-st-viktor",
+        "label": "window_frame",
+        "assets": [
+          "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+          "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.3729586821864145,
+          "gray-world": 0.3676780523865956,
+          "intrinsic": 0.0851918068259165
+        }
+      },
+      {
+        "subject_id": "kakegawa-keep",
+        "label": "roof_surface",
+        "assets": [
+          "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+          "b2a4d9a0-a875-42c3-933e-d158784b3a69"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.11086071861879988,
+          "gray-world": 0.15618176962976404,
+          "intrinsic": 0.176289398346483
+        }
+      },
+      {
+        "subject_id": "kakegawa-keep",
+        "label": "window_frame",
+        "assets": [
+          "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+          "b2a4d9a0-a875-42c3-933e-d158784b3a69"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.1662843161579851,
+          "gray-world": 0.1738472083089689,
+          "intrinsic": 0.07691658686276272
+        }
+      },
+      {
+        "subject_id": "leon-cathedral-west",
+        "label": "roof_surface",
+        "assets": [
+          "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+          "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.10674649720549913,
+          "gray-world": 0.09668186060265974,
+          "intrinsic": 0.0998557972641241
+        }
+      },
+      {
+        "subject_id": "leon-cathedral-west",
+        "label": "wall_main",
+        "assets": [
+          "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+          "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.10669492158546141,
+          "gray-world": 0.09663402513560412,
+          "intrinsic": 0.09997779450008214
+        }
+      },
+      {
+        "subject_id": "muenster-st-paulus",
+        "label": "wall_main",
+        "assets": [
+          "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+          "9d176920-0aac-4077-95b1-a5aef5677aac"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.0776999064726767,
+          "gray-world": 0.06800809492291945,
+          "intrinsic": 0.09849200324877858
+        }
+      },
+      {
+        "subject_id": "muenster-st-paulus",
+        "label": "window_frame",
+        "assets": [
+          "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+          "9d176920-0aac-4077-95b1-a5aef5677aac"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.10223460500753966,
+          "gray-world": 0.09947757019751247,
+          "intrinsic": 0.12492509406820687
+        }
+      },
+      {
+        "subject_id": "strasbourg-cathedral",
+        "label": "door",
+        "assets": [
+          "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+          "a86f43ed-fdc4-4cea-8335-76d67291002d"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.07681035264676545,
+          "gray-world": 0.09044174444034934,
+          "intrinsic": 0.20366429430868635
+        }
+      },
+      {
+        "subject_id": "strasbourg-cathedral",
+        "label": "roof_surface",
+        "assets": [
+          "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+          "a86f43ed-fdc4-4cea-8335-76d67291002d"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.28693814153004,
+          "gray-world": 0.3195131989773453,
+          "intrinsic": 0.29597624955292035
+        }
+      },
+      {
+        "subject_id": "strasbourg-cathedral",
+        "label": "wall_main",
+        "assets": [
+          "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+          "a86f43ed-fdc4-4cea-8335-76d67291002d"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.28713753245283274,
+          "gray-world": 0.3196981836292855,
+          "intrinsic": 0.295732122850327
+        }
+      },
+      {
+        "subject_id": "strasbourg-cathedral",
+        "label": "window_frame",
+        "assets": [
+          "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+          "a86f43ed-fdc4-4cea-8335-76d67291002d"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.23758073527470425,
+          "gray-world": 0.2709414406835443,
+          "intrinsic": 0.23132732825939126
+        }
+      }
+    ],
+    "methods": {
+      "none": {
+        "mean_delta_e_ok": 0.13067356175221767,
+        "by_subject": {
+          "dome-of-the-rock": 0.06014207836725557,
+          "duelmen-st-viktor": 0.16652211914598386,
+          "kakegawa-keep": 0.1385725173883925,
+          "leon-cathedral-west": 0.10672070939548027,
+          "muenster-st-paulus": 0.08996725574010818,
+          "strasbourg-cathedral": 0.2221166904760856
+        }
+      },
+      "gray-world": {
+        "mean_delta_e_ok": 0.13528876470166573,
+        "by_subject": {
+          "dome-of-the-rock": 0.0584571219405352,
+          "duelmen-st-viktor": 0.15771155993811375,
+          "kakegawa-keep": 0.1650144889693665,
+          "leon-cathedral-west": 0.09665794286913193,
+          "muenster-st-paulus": 0.08374283256021596,
+          "strasbourg-cathedral": 0.2501486419326311
+        }
+      },
+      "intrinsic": {
+        "mean_delta_e_ok": 0.12676671212310706,
+        "by_subject": {
+          "dome-of-the-rock": 0.03654641561984146,
+          "duelmen-st-viktor": 0.12915052123075102,
+          "kakegawa-keep": 0.12660299260462285,
+          "leon-cathedral-west": 0.09991679588210312,
+          "muenster-st-paulus": 0.11170854865849272,
+          "strasbourg-cathedral": 0.25667499874283123
+        }
+      }
+    },
+    "subjects": 6,
+    "pairs": 26
+  },
+  "human": {
+    "cells": [],
+    "methods": {
+      "none": {
+        "mean_delta_e_ok": null,
+        "by_subject": {}
+      },
+      "gray-world": {
+        "mean_delta_e_ok": null,
+        "by_subject": {}
+      },
+      "intrinsic": {
+        "mean_delta_e_ok": null,
+        "by_subject": {}
+      }
+    },
+    "subjects": 0,
+    "pairs": 0
+  },
+  "sol-correct": {
+    "cells": [
+      {
+        "subject_id": "dome-of-the-rock",
+        "label": "door",
+        "assets": [
+          "152cadd8-7323-4de2-ba65-fce95747d576",
+          "78f5d063-b33b-4808-b31a-8d441737484d",
+          "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+        ],
+        "pairs": 3,
+        "mean_delta_e_ok": {
+          "none": 0.08272800737525969,
+          "gray-world": 0.08286547962969211,
+          "intrinsic": 0.03691937525335786
+        }
+      },
+      {
+        "subject_id": "dome-of-the-rock",
+        "label": "window_frame",
+        "assets": [
+          "152cadd8-7323-4de2-ba65-fce95747d576",
+          "78f5d063-b33b-4808-b31a-8d441737484d",
+          "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+        ],
+        "pairs": 3,
+        "mean_delta_e_ok": {
+          "none": 0.0537492125451875,
+          "gray-world": 0.053275031039257625,
+          "intrinsic": 0.060233693695014044
+        }
+      },
+      {
+        "subject_id": "duelmen-st-viktor",
+        "label": "roof_surface",
+        "assets": [
+          "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+          "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.08316441279534102,
+          "gray-world": 0.07320303433542057,
+          "intrinsic": 0.22650634747478013
+        }
+      },
+      {
+        "subject_id": "muenster-st-paulus",
+        "label": "window_frame",
+        "assets": [
+          "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+          "9d176920-0aac-4077-95b1-a5aef5677aac"
+        ],
+        "pairs": 1,
+        "mean_delta_e_ok": {
+          "none": 0.10223460500753966,
+          "gray-world": 0.09947757019751247,
+          "intrinsic": 0.12492509406820687
+        }
+      }
+    ],
+    "methods": {
+      "none": {
+        "mean_delta_e_ok": 0.08454587592103475,
+        "by_subject": {
+          "dome-of-the-rock": 0.0682386099602236,
+          "duelmen-st-viktor": 0.08316441279534102,
+          "muenster-st-paulus": 0.10223460500753966
+        }
+      },
+      "gray-world": {
+        "mean_delta_e_ok": 0.0802502866224693,
+        "by_subject": {
+          "dome-of-the-rock": 0.06807025533447486,
+          "duelmen-st-viktor": 0.07320303433542057,
+          "muenster-st-paulus": 0.09947757019751247
+        }
+      },
+      "intrinsic": {
+        "mean_delta_e_ok": 0.13333599200572432,
+        "by_subject": {
+          "dome-of-the-rock": 0.04857653447418595,
+          "duelmen-st-viktor": 0.22650634747478013,
+          "muenster-st-paulus": 0.12492509406820687
+        }
+      }
+    },
+    "subjects": 3,
+    "pairs": 8
+  }
+}
