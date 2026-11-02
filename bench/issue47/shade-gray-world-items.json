@@ -1,0 +1,3003 @@
+[
+  {
+    "asset_id": "99c99018-6cad-44df-9226-f5fa00b18d5c",
+    "success": true,
+    "output_bytes": 81399,
+    "seconds": 1.2054105489951326
+  },
+  {
+    "asset_id": "1f9ddc9d-5993-45af-9456-240ef40ba846",
+    "success": true,
+    "output_bytes": 75719,
+    "seconds": 0.4980587620084407
+  },
+  {
+    "asset_id": "bdbc8335-119e-48b6-a9ef-2041a7f0a267",
+    "success": true,
+    "output_bytes": 107647,
+    "seconds": 0.9102365840080893
+  },
+  {
+    "asset_id": "f83038c3-a336-4fb1-930a-fae69fcb4056",
+    "success": true,
+    "output_bytes": 90120,
+    "seconds": 0.2840880029980326
+  },
+  {
+    "asset_id": "c5ef9c9b-f415-45bc-866f-1865edbf4f82",
+    "success": true,
+    "output_bytes": 40725,
+    "seconds": 0.1611855730006937
+  },
+  {
+    "asset_id": "fff79485-5da7-44db-bddd-ec59e9dfff4a",
+    "success": true,
+    "output_bytes": 102046,
+    "seconds": 0.6405302359926281
+  },
+  {
+    "asset_id": "96176095-2b3d-47c3-959e-3ee6ae0ac9d1",
+    "success": true,
+    "output_bytes": 55341,
+    "seconds": 0.5491694230004214
+  },
+  {
+    "asset_id": "73fbdcde-1ee7-4777-971c-4799d52606af",
+    "success": true,
+    "output_bytes": 96180,
+    "seconds": 0.32789299500291236
+  },
+  {
+    "asset_id": "e050e45c-47a7-4034-94e1-bb4ca4483730",
+    "success": true,
+    "output_bytes": 63777,
+    "seconds": 0.8394312860036734
+  },
+  {
+    "asset_id": "ab2abcfd-ee22-4729-8399-e1b9204051b0",
+    "success": true,
+    "output_bytes": 84805,
+    "seconds": 1.3905736269953195
+  },
+  {
+    "asset_id": "acf3a472-428b-4f67-aa93-61a0e4455b37",
+    "success": true,
+    "output_bytes": 58306,
+    "seconds": 0.40634544999920763
+  },
+  {
+    "asset_id": "15c2c715-04e9-4133-96f4-8316d0126199",
+    "success": true,
+    "output_bytes": 69763,
+    "seconds": 0.4209205349907279
+  },
+  {
+    "asset_id": "b77ac6a1-2e56-4d81-b6d2-4cfab83690c4",
+    "success": true,
+    "output_bytes": 107171,
+    "seconds": 0.4995981620013481
+  },
+  {
+    "asset_id": "0ec0d973-4c2d-4590-887d-ce50926c5236",
+    "success": true,
+    "output_bytes": 165505,
+    "seconds": 0.7983414660120616
+  },
+  {
+    "asset_id": "340aa8e3-91e4-4e3e-8dd1-2dc194d23cb0",
+    "success": true,
+    "output_bytes": 90120,
+    "seconds": 0.2940436469943961
+  },
+  {
+    "asset_id": "016e3d3c-076e-4613-a7be-4eb5dcceb3a2",
+    "success": true,
+    "output_bytes": 84212,
+    "seconds": 0.39331973499793094
+  },
+  {
+    "asset_id": "75fe4beb-32a7-4686-9763-dab9531c41d3",
+    "success": true,
+    "output_bytes": 55250,
+    "seconds": 1.0313286640011938
+  },
+  {
+    "asset_id": "d0deb5de-e1ed-49b0-beb8-3ee055fde464",
+    "success": true,
+    "output_bytes": 80923,
+    "seconds": 2.465657391003333
+  },
+  {
+    "asset_id": "f303edf9-737c-4140-9eb6-a8990a68239f",
+    "success": true,
+    "output_bytes": 102004,
+    "seconds": 0.7371902300073998
+  },
+  {
+    "asset_id": "04a55453-192e-491c-b687-46db0f13c440",
+    "success": true,
+    "output_bytes": 72452,
+    "seconds": 0.17432406201260164
+  },
+  {
+    "asset_id": "85f026a9-192e-48eb-9957-94cd2be39c19",
+    "success": true,
+    "output_bytes": 92951,
+    "seconds": 0.65784387900203
+  },
+  {
+    "asset_id": "fe93bfc0-bcd8-4fb7-881d-51f69f091aea",
+    "success": true,
+    "output_bytes": 81096,
+    "seconds": 0.553072491005878
+  },
+  {
+    "asset_id": "bd5941d8-71f7-4fd7-8f23-43c3755608e8",
+    "success": true,
+    "output_bytes": 58133,
+    "seconds": 0.5087409270054195
+  },
+  {
+    "asset_id": "68158ad9-2ff4-4ffc-ace2-fe98824b8a9b",
+    "success": true,
+    "output_bytes": 20675,
+    "seconds": 0.13751189100730699
+  },
+  {
+    "asset_id": "6a36af13-c762-4399-9fd0-b96f6ca1c9cd",
+    "success": true,
+    "output_bytes": 75855,
+    "seconds": 0.37140721100149676
+  },
+  {
+    "asset_id": "e5d83a4e-e50b-4047-ad88-8b78e12b68e9",
+    "success": true,
+    "output_bytes": 66731,
+    "seconds": 0.5716919589904137
+  },
+  {
+    "asset_id": "e1199d68-ad5a-4fde-9167-901a76c58e51",
+    "success": true,
+    "output_bytes": 108056,
+    "seconds": 0.8895701730070869
+  },
+  {
+    "asset_id": "9d195dfd-cabb-4530-b71e-43f617e1e9fd",
+    "success": true,
+    "output_bytes": 67110,
+    "seconds": 0.2749058019981021
+  },
+  {
+    "asset_id": "c2ae006b-0808-4960-b9ac-7a8d924aff65",
+    "success": true,
+    "output_bytes": 89833,
+    "seconds": 0.9637102020060411
+  },
+  {
+    "asset_id": "6c78db91-b63a-41c1-9bcc-10b01d1969d9",
+    "success": true,
+    "output_bytes": 108056,
+    "seconds": 0.8897253960021771
+  },
+  {
+    "asset_id": "1399f860-6aec-485c-a743-8febbb640477",
+    "success": true,
+    "output_bytes": 63727,
+    "seconds": 0.19322201900649816
+  },
+  {
+    "asset_id": "fac51870-b114-4ed8-8e97-d23948478ebd",
+    "success": true,
+    "output_bytes": 107171,
+    "seconds": 0.6347608210053295
+  },
+  {
+    "asset_id": "a68476cc-223a-45b3-af90-86e9a4eedf7b",
+    "success": true,
+    "output_bytes": 61000,
+    "seconds": 0.2522212049952941
+  },
+  {
+    "asset_id": "99e5c7bd-aa8c-48df-a0bd-3d5ca6891103",
+    "success": true,
+    "output_bytes": 92951,
+    "seconds": 0.6729174880019855
+  },
+  {
+    "asset_id": "95a44cfe-a215-4d0d-918c-1a1e6e2d3c6b",
+    "success": true,
+    "output_bytes": 206087,
+    "seconds": 1.129090295988135
+  },
+  {
+    "asset_id": "f923781e-4d05-4349-adc9-d6574701a0a5",
+    "success": true,
+    "output_bytes": 38080,
+    "seconds": 0.4502775120054139
+  },
+  {
+    "asset_id": "580e3d6e-e0f2-4501-b722-4550e65bd900",
+    "success": true,
+    "output_bytes": 96180,
+    "seconds": 0.3423097929917276
+  },
+  {
+    "asset_id": "6b1f78d2-1ab5-47eb-b598-a8d6ce13c70e",
+    "success": true,
+    "output_bytes": 93015,
+    "seconds": 2.1674749519879697
+  },
+  {
+    "asset_id": "144a7b30-cdc8-418e-8521-bbcd49d0c7bc",
+    "success": true,
+    "output_bytes": 84538,
+    "seconds": 0.7673355489969254
+  },
+  {
+    "asset_id": "3bd6afc2-e3d9-42a6-81d6-0334904099db",
+    "success": true,
+    "output_bytes": 96091,
+    "seconds": 0.8702892860019347
+  },
+  {
+    "asset_id": "83d69e4e-a9f4-4391-8cde-bcf7b4ef2c79",
+    "success": true,
+    "output_bytes": 80998,
+    "seconds": 1.3720142279926222
+  },
+  {
+    "asset_id": "28806dbc-cda8-4065-bcb2-c2bd02741ee3",
+    "success": true,
+    "output_bytes": 80935,
+    "seconds": 3.9216292670025723
+  },
+  {
+    "asset_id": "8f30615c-e371-4c69-8e50-6cb1788dbc2f",
+    "success": true,
+    "output_bytes": 72366,
+    "seconds": 4.574601886997698
+  },
+  {
+    "asset_id": "e80962ff-5265-4dcb-88d3-3d44323a1a45",
+    "success": true,
+    "output_bytes": 89269,
+    "seconds": 2.532218667998677
+  },
+  {
+    "asset_id": "9a6cfd49-546d-4951-be43-28e41fbb1bad",
+    "success": true,
+    "output_bytes": 95110,
+    "seconds": 1.1152674190088874
+  },
+  {
+    "asset_id": "ccf56679-c30c-49e1-b52b-174300129590",
+    "success": true,
+    "output_bytes": 86643,
+    "seconds": 2.6130255360039882
+  },
+  {
+    "asset_id": "d71864dc-890f-4784-be1d-431b69045ce3",
+    "success": true,
+    "output_bytes": 54969,
+    "seconds": 1.177021651994437
+  },
+  {
+    "asset_id": "64e724c3-9741-413a-9e56-1268117f89ca",
+    "success": true,
+    "output_bytes": 83900,
+    "seconds": 1.682332406999194
+  },
+  {
+    "asset_id": "282eb584-4ce1-4510-a5c3-0b3882f000cd",
+    "success": true,
+    "output_bytes": 43257,
+    "seconds": 1.877333786993404
+  },
+  {
+    "asset_id": "5992dcf8-038d-414d-8517-19f0e07ca494",
+    "success": true,
+    "output_bytes": 43257,
+    "seconds": 1.8752147179911844
+  },
+  {
+    "asset_id": "843a378a-e414-405f-bb0b-9e4280b0f0b1",
+    "success": true,
+    "output_bytes": 51948,
+    "seconds": 0.24188737499935087
+  },
+  {
+    "asset_id": "56334741-63da-4dac-8ded-f94ce40ae537",
+    "success": true,
+    "output_bytes": 77939,
+    "seconds": 1.6963344609976048
+  },
+  {
+    "asset_id": "c156af6b-3b81-463e-a80c-4ad970b79d0a",
+    "success": true,
+    "output_bytes": 75189,
+    "seconds": 1.6671598980028648
+  },
+  {
+    "asset_id": "2d95bee9-772e-4cf2-9524-1eb94ee9d9be",
+    "success": true,
+    "output_bytes": 43618,
+    "seconds": 0.8306469969975296
+  },
+  {
+    "asset_id": "a5476f4e-3e3c-491a-be35-a6893b081b45",
+    "success": true,
+    "output_bytes": 83445,
+    "seconds": 0.9355212719965493
+  },
+  {
+    "asset_id": "f1627b1c-2080-4efb-a191-aef5eeb6ce34",
+    "success": true,
+    "output_bytes": 113349,
+    "seconds": 1.2237515169981634
+  },
+  {
+    "asset_id": "8a963287-ad45-4172-a15e-033934c9abf5",
+    "success": true,
+    "output_bytes": 75364,
+    "seconds": 3.9860101509984815
+  },
+  {
+    "asset_id": "7065b122-b294-4f03-90fb-190f05e10f59",
+    "success": true,
+    "output_bytes": 83857,
+    "seconds": 1.9865435359970434
+  },
+  {
+    "asset_id": "5f8c04a2-1512-4174-9614-74d14d7d012e",
+    "success": true,
+    "output_bytes": 89760,
+    "seconds": 2.2432245949894423
+  },
+  {
+    "asset_id": "de5d6fef-8214-4b9a-a1d1-e61c2a94a730",
+    "success": true,
+    "output_bytes": 78146,
+    "seconds": 2.7979450129932957
+  },
+  {
+    "asset_id": "66d26d58-ba62-4df3-94c4-1aec8bb34605",
+    "success": true,
+    "output_bytes": 80890,
+    "seconds": 1.0581244939967291
+  },
+  {
+    "asset_id": "8c9b6a31-e580-4824-b0af-feffab7e3c5a",
+    "success": true,
+    "output_bytes": 75189,
+    "seconds": 1.6468819530127803
+  },
+  {
+    "asset_id": "d545be37-4ae3-4c0d-8a6c-71195c858e02",
+    "success": true,
+    "output_bytes": 67047,
+    "seconds": 0.6044381609972334
+  },
+  {
+    "asset_id": "e1ec4bb8-7cae-49f6-9b83-9c7077f99b08",
+    "success": true,
+    "output_bytes": 83634,
+    "seconds": 1.136155439002323
+  },
+  {
+    "asset_id": "13b29e31-b8e3-4c65-897d-b8a9fe27e375",
+    "success": true,
+    "output_bytes": 84019,
+    "seconds": 4.733680088989786
+  },
+  {
+    "asset_id": "c4cd45b8-6817-40c9-b5a0-36e4f0bec65b",
+    "success": true,
+    "output_bytes": 101020,
+    "seconds": 1.5999686970026232
+  },
+  {
+    "asset_id": "7acb1b6c-aa5d-4f90-bfa0-c45ea2480557",
+    "success": true,
+    "output_bytes": 84265,
+    "seconds": 3.833237999002449
+  },
+  {
+    "asset_id": "e0b1eee0-0e2e-4ccc-a878-78f528631cc8",
+    "success": true,
+    "output_bytes": 100771,
+    "seconds": 1.1462010480026947
+  },
+  {
+    "asset_id": "9dbb60c2-a8dd-49df-b86b-8d99890f073c",
+    "success": true,
+    "output_bytes": 78604,
+    "seconds": 3.5458124650031095
+  },
+  {
+    "asset_id": "66c505e8-19ae-47da-8b14-7dce9d6a1224",
+    "success": true,
+    "output_bytes": 78770,
+    "seconds": 1.987866147988825
+  },
+  {
+    "asset_id": "d1b73034-b9e5-465d-a66f-f757c9334a73",
+    "success": true,
+    "output_bytes": 75035,
+    "seconds": 0.4735776980087394
+  },
+  {
+    "asset_id": "573ac1bc-5335-4dad-a13c-692c4839dba0",
+    "success": true,
+    "output_bytes": 109566,
+    "seconds": 2.209295442997245
+  },
+  {
+    "asset_id": "f1867d9c-021b-41d9-bcfe-1a92f876927a",
+    "success": true,
+    "output_bytes": 83445,
+    "seconds": 0.8853421959938714
+  },
+  {
+    "asset_id": "2f0adb3e-6c80-44ba-b550-a363ed4e6767",
+    "success": true,
+    "output_bytes": 100998,
+    "seconds": 1.1737833470106125
+  },
+  {
+    "asset_id": "f6716112-0b8e-4489-9fd0-6f871fd86220",
+    "success": true,
+    "output_bytes": 75655,
+    "seconds": 3.6669279229972744
+  },
+  {
+    "asset_id": "521878c1-5e53-4ffe-912e-17fe79c5d19a",
+    "success": true,
+    "output_bytes": 81024,
+    "seconds": 3.1617698979971465
+  },
+  {
+    "asset_id": "982e6777-b605-49f7-b8c4-623863e30e40",
+    "success": true,
+    "output_bytes": 80935,
+    "seconds": 3.74216094899748
+  },
+  {
+    "asset_id": "c60ca2d4-2ced-4812-acb9-601d0c7aeec0",
+    "success": true,
+    "output_bytes": 86249,
+    "seconds": 0.8463754910044372
+  },
+  {
+    "asset_id": "65517e68-8cd7-424b-ba43-2b355e51e338",
+    "success": true,
+    "output_bytes": 86970,
+    "seconds": 2.6754591170029016
+  },
+  {
+    "asset_id": "efbbb159-f648-4e35-966f-3586ef7d4410",
+    "success": true,
+    "output_bytes": 75016,
+    "seconds": 2.7193487440090394
+  },
+  {
+    "asset_id": "df434854-ccd4-401d-b1e1-6f774b7eadaf",
+    "success": true,
+    "output_bytes": 100771,
+    "seconds": 1.1447245559975272
+  },
+  {
+    "asset_id": "3f0df505-d2d3-4912-af97-dfbf913fd277",
+    "success": true,
+    "output_bytes": 98397,
+    "seconds": 2.568578416001401
+  },
+  {
+    "asset_id": "b4b50332-87e3-4176-8b9b-1f298a98200a",
+    "success": true,
+    "output_bytes": 92576,
+    "seconds": 3.4546567700017476
+  },
+  {
+    "asset_id": "0713c47a-c7f4-40bd-b8c2-1134e86989d8",
+    "success": true,
+    "output_bytes": 89704,
+    "seconds": 1.5098314179922454
+  },
+  {
+    "asset_id": "470dd4d9-9dbf-478e-9eba-539cb099c11e",
+    "success": true,
+    "output_bytes": 72058,
+    "seconds": 3.7086489590001293
+  },
+  {
+    "asset_id": "2bf0f80a-b236-4a1e-a17a-5fce1865804e",
+    "success": true,
+    "output_bytes": 58044,
+    "seconds": 1.2063138439989416
+  },
+  {
+    "asset_id": "289c0956-19cc-4a11-9a48-bbc99fcc922c",
+    "success": true,
+    "output_bytes": 29118,
+    "seconds": 0.6291887449915521
+  },
+  {
+    "asset_id": "8bacdda9-f3af-4ef3-b6b5-042d3a74995b",
+    "success": true,
+    "output_bytes": 101597,
+    "seconds": 0.9016787500004284
+  },
+  {
+    "asset_id": "fd8363db-143f-47de-8de3-3c8d051bff37",
+    "success": true,
+    "output_bytes": 87190,
+    "seconds": 0.5450766510039102
+  },
+  {
+    "asset_id": "ecb76ed1-1872-4aaa-8a83-ec1a7b3ca297",
+    "success": true,
+    "output_bytes": 95767,
+    "seconds": 1.937850015994627
+  },
+  {
+    "asset_id": "d934a20f-d7b4-4b7d-8cfb-9bc016875f92",
+    "success": true,
+    "output_bytes": 66690,
+    "seconds": 1.8178523200040217
+  },
+  {
+    "asset_id": "b46b38a5-3a0e-4dd2-a047-7aacb9eb3158",
+    "success": true,
+    "output_bytes": 124964,
+    "seconds": 1.1239438140037237
+  },
+  {
+    "asset_id": "1232746f-32dc-4c2a-9210-e2c3e9106e46",
+    "success": true,
+    "output_bytes": 55301,
+    "seconds": 2.228911764002987
+  },
+  {
+    "asset_id": "8a122ec0-a1df-4d74-838e-e759195e69f1",
+    "success": true,
+    "output_bytes": 72591,
+    "seconds": 1.1725964810029836
+  },
+  {
+    "asset_id": "fff1d5fd-88a3-41f0-8b23-50c666a05f80",
+    "success": true,
+    "output_bytes": 157541,
+    "seconds": 1.466757795002195
+  },
+  {
+    "asset_id": "ea0c8f60-6c25-4452-8aa7-fa747c211bfd",
+    "success": true,
+    "output_bytes": 72967,
+    "seconds": 2.890379877993837
+  },
+  {
+    "asset_id": "9e101f07-5243-467e-8672-6720445fac14",
+    "success": true,
+    "output_bytes": 81484,
+    "seconds": 0.6557511800056091
+  },
+  {
+    "asset_id": "0b790294-60e2-4888-840c-f2252fa7b283",
+    "success": true,
+    "output_bytes": 80754,
+    "seconds": 0.5250818159984192
+  },
+  {
+    "asset_id": "7adf84eb-b9fa-425d-bf4c-3db878e33bec",
+    "success": true,
+    "output_bytes": 113470,
+    "seconds": 0.5036481310089584
+  },
+  {
+    "asset_id": "6d0b1aa7-3a7d-47c5-bac9-63ad47bf91d7",
+    "success": true,
+    "output_bytes": 124964,
+    "seconds": 1.1354919980076374
+  },
+  {
+    "asset_id": "ad960c51-e440-49a9-84bc-1dd8fd467d3d",
+    "success": true,
+    "output_bytes": 78486,
+    "seconds": 1.2728461759979837
+  },
+  {
+    "asset_id": "d5430824-c76e-4110-9f7c-c54cb9a3be3c",
+    "success": true,
+    "output_bytes": 72998,
+    "seconds": 4.051079393000691
+  },
+  {
+    "asset_id": "5b76ec1b-23ff-43b8-a14a-2cf0ee68a8c0",
+    "success": true,
+    "output_bytes": 95638,
+    "seconds": 1.6131400059966836
+  },
+  {
+    "asset_id": "57da9f5f-1a56-47c5-9f8d-52e99d8e86eb",
+    "success": true,
+    "output_bytes": 61233,
+    "seconds": 2.110624890992767
+  },
+  {
+    "asset_id": "e8f97a2c-0f5b-45a5-9d6d-c7d5fd1bd8a7",
+    "success": true,
+    "output_bytes": 58044,
+    "seconds": 1.2056454949924955
+  },
+  {
+    "asset_id": "6506cc1f-5b1b-4573-b65a-9e72be059a7e",
+    "success": true,
+    "output_bytes": 52502,
+    "seconds": 0.5423267139995005
+  },
+  {
+    "asset_id": "412d4ec0-2f70-4482-9a2b-b9c5eb7d5435",
+    "success": true,
+    "output_bytes": 23532,
+    "seconds": 0.20387382501212414
+  },
+  {
+    "asset_id": "321a4945-2637-41c7-84d7-99ed02b66cc0",
+    "success": true,
+    "output_bytes": 70179,
+    "seconds": 2.502765389988781
+  },
+  {
+    "asset_id": "467f3586-362f-4fa7-af33-f97ce65a7448",
+    "success": true,
+    "output_bytes": 87130,
+    "seconds": 1.0886466249939986
+  },
+  {
+    "asset_id": "ad09af2a-2417-4014-8fde-f5d0658a330b",
+    "success": true,
+    "output_bytes": 124964,
+    "seconds": 1.1027636569924653
+  },
+  {
+    "asset_id": "c19eb7c0-7bdf-44d6-a193-baf29755f4ee",
+    "success": true,
+    "output_bytes": 49347,
+    "seconds": 0.9823937220062362
+  },
+  {
+    "asset_id": "367fdba7-3d11-4f0c-9e9d-c62c91c2f6cd",
+    "success": true,
+    "output_bytes": 61233,
+    "seconds": 2.1421321770030772
+  },
+  {
+    "asset_id": "8c771f6d-4217-422f-a972-3821a8e0f060",
+    "success": true,
+    "output_bytes": 78594,
+    "seconds": 1.675704768000287
+  },
+  {
+    "asset_id": "dbeff692-c4cb-491e-a2aa-33e10d62009e",
+    "success": true,
+    "output_bytes": 52804,
+    "seconds": 0.46917793300235644
+  },
+  {
+    "asset_id": "00477d20-007b-40b8-89d7-f9b457d3c951",
+    "success": true,
+    "output_bytes": 52804,
+    "seconds": 0.46835423199809156
+  },
+  {
+    "asset_id": "3edfa6dc-a5db-4dd3-a9d8-b8dbef8b9ea2",
+    "success": true,
+    "output_bytes": 90027,
+    "seconds": 2.3312764059955953
+  },
+  {
+    "asset_id": "cbf98769-849d-4408-b071-876e992762f7",
+    "success": true,
+    "output_bytes": 84211,
+    "seconds": 2.412031138999737
+  },
+  {
+    "asset_id": "24ae1764-0d2c-48f4-9aac-8f136b934d1a",
+    "success": true,
+    "output_bytes": 84319,
+    "seconds": 0.32730241199897137
+  },
+  {
+    "asset_id": "b5eeb604-d71f-483e-add9-33ffe3b318c5",
+    "success": true,
+    "output_bytes": 61091,
+    "seconds": 0.351004632000695
+  },
+  {
+    "asset_id": "0aeaf4b7-2240-4601-892c-1a46213acf48",
+    "success": true,
+    "output_bytes": 69903,
+    "seconds": 1.4067895519983722
+  },
+  {
+    "asset_id": "898f31e2-e9b8-48fa-a76f-027bded24e94",
+    "success": true,
+    "output_bytes": 84211,
+    "seconds": 2.4192041180067463
+  },
+  {
+    "asset_id": "0d9fb8f2-6b86-410d-872b-6ef65b239218",
+    "success": true,
+    "output_bytes": 105090,
+    "seconds": 0.787980648005032
+  },
+  {
+    "asset_id": "3d163590-ec13-4710-887a-9fe115f185f4",
+    "success": true,
+    "output_bytes": 92812,
+    "seconds": 1.1458177160093328
+  },
+  {
+    "asset_id": "4fe0d0cf-20d5-44a4-ba2c-0e8178602b99",
+    "success": true,
+    "output_bytes": 75704,
+    "seconds": 0.6355478589975974
+  },
+  {
+    "asset_id": "c7a8c7d6-cb44-4f7c-bf76-ea4aad2f7750",
+    "success": true,
+    "output_bytes": 64053,
+    "seconds": 1.2666772170050535
+  },
+  {
+    "asset_id": "bf62c2cc-6be0-4a1b-9905-5513e180c821",
+    "success": true,
+    "output_bytes": 110875,
+    "seconds": 2.6934519089991227
+  },
+  {
+    "asset_id": "5725453e-9540-47cc-92b9-9f1f3de8e2b1",
+    "success": true,
+    "output_bytes": 81271,
+    "seconds": 1.6419434639974497
+  },
+  {
+    "asset_id": "bfe3b94a-5c90-4250-a04f-c3f9c9127eee",
+    "success": true,
+    "output_bytes": 81870,
+    "seconds": 3.498838211002294
+  },
+  {
+    "asset_id": "cec0d145-b422-48fd-b56d-cf979b9e7858",
+    "success": true,
+    "output_bytes": 96098,
+    "seconds": 4.158957206003834
+  },
+  {
+    "asset_id": "b15c85eb-d1f1-4893-8646-044aa70524d5",
+    "success": true,
+    "output_bytes": 87413,
+    "seconds": 1.950546760999714
+  },
+  {
+    "asset_id": "ddc64462-620c-4730-ba5c-9ac55cda6c51",
+    "success": true,
+    "output_bytes": 90344,
+    "seconds": 1.317296402005013
+  },
+  {
+    "asset_id": "def806c6-0329-4bf7-9d96-198c9b765344",
+    "success": true,
+    "output_bytes": 78476,
+    "seconds": 1.4908684649999486
+  },
+  {
+    "asset_id": "05350a6d-aadd-4eee-9eae-078fd0d8fd6e",
+    "success": true,
+    "output_bytes": 90367,
+    "seconds": 0.5851895340019837
+  },
+  {
+    "asset_id": "1e7f7262-c604-42ba-a5d2-c0fd12cf7bdf",
+    "success": true,
+    "output_bytes": 93479,
+    "seconds": 1.5422729109995998
+  },
+  {
+    "asset_id": "4c97d7a5-6552-4faa-8659-2a97c5047e71",
+    "success": true,
+    "output_bytes": 91544,
+    "seconds": 2.1962318969890475
+  },
+  {
+    "asset_id": "42debd18-3658-4024-83d3-70f4553022af",
+    "success": true,
+    "output_bytes": 81760,
+    "seconds": 1.4979233290068805
+  },
+  {
+    "asset_id": "d6eba318-dc53-4336-8237-a85065ac037e",
+    "success": true,
+    "output_bytes": 96017,
+    "seconds": 0.5264007429941557
+  },
+  {
+    "asset_id": "888ff2d1-f799-443f-9beb-af801108fead",
+    "success": true,
+    "output_bytes": 107060,
+    "seconds": 1.3441239319945453
+  },
+  {
+    "asset_id": "f8a96d36-1960-413e-8027-082a57018a1e",
+    "success": true,
+    "output_bytes": 87176,
+    "seconds": 0.5908978249935899
+  },
+  {
+    "asset_id": "1221132a-49bc-426b-9cf3-efcfbc3d4a1a",
+    "success": true,
+    "output_bytes": 55304,
+    "seconds": 0.8513806809933158
+  },
+  {
+    "asset_id": "f355bb0d-fa9e-4678-84b3-a10298a9c729",
+    "success": true,
+    "output_bytes": 110875,
+    "seconds": 2.6913921640079934
+  },
+  {
+    "asset_id": "63511530-4918-4a0c-93e0-e4eac1b4c3d6",
+    "success": true,
+    "output_bytes": 103827,
+    "seconds": 0.6034228270000312
+  },
+  {
+    "asset_id": "182937e6-487d-4852-90ec-f6334115eea0",
+    "success": true,
+    "output_bytes": 75973,
+    "seconds": 3.051086031991872
+  },
+  {
+    "asset_id": "95cefdac-3690-46e1-8341-ea59fe15f5d2",
+    "success": true,
+    "output_bytes": 110974,
+    "seconds": 2.978580826005782
+  },
+  {
+    "asset_id": "336914e9-7d22-4768-9840-10fecbd5a7dc",
+    "success": true,
+    "output_bytes": 58461,
+    "seconds": 1.1521333290002076
+  },
+  {
+    "asset_id": "0892d26f-f98e-4d05-ae85-96b60689b57f",
+    "success": true,
+    "output_bytes": 97595,
+    "seconds": 1.4548022809904069
+  },
+  {
+    "asset_id": "22c4e942-126a-4289-8972-37304c590048",
+    "success": true,
+    "output_bytes": 78616,
+    "seconds": 3.1106884199980414
+  },
+  {
+    "asset_id": "7ba72f45-7b89-4518-8738-dfd459bf5359",
+    "success": true,
+    "output_bytes": 63955,
+    "seconds": 0.4286511700047413
+  },
+  {
+    "asset_id": "160954cd-7e99-4085-b14e-4e7535a89b8f",
+    "success": true,
+    "output_bytes": 84701,
+    "seconds": 2.9644317030033562
+  },
+  {
+    "asset_id": "d874ad9d-be01-4166-b460-144913dcdf8c",
+    "success": true,
+    "output_bytes": 95651,
+    "seconds": 1.8306128279946279
+  },
+  {
+    "asset_id": "7cc7f11c-63f2-4c39-8dbc-4a47626437f1",
+    "success": true,
+    "output_bytes": 87211,
+    "seconds": 1.4675890969956527
+  },
+  {
+    "asset_id": "6405a553-ab23-4afd-a796-53901d5e8dd2",
+    "success": true,
+    "output_bytes": 88284,
+    "seconds": 1.5396150090091396
+  },
+  {
+    "asset_id": "f16abd2e-55cb-4a7f-a5a4-19fa4b71edb3",
+    "success": true,
+    "output_bytes": 97635,
+    "seconds": 3.972116017001099
+  },
+  {
+    "asset_id": "d3ead29b-fd6f-49cc-81b5-9a93e838e64f",
+    "success": true,
+    "output_bytes": 58126,
+    "seconds": 0.34500727300473955
+  },
+  {
+    "asset_id": "d911a0ea-e39b-4e2b-973b-89e897cd8f9a",
+    "success": true,
+    "output_bytes": 101977,
+    "seconds": 0.9020086910022656
+  },
+  {
+    "asset_id": "e3385993-9ef4-41a1-b627-950b045508be",
+    "success": true,
+    "output_bytes": 97595,
+    "seconds": 1.5190905930066947
+  },
+  {
+    "asset_id": "70761c21-a31e-4b34-b215-b6b2598b2811",
+    "success": true,
+    "output_bytes": 79751,
+    "seconds": 3.658236458999454
+  },
+  {
+    "asset_id": "f2ac60e1-023e-47fd-8635-1d2112b86141",
+    "success": true,
+    "output_bytes": 95651,
+    "seconds": 1.9100460170011502
+  },
+  {
+    "asset_id": "dfb3d83b-5b3a-48ce-be09-35a9a9bf1dbb",
+    "success": true,
+    "output_bytes": 92900,
+    "seconds": 0.6805426139908377
+  },
+  {
+    "asset_id": "201cab78-1384-4341-9fc1-47cd207f49db",
+    "success": true,
+    "output_bytes": 93463,
+    "seconds": 2.9276842459948966
+  },
+  {
+    "asset_id": "dd7dd6ac-d518-4dae-96a5-29dd6fda61d6",
+    "success": true,
+    "output_bytes": 84315,
+    "seconds": 0.5460876239958452
+  },
+  {
+    "asset_id": "bfa04425-cc81-4bb1-9e05-4e455a90ab14",
+    "success": true,
+    "output_bytes": 90289,
+    "seconds": 3.6524809839902446
+  },
+  {
+    "asset_id": "88df3a7e-f19e-4e6c-883c-595800c034bb",
+    "success": true,
+    "output_bytes": 168638,
+    "seconds": 1.7051406569953542
+  },
+  {
+    "asset_id": "d98c9464-ba45-4959-8566-0c96ece8fdbb",
+    "success": true,
+    "output_bytes": 110280,
+    "seconds": 1.426550653995946
+  },
+  {
+    "asset_id": "14be4d6a-4eee-400e-bbc9-bb6c7da375d0",
+    "success": true,
+    "output_bytes": 99447,
+    "seconds": 3.5477231929980917
+  },
+  {
+    "asset_id": "2e7d06ba-0fe1-47a3-9a06-49ac461b21ef",
+    "success": true,
+    "output_bytes": 97595,
+    "seconds": 1.5139175630029058
+  },
+  {
+    "asset_id": "a1144454-43df-4b20-a063-98f06994aa13",
+    "success": true,
+    "output_bytes": 79867,
+    "seconds": 3.564877458004048
+  },
+  {
+    "asset_id": "6ba444c9-6eb9-4b96-8912-72665169c74e",
+    "success": true,
+    "output_bytes": 92870,
+    "seconds": 0.8912557949952316
+  },
+  {
+    "asset_id": "59fd78c8-be57-4b91-9c55-3dd28e7d4347",
+    "success": true,
+    "output_bytes": 87139,
+    "seconds": 1.2213689589989372
+  },
+  {
+    "asset_id": "e7806514-1ff0-45ca-a2b6-1d520bbdd5f7",
+    "success": true,
+    "output_bytes": 90211,
+    "seconds": 1.5564483749913052
+  },
+  {
+    "asset_id": "4c4cf5ae-147e-463d-a77d-20ca18085692",
+    "success": true,
+    "output_bytes": 81209,
+    "seconds": 1.4254305189970182
+  },
+  {
+    "asset_id": "91405826-7990-4d4e-ba7d-38e5a76c44b8",
+    "success": true,
+    "output_bytes": 118621,
+    "seconds": 1.4607028269965667
+  },
+  {
+    "asset_id": "d7771efa-4d56-4fa4-95ec-9ac9180f57af",
+    "success": true,
+    "output_bytes": 83924,
+    "seconds": 0.6404465380037436
+  },
+  {
+    "asset_id": "c3cb5677-da9a-4701-be61-19243148c81a",
+    "success": true,
+    "output_bytes": 81254,
+    "seconds": 0.2430019280000124
+  },
+  {
+    "asset_id": "7de427b3-965c-4110-94ab-107e43f9d6f1",
+    "success": true,
+    "output_bytes": 76050,
+    "seconds": 4.345216367990361
+  },
+  {
+    "asset_id": "9a14f90c-b5c0-4451-8355-e05da5afee81",
+    "success": true,
+    "output_bytes": 87636,
+    "seconds": 2.1335101300064707
+  },
+  {
+    "asset_id": "1e02647e-5762-466e-8f6a-1ace5d1fd055",
+    "success": true,
+    "output_bytes": 81698,
+    "seconds": 1.6252075640077237
+  },
+  {
+    "asset_id": "0f7a8f99-aab5-44d7-b495-d04edd1aaf15",
+    "success": true,
+    "output_bytes": 87105,
+    "seconds": 2.9608125740051037
+  },
+  {
+    "asset_id": "f6f0038e-9c5f-4985-8b46-2be9b38221e1",
+    "success": true,
+    "output_bytes": 133963,
+    "seconds": 1.7255447749921586
+  },
+  {
+    "asset_id": "818cf707-8b64-4d86-970d-38d7ae6dedf8",
+    "success": true,
+    "output_bytes": 113531,
+    "seconds": 1.3251410639932146
+  },
+  {
+    "asset_id": "1b1ff46d-f6fa-4e41-99ce-d3f7965adb93",
+    "success": true,
+    "output_bytes": 83904,
+    "seconds": 0.37399278600059915
+  },
+  {
+    "asset_id": "e6ef95b4-3617-4865-9e30-d4f147985b78",
+    "success": true,
+    "output_bytes": 78680,
+    "seconds": 1.2238974159990903
+  },
+  {
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "success": true,
+    "output_bytes": 162219,
+    "seconds": 1.3476779570046347
+  },
+  {
+    "asset_id": "a849ff4d-6e87-46c5-81df-637d224377e3",
+    "success": true,
+    "output_bytes": 69438,
+    "seconds": 0.21172632700472604
+  },
+  {
+    "asset_id": "c88a28ee-54e7-42a1-a56d-94c5249a8d35",
+    "success": true,
+    "output_bytes": 67494,
+    "seconds": 0.941219017986441
+  },
+  {
+    "asset_id": "765766f3-5f81-447f-a02a-ce40d1eda4bd",
+    "success": true,
+    "output_bytes": 69438,
+    "seconds": 0.21474108500115108
+  },
+  {
+    "asset_id": "d1c05b10-5887-42b9-9450-becbf7fa6d00",
+    "success": true,
+    "output_bytes": 81209,
+    "seconds": 1.3603506890067365
+  },
+  {
+    "asset_id": "05827326-7ef7-40a5-9142-22e14ec6efe6",
+    "success": true,
+    "output_bytes": 101532,
+    "seconds": 2.244224916008534
+  },
+  {
+    "asset_id": "7184d0f9-6bdb-4d08-af31-6729075a22c2",
+    "success": true,
+    "output_bytes": 107491,
+    "seconds": 0.33430513899656944
+  },
+  {
+    "asset_id": "cf9b3aab-c1dd-4290-894e-07b892d9708d",
+    "success": true,
+    "output_bytes": 86706,
+    "seconds": 1.3171653219906148
+  },
+  {
+    "asset_id": "868499b2-94c1-409d-bff7-03f9dfb426c7",
+    "success": true,
+    "output_bytes": 90028,
+    "seconds": 0.7840031600062503
+  },
+  {
+    "asset_id": "c4054aa7-fa55-4945-a1e1-c5f710dbc77b",
+    "success": true,
+    "output_bytes": 75600,
+    "seconds": 3.036249284996302
+  },
+  {
+    "asset_id": "f3a70d84-514e-4e53-96f1-79a65288e69e",
+    "success": true,
+    "output_bytes": 81664,
+    "seconds": 0.4112136679905234
+  },
+  {
+    "asset_id": "1000bf4d-7991-495c-86d6-14514da5ae54",
+    "success": true,
+    "output_bytes": 78908,
+    "seconds": 1.9678138169983868
+  },
+  {
+    "asset_id": "c765a855-3ceb-41f1-a850-d37083e684ef",
+    "success": true,
+    "output_bytes": 81126,
+    "seconds": 1.0778601740021259
+  },
+  {
+    "asset_id": "c970d328-8487-4875-b87b-6ea9bddcbd8b",
+    "success": true,
+    "output_bytes": 93072,
+    "seconds": 1.2261058349977247
+  },
+  {
+    "asset_id": "48ab1ceb-c815-4f09-9100-4eccb9467edf",
+    "success": true,
+    "output_bytes": 37740,
+    "seconds": 0.44017183799587656
+  },
+  {
+    "asset_id": "c7e2f95a-8d03-49a4-9d2c-a495cd31b176",
+    "success": true,
+    "output_bytes": 125064,
+    "seconds": 1.5627064590080408
+  },
+  {
+    "asset_id": "b3ea6fb3-bd4f-4b93-a7d3-2245ad5bfa96",
+    "success": true,
+    "output_bytes": 121576,
+    "seconds": 3.8435425019997638
+  },
+  {
+    "asset_id": "8050e9d8-2cc3-4063-aeb3-2b34b6e8b5bd",
+    "success": true,
+    "output_bytes": 104983,
+    "seconds": 3.5736054339940893
+  },
+  {
+    "asset_id": "1ae57be5-b4ed-4a99-a618-bbc103a9a446",
+    "success": true,
+    "output_bytes": 127098,
+    "seconds": 1.6508247530000517
+  },
+  {
+    "asset_id": "c31c89c9-284d-43a7-9769-bae34be7a1ef",
+    "success": true,
+    "output_bytes": 52373,
+    "seconds": 0.28646526401280425
+  },
+  {
+    "asset_id": "650f6dff-15ab-4254-b774-2289b1b8052c",
+    "success": true,
+    "output_bytes": 72692,
+    "seconds": 0.5684378299920354
+  },
+  {
+    "asset_id": "978141a7-ca90-4a37-b131-dd85a73c1bd3",
+    "success": true,
+    "output_bytes": 64111,
+    "seconds": 1.1441918710042955
+  },
+  {
+    "asset_id": "8c35e0f3-7894-4af7-8b7b-4d53beb8bf12",
+    "success": true,
+    "output_bytes": 61148,
+    "seconds": 0.21070281699940097
+  },
+  {
+    "asset_id": "462bb2e2-0364-4597-829d-184fe0dedfb3",
+    "success": true,
+    "output_bytes": 66811,
+    "seconds": 0.4351022339978954
+  },
+  {
+    "asset_id": "c08ef0dd-73d7-403f-b65e-3e5d0c475963",
+    "success": true,
+    "output_bytes": 87586,
+    "seconds": 3.262956363003468
+  },
+  {
+    "asset_id": "09be06a4-ae80-4a0f-8021-fe8f650fab32",
+    "success": true,
+    "output_bytes": 78495,
+    "seconds": 0.4172889729961753
+  },
+  {
+    "asset_id": "f622551d-96ff-4e66-b1ba-22c809f35164",
+    "success": true,
+    "output_bytes": 93265,
+    "seconds": 1.4494938379939413
+  },
+  {
+    "asset_id": "2d305abb-9f1d-4029-b39a-d1f8f1c6ba51",
+    "success": true,
+    "output_bytes": 76039,
+    "seconds": 0.19171887799166143
+  },
+  {
+    "asset_id": "bf6b24e5-583f-45d3-b247-601379d90dbc",
+    "success": true,
+    "output_bytes": 92809,
+    "seconds": 2.790173063011025
+  },
+  {
+    "asset_id": "bfe58f05-89e9-44d4-b7ba-476ad2dfb962",
+    "success": true,
+    "output_bytes": 104582,
+    "seconds": 0.5911317430000054
+  },
+  {
+    "asset_id": "703999d8-eece-42a6-9aed-48136aa8d9a0",
+    "success": true,
+    "output_bytes": 104822,
+    "seconds": 1.7853271939966362
+  },
+  {
+    "asset_id": "e166a59c-2f9c-4689-afa2-485130492fbd",
+    "success": true,
+    "output_bytes": 93607,
+    "seconds": 1.5576480710005853
+  },
+  {
+    "asset_id": "09efbc84-2d75-412c-8773-219b257387e5",
+    "success": true,
+    "output_bytes": 87586,
+    "seconds": 3.2616378370003076
+  },
+  {
+    "asset_id": "e7faf946-da66-42ac-a5af-675494b2a438",
+    "success": true,
+    "output_bytes": 78628,
+    "seconds": 0.6109033850079868
+  },
+  {
+    "asset_id": "4c8f74a9-a6e2-4719-a24c-8f0f61b6c0a0",
+    "success": true,
+    "output_bytes": 83960,
+    "seconds": 3.0584321079950314
+  },
+  {
+    "asset_id": "74127c34-965d-4a7c-bd0c-06412e73c649",
+    "success": true,
+    "output_bytes": 35000,
+    "seconds": 0.2563962989952415
+  },
+  {
+    "asset_id": "143b11ab-c9f6-476c-9882-72cf54be5741",
+    "success": true,
+    "output_bytes": 104822,
+    "seconds": 1.824194767003064
+  },
+  {
+    "asset_id": "6c5fc7ca-cb67-44dd-9a9e-ac4d9ff4eb50",
+    "success": true,
+    "output_bytes": 81666,
+    "seconds": 0.5791388530051336
+  },
+  {
+    "asset_id": "e10a5d52-60e8-45a3-9f9c-8cc721306fad",
+    "success": false,
+    "error_type": "KeyError",
+    "error": "'e10a5d52-60e8-45a3-9f9c-8cc721306fad'",
+    "seconds": 3.1351009965874255e-05
+  },
+  {
+    "asset_id": "c8bc56bd-9ec6-432f-8ccb-f01efd0a26f0",
+    "success": true,
+    "output_bytes": 46636,
+    "seconds": 0.281602388000465
+  },
+  {
+    "asset_id": "a350c1ef-6d51-4c75-bec7-f6426e6d069f",
+    "success": true,
+    "output_bytes": 104822,
+    "seconds": 1.8592423999944003
+  },
+  {
+    "asset_id": "23772759-18e5-4175-8741-e67f08555b42",
+    "success": true,
+    "output_bytes": 87900,
+    "seconds": 1.7321763820073102
+  },
+  {
+    "asset_id": "3101ff3e-410c-4f84-91c4-4aa532fedf59",
+    "success": true,
+    "output_bytes": 61367,
+    "seconds": 1.0636696980072884
+  },
+  {
+    "asset_id": "d7e3688b-c3e3-4aa4-bab4-33a9fe388291",
+    "success": true,
+    "output_bytes": 37914,
+    "seconds": 0.2100167979951948
+  },
+  {
+    "asset_id": "f7b1e43b-e7be-4f03-87d8-0768be98435b",
+    "success": true,
+    "output_bytes": 81656,
+    "seconds": 2.7552007350022905
+  },
+  {
+    "asset_id": "fa3870ed-820b-4f42-a9b7-38077f4e0d12",
+    "success": true,
+    "output_bytes": 76050,
+    "seconds": 0.5845189609972294
+  },
+  {
+    "asset_id": "c3d4018f-dab4-4ab7-9ed7-4dab11266667",
+    "success": true,
+    "output_bytes": 78568,
+    "seconds": 0.5326998129894491
+  },
+  {
+    "asset_id": "ddb700d2-8d8c-42d9-94bc-12bbf96fd94d",
+    "success": true,
+    "output_bytes": 78766,
+    "seconds": 1.366534581000451
+  },
+  {
+    "asset_id": "9b249eef-6ab6-4ed7-b41b-df2d1af9613e",
+    "success": true,
+    "output_bytes": 67262,
+    "seconds": 0.9524558669945691
+  },
+  {
+    "asset_id": "f311a360-1960-4ed5-b6bd-81756be1084f",
+    "success": true,
+    "output_bytes": 75547,
+    "seconds": 0.4345690070040291
+  },
+  {
+    "asset_id": "8271e0fe-b6ca-4880-95a0-3169c8c182b5",
+    "success": true,
+    "output_bytes": 46560,
+    "seconds": 0.591464798009838
+  },
+  {
+    "asset_id": "adefc05b-dec0-40b5-81fd-5b66e51da8e2",
+    "success": true,
+    "output_bytes": 118731,
+    "seconds": 2.8933763550012372
+  },
+  {
+    "asset_id": "534e6dbc-3463-40cb-8dc3-b62737d6455a",
+    "success": true,
+    "output_bytes": 127883,
+    "seconds": 1.6252684990031412
+  },
+  {
+    "asset_id": "2b7fcc91-44a7-4640-8e45-1fd977a9fe8c",
+    "success": true,
+    "output_bytes": 72497,
+    "seconds": 1.5711089329997776
+  },
+  {
+    "asset_id": "2f093e38-14a1-4869-bf4e-4b6fc58cb23e",
+    "success": true,
+    "output_bytes": 91499,
+    "seconds": 0.7804958199994871
+  },
+  {
+    "asset_id": "d2ca9010-b99e-4dde-b5ed-a86a6ae2a60a",
+    "success": true,
+    "output_bytes": 43871,
+    "seconds": 0.3434833329956746
+  },
+  {
+    "asset_id": "7debc202-7b2f-49d4-95e2-9cba0278e944",
+    "success": true,
+    "output_bytes": 69998,
+    "seconds": 0.6590200979990186
+  },
+  {
+    "asset_id": "ac18a547-288f-4819-a15f-68984e865527",
+    "success": true,
+    "output_bytes": 75426,
+    "seconds": 0.30500274899532087
+  },
+  {
+    "asset_id": "8c640b8d-a4f9-4768-a399-9253e6076b3d",
+    "success": true,
+    "output_bytes": 64065,
+    "seconds": 0.5139667779876618
+  },
+  {
+    "asset_id": "df32207a-b774-421a-83dd-7b01c3c37b70",
+    "success": true,
+    "output_bytes": 87257,
+    "seconds": 2.7544165500003146
+  },
+  {
+    "asset_id": "9ad7ba09-0247-4a32-baa0-bb46e5e8bfd9",
+    "success": true,
+    "output_bytes": 109960,
+    "seconds": 0.6499871429987252
+  },
+  {
+    "asset_id": "2ba22352-76f3-437d-b593-e7fba41b4f70",
+    "success": true,
+    "output_bytes": 78143,
+    "seconds": 0.3481925490050344
+  },
+  {
+    "asset_id": "b1ce3b5e-3b3f-4dab-a05c-3122be0848f2",
+    "success": true,
+    "output_bytes": 84127,
+    "seconds": 0.7419838509958936
+  },
+  {
+    "asset_id": "7dbf2a91-3f33-414d-b1a8-eaaa4fb85780",
+    "success": true,
+    "output_bytes": 89740,
+    "seconds": 0.6673579870112007
+  },
+  {
+    "asset_id": "0ed2c457-8f2b-445e-987a-05ceb93a8a6b",
+    "success": true,
+    "output_bytes": 78479,
+    "seconds": 0.38172800799657125
+  },
+  {
+    "asset_id": "795415da-b577-4200-a08b-ba071656c57f",
+    "success": true,
+    "output_bytes": 98731,
+    "seconds": 1.0041192659991793
+  },
+  {
+    "asset_id": "d9b50181-e92d-4ac8-9ec9-531632fea034",
+    "success": true,
+    "output_bytes": 125175,
+    "seconds": 0.44777180600794964
+  },
+  {
+    "asset_id": "110b8e27-2f1c-483d-8809-60d9e87efa63",
+    "success": true,
+    "output_bytes": 87635,
+    "seconds": 1.5591761099931318
+  },
+  {
+    "asset_id": "88ffea4b-ba6a-4d5f-8d79-933cc567d298",
+    "success": true,
+    "output_bytes": 89849,
+    "seconds": 0.6729980620002607
+  },
+  {
+    "asset_id": "f7d5293a-a9bc-4ce8-b93c-a7282d1434ae",
+    "success": true,
+    "output_bytes": 86947,
+    "seconds": 0.5448768499918515
+  },
+  {
+    "asset_id": "5d13fbf3-936b-488d-87f3-c10aadc0bb08",
+    "success": true,
+    "output_bytes": 81413,
+    "seconds": 0.6471389549988089
+  },
+  {
+    "asset_id": "5644a279-55f1-4501-9252-9fb615ab1ad5",
+    "success": true,
+    "output_bytes": 92520,
+    "seconds": 1.0141907899960643
+  },
+  {
+    "asset_id": "48ccc787-35af-4bb4-a1b6-5f714ea33281",
+    "success": true,
+    "output_bytes": 77913,
+    "seconds": 0.6530990030005341
+  },
+  {
+    "asset_id": "6413a75a-efd4-4914-a430-f8f71e95186f",
+    "success": true,
+    "output_bytes": 75902,
+    "seconds": 2.782069937995402
+  },
+  {
+    "asset_id": "4883feb7-9edf-4f18-816e-ec4942c352d7",
+    "success": true,
+    "output_bytes": 52393,
+    "seconds": 0.20605591300409287
+  },
+  {
+    "asset_id": "aae9eec0-02a9-4f44-8172-4cc31f7df9ba",
+    "success": true,
+    "output_bytes": 64041,
+    "seconds": 0.4746593759919051
+  },
+  {
+    "asset_id": "6651888d-5508-4d72-9097-036c739217a9",
+    "success": true,
+    "output_bytes": 78479,
+    "seconds": 0.3755691569967894
+  },
+  {
+    "asset_id": "9ea27dc8-a5dd-4f51-b6df-46492701bc9e",
+    "success": true,
+    "output_bytes": 89812,
+    "seconds": 0.5052584490040317
+  },
+  {
+    "asset_id": "9c9b1b16-c379-4db3-ad3e-a6777aa7aaf0",
+    "success": true,
+    "output_bytes": 107871,
+    "seconds": 0.71725454099942
+  },
+  {
+    "asset_id": "6ba51a11-866e-4491-930f-4bff27f35e58",
+    "success": true,
+    "output_bytes": 84339,
+    "seconds": 0.6856388500018511
+  },
+  {
+    "asset_id": "0ff57728-df37-43cc-b93c-93f5151f3f85",
+    "success": true,
+    "output_bytes": 81229,
+    "seconds": 0.43904764599574264
+  },
+  {
+    "asset_id": "359567e4-203a-4f5f-9724-069fe4a15681",
+    "success": true,
+    "output_bytes": 64041,
+    "seconds": 0.48393574899819214
+  },
+  {
+    "asset_id": "d88e6d65-f03f-4117-94f0-927ec26b8557",
+    "success": true,
+    "output_bytes": 125175,
+    "seconds": 0.46187723000184633
+  },
+  {
+    "asset_id": "af745c3b-e77c-4c87-97b4-e8c49898d97e",
+    "success": true,
+    "output_bytes": 98928,
+    "seconds": 0.5485043660009978
+  },
+  {
+    "asset_id": "0003c8de-55c4-42f1-a7f0-869f2125cab6",
+    "success": true,
+    "output_bytes": 93193,
+    "seconds": 0.717523273997358
+  },
+  {
+    "asset_id": "07469773-34fc-4904-9db8-b5bfab12dc12",
+    "success": true,
+    "output_bytes": 75724,
+    "seconds": 0.48179605600307696
+  },
+  {
+    "asset_id": "9652f252-5616-4c04-b831-ef85197d1957",
+    "success": true,
+    "output_bytes": 81272,
+    "seconds": 0.45555192200117745
+  },
+  {
+    "asset_id": "a6059d08-ce31-42c9-83d8-bb5dd7646de7",
+    "success": true,
+    "output_bytes": 109776,
+    "seconds": 0.7975269599992316
+  },
+  {
+    "asset_id": "bfb7a9e0-a15d-4328-90b4-d25a91624e46",
+    "success": true,
+    "output_bytes": 61457,
+    "seconds": 0.3389882920018863
+  },
+  {
+    "asset_id": "9c13c37b-b0e6-4372-b127-ddfeef23b035",
+    "success": true,
+    "output_bytes": 86947,
+    "seconds": 0.5238775670004543
+  },
+  {
+    "asset_id": "ed40462e-c530-4c88-9658-d7fe89cf2f92",
+    "success": true,
+    "output_bytes": 75796,
+    "seconds": 0.5554848989995662
+  },
+  {
+    "asset_id": "5980c5fb-2e2e-4e74-a475-c1868db75773",
+    "success": true,
+    "output_bytes": 89798,
+    "seconds": 3.7571776419936214
+  },
+  {
+    "asset_id": "659fc412-6e3e-4ca3-84fa-a5a25f0dbd4c",
+    "success": true,
+    "output_bytes": 92664,
+    "seconds": 0.5914859879994765
+  },
+  {
+    "asset_id": "2269214a-95d2-4502-b84a-220f503d50c5",
+    "success": true,
+    "output_bytes": 93026,
+    "seconds": 0.4350107040081639
+  },
+  {
+    "asset_id": "66e96f7b-2374-4235-a057-6a1840ddf1a2",
+    "success": true,
+    "output_bytes": 106916,
+    "seconds": 0.4996795600018231
+  },
+  {
+    "asset_id": "28aa5d47-f709-4a0c-a336-9d86972c5685",
+    "success": true,
+    "output_bytes": 90075,
+    "seconds": 0.451259706998826
+  },
+  {
+    "asset_id": "39dc69c8-2f04-4c55-929c-9c212f650639",
+    "success": true,
+    "output_bytes": 92520,
+    "seconds": 0.9728185400017537
+  },
+  {
+    "asset_id": "96672d87-9952-4b9e-a530-a64a7b9d3852",
+    "success": true,
+    "output_bytes": 72922,
+    "seconds": 0.5386852000083309
+  },
+  {
+    "asset_id": "740a05a4-a1eb-4a4b-8085-0aa000b90df9",
+    "success": true,
+    "output_bytes": 89798,
+    "seconds": 3.7536369369918248
+  },
+  {
+    "asset_id": "b6eb2a66-8542-473f-bab9-e37f5b451a50",
+    "success": true,
+    "output_bytes": 89849,
+    "seconds": 0.6625536250066943
+  },
+  {
+    "asset_id": "972f8db2-888d-493c-b2c1-64ff85cb9589",
+    "success": true,
+    "output_bytes": 78830,
+    "seconds": 1.0376906279998366
+  },
+  {
+    "asset_id": "500a0c2d-caae-4fa4-ba0f-6f6a16e32d68",
+    "success": true,
+    "output_bytes": 98700,
+    "seconds": 0.6865759670035914
+  },
+  {
+    "asset_id": "b8b3a3c8-3434-41cc-a3dc-cbd7ea3d476f",
+    "success": true,
+    "output_bytes": 116342,
+    "seconds": 0.42666150999139063
+  },
+  {
+    "asset_id": "d46257fc-4c23-4748-ab9e-baad1a8e3fc5",
+    "success": true,
+    "output_bytes": 87471,
+    "seconds": 0.411901161991409
+  },
+  {
+    "asset_id": "bc074983-a6dc-4986-ac43-a0c39bee2fb3",
+    "success": true,
+    "output_bytes": 107128,
+    "seconds": 0.5911439199990127
+  },
+  {
+    "asset_id": "5b1dee8c-0ce7-4970-95ce-43cd3005d2df",
+    "success": true,
+    "output_bytes": 118933,
+    "seconds": 2.519232923994423
+  },
+  {
+    "asset_id": "6a88e853-0ef4-45a2-ae82-fdfc070eefc7",
+    "success": true,
+    "output_bytes": 73670,
+    "seconds": 0.33848387500620447
+  },
+  {
+    "asset_id": "cce9bde9-7e07-4904-bddd-3a7be00a64ae",
+    "success": true,
+    "output_bytes": 87471,
+    "seconds": 0.4074450589978369
+  },
+  {
+    "asset_id": "05cec9d2-91eb-426a-9852-ced6544f566e",
+    "success": true,
+    "output_bytes": 57896,
+    "seconds": 0.2983804450050229
+  },
+  {
+    "asset_id": "f097fdde-1af5-4ba8-98d5-36bb9c8106a2",
+    "success": true,
+    "output_bytes": 89921,
+    "seconds": 2.9643506199936382
+  },
+  {
+    "asset_id": "96eacda5-a877-413d-814a-263eefabe1c0",
+    "success": true,
+    "output_bytes": 93221,
+    "seconds": 1.2294027809984982
+  },
+  {
+    "asset_id": "e65f80aa-c855-44b8-9876-b8a3953479a1",
+    "success": true,
+    "output_bytes": 95749,
+    "seconds": 0.8678551579941995
+  },
+  {
+    "asset_id": "e3cea2f9-1eed-470d-a702-e6af65c40d2b",
+    "success": true,
+    "output_bytes": 113196,
+    "seconds": 0.42229000400402583
+  },
+  {
+    "asset_id": "e73169de-a1d1-4797-847e-9ea4129e5d5f",
+    "success": true,
+    "output_bytes": 183080,
+    "seconds": 2.788224050993449
+  },
+  {
+    "asset_id": "f3c8152c-2346-4d4d-abdd-974656bc1afb",
+    "success": true,
+    "output_bytes": 110700,
+    "seconds": 2.2709835290006595
+  },
+  {
+    "asset_id": "bb91bc85-e14e-444a-94fa-e824e8fb95ef",
+    "success": true,
+    "output_bytes": 127308,
+    "seconds": 0.7004915399884339
+  },
+  {
+    "asset_id": "f1f3e9e8-8b6f-49ca-a85f-1387739ce3db",
+    "success": true,
+    "output_bytes": 84329,
+    "seconds": 0.9894417199975578
+  },
+  {
+    "asset_id": "d87f26f7-039d-499e-a98f-46e92c84a95c",
+    "success": true,
+    "output_bytes": 95908,
+    "seconds": 0.5798375120066339
+  },
+  {
+    "asset_id": "48df2e8c-dde9-4a54-837d-1859fb4e6d3c",
+    "success": true,
+    "output_bytes": 46634,
+    "seconds": 0.29857717800769024
+  },
+  {
+    "asset_id": "9699c37b-2c49-40c2-bfc3-a6f262ce8f9a",
+    "success": true,
+    "output_bytes": 78579,
+    "seconds": 1.772750255986466
+  },
+  {
+    "asset_id": "0fb0e54b-ead8-4f9e-9535-e209e761c06a",
+    "success": true,
+    "output_bytes": 43692,
+    "seconds": 0.28895823800121434
+  },
+  {
+    "asset_id": "4920aedc-955e-466b-9450-a1c4579df943",
+    "success": true,
+    "output_bytes": 72521,
+    "seconds": 0.5349976889992831
+  },
+  {
+    "asset_id": "f1be6786-6abf-480b-be53-31788083a5af",
+    "success": true,
+    "output_bytes": 110307,
+    "seconds": 0.44220603599387687
+  },
+  {
+    "asset_id": "1f708837-85aa-4fff-bfb8-17f64a7f03d4",
+    "success": true,
+    "output_bytes": 136579,
+    "seconds": 1.6187102719995892
+  },
+  {
+    "asset_id": "c1ba5855-fdac-4123-96fa-265578904d29",
+    "success": true,
+    "output_bytes": 110779,
+    "seconds": 3.1291029079875443
+  },
+  {
+    "asset_id": "a6d6aff3-b63f-4f0f-b665-aff313bceb1b",
+    "success": true,
+    "output_bytes": 78662,
+    "seconds": 1.7544096759957029
+  },
+  {
+    "asset_id": "1863278d-90a3-4deb-a3d3-9f83b571bd9f",
+    "success": true,
+    "output_bytes": 154148,
+    "seconds": 0.941034021001542
+  },
+  {
+    "asset_id": "5bca9718-a296-4fd1-a1cc-e55b0a614baf",
+    "success": true,
+    "output_bytes": 104641,
+    "seconds": 0.6405892670009052
+  },
+  {
+    "asset_id": "47d3595d-a521-4783-a611-d2307fe3690e",
+    "success": true,
+    "output_bytes": 110540,
+    "seconds": 1.6972509309998713
+  },
+  {
+    "asset_id": "e8d9e5e6-3dfa-4183-96da-ccaa0798bb36",
+    "success": true,
+    "output_bytes": 72864,
+    "seconds": 0.39276949600025546
+  },
+  {
+    "asset_id": "9f545079-9fca-4f9d-a62e-644a5897d90a",
+    "success": true,
+    "output_bytes": 82701,
+    "seconds": 1.7211754940071842
+  },
+  {
+    "asset_id": "01f3817d-9e42-4aba-a593-3fa4231b513a",
+    "success": true,
+    "output_bytes": 75443,
+    "seconds": 0.5772875019902131
+  },
+  {
+    "asset_id": "f418dd82-0113-4dce-927e-ecb2e75e0b66",
+    "success": true,
+    "output_bytes": 157269,
+    "seconds": 0.9950783039967064
+  },
+  {
+    "asset_id": "3b472dd3-3eaa-4423-a82e-7c8c31473a86",
+    "success": true,
+    "output_bytes": 110789,
+    "seconds": 2.2319091350072995
+  },
+  {
+    "asset_id": "1e63880c-7279-4959-b36c-a4026762a4e7",
+    "success": true,
+    "output_bytes": 78534,
+    "seconds": 0.7595966770022642
+  },
+  {
+    "asset_id": "d946f363-fa87-4eb1-86d0-3a70c72f3902",
+    "success": true,
+    "output_bytes": 126921,
+    "seconds": 0.650051322998479
+  },
+  {
+    "asset_id": "9b1da18a-8b30-4b7e-88dd-e476e5f541cf",
+    "success": true,
+    "output_bytes": 92921,
+    "seconds": 0.38616536601330154
+  },
+  {
+    "asset_id": "009908ea-2800-434f-898c-92150b73739d",
+    "success": true,
+    "output_bytes": 92854,
+    "seconds": 0.8706655659916578
+  },
+  {
+    "asset_id": "98931fe0-d294-4c37-9184-0930c5724c7f",
+    "success": true,
+    "output_bytes": 55242,
+    "seconds": 0.6862266520038247
+  },
+  {
+    "asset_id": "c6e38767-f615-41a8-8aa1-3e9894482468",
+    "success": true,
+    "output_bytes": 128012,
+    "seconds": 0.5153200150089106
+  },
+  {
+    "asset_id": "b9480011-d385-47e1-9f8f-d1f00d022696",
+    "success": true,
+    "output_bytes": 49543,
+    "seconds": 0.279554682012531
+  },
+  {
+    "asset_id": "f6531adc-e76a-40ab-8339-b22958123f37",
+    "success": true,
+    "output_bytes": 75600,
+    "seconds": 0.4829778090061154
+  },
+  {
+    "asset_id": "94aedc69-65af-46c1-9043-0e72e50c3852",
+    "success": true,
+    "output_bytes": 184176,
+    "seconds": 2.0472882719914196
+  },
+  {
+    "asset_id": "31b0278c-b79e-4011-80a0-f5cfcb8e8ffd",
+    "success": true,
+    "output_bytes": 107229,
+    "seconds": 0.6890992720000213
+  },
+  {
+    "asset_id": "ca3999bc-37da-4d6f-9f5e-fe2344f836e1",
+    "success": true,
+    "output_bytes": 171517,
+    "seconds": 1.156131354990066
+  },
+  {
+    "asset_id": "a16df04a-38f7-4b8b-9162-a102f31e1809",
+    "success": true,
+    "output_bytes": 104866,
+    "seconds": 2.14922156999819
+  },
+  {
+    "asset_id": "29ecab17-3b47-4224-92c5-f38984c2ec62",
+    "success": true,
+    "output_bytes": 110789,
+    "seconds": 2.3207677119935397
+  },
+  {
+    "asset_id": "215b102e-b184-463a-9e06-9853d8d15dc0",
+    "success": true,
+    "output_bytes": 162761,
+    "seconds": 0.4309531729959417
+  },
+  {
+    "asset_id": "aa1a95c8-2605-4088-baf5-361f0d947c00",
+    "success": true,
+    "output_bytes": 107872,
+    "seconds": 0.8225111579959048
+  },
+  {
+    "asset_id": "a753f435-0a76-4666-adaa-3851fe2705b5",
+    "success": true,
+    "output_bytes": 95924,
+    "seconds": 1.627363890002016
+  },
+  {
+    "asset_id": "d71247b5-871a-47b1-b58e-04302952941c",
+    "success": true,
+    "output_bytes": 99348,
+    "seconds": 0.6639061489986489
+  },
+  {
+    "asset_id": "2ad68351-a17e-4e8a-932c-2603af8a6a06",
+    "success": true,
+    "output_bytes": 191650,
+    "seconds": 0.8581357140064938
+  },
+  {
+    "asset_id": "f1f9ee1e-e2a5-45f2-bb7d-8629dfb616c7",
+    "success": true,
+    "output_bytes": 87378,
+    "seconds": 0.6943957350013079
+  },
+  {
+    "asset_id": "47a1c6f9-ae12-4d0c-8199-bce10852f6f1",
+    "success": true,
+    "output_bytes": 194234,
+    "seconds": 0.8306273439957295
+  },
+  {
+    "asset_id": "c6e14be5-5d6b-4921-be50-956434971419",
+    "success": true,
+    "output_bytes": 93130,
+    "seconds": 0.942417337995721
+  },
+  {
+    "asset_id": "e8850a7a-029b-402c-9541-c0f97df0ceb3",
+    "success": true,
+    "output_bytes": 136580,
+    "seconds": 0.7733108760003233
+  },
+  {
+    "asset_id": "d873022d-8051-4f2b-b49f-daba5cb23956",
+    "success": true,
+    "output_bytes": 151297,
+    "seconds": 0.47265246900497004
+  },
+  {
+    "asset_id": "30a3410d-8605-4b65-908a-720ab99c4e6a",
+    "success": true,
+    "output_bytes": 87182,
+    "seconds": 0.8646010149968788
+  },
+  {
+    "asset_id": "c272ee5e-9e26-4980-b669-416f612353eb",
+    "success": true,
+    "output_bytes": 104584,
+    "seconds": 0.40947173099266365
+  },
+  {
+    "asset_id": "f55ab444-0b7b-48ab-b87f-3b02052be6b1",
+    "success": true,
+    "output_bytes": 87182,
+    "seconds": 0.8620541639975272
+  },
+  {
+    "asset_id": "a179a810-70a6-4001-9bae-4709b3ce883c",
+    "success": true,
+    "output_bytes": 67035,
+    "seconds": 1.5032941629906418
+  },
+  {
+    "asset_id": "d5001179-27b8-47f4-8418-d2c003d7a5b0",
+    "success": true,
+    "output_bytes": 69917,
+    "seconds": 0.7529615969979204
+  },
+  {
+    "asset_id": "60e3d331-4a4b-486b-9a11-2cfd4658cbf4",
+    "success": true,
+    "output_bytes": 92417,
+    "seconds": 0.8000944189989241
+  },
+  {
+    "asset_id": "9b93d739-8e97-4518-840e-773b060fc99b",
+    "success": true,
+    "output_bytes": 90593,
+    "seconds": 1.0380812040093588
+  },
+  {
+    "asset_id": "c377c655-e434-4b79-af16-5f95b37786ad",
+    "success": true,
+    "output_bytes": 49614,
+    "seconds": 0.6835370970075019
+  },
+  {
+    "asset_id": "29a40afa-e48e-4fd2-8894-63b4a8acff06",
+    "success": true,
+    "output_bytes": 55074,
+    "seconds": 0.2621616889955476
+  },
+  {
+    "asset_id": "429457a0-b963-4ba3-a2a2-a8bc8801dce4",
+    "success": true,
+    "output_bytes": 69653,
+    "seconds": 0.5597698409983423
+  },
+  {
+    "asset_id": "ee3904cb-5889-4bba-8180-9f5ed80c533e",
+    "success": true,
+    "output_bytes": 91248,
+    "seconds": 0.6586570240033325
+  },
+  {
+    "asset_id": "a2929304-d844-4667-9954-b273db0483b2",
+    "success": true,
+    "output_bytes": 66942,
+    "seconds": 0.4314384320023237
+  },
+  {
+    "asset_id": "353aacca-c94d-4f92-9fa4-bef4af32376f",
+    "success": true,
+    "output_bytes": 95957,
+    "seconds": 0.7937835599877872
+  },
+  {
+    "asset_id": "7cd0c972-62fc-4c72-b179-9ec69a49c20a",
+    "success": true,
+    "output_bytes": 116287,
+    "seconds": 1.099807951002731
+  },
+  {
+    "asset_id": "ecca9515-c5bb-4d2d-948a-e653131fc77d",
+    "success": true,
+    "output_bytes": 92946,
+    "seconds": 0.3803109000000404
+  },
+  {
+    "asset_id": "30a331c1-35fa-4c4a-9e40-54da24ca38ec",
+    "success": true,
+    "output_bytes": 61269,
+    "seconds": 0.48898568900767714
+  },
+  {
+    "asset_id": "ade96d11-a1ba-445f-8061-26b35dfa4026",
+    "success": true,
+    "output_bytes": 76821,
+    "seconds": 0.47261316199728753
+  },
+  {
+    "asset_id": "10ba23d4-9e3a-4d9c-b2da-3b2119d5e542",
+    "success": true,
+    "output_bytes": 96057,
+    "seconds": 0.4579961849958636
+  },
+  {
+    "asset_id": "2c81a429-30c8-43dc-a2a9-603ea6550993",
+    "success": true,
+    "output_bytes": 122555,
+    "seconds": 0.7960400820011273
+  },
+  {
+    "asset_id": "6d83716e-d80f-4a40-a0cd-de55c205b7d3",
+    "success": true,
+    "output_bytes": 127864,
+    "seconds": 0.5999668620061129
+  },
+  {
+    "asset_id": "fa1456d7-dbae-438b-b047-b61dabf6eb46",
+    "success": true,
+    "output_bytes": 130726,
+    "seconds": 0.621580841994728
+  },
+  {
+    "asset_id": "66341fac-b28f-4e92-98b3-6dc3b64b1d2b",
+    "success": true,
+    "output_bytes": 70123,
+    "seconds": 0.613274919000105
+  },
+  {
+    "asset_id": "f60b98c3-659b-4321-9067-ed7d3b4b615a",
+    "success": true,
+    "output_bytes": 43873,
+    "seconds": 0.463930532001541
+  },
+  {
+    "asset_id": "7f1ee5b5-2b5d-42bf-8feb-c6a5a1d407dd",
+    "success": true,
+    "output_bytes": 57700,
+    "seconds": 0.6613491919997614
+  },
+  {
+    "asset_id": "96c4ec8b-0038-46eb-852c-2edddd010d2b",
+    "success": true,
+    "output_bytes": 90494,
+    "seconds": 1.0077372990053846
+  },
+  {
+    "asset_id": "f370b0da-f379-4af6-ac34-e13cb314ba63",
+    "success": true,
+    "output_bytes": 90177,
+    "seconds": 0.4842876000038814
+  },
+  {
+    "asset_id": "39aa6078-b7bb-4f40-840c-d6c8bbf384d0",
+    "success": true,
+    "output_bytes": 168872,
+    "seconds": 0.7348303660110105
+  },
+  {
+    "asset_id": "24c968e9-7a93-4225-9b1d-33333dc46bb0",
+    "success": true,
+    "output_bytes": 194197,
+    "seconds": 0.7123760090034921
+  },
+  {
+    "asset_id": "8d43a67a-73a2-4886-9be0-f41ea3b2a121",
+    "success": true,
+    "output_bytes": 49614,
+    "seconds": 0.6837238979933318
+  },
+  {
+    "asset_id": "575ecb59-c864-475b-adaf-853c8b0ac407",
+    "success": true,
+    "output_bytes": 63986,
+    "seconds": 0.40871112400782295
+  },
+  {
+    "asset_id": "755db214-3269-4873-9a54-dc432db4fe3e",
+    "success": true,
+    "output_bytes": 76821,
+    "seconds": 0.46710490599798504
+  },
+  {
+    "asset_id": "c6cdff62-5c9d-401f-a49c-def655726c79",
+    "success": true,
+    "output_bytes": 153173,
+    "seconds": 0.6529306629963685
+  },
+  {
+    "asset_id": "e84e1d52-c246-4078-b96c-e4fee7f50bfc",
+    "success": true,
+    "output_bytes": 43813,
+    "seconds": 0.23217792699870188
+  },
+  {
+    "asset_id": "0302fd38-6d35-4c61-adb2-4d78b217e91b",
+    "success": true,
+    "output_bytes": 63940,
+    "seconds": 0.6390905449952697
+  },
+  {
+    "asset_id": "c4b604c4-9d21-49b9-a294-e8d306386974",
+    "success": true,
+    "output_bytes": 90158,
+    "seconds": 0.7060290299996268
+  },
+  {
+    "asset_id": "f5304977-5946-4c0b-8603-4dad21745f3f",
+    "success": true,
+    "output_bytes": 72604,
+    "seconds": 0.9249110730015673
+  },
+  {
+    "asset_id": "5cc6a483-ab07-44ab-9b8d-e4563ccf3236",
+    "success": true,
+    "output_bytes": 108041,
+    "seconds": 2.6287684419949073
+  },
+  {
+    "asset_id": "fbeb17eb-aa6d-4900-a432-15f6e369fc72",
+    "success": true,
+    "output_bytes": 76077,
+    "seconds": 2.5213177499972517
+  },
+  {
+    "asset_id": "dd19ec67-78e4-4abd-9042-1bdcef948f95",
+    "success": true,
+    "output_bytes": 78395,
+    "seconds": 1.3102937940129777
+  },
+  {
+    "asset_id": "90ebb642-8302-447f-a73e-708f7d19321a",
+    "success": true,
+    "output_bytes": 78261,
+    "seconds": 0.7435992569953669
+  },
+  {
+    "asset_id": "29339524-a09a-4f5c-9133-80e2cdec38db",
+    "success": true,
+    "output_bytes": 60943,
+    "seconds": 0.6638750650017755
+  },
+  {
+    "asset_id": "814b3a32-a9ec-44ab-b73e-55da28095997",
+    "success": true,
+    "output_bytes": 43858,
+    "seconds": 0.17451339699618984
+  },
+  {
+    "asset_id": "1809ff48-1759-4506-a9ff-e9e11218e0f3",
+    "success": true,
+    "output_bytes": 23389,
+    "seconds": 0.1212101220007753
+  },
+  {
+    "asset_id": "3cba67e4-97dc-4436-af0f-fd4015858148",
+    "success": true,
+    "output_bytes": 43731,
+    "seconds": 0.4527074859943241
+  },
+  {
+    "asset_id": "eb87125d-adba-4ae2-95f2-e164aaa32500",
+    "success": true,
+    "output_bytes": 60880,
+    "seconds": 0.4024096889916109
+  },
+  {
+    "asset_id": "29189f53-883f-48a4-a727-e6063ef0811a",
+    "success": true,
+    "output_bytes": 78694,
+    "seconds": 3.7907351430039853
+  },
+  {
+    "asset_id": "5db706bc-e045-4e05-96ce-93aae4f2e024",
+    "success": true,
+    "output_bytes": 75269,
+    "seconds": 0.685582432008232
+  },
+  {
+    "asset_id": "476ecea5-1f80-47ac-a209-ce42d2cd8b3f",
+    "success": true,
+    "output_bytes": 61006,
+    "seconds": 0.31578811899817083
+  },
+  {
+    "asset_id": "1c4a8cc3-4c13-441e-8f27-f42598cbbf6e",
+    "success": true,
+    "output_bytes": 78041,
+    "seconds": 0.7239755949995015
+  },
+  {
+    "asset_id": "37f9c0d1-34b4-4392-bb9b-bbeab22bf436",
+    "success": true,
+    "output_bytes": 52270,
+    "seconds": 0.4741282689938089
+  },
+  {
+    "asset_id": "cf1d92b2-dda7-4671-8e98-42bb8491f5f8",
+    "success": true,
+    "output_bytes": 86827,
+    "seconds": 0.9022669789992506
+  },
+  {
+    "asset_id": "40ea594f-01b4-49fb-b7e4-d2d97d054bdc",
+    "success": true,
+    "output_bytes": 43731,
+    "seconds": 0.4402291209989926
+  },
+  {
+    "asset_id": "3f4cbb81-f579-486b-8e5e-3bc9a7866384",
+    "success": true,
+    "output_bytes": 113192,
+    "seconds": 3.0037926380027784
+  },
+  {
+    "asset_id": "1b84871c-b496-4b06-a066-2b178d6e126a",
+    "success": true,
+    "output_bytes": 52591,
+    "seconds": 0.41913614800432697
+  },
+  {
+    "asset_id": "22d62a95-e53f-48ef-8877-55b06ea443de",
+    "success": true,
+    "output_bytes": 35523,
+    "seconds": 0.22886310999456327
+  },
+  {
+    "asset_id": "32c4edc5-048f-48f7-8959-420ff9ca9570",
+    "success": true,
+    "output_bytes": 104306,
+    "seconds": 2.611707714997465
+  },
+  {
+    "asset_id": "eb6d6f28-f49e-4c86-9acf-33f244cda457",
+    "success": true,
+    "output_bytes": 75631,
+    "seconds": 1.1612013570120325
+  },
+  {
+    "asset_id": "9b601cd3-31cc-49f3-b9f6-0ee997fda62b",
+    "success": true,
+    "output_bytes": 76336,
+    "seconds": 3.6961778340046294
+  },
+  {
+    "asset_id": "86c6bf28-ef19-426b-a20f-64a0cf1d4955",
+    "success": true,
+    "output_bytes": 37786,
+    "seconds": 0.182595300997491
+  },
+  {
+    "asset_id": "30b4d4f0-1677-41bb-8235-17ae21c23737",
+    "success": true,
+    "output_bytes": 98554,
+    "seconds": 2.184901124011958
+  },
+  {
+    "asset_id": "a096f6ae-96b8-496c-a1b7-3c10d0774d90",
+    "success": true,
+    "output_bytes": 52275,
+    "seconds": 0.6521890349977184
+  },
+  {
+    "asset_id": "72b9ea23-6f84-40aa-9722-4dea68d04c04",
+    "success": true,
+    "output_bytes": 75269,
+    "seconds": 0.6496980969968718
+  },
+  {
+    "asset_id": "da4c53db-a69b-4c91-81a6-d62b1dcecbec",
+    "success": true,
+    "output_bytes": 60870,
+    "seconds": 1.4869797290011775
+  },
+  {
+    "asset_id": "5708499b-4d27-49ee-9173-708f47144575",
+    "success": true,
+    "output_bytes": 43805,
+    "seconds": 0.14797592800459825
+  },
+  {
+    "asset_id": "86a493b0-3ee6-4087-8658-b950b6e917d7",
+    "success": true,
+    "output_bytes": 60880,
+    "seconds": 0.3993883969960734
+  },
+  {
+    "asset_id": "229ed383-2a04-4191-b979-fdcb6473c5d8",
+    "success": true,
+    "output_bytes": 81019,
+    "seconds": 3.460770298988791
+  },
+  {
+    "asset_id": "783ba5aa-3766-483b-a09b-2f4d238e2b2a",
+    "success": true,
+    "output_bytes": 78597,
+    "seconds": 2.81890354299685
+  },
+  {
+    "asset_id": "26f2ad4a-b5a2-4b42-8bad-f4c6853fa1e3",
+    "success": true,
+    "output_bytes": 84759,
+    "seconds": 3.6870590159960557
+  },
+  {
+    "asset_id": "0f8cea19-20c3-4f27-890a-c21ce7eb8e07",
+    "success": true,
+    "output_bytes": 98463,
+    "seconds": 1.6353942480054684
+  },
+  {
+    "asset_id": "4fb16615-cb2b-4a85-a6a5-0a2bf5cb10d5",
+    "success": true,
+    "output_bytes": 17687,
+    "seconds": 0.48831865200190805
+  },
+  {
+    "asset_id": "ddce5253-e137-47de-8a7c-8b6186a6f9a8",
+    "success": true,
+    "output_bytes": 95737,
+    "seconds": 1.8808511449897196
+  },
+  {
+    "asset_id": "35bce64f-1da3-4e2b-9edc-5a493694eaa9",
+    "success": true,
+    "output_bytes": 63902,
+    "seconds": 0.6515527599985944
+  },
+  {
+    "asset_id": "7e4984ad-c8f8-4790-9d7b-6934813f59ad",
+    "success": true,
+    "output_bytes": 75269,
+    "seconds": 0.6518662370071979
+  },
+  {
+    "asset_id": "22bd7ede-ba03-4f16-8785-ac1bb4e50bc7",
+    "success": true,
+    "output_bytes": 107614,
+    "seconds": 2.432419597011176
+  },
+  {
+    "asset_id": "79934203-4cb9-48bf-bf38-12d6f43d9cfe",
+    "success": true,
+    "output_bytes": 61554,
+    "seconds": 0.3072551770019345
+  },
+  {
+    "asset_id": "a7b77d34-3aa9-4122-acae-330f290f27d0",
+    "success": true,
+    "output_bytes": 75774,
+    "seconds": 0.8739872699952684
+  },
+  {
+    "asset_id": "cbbed4a9-80b9-485a-b547-d7a0269bf195",
+    "success": true,
+    "output_bytes": 101945,
+    "seconds": 0.739993962997687
+  },
+  {
+    "asset_id": "d994c972-f43c-427d-a491-bf5e6b80f83e",
+    "success": true,
+    "output_bytes": 72713,
+    "seconds": 0.3371961749944603
+  },
+  {
+    "asset_id": "e3c03fc6-31eb-46d3-b4b3-478bb0f20b67",
+    "success": true,
+    "output_bytes": 37873,
+    "seconds": 0.08899931301129982
+  },
+  {
+    "asset_id": "a1d099c8-1d46-4202-b7ff-50f3a69455ff",
+    "success": true,
+    "output_bytes": 101082,
+    "seconds": 0.4991109019902069
+  },
+  {
+    "asset_id": "fad3330d-08e7-4726-b1b9-7081e901c034",
+    "success": true,
+    "output_bytes": 92646,
+    "seconds": 0.4245021670067217
+  },
+  {
+    "asset_id": "f9beecf6-e79c-42fc-8da0-fbf8134d36ad",
+    "success": true,
+    "output_bytes": 37764,
+    "seconds": 0.18920585300656967
+  },
+  {
+    "asset_id": "cafb7b88-0b4c-4936-bf3d-d2edfb4a8b10",
+    "success": true,
+    "output_bytes": 61001,
+    "seconds": 1.4758137349999743
+  },
+  {
+    "asset_id": "d2eb19bf-c1ea-4435-8767-1ff23ba2a7a5",
+    "success": true,
+    "output_bytes": 80931,
+    "seconds": 1.0539056490088115
+  },
+  {
+    "asset_id": "d11df060-ead5-4ac1-9a45-d5bbb2475512",
+    "success": true,
+    "output_bytes": 49321,
+    "seconds": 0.9178109950007638
+  },
+  {
+    "asset_id": "c68de851-f16d-42f4-8c57-8503c70802b2",
+    "success": true,
+    "output_bytes": 81091,
+    "seconds": 1.107049136000569
+  },
+  {
+    "asset_id": "f00736e2-c6a2-4438-bcf2-bb87ea4032bf",
+    "success": true,
+    "output_bytes": 87021,
+    "seconds": 0.4131404559884686
+  },
+  {
+    "asset_id": "05696a6b-e616-4948-84c8-93135956c6c4",
+    "success": true,
+    "output_bytes": 92646,
+    "seconds": 0.4196120010019513
+  },
+  {
+    "asset_id": "55807b0d-6e65-40bf-8a72-cbb899f2130a",
+    "success": true,
+    "output_bytes": 84538,
+    "seconds": 1.885337902000174
+  },
+  {
+    "asset_id": "9633f769-bfb5-498d-958f-b5176a5c7b29",
+    "success": true,
+    "output_bytes": 86643,
+    "seconds": 0.9302854289999232
+  },
+  {
+    "asset_id": "12a936a6-9e2e-495d-809e-43abba037efb",
+    "success": true,
+    "output_bytes": 87253,
+    "seconds": 2.539733940997394
+  },
+  {
+    "asset_id": "cd2121cf-2e57-4974-8703-db819c661d90",
+    "success": true,
+    "output_bytes": 86517,
+    "seconds": 2.0273131589929108
+  },
+  {
+    "asset_id": "27979ab0-25ee-4f61-b7c1-62e74eedb554",
+    "success": true,
+    "output_bytes": 66324,
+    "seconds": 0.6418481209984748
+  },
+  {
+    "asset_id": "306d012a-c04d-44dc-a5c9-55708e81da79",
+    "success": true,
+    "output_bytes": 86911,
+    "seconds": 1.0278784279944375
+  },
+  {
+    "asset_id": "25f62d3b-cfdc-4204-b0ac-71d6604d7dc8",
+    "success": true,
+    "output_bytes": 84083,
+    "seconds": 2.043644648991176
+  },
+  {
+    "asset_id": "98aed308-e883-4778-991a-47bf0ea60786",
+    "success": true,
+    "output_bytes": 49321,
+    "seconds": 0.9130691750033293
+  },
+  {
+    "asset_id": "d13fbf40-962c-4f27-835c-402e399d5e60",
+    "success": true,
+    "output_bytes": 78654,
+    "seconds": 1.1845075949968304
+  },
+  {
+    "asset_id": "176f75b2-121e-4454-b2c8-9167a89f4eaa",
+    "success": true,
+    "output_bytes": 29168,
+    "seconds": 0.4102879040001426
+  },
+  {
+    "asset_id": "97d850af-3fd9-4116-a645-2bdbfa8565cb",
+    "success": true,
+    "output_bytes": 52316,
+    "seconds": 1.4029882949980674
+  },
+  {
+    "asset_id": "5165dcde-5353-403b-9238-d47203c0e2bd",
+    "success": true,
+    "output_bytes": 43528,
+    "seconds": 0.1945500220026588
+  },
+  {
+    "asset_id": "c1f05bd5-5732-471d-adbe-9c32d710a6a1",
+    "success": true,
+    "output_bytes": 83757,
+    "seconds": 1.0359700599947246
+  },
+  {
+    "asset_id": "e6a7da1b-4be0-449c-91d4-50924afaff73",
+    "success": true,
+    "output_bytes": 125109,
+    "seconds": 1.2648401699989336
+  },
+  {
+    "asset_id": "f9a11bf9-00f3-48bf-99cf-008898e67931",
+    "success": true,
+    "output_bytes": 75250,
+    "seconds": 0.3463141859974712
+  },
+  {
+    "asset_id": "e87d6362-0cd3-421c-a5e1-5295cd2708d3",
+    "success": true,
+    "output_bytes": 95526,
+    "seconds": 0.4154381729895249
+  },
+  {
+    "asset_id": "f902b306-cf59-4587-a90d-629371489f65",
+    "success": true,
+    "output_bytes": 70000,
+    "seconds": 0.6073001549957553
+  },
+  {
+    "asset_id": "2d07372f-c309-4d84-a0b2-9b4cae927fdf",
+    "success": true,
+    "output_bytes": 82513,
+    "seconds": 1.342807837005239
+  },
+  {
+    "asset_id": "6483225c-f8d4-48e5-a410-5d7fd96b3b2e",
+    "success": true,
+    "output_bytes": 101082,
+    "seconds": 0.5137914749939227
+  },
+  {
+    "asset_id": "57fdbfaf-f52f-45b6-a62b-33ba4fdcbecb",
+    "success": true,
+    "output_bytes": 78523,
+    "seconds": 0.748792668004171
+  },
+  {
+    "asset_id": "081d4bc4-d0bc-4dea-b8db-104e2e2282a9",
+    "success": true,
+    "output_bytes": 63663,
+    "seconds": 0.6229701499978546
+  },
+  {
+    "asset_id": "f10e3a3d-10ff-4c48-b108-64185a6e836c",
+    "success": true,
+    "output_bytes": 40706,
+    "seconds": 0.5622153549920768
+  },
+  {
+    "asset_id": "950b7826-b930-4f86-a8e6-54027d025a00",
+    "success": true,
+    "output_bytes": 82513,
+    "seconds": 1.3346268699970096
+  },
+  {
+    "asset_id": "3ace0efb-1ef8-4a8e-9b0d-6db0578a23b4",
+    "success": true,
+    "output_bytes": 66597,
+    "seconds": 0.608769485988887
+  },
+  {
+    "asset_id": "45c04883-0d49-4c52-95e3-93827ad53c7b",
+    "success": true,
+    "output_bytes": 55144,
+    "seconds": 1.0148849510005675
+  },
+  {
+    "asset_id": "83e3f82a-1f17-4c13-bc8f-674275a37675",
+    "success": true,
+    "output_bytes": 87253,
+    "seconds": 2.6182303549867356
+  },
+  {
+    "asset_id": "1c1fe8b2-7abb-4070-b976-db0f325ff2c1",
+    "success": true,
+    "output_bytes": 101445,
+    "seconds": 1.8127682610065676
+  },
+  {
+    "asset_id": "11e4b275-053c-4e13-a4e1-9c4026f6ab42",
+    "success": true,
+    "output_bytes": 43629,
+    "seconds": 0.39077018800890073
+  },
+  {
+    "asset_id": "f4d726c6-549a-4b54-89d4-efa7cd764505",
+    "success": true,
+    "output_bytes": 58390,
+    "seconds": 2.1275201689859387
+  },
+  {
+    "asset_id": "795c93c7-8450-480a-b68e-44a120684221",
+    "success": true,
+    "output_bytes": 44029,
+    "seconds": 0.5265655110124499
+  },
+  {
+    "asset_id": "175272eb-c67d-43b0-9a0b-f533b9f377bb",
+    "success": true,
+    "output_bytes": 58390,
+    "seconds": 2.1345568349934183
+  },
+  {
+    "asset_id": "f8e94848-6fbe-498e-9755-0441ca3c7277",
+    "success": true,
+    "output_bytes": 98295,
+    "seconds": 0.8561867660027929
+  },
+  {
+    "asset_id": "02567f41-bb9e-428e-aa74-f25536711e74",
+    "success": true,
+    "output_bytes": 67071,
+    "seconds": 0.5434475600050064
+  },
+  {
+    "asset_id": "67db29ac-f39d-40de-8c49-4a52b7cf1296",
+    "success": true,
+    "output_bytes": 96051,
+    "seconds": 0.502363866995438
+  },
+  {
+    "asset_id": "88b13bb4-602a-4f6a-9ead-37288461445f",
+    "success": true,
+    "output_bytes": 81964,
+    "seconds": 0.4240052690001903
+  },
+  {
+    "asset_id": "507506c7-6732-4059-81ec-efa5e79f2602",
+    "success": true,
+    "output_bytes": 116541,
+    "seconds": 1.525323132998892
+  },
+  {
+    "asset_id": "e2afa9ca-b216-4c87-a12d-a001b4008ba1",
+    "success": true,
+    "output_bytes": 98954,
+    "seconds": 2.031867689001956
+  },
+  {
+    "asset_id": "59fa4505-7306-4cf5-9f41-c289f8286912",
+    "success": true,
+    "output_bytes": 107634,
+    "seconds": 0.667932911994285
+  },
+  {
+    "asset_id": "91d3bf12-cc37-449a-8f8f-2ccee0ab8d25",
+    "success": true,
+    "output_bytes": 76156,
+    "seconds": 2.6627244549890747
+  },
+  {
+    "asset_id": "920173fa-0d7e-477a-aa22-3165f8bac7ce",
+    "success": true,
+    "output_bytes": 43727,
+    "seconds": 0.579511474003084
+  },
+  {
+    "asset_id": "39ef3cd0-0133-4b55-8898-ee475429c086",
+    "success": true,
+    "output_bytes": 47406,
+    "seconds": 0.7883321159897605
+  },
+  {
+    "asset_id": "54f4e472-fe8a-444d-a636-acb8e4d90e5d",
+    "success": true,
+    "output_bytes": 40788,
+    "seconds": 0.2945813339902088
+  },
+  {
+    "asset_id": "b8bc845b-63fc-4d04-9ea1-366648af6c62",
+    "success": true,
+    "output_bytes": 98381,
+    "seconds": 1.5160236410010839
+  },
+  {
+    "asset_id": "f7bb53ba-63cb-4eeb-b13b-fd906f5a5b96",
+    "success": true,
+    "output_bytes": 105758,
+    "seconds": 0.33791820499754976
+  },
+  {
+    "asset_id": "0fbe3f50-b64f-4733-bd11-1f352cfc8e19",
+    "success": true,
+    "output_bytes": 40788,
+    "seconds": 0.3029230300016934
+  },
+  {
+    "asset_id": "7a60fa2d-7cd7-427d-b02f-a143175557bf",
+    "success": true,
+    "output_bytes": 32637,
+    "seconds": 0.25335728299978655
+  },
+  {
+    "asset_id": "f4464808-3f65-4229-9bd6-e5e1f39c87d7",
+    "success": true,
+    "output_bytes": 47345,
+    "seconds": 0.6625397900061216
+  },
+  {
+    "asset_id": "79c8f700-aa03-4ad9-b87b-e4ff84d32ca8",
+    "success": true,
+    "output_bytes": 17629,
+    "seconds": 0.04501789099595044
+  },
+  {
+    "asset_id": "ae1a967a-5cf7-48df-b708-c401f8755f2f",
+    "success": true,
+    "output_bytes": 75409,
+    "seconds": 1.3957788859988796
+  },
+  {
+    "asset_id": "3114de4b-3518-4642-afdb-9817dcb597bb",
+    "success": true,
+    "output_bytes": 52692,
+    "seconds": 0.2912977689993568
+  },
+  {
+    "asset_id": "aea877f4-f79a-49d3-84c0-bbc74c4b2693",
+    "success": true,
+    "output_bytes": 75409,
+    "seconds": 1.3816336180025246
+  },
+  {
+    "asset_id": "ac4fc653-2157-4d68-bf68-a9d32a8fb36b",
+    "success": true,
+    "output_bytes": 86372,
+    "seconds": 2.812927000995842
+  },
+  {
+    "asset_id": "89ac99d3-b492-467c-bda0-b8f093581402",
+    "success": true,
+    "output_bytes": 57844,
+    "seconds": 0.31033586600096896
+  },
+  {
+    "asset_id": "ce32c7e1-ad8c-4ecb-8543-d45d461bc8d5",
+    "success": true,
+    "output_bytes": 96051,
+    "seconds": 0.49278477000189014
+  },
+  {
+    "asset_id": "17c2d6a9-946e-4b68-87ac-6957b8f0a23d",
+    "success": true,
+    "output_bytes": 75664,
+    "seconds": 0.4032380159915192
+  },
+  {
+    "asset_id": "e5d12e23-0297-4177-a38b-72b07cf7ede4",
+    "success": true,
+    "output_bytes": 63981,
+    "seconds": 1.209376811995753
+  },
+  {
+    "asset_id": "cab527a7-b67a-486b-a220-953484d42e4c",
+    "success": true,
+    "output_bytes": 82758,
+    "seconds": 0.2306921880081063
+  },
+  {
+    "asset_id": "600eda6c-b486-4b51-8c17-1233b45deea1",
+    "success": true,
+    "output_bytes": 84530,
+    "seconds": 1.1169046660070308
+  },
+  {
+    "asset_id": "6ec2c554-5e03-4c55-82cd-fa30b472e224",
+    "success": true,
+    "output_bytes": 92794,
+    "seconds": 1.2680796930071665
+  },
+  {
+    "asset_id": "a2c86408-744d-4bf5-89d5-5bdcbd8a7835",
+    "success": true,
+    "output_bytes": 84737,
+    "seconds": 1.021456122995005
+  },
+  {
+    "asset_id": "1d760ebe-84e6-4ef7-bf06-f8ce4059f8fb",
+    "success": true,
+    "output_bytes": 52692,
+    "seconds": 0.2847287699987646
+  },
+  {
+    "asset_id": "0c04ec60-7791-4c37-adb0-21b3ba1f0a49",
+    "success": true,
+    "output_bytes": 75409,
+    "seconds": 1.347887288997299
+  },
+  {
+    "asset_id": "9dcbe034-a492-43c6-8fd2-09a3ca943dc7",
+    "success": true,
+    "output_bytes": 61536,
+    "seconds": 1.028607034997549
+  },
+  {
+    "asset_id": "5049db2f-990e-4aca-9f3c-df47b32a84f9",
+    "success": true,
+    "output_bytes": 55193,
+    "seconds": 0.7055784789990867
+  },
+  {
+    "asset_id": "ab03fb4b-f885-4897-8cec-69260ef631b7",
+    "success": true,
+    "output_bytes": 96183,
+    "seconds": 0.5389087880030274
+  },
+  {
+    "asset_id": "9198e083-e6c5-4a06-b2e5-f1d711781fc7",
+    "success": true,
+    "output_bytes": 67753,
+    "seconds": 2.7550666800088948
+  },
+  {
+    "asset_id": "d40e3b86-7995-40bf-8751-5d1f9aaff6a9",
+    "success": true,
+    "output_bytes": 84737,
+    "seconds": 0.9974571909988299
+  },
+  {
+    "asset_id": "29abc05a-3830-4fae-bfa1-05ce40c3eeee",
+    "success": true,
+    "output_bytes": 80892,
+    "seconds": 1.126246961997822
+  },
+  {
+    "asset_id": "88ef8ab9-9a02-4a55-91f2-23ed9105c9a1",
+    "success": true,
+    "output_bytes": 87146,
+    "seconds": 0.348305806008284
+  },
+  {
+    "asset_id": "fa837342-26dd-4f9b-9395-5a6b32c13050",
+    "success": true,
+    "output_bytes": 55489,
+    "seconds": 1.5615610200038645
+  },
+  {
+    "asset_id": "fc6c7862-fe3e-41c7-b103-9562593dc2b0",
+    "success": true,
+    "output_bytes": 32637,
+    "seconds": 0.24384794000070542
+  },
+  {
+    "asset_id": "87e66876-1390-4c78-922f-74c68f013163",
+    "success": true,
+    "output_bytes": 75664,
+    "seconds": 0.39975432099890895
+  },
+  {
+    "asset_id": "b67ac48e-7717-4800-aee8-2be2cdad14eb",
+    "success": true,
+    "output_bytes": 167656,
+    "seconds": 0.9143175850040279
+  }
+]
