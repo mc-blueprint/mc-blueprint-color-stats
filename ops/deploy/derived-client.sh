@@ -4,7 +4,7 @@ set -euo pipefail
 test "$(hostname)" = ubuntu-1
 sudo -n apt-get install -y nfs-common
 sudo -n install -d /mnt/data/derived
-entry='192.168.1.86:/mnt/data/derived /mnt/data/derived nfs vers=4.2,proto=tcp,rw,soft,timeo=50,retrans=2,nosuid,nodev,_netdev,nofail 0 0'
+entry='192.168.1.86:/mnt/data/derived /mnt/data/derived nfs vers=4.2,proto=tcp,rw,hard,timeo=600,retrans=2,nosuid,nodev,_netdev,nofail 0 0'
 if ! grep -Fxq "$entry" /etc/fstab; then
     if findmnt --fstab --mountpoint /mnt/data/derived >/dev/null; then
         echo 'derivedの既存fstab設定を確認してください' >&2
