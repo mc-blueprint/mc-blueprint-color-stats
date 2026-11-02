@@ -1,0 +1,1877 @@
+{
+  "pilot_assets": 755,
+  "pilot_building_assets": 480,
+  "subjects": 5,
+  "images": 15,
+  "identification": "Commonsの個別建築名・カテゴリ・撮影地とAI画像照合。人手確認未実施。",
+  "excluded": [
+    {
+      "title": "Matsuyama castle(Iyo)4.JPG",
+      "reason": "天守ではなく門の接写。"
+    },
+    {
+      "title": "Matsuyama castle(Iyo)17.JPG",
+      "reason": "門と天守を同一部位として比較しないため群全体を除外。"
+    },
+    {
+      "title": "Dülmen, St.-Viktor-Kirche -- 2015 -- 4909.jpg",
+      "reason": "4908と同時刻08:58・ほぼ同じ構図の連写。"
+    },
+    {
+      "title": "Münster, St.-Paulus-Dom -- 2020 -- 8313.jpg",
+      "reason": "8304と1分差・ほぼ同じ構図の連写。"
+    }
+  ],
+  "groups": [
+    {
+      "subject_id": "duelmen-st-viktor",
+      "evidence": {
+        "rule": "個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。",
+        "title_match": "Dülmen, St.-Viktor-Kirche --",
+        "visual_review": "担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。",
+        "reason": "同一のSt. Viktor教会名、全画像同一座標51.828800,7.278100、個別建築カテゴリExterior of St. Viktor (Dülmen)。塔・屋根・石造外装を画像照合。夕夜間照明と昼間・積雪を含む。",
+        "reviewer": "complex_worker-issue46 (AI)",
+        "human_confirmation": false
+      },
+      "assets": [
+        {
+          "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+          "collected_title": "File:Dülmen, St.-Viktor-Kirche -- 2013 -- 5351.jpg",
+          "collected_location": "51.828800, 7.278100",
+          "source_url": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_St.-Viktor-Kirche_--_2013_--_5351.jpg",
+          "input_run_id": "498c2482-22f8-4e59-b110-3604bcbf511f",
+          "region_run_id": "115f8f81-b55a-4315-96e8-e07113ac02d7",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 43309581,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:Autumn 2013 in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Buildings with addresses"
+              },
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-4.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches in Germany photographed in 2013"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Dark skies in Kreis Coesfeld"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Dülmen photographs taken on 2013-12-13"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exposure time 4 sec"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exterior of St. Viktor (Dülmen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:F-number f/8"
+              },
+              {
+                "ns": 14,
+                "title": "Category:ISO speed rating 100"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Illuminated buildings in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Illuminated churches in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images by XRay (flat list)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2015"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2015, DE-NW"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2015 in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Information field template with formatting"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Lens focal length 12 mm"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Long exposure photographs of Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Long exposure photography in architecture"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Night in Dülmen-Mitte"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Night sky of Kreis Coesfeld"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Religious buildings"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Available light photography/Night"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Long exposure"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images from Wiki Loves Monuments"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of churches"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of trees"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Wiki Loves Monuments/2015"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Year/2013"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs with aspect ratio of 3:4"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images from Wiki Loves Monuments 2015 in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of churches in Dülmen-Mitte"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of cultural heritage monuments in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of trees in Dülmen-Mitte"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images with long exposure"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality night photography in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EF-S 10-22mm F3.5-4.5 USM"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EOS 600D"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in Dülmen-Mitte"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in North Rhine-Westphalia at night"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in North Rhine-Westphalia in December 2013"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in autumn 2013 in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in autumn in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Uploaded with VicuñaUploader"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Worm's-eye view of churches in Germany"
+              }
+            ],
+            "datetime_original": {
+              "value": "Taken on 13 December 2013, 17:04",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+        },
+        {
+          "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+          "collected_title": "File:Dülmen, St.-Viktor-Kirche -- 2014 -- 0056.jpg",
+          "collected_location": "51.828800, 7.278100",
+          "source_url": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_St.-Viktor-Kirche_--_2014_--_0056.jpg",
+          "input_run_id": "d1ab5c65-7854-44c1-adad-bae2dec16f54",
+          "region_run_id": "c970e466-8ee9-4d1e-9860-f5ab806d2d7f",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 32558925,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:1601 architectural dates in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Abat-sons in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Architectural dates in Kreis Coesfeld"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Blue sky background in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Blue sky in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Building inscriptions in Kreis Coesfeld"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Buildings with addresses"
+              },
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-4.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Changes of XRay's photographs of the recent weeks"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Church inscriptions in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Church towers in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches in North Rhine-Westphalia photographed in 2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches with blue sky background"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Dülmen photographs taken on 2014-05-04"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exposure time 1/250 sec"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exterior of St. Viktor (Dülmen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:F-number f/5.6"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Files with derivative versions"
+              },
+              {
+                "ns": 14,
+                "title": "Category:ISO speed rating 100"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images by XRay (flat list)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Information field template with formatting"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Inscriptions in Dülmen-Mitte"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Lens focal length 250 mm"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Morning in Kreis Coesfeld"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Partial views of buildings"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Religious buildings"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Towers"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Medium exposure"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of architectural elements"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of churches"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of towers"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Year/2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs with aspect ratio of 14:9"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of church towers in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of churches in Dülmen-Mitte"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of cultural heritage monuments in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of wall anchors"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Spring 2014 in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EF-S 55-250mm F4-5.6 IS STM"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EOS 70D"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Wall anchors in Kreis Coesfeld"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Year anchors in Germany"
+              }
+            ],
+            "datetime_original": {
+              "value": "Taken on 4 May 2014, 07:20",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5"
+        },
+        {
+          "sha256": "553337378a9a6dc3720c76de467b9d71d555e966b6e871b0e6d925902d043a5f",
+          "collected_title": "File:Dülmen, St.-Viktor-Kirche -- 2014 -- 5563-5.jpg",
+          "collected_location": "51.828800, 7.278100",
+          "source_url": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_St.-Viktor-Kirche_--_2014_--_5563-5.jpg",
+          "input_run_id": "6678ef87-3378-44be-947d-a738aef3b0a5",
+          "region_run_id": "8350d0e7-71c4-4236-81c2-1612f29dea91",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 35076985,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:Black sky in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Buildings with addresses"
+              },
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-4.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches in North Rhine-Westphalia photographed in 2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Dark skies in Kreis Coesfeld"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Dülmen photographs taken on 2014-01-15"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exposure time 8 sec"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exterior of St. Viktor (Dülmen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:F-number f/8"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Front views of buildings in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:ISO speed rating 400"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Illuminated buildings in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Illuminated churches in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images by XRay (flat list)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2014, DE-NW"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2014 in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Information field template with formatting"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Lens focal length 18 mm"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Long exposure photographs of Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Long exposure photography in architecture"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Night in Dülmen-Mitte"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Night sky of Kreis Coesfeld"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Religious buildings"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Available light photography/Night"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Long exposure"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images from Wiki Loves Monuments"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of churches"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Tone-mapped HDR images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Wiki Loves Monuments/2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Year/2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs with aspect ratio of 8:13"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images from Wiki Loves Monuments 2014 in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of churches in Dülmen-Mitte"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of cultural heritage monuments in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images with long exposure"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality night photography in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EF-S 10-22mm F3.5-4.5 USM"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EOS 600D"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Tone-mapped HDR images of Dülmen-Mitte"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Tone-mapped HDR images of churches in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Uploaded with VicuñaUploader"
+              }
+            ],
+            "datetime_original": {
+              "value": "Taken on 15 January 2014, 19:17",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "d5a37a02-3517-45bd-9aaa-ac426cc9986b"
+        },
+        {
+          "sha256": "b5a3582c9e51d250c15e9963cbd9cde181dd3cf224666c69c39b38aae4c81907",
+          "collected_title": "File:Dülmen, St.-Viktor-Kirche -- 2015 -- 4908.jpg",
+          "collected_location": "51.828800, 7.278100",
+          "source_url": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_St.-Viktor-Kirche_--_2015_--_4908.jpg",
+          "input_run_id": "63f193fb-ee4a-4464-a799-5009689e9986",
+          "region_run_id": "46914e07-6768-4dd4-bdc3-b53bb4372851",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 42827804,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:Bare trees in Dülmen-Mitte"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Buildings with addresses"
+              },
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-4.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Church portals in Kreis Coesfeld"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches in Germany photographed in 2015"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches in North Rhine-Westphalia in snow"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churchyard of St. Viktor (Dülmen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churchyard paths in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Dülmen photographs taken on 2015-01-24"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exposure time 1/30 sec"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exterior of St. Viktor (Dülmen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:F-number f/7.1"
+              },
+              {
+                "ns": 14,
+                "title": "Category:ISO speed rating 320"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images by XRay (flat list)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2015"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2015, DE-NW"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2015 in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Information field template with formatting"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Lens focal length 10 mm"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Morning in Kreis Coesfeld"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Religious buildings"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Wiki Loves Monuments/2015"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Year/2015"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs with aspect ratio of 4:5"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Portals in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Snow in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Snow in North Rhine-Westphalia in January 2015"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EF-S 10-22mm F3.5-4.5 USM"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EOS 70D"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in Kreis Coesfeld in snow"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in North Rhine-Westphalia in January 2015"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in winter 2014-2015 in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in winter in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Uploaded with VicuñaUploader"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Winter 2014-2015 in Dülmen"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Worm's-eye view of churches in Germany"
+              }
+            ],
+            "datetime_original": {
+              "value": "Taken on 24 January 2015, 08:58",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "473973db-b74f-4d8a-a16a-3d65e0fe533a"
+        }
+      ]
+    },
+    {
+      "subject_id": "muenster-st-paulus",
+      "evidence": {
+        "rule": "個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。",
+        "title_match": "Münster, St.-Paulus-Dom --",
+        "visual_review": "担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。",
+        "reason": "同一のSt.-Paulus-Dom名と全画像同一座標51.963100,7.625560。双塔と身廊・石造外装を画像照合。2014年夜景と昼景、2020年早朝の斜光を含む。",
+        "reviewer": "complex_worker-issue46 (AI)",
+        "human_confirmation": false
+      },
+      "assets": [
+        {
+          "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+          "collected_title": "File:Münster, St.-Paulus-Dom -- 2014 -- 00972.jpg",
+          "collected_location": "51.963100, 7.625560",
+          "source_url": "https://commons.wikimedia.org/wiki/File:M%C3%BCnster,_St.-Paulus-Dom_--_2014_--_00972.jpg",
+          "input_run_id": "5438a4b1-c082-431d-be4a-75ed1802dc91",
+          "region_run_id": "a853dfe7-22c1-44ed-bf7b-ae697d50a1bd",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 37414302,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:Buildings with addresses"
+              },
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-4.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Church towers in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches in North Rhine-Westphalia photographed in 2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Dark skies in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exposure time 1/50 sec"
+              },
+              {
+                "ns": 14,
+                "title": "Category:F-number f/3.5"
+              },
+              {
+                "ns": 14,
+                "title": "Category:ISO speed rating 3200"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images by XRay (flat list)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Information field template with formatting"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Lens focal length 18 mm"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Münster (Westfalen) photographs taken on 2014-12-20"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Religious buildings"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Towers"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Available light photography/Night"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Münster"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of cathedrals"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of street furniture"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Year/2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs with aspect ratio of 5:7"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of St Paul's Cathedral (Münster)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of street furniture in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality night photography in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              },
+              {
+                "ns": 14,
+                "title": "Category:St. Paul's Cathedral (Münster) at night"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Street lights in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Street lights photographed in 2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Sony E 18-55mm F3.5-5.6 OSS"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Sony NEX-5R"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Uploaded with VicuñaUploader"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Western towers and choir of St. Paul's Cathedral (Münster) exterior"
+              }
+            ],
+            "datetime_original": {
+              "value": "Taken on 20 December 2014, 19:07",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8"
+        },
+        {
+          "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+          "collected_title": "File:Münster, St.-Paulus-Dom -- 2014 -- 6847.jpg",
+          "collected_location": "51.963100, 7.625560",
+          "source_url": "https://commons.wikimedia.org/wiki/File:M%C3%BCnster,_St.-Paulus-Dom_--_2014_--_6847.jpg",
+          "input_run_id": "f289e143-4b2b-4f3a-b286-7cfd2181dbe9",
+          "region_run_id": "0762dec0-1a87-4e76-9b3e-df618e3018cf",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 35096080,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:Buildings with addresses"
+              },
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-4.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Church facades in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches in North Rhine-Westphalia photographed in 2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches with clouds and blue sky background"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Clouds and blue sky in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Clouds in Germany in March 2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Domplatz (Münster)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exposure time 1/160 sec"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exterior view of St. Paul's Cathedral (Münster)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:F-number f/8"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Facades in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Front views of buildings in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:ISO speed rating 100"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images by XRay (flat list)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2014, DE-NW"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images from Wiki Loves Monuments 2014 in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Information field template with formatting"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Lens focal length 11 mm"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Münster (Westfalen) photographs taken on 2014-03-14"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Religious buildings"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Münster"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images from Wiki Loves Monuments"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of cathedrals"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of facades"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of trees"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of urban squares"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Wiki Loves Monuments/2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Wiki Loves Monuments/Winners"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Year/2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs with aspect ratio of 25:14"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images from Wiki Loves Monuments 2014 in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of St Paul's Cathedral (Münster)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of facades in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of trees in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of urban squares in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EF-S 10-22mm F3.5-4.5 USM"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EOS 600D"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in North Rhine-Westphalia in March 2014"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Trees in winter 2013-2014 in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Uploaded with VicuñaUploader"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Winners of Wiki Loves Monuments 2014 in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Winter 2013-2014 in Münster (Westfalen)"
+              }
+            ],
+            "datetime_original": {
+              "value": "Taken on 14 March 2014, 16:05",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac"
+        },
+        {
+          "sha256": "4a12c80e6a0f8b470c56a3af55fe35a5333adcecf02b5c5fd37f5edcbad13df6",
+          "collected_title": "File:Münster, St.-Paulus-Dom -- 2020 -- 8304.jpg",
+          "collected_location": "51.963100, 7.625560",
+          "source_url": "https://commons.wikimedia.org/wiki/File:M%C3%BCnster,_St.-Paulus-Dom_--_2020_--_8304.jpg",
+          "input_run_id": "17fd2c18-4041-4e82-8518-ce8fab3db4c5",
+          "region_run_id": "1c47fe22-097d-4831-a373-2882543ad8e9",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 91988261,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:Buildings with addresses"
+              },
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-4.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Church spires in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Church towers in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches in Germany photographed in 2020"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches with clouds and blue sky background"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Clouds and blue sky in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Clouds in Germany in July 2020"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exposure time 1/100 sec"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exterior view of St. Paul's Cathedral (Münster)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:F-number f/13"
+              },
+              {
+                "ns": 14,
+                "title": "Category:ISO speed rating 100"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images by XRay (flat list)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Information field template with formatting"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Lens focal length 62 mm"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Morning in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Münster (Westfalen) photographs taken on 2020-07-02"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Religious buildings"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Towers"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Münster"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of cathedrals"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of religious items"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of roofs"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of towers"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Year/2020"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs with aspect ratio of 5:4"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of St Paul's Cathedral (Münster)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of architectural elements in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of church towers in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of crosses in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of spires in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Roof finials in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EOS 5D Mark IV and Canon EF 24-105mm F4L IS II USM"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Tower crosses in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Uploaded with LrMediaWiki"
+              }
+            ],
+            "datetime_original": {
+              "value": "Taken on 2 July 2020, 07:23",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "dd7dd6ac-d518-4dae-96a5-29dd6fda61d6"
+        },
+        {
+          "sha256": "5092c16150cd7b2e9eddd0661b088ec4075ec75eb3d4792afb16dad58d380b39",
+          "collected_title": "File:Münster, St.-Paulus-Dom -- 2020 -- 8315.jpg",
+          "collected_location": "51.963100, 7.625560",
+          "source_url": "https://commons.wikimedia.org/wiki/File:M%C3%BCnster,_St.-Paulus-Dom_--_2020_--_8315.jpg",
+          "input_run_id": "4a29e272-8231-49fd-b419-dd7cc8ea62f9",
+          "region_run_id": "b66cf007-57d0-4048-bae3-f15ffc1b7e66",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 91988271,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:Buildings with addresses"
+              },
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-4.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Church spires in North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Church towers in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches in Germany photographed in 2020"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Churches with clouds and blue sky background"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Clouds and blue sky in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Clouds in Germany in July 2020"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exposure time 1/100 sec"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Exterior view of St. Paul's Cathedral (Münster)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:F-number f/13"
+              },
+              {
+                "ns": 14,
+                "title": "Category:ISO speed rating 100"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Images by XRay (flat list)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Information field template with formatting"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Lens focal length 35 mm"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Morning in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Münster (Westfalen) photographs taken on 2020-07-02"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Religious buildings"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Architectural photography/Towers"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Münster"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of North Rhine-Westphalia"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of cathedrals"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of religious items"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of roofs"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Quality images of towers"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs by Dietmar Rabich/Year/2020"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Photographs with aspect ratio of 8:5"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of St Paul's Cathedral (Münster)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of architectural elements in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of church towers in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of clouds in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of crosses in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Quality images of spires in Germany"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Roof finials in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Canon EOS 5D Mark IV and Canon EF 24-105mm F4L IS II USM"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Tower crosses in Münster (Westfalen)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Uploaded with LrMediaWiki"
+              }
+            ],
+            "datetime_original": {
+              "value": "Taken on 2 July 2020, 07:25",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "1377ce75-dd7e-480c-a664-88f229c7e993"
+        }
+      ]
+    },
+    {
+      "subject_id": "dome-of-the-rock",
+      "evidence": {
+        "rule": "個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。",
+        "title_match": "Dome of the Rock (",
+        "visual_review": "担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。",
+        "reason": "個別建築名と全画像のFacade of the Dome of the Rockカテゴリ一致。金色ドーム、タイル貼りの八角形外壁を画像照合。2015/2019/2020年の異なる空・照明状態。",
+        "reviewer": "complex_worker-issue46 (AI)",
+        "human_confirmation": false
+      },
+      "assets": [
+        {
+          "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+          "collected_title": "File:Dome of the Rock (11).jpg",
+          "collected_location": null,
+          "source_url": "https://commons.wikimedia.org/wiki/File:Dome_of_the_Rock_(11).jpg",
+          "input_run_id": "5bbb7bfa-381c-4405-bd4f-40f4cd3a6c6e",
+          "region_run_id": "7f1747fc-7ec7-4ec0-88e0-4d903618e969",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 152978451,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:CC-Zero"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Facade of the Dome of the Rock"
+              }
+            ],
+            "datetime_original": {
+              "value": "2015-09-09",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576"
+        },
+        {
+          "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+          "collected_title": "File:Dome of the Rock (4).jpg",
+          "collected_location": null,
+          "source_url": "https://commons.wikimedia.org/wiki/File:Dome_of_the_Rock_(4).jpg",
+          "input_run_id": "46baf850-8bdb-4b8f-a3b7-4b8d3cb15799",
+          "region_run_id": "b621cdfa-5292-44d1-a7d6-fdf1b09e57c9",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 152978446,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:CC-Zero"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Facade of the Dome of the Rock"
+              }
+            ],
+            "datetime_original": {
+              "value": "2019-10-22",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "3f9a6843-0c63-47ef-991e-05d9dbf257da"
+        },
+        {
+          "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+          "collected_title": "File:Dome of the Rock (5).jpg",
+          "collected_location": null,
+          "source_url": "https://commons.wikimedia.org/wiki/File:Dome_of_the_Rock_(5).jpg",
+          "input_run_id": "dd3d4c74-e5f3-4c61-b11c-f86545e458e1",
+          "region_run_id": "c63cacd3-a991-489f-ad0f-e66f927f7719",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 152978444,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:CC-Zero"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Facade of the Dome of the Rock"
+              }
+            ],
+            "datetime_original": {
+              "value": "2020-11-14",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "40addf0f-b9a3-453d-90f4-00722151df6f"
+        }
+      ]
+    },
+    {
+      "subject_id": "kakegawa-keep",
+      "evidence": {
+        "rule": "個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。",
+        "title_match": "Kakegawa Castle",
+        "visual_review": "担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。",
+        "reason": "掛川城天守を指定する2タイトルとKeep Tower/Remote viewsカテゴリ。近傍座標と天守外観を画像照合。同日の11:10/11:53、異なる構図・日照面。",
+        "reviewer": "complex_worker-issue46 (AI)",
+        "human_confirmation": false
+      },
+      "assets": [
+        {
+          "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+          "collected_title": "File:Kakegawa Castle, Kakegawa City.jpg",
+          "collected_location": "34.774764, 138.015408",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Kakegawa_Castle,_Kakegawa_City.jpg",
+          "input_run_id": "75d5625d-6c4c-4333-85ba-2f34993cb877",
+          "region_run_id": "2cded44a-d056-45e6-9bf0-b35af1e6cb45",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 100946865,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-4.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Files with coordinates missing SDC location of creation"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Japan photographs taken on 2021-02-28"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Remote views of the Kakegawa Castle Keep Tower"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              }
+            ],
+            "datetime_original": {
+              "value": "2021-02-28 11:53:16",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0"
+        },
+        {
+          "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+          "collected_title": "File:Kakegawa Castle.jpg",
+          "collected_location": "34.774725, 138.014286",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Kakegawa_Castle.jpg",
+          "input_run_id": "2b0d5bbf-c8fd-4b07-ac37-2d84943b06ed",
+          "region_run_id": "f92823ca-4cac-47e8-ae26-578f859c2e3d",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 100946451,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-4.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Files with coordinates missing SDC location of creation"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Japan photographs taken on 2021-02-28"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Kakegawa Castle Keep Tower"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              }
+            ],
+            "datetime_original": {
+              "value": "2021-02-28 11:10:01",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "8852ab9a-5707-4da5-8b42-af759baec159"
+        }
+      ]
+    },
+    {
+      "subject_id": "strasbourg-cathedral",
+      "evidence": {
+        "rule": "個別建築名を含むタイトルと撮影地を照合。画像確認は別途記録。",
+        "title_match": "Strasbourg Cathedral",
+        "visual_review": "担当AIによる同一建築の画像照合済み。人手の正解確認は未実施。",
+        "reason": "Strasbourg Cathedral名、西正面/中央portalカテゴリを照合。西正面の全景とその中央portalを同一建築として採用。2009年夜景と2014年昼景。画角・範囲の違いが大きい。",
+        "reviewer": "complex_worker-issue46 (AI)",
+        "human_confirmation": false
+      },
+      "assets": [
+        {
+          "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+          "collected_title": "File:Strasbourg Cathedral Exterior - Diliff.jpg",
+          "collected_location": "48.581554, 7.750102",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Strasbourg_Cathedral_Exterior_-_Diliff.jpg",
+          "input_run_id": "58a38362-bd3e-4551-a4d7-83f0f8d73ac8",
+          "region_run_id": "26086c26-8f9a-4308-b93b-2e7c59637be9",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 31538953,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-3.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Featured pictures on Wikipedia, Hebrew"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Files with Assessments template missing SDC Commons no value quality assessment"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Files with coordinates missing SDC location of creation (48° N, 7° E)"
+              },
+              {
+                "ns": 14,
+                "title": "Category:GFDL"
+              },
+              {
+                "ns": 14,
+                "title": "Category:License migration redundant"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Self-published work"
+              },
+              {
+                "ns": 14,
+                "title": "Category:West facade of Cathédrale Notre-Dame de Strasbourg"
+              }
+            ],
+            "datetime_original": {
+              "value": "2014-02-08",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b"
+        },
+        {
+          "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+          "collected_title": "File:Strasbourg Cathedral, central portal of west facade, looking up from below.jpg",
+          "collected_location": null,
+          "source_url": "https://commons.wikimedia.org/wiki/File:Strasbourg_Cathedral,_central_portal_of_west_facade,_looking_up_from_below.jpg",
+          "input_run_id": "5a8fca5a-7805-477a-a137-e60f580d4474",
+          "region_run_id": "0ed6c04f-6f74-4b88-8d37-dccf5329f181",
+          "license_class": "open",
+          "identification_metadata": {
+            "pageid": 19013365,
+            "categories": [
+              {
+                "ns": 14,
+                "title": "Category:CC-BY-SA-2.0"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Central portal of the western facade of Notre-Dame de Strasbourg"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Flickr images reviewed by FlickreviewR"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Gothic sculptures in Strasbourg"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Strasbourg Cathedral by night"
+              },
+              {
+                "ns": 14,
+                "title": "Category:Taken with Fujifilm FinePix F30"
+              }
+            ],
+            "datetime_original": {
+              "value": "2009-10-07 19:46",
+              "source": "commons-desc-page"
+            }
+          },
+          "asset_id": "300b8826-bd09-4f67-bbb2-d3240b4ced0d"
+        }
+      ]
+    }
+  ]
+}
