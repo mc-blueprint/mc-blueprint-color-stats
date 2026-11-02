@@ -240,7 +240,7 @@ CMPは正面化した建築で、元の正解は重なりを許す矩形をZ順�
 名称の意味的一致は自動判定しない。matchは同名群と既存ID群のasset集合一致、
 not_groupedは両方が単独、unresolvedは既存候補あり・名称null。
 全100枚の名称・判定根拠・既存候補・群比較は
-[保存版](judgments/building-identity.json)に保存し、#46へ引き継ぐ。
+[保存版](../bench/issue41/judgments/building-identity.json)に保存し、#46へ引き継ぐ。
 
 | 既存の複数画像候補 | 枚数 | 群比較（画像数） |
 | --- | ---: | --- |
