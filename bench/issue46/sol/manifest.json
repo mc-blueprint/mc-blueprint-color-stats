@@ -1,0 +1,233 @@
+{
+  "basis": "#41 gpt-6.1-sol初回判定。人手正解ではない。",
+  "labels": [
+    "wall_main",
+    "roof_surface",
+    "door",
+    "window_frame"
+  ],
+  "groups": [
+    {
+      "subject_id": "dome-of-the-rock",
+      "building_name": "岩のドーム",
+      "asset_ids": [
+        "152cadd8-7323-4de2-ba65-fce95747d576",
+        "78f5d063-b33b-4808-b31a-8d441737484d",
+        "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+      ]
+    },
+    {
+      "subject_id": "duelmen-st-viktor",
+      "building_name": "聖ヴィクトル教会（デュルメン）",
+      "asset_ids": [
+        "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+        "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+      ]
+    },
+    {
+      "subject_id": "kakegawa-keep",
+      "building_name": "掛川城天守",
+      "asset_ids": [
+        "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+        "b2a4d9a0-a875-42c3-933e-d158784b3a69"
+      ]
+    },
+    {
+      "subject_id": "leon-cathedral-west",
+      "building_name": "レオン大聖堂",
+      "asset_ids": [
+        "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+        "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01"
+      ]
+    },
+    {
+      "subject_id": "muenster-st-paulus",
+      "building_name": "聖パウルス大聖堂（ミュンスター）",
+      "asset_ids": [
+        "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+        "9d176920-0aac-4077-95b1-a5aef5677aac"
+      ]
+    },
+    {
+      "subject_id": "strasbourg-cathedral",
+      "building_name": "ストラスブール大聖堂",
+      "asset_ids": [
+        "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+        "a86f43ed-fdc4-4cea-8335-76d67291002d"
+      ]
+    }
+  ],
+  "inputs": [
+    {
+      "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+      "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+      "prep_sha256": "ffc938e67685b55463d25c8f8918d2da9aaf56f96d2951ba26532ef2ad6ee12c",
+      "prep_run_id": "63e513f9-a2ac-46b4-8fe4-483b94e73cca"
+    },
+    {
+      "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+      "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+      "prep_sha256": "4b7a6f365a3d8ec6592f5b751be52bda6ebdf5195bb211046530daaa4760272f",
+      "prep_run_id": "7292f63b-0b40-4d8e-ad4c-d280c73e92f6"
+    },
+    {
+      "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+      "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+      "prep_sha256": "82b9a4333262c16f7f098b3626ee7697da74d46c06217e3733cc392ed0290f06",
+      "prep_run_id": "9c160def-a806-4ab8-8ae4-43e21dec1df5"
+    },
+    {
+      "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+      "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+      "prep_sha256": "65df0af03ffa582cb61beea762de1f54c33993528b9dd041e3fc3119b07c001d",
+      "prep_run_id": "2961a72e-9f75-4056-b22e-874fa2e1edf3"
+    },
+    {
+      "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+      "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+      "prep_sha256": "94320152e114e7a877e52822ea1341fdb7f3c938ec0afd5df09c69a13d48e676",
+      "prep_run_id": "6c912a78-df94-4491-a3a8-ac3771e17a62"
+    },
+    {
+      "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+      "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+      "prep_sha256": "9d5ef77fb07b889b2c5ad7585185b305cbee06f1438d968115f8ffd3ed22f66d",
+      "prep_run_id": "65584cd9-107b-44b7-91e2-d017fd52e31b"
+    },
+    {
+      "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+      "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+      "prep_sha256": "31cc6422851b4c18ee9c159de25e4c539d5b31a975bb4a1f3eb57edb133a7615",
+      "prep_run_id": "3fefa65e-2fef-4e1a-8656-0b1cab73f065"
+    },
+    {
+      "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+      "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+      "prep_sha256": "35518fca2b5ea861f53db6a1f60eaf587e48a4688b90318b2241882d5a1640b3",
+      "prep_run_id": "eb3e1f42-b047-495b-8e03-c2eeed32c1f0"
+    },
+    {
+      "asset_id": "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01",
+      "sha256": "a8e95fc03080586acdb7e3184a9ecc45fa88dfd681103b832d96fa580865f131",
+      "prep_sha256": "e9d7eb8d87c17f1318f57a6c24f9a2a7503df342397e5bab1445626f582e5023",
+      "prep_run_id": "f5a3498a-de8e-444d-8da1-098cde16ee44"
+    },
+    {
+      "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+      "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+      "prep_sha256": "01da4a0aa011b743b669ed8744c78b4bea92b1a5f2c6aa359a9deb741be8e51e",
+      "prep_run_id": "601ba6d7-89bb-4dd4-84cd-c0de095306c4"
+    },
+    {
+      "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+      "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+      "prep_sha256": "911fca97aec12dda3db6b2fba9e2108a9583e6c08fbd9fe54ac99d79cd2a686e",
+      "prep_run_id": "fc69ba7e-3a9b-4e66-9e15-20133bab9d7f"
+    },
+    {
+      "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+      "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+      "prep_sha256": "65ff09406d4b319d3b7da962a1ee79483a50a48fe9d4a8f9a7dc26ff24dc0635",
+      "prep_run_id": "6cc83412-8423-4bb3-965b-f695766b9e82"
+    },
+    {
+      "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+      "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+      "prep_sha256": "249ec4e81e3d8868d7557089b01922ff5121778de62625fe95f645ce5831e06d",
+      "prep_run_id": "78b6e924-81b6-45ba-92d5-5b40f5ab0bfa"
+    }
+  ],
+  "sources_sha256": {
+    "manifest.json": "69e21a7d7a2fe4af612a02ebe1062a9a50d4a8da1721ef000adf9e38fdfa53c3",
+    "judgments/building-identity.json": "4533aa6ca1a8cbc6c35cef0f96254672401b72dd293b540fd4e6d8a2ef961e2b",
+    "judgments/batch-01.json": "f7db93f8af53635d6f00271981d984d204e1904b9b8cd4a55d97eaf4f7104a73",
+    "judgments/batch-02.json": "fb241f7b92b9aef05fc4c5c4bc6c8dda38eb71d1224342bb73e270b081aac128",
+    "judgments/batch-03.json": "65df6e608b01848b856d1a962efcda2f8ba4ed909bd2d0339a0fae6eaf06dbe3",
+    "judgments/batch-04.json": "cd211ca46774099217a88b1c8cc47710b08f98eb332b8938d6a0ac47da54aa8d",
+    "judgments/batch-05.json": "f3591f5e33b935c924399022f7513f61b6da25a7171dcd6fac93be99395d96c7",
+    "judgments/batch-06.json": "3ad6ca299d68c66199afe3b0b6d75d01bb6b1f68659694170c9ac2b6ae184fa9",
+    "judgments/batch-07.json": "8c53b1159ce844f50ad17e2730460f1e4084a0bdb0d8d50680e7d6ece08a5ee2",
+    "judgments/batch-08.json": "1a757dd99c9f080a9982b6498787922ee8f8f47c0bc827698ac41bb25db503ff",
+    "judgments/batch-09.json": "3d71f1aafb5876e66ee893655656b5432d9640aa96c393251c1f4efc369966d1",
+    "judgments/batch-10.json": "41fed2f446ff1c2cf807acb288297bfccce55478c850b10c40bf8b35222937e1"
+  },
+  "draft_sha256": "2f153c8557c765ce481bd649a4974d7b74113430243d612723875cb53958c347",
+  "weights_sha256": {
+    "stage_0.pt": "e65832027ffe9d308be8e24a1cdb128ed2d006638a3146c1c4395c23d40bde32",
+    "stage_1.pt": "358c6515808c8eb02334fdbd7e027572c37abf3e3ffc7d3674d90085ba11dddb",
+    "stage_2.pt": "7e7469db4717789626d26b8446c5c1647adba8c754d2e5ec1d47bc02c5016b2d",
+    "stage_3.pt": "da468151082c7d6fffd8efad400753e85a3cd994291285b32f374055520bbd55"
+  },
+  "intrinsic_license_class": "academic_only",
+  "implementation": {
+    "packages": {
+      "intrinsic": {
+        "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "decompose.py": "8c337184be3cb2b89e8c05e7087904708efcdaaccac0ebe363abf18cb7b6a20b",
+        "ordinal_util.py": "e73527ffb16e87897e2520b5ba6c8ed8b6d9d0e25c5219ed0526f93e676ac58a",
+        "pipeline.py": "80b3500dd2f6b805b4d0cb02039b4b9d1a8d564233319abd0939611bacb58ac4"
+      },
+      "altered_midas": {
+        "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "backbones/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "backbones/beit.py": "ce7eaeeefcfd9dddee6658832b820106603b9a5cab37494fd2ece14fd62597bb",
+        "backbones/levit.py": "782e6be3915981ba24348dd76c693fc14ee602f39c4d7ca7a034d52d4a02d613",
+        "backbones/next_vit.py": "c2f36cbdb5cafe52cadf8ff1942a85248aa604405d72e799dc983d611243312f",
+        "backbones/swin.py": "119d9f10015e5041f18ac701afad34df7af422eeb3130eb91f6ee6ebf0ad5d52",
+        "backbones/swin2.py": "a0168fc93f31e47f641fa9554938011de3e6500a45e94d8cf2d3f470308c6a46",
+        "backbones/swin_common.py": "e27fd6380172ed343c103a5ae55b875163b33984a460848aa2d28bf2ea6cb2e0",
+        "backbones/utils.py": "d3d4f1adebcefd0b18cba7d53a237c5ff4238e477197dbbb44d5c92e8e301cfb",
+        "backbones/vit.py": "67ec52b3d9a8e7836c6bc4dba0e8777adcd2964687f30bfd02b423b6ace4c477",
+        "base_model.py": "a50dc79482afbcd023a3c401d17d21e5f8b5c0c51c9060ef849a75bd1816496b",
+        "blocks.py": "f2fb6bb8447f0b06bd5b105b857a5f3fcdafd6ed96c3903a57aeb041846cd91f",
+        "dpt_depth.py": "234b3bcee35257709c25c016d28fcd17f27c9eea57ad959fde12b986b1f6f7ec",
+        "midas_net.py": "7e586d6f97029ece4f3381ca0f8fe460b4e2805b65c3a3deb02f98e4e3b11fc0",
+        "midas_net_custom.py": "b2d6b7e3498cd3b456d1a61f725188a6f9a5a8c62b16eb69edfd09bc3e69a4ac",
+        "model_loader.py": "a280a19133b96e6693cb5c0aeec8fd23a9345e07722ffb05d4a163df28ff97de",
+        "transforms.py": "ab3d20b77065606332e6a9bac96a44f60f22923a7848d62b57b5690959a9883d"
+      },
+      "chrislib": {
+        "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "color_util.py": "b06c51ec157e50bde74097ffe484d61dcb6e9bdcd064deefc4671a44b9ab4384",
+        "data_util.py": "39ea4737c4a8748c8dd3d255b0109fb938ab1300736d6da07e8422f56a66333c",
+        "depth_util.py": "fffbacb62ba8c4309b8b459f67cee99f32fbba436d36cce801b5217d222e65f1",
+        "gan_loss.py": "aa7eb90bedf5abc872d6bfc8cbd155ffea985af2e68ff016c49047791e85430c",
+        "general.py": "ac8ed0e972ca998f64a330f1c8a33efdf4ff0ad84b97f8f0d62acbd943149adc",
+        "loss.py": "638319a2f9963fd079b71a305a62d55a080b1abdd8c9b8d489e8929b00701c82",
+        "methods.py": "8f819ad9b87d648e87c5e306999e3f585c0501a222387af46d318d8322d904a4",
+        "metrics.py": "130c72b4cb0a1b345fe37399a7742aeecd085b6fd69918cf40521438da182264",
+        "midas_loss.py": "c28441f70cc16e305e6ebf0b620ed603853b17192e73131eb5c770275a13d69b",
+        "normal_util.py": "af028f8347901dba791ea79e9909116897f423ff467a31b1441387d9bc04a733",
+        "resolution_util.py": "7aaf00a7aa0ad307e7026efa6ab9c45b43b8e2a540de9648ed37e607608ffa1c",
+        "sh_util.py": "67cd840ce1d4827d01834929b9f2c783a3b510c0695c8edb10ecb4aea9a0de8d"
+      },
+      "geffnet": {
+        "__init__.py": "1dcde27254dc19485d90b2f8d2a6ccd6aef1036e1a742b2158fa5868faa75309",
+        "activations/__init__.py": "2b1cadb7eb1f107a68faae1f3789d7a958cc2e887f3a2d19dcb190e2def1500d",
+        "activations/activations.py": "9b42a5284658e723530decbead9b8d0e600e34cb14e78edcc19c76e57f1d01e5",
+        "activations/activations_jit.py": "a8636690d86c7b2ae6f2b1bc558bf5ed6c7b4a0b879eaa78f2a7f0a00cba0372",
+        "activations/activations_me.py": "1f360fb8789d688abf2f82bd3d501320bbf0417e70c2e7140f0e87d90acc093b",
+        "config.py": "c999834ac28916f3e0e2b591733cf19f3a4e70308c35c67660c50d021a4b8fd3",
+        "conv2d_layers.py": "1ae6bc2eab9dae1822ab0cdb57342f390436ebd3ca5ae053851d4f9ab89e761c",
+        "efficientnet_builder.py": "476cfea0edb379d0a1ecbe911556165f6bd8c59b159251326bb122b881b6b04c",
+        "gen_efficientnet.py": "353ace0689f526e70e5941f4c9590b6dd88e1d063ed139f4d5a6e6c508c5e859",
+        "helpers.py": "15565ffca282912b3bf9af1ba5b753e8569dd64038566297f8167ab4e8904f16",
+        "mobilenetv3.py": "a5cf20e385c6ff7e1935edac5ae2a6e965174653d475b1dec4601cabd5b1b289",
+        "model_factory.py": "e8666720ca6c4500126486abccd29bae359aafac4dc6b23a428737716d3111e8",
+        "version.py": "6538a9347eb0c82eaab2ad47fe566cbc9c95aee51ad67bb7cb8132b0c764a6e5"
+      }
+    },
+    "versions": {
+      "torch": "2.11.0+cu128",
+      "torchvision": "0.26.0+cu128",
+      "timm": "1.0.30",
+      "geffnet": "1.0.2",
+      "numpy": "2.5.4",
+      "scikit-image": "0.26.0"
+    }
+  },
+  "code_sha256": {
+    "run_sol.py": "e94836d12a52ffad9a33bc20b1756a600f211248b9f5e93d50cbe4e0d4ac32dc",
+    "shade.py": "2cd76f8f928a0b173c4702d62a2de882298b0c035d6c57198abe281097428299"
+  }
+}
