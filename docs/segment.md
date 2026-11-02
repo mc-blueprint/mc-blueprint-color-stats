@@ -39,7 +39,7 @@ torch 2.11.0・torchvision 0.26.0を組み合わせ、GPUでは対応するCUDA 
 SAM Licenseには再配布時の同ライセンス添付、研究発表時の利用明示、用途制限がある。
 利用・配布により契約へ拘束される記載があり、重みの配布ページも情報提供への同意と
 ログインを要求する。この作業では同意・ログイン・ゲート付き重みの取得を行わない。
-SAM 3.1は[ユーザー判断](https://github.com/rs0325/mc-blueprint-color-stats/issues/40#issuecomment-6567448053)により未評価（restricted・ゲート付き）とし、比較対象に含めない。
+SAM 3.1は[ユーザー判断](https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/40#issuecomment-6567448053)により未評価（restricted・ゲート付き）とし、比較対象に含めない。
 `restricted`の結果はdesign §8に従い同梱パックから除外する。
 採用したSAM 2・DINOに`noncommercial`・`academic_only`の重みは採用していない。
 

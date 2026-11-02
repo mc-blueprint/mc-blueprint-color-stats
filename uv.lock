@@ -613,7 +613,7 @@ requires-dist = [
     { name = "colour-science", specifier = ">=0.4.6,<0.5" },
     { name = "imagehash", specifier = ">=4.3,<5" },
     { name = "jsonschema", specifier = ">=4.23,<5" },
-    { name = "mcblueprint", git = "https://github.com/rs0325/MCBlueprint?rev=6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774" },
+    { name = "mcblueprint", git = "https://github.com/mc-blueprint/mc-blueprint?rev=6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774" },
     { name = "opencv-python-headless", specifier = ">=4.13,<5" },
     { name = "pillow", specifier = ">=11,<13" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2,<4" },
@@ -634,7 +634,7 @@ dev = [
 [[package]]
 name = "mcblueprint"
 version = "0.1.0"
-source = { git = "https://github.com/rs0325/MCBlueprint?rev=6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774#6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774" }
+source = { git = "https://github.com/mc-blueprint/mc-blueprint?rev=6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774#6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774" }
 dependencies = [
     { name = "jsonschema" },
     { name = "nbtlib" },

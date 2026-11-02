@@ -1,5 +1,5 @@
 [Unit]
-Description=MCBlueprint配色統計 ストレージ監視
+Description=mc-blueprint配色統計 ストレージ監視
 After=local-fs.target
 
 [Service]
