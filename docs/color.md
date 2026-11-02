@@ -1,5 +1,8 @@
 # color stage のベースライン
 
+M2の部位マスクの出力・座標・不変パスは[segment stage](segment.md)を参照する。
+このcolor stageのRegionへの観測登録は#45で接続する。
+
 Issue #12。画像全体から最大5色を抽出し、色ごとの観測をassetへ直接登録する。
 region・relation・材質色の推定は行わない。DBスキーマの変更はない。
 
