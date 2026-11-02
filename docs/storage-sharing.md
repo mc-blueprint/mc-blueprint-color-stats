@@ -1,9 +1,10 @@
 # raw共有方式とNFS断・復帰試験（Issue #42）
 
-2026-11-02。基準は`feature/issue-42` / `4e016c5`。
+2026-11-02。比較・隔離試験の基準は`feature/issue-42` / `4e016c5`、本番配備の基準は`cd70dda`。
 [設計 §4・§4.1](design.md)、[segmentの入力契約](segment.md)、
 [媒体監視](../ops/storage/README.md)を前提とする。
-恒久設定は適用せず、本番DBと停止中のパイロットには触れない。
+比較・隔離試験に続き、同日のユーザー判断に基づいてraw事前複製を本番配備した。
+NFSの恒久設定と停止中のパイロットは変更せず、本番DBは由来選定の読取りだけに使用した。
 
 ## rawの選定
 
@@ -26,31 +27,96 @@ rsyncは両Ubuntuに導入済みだが、Ubuntu間の認証・manifestと原本S
 
 ## 配備案と監視の境界
 
-`ops/deploy/raw-replica.py`は手動実行する案。恒久export・fstab・systemdは不要。
+`ops/deploy/raw-replica.py`は手動実行する。恒久export・fstab・systemdは不要。
 実行コマンドは`run_logged.py`、SSHは登録済み接続先を`ssh_logged.py`経由で記録する。
 
 1. ubuntu-1で採用済みassetの原本**不変パス**を選ぶ。DBの参照を正本とし、媒体全体の走査結果をそのまま投入しない。
 2. ubuntu-1の配備Pythonと`PYTHONPATH=<repo>/src`で
-   `raw-replica.py stage --destination <新規の転送用ディレクトリ> <原本パス>...`を実行する。
+   `raw-replica.py stage --provenance <由来JSON> --destination <新規の転送用ディレクトリ> <原本パス>...`を実行する。
    `storage_available("prep")`を再利用し、blocked・媒体欠落・readonlyなら保留する。
    原本名と内容SHA-256を照合し、コピー後も再照合・監視確認を行って最後にmanifestを作る。
 3. manifestと選択画像だけを、監査付きSCPでGPUノードのstagingへ転送する。
-   今回はWindowsの担当領域を経由した。SSH鍵やDB資格情報は転送しない。
+   初回の隔離試験はWindowsの担当領域を経由した。本番配備の確認は`scp -3`で
+   ubuntu-1からubuntu-2へ転送し、Windowsには画像ファイルを保存していない。
+   SSH鍵やDB資格情報は転送しない。
    恒久運用ではSSHの接続・死活timeout（例: `ConnectTimeout=15,ServerAliveInterval=15,ServerAliveCountMax=2`）を指定し、
    転送失敗は投入前の保留にする。今回のSCPは正常転送だけを確認し、転送断の実機試験は行っていない。
-4. GPUノードで`raw-replica.py publish --staging <転送先> --destination <新規バッチ公開先>`を実行する。
+4. GPUノードで`raw-replica.py publish --config <cache設定JSON> --staging <転送先> --destination <新規バッチ公開先>`を実行する。
    内容と容量を検証後、ディレクトリrenameで公開する。両パスは同じfilesystemに置く。
    不完全な転送は公開せず、既存バッチを上書きしない。失敗時はジョブを投入せずstagingを保全する。
 5. manifestのSHAをassetと突き合わせ、segmentの`input_path`へ公開済みローカル画像を渡す。
    `license_class`はassetの区分を保持する。prep runの画像ではないため、
-   prepを指す`input_run_id`を流用しない。原本とrunの由来を恒久運用でどう記録するかは、
-   #40/#45の担当と確認してからジョブ投入手順を確定する。
+   prepを指す`input_run_id`を流用しない。原本入力では省略（またはnull）とし、
+   原本のcollect runはmanifestの`origins[].source_run_id`に記録する。
+   以下の由来記録と[配備手順](../ops/deploy/README.md#raw事前複製の本番運用)に従う。
 
 既存`Storage.resolve`のホスト・raw配列順、DBの原本パス、既存payload・保存形式は変更しない。
 本番のcollect/prepはubuntu-1の監視を使い続ける。既に検証したキャッシュの推論は
 元媒体が停止しても継続可能とし、追加の複製を止める。媒体停止の解除やreadonly解除は既存の手動復帰手順に従う。
 複製中の停止・SHA不一致はこの配備案の呼出し元が「保留」として扱う。自動scheduler連携は今回追加しない。
-stagingは対象バッチだけ再生成し、参照中の公開バッチは削除しない。容量上限・保持期間は恒久配備前に決める。
+stagingは対象バッチだけ再生成し、参照中の公開バッチは削除しない。
+上限は150GB（150,000,000,000 byte）、保持は全GPU stage成功後の参照解除までとする。
+日数による削除や容量不足を理由にした未成功バッチの追い出しは行わず、追加転送を保留する。
+
+### 原本入力の由来と保持
+
+投入前にDBの読取り専用トランザクションでassetのID・SHA-256・storage_path・license_classと、
+そのパスを`output_paths`に持つ成功済みcollect run・jobを照合する。
+由来JSONは`{"files": [{"asset_id": "…", "source_run_id": "…", "source_stage": "collect",
+"input_run_id": null, "sha256": "…", "source": "/srv/colorstats/raw-…/…jpg", "license_class": "open"}]}`。
+stageは由来と実SHAの一致を確認し、各画像のmanifestレコードの`origins`へ保存する。
+同じ原本に複数assetが対応する場合は、由来JSONに全対応を記録する。
+
+公開後、投入するassetごとにmanifestの由来を再照合し、segmentのpayloadに
+`input_path`（公開先の画像）、assetの`license_class`、`input_run_id: null`を指定する。
+さらに`raw_origin`として`asset_id`・`source_run_id`・`sha256`・`source`・`manifest_sha256`を含める。
+既存の設定ハッシュはpayload全体を含み、成功runの`parameters.payload`にも由来が残る。
+collect runをprep専用の`ProcessingRunInput`へ登録しない。DB schema・既存APIは変更しない。
+manifestと投入対象・全GPUジョブIDの計画、完了証跡はcache外の運用記録へ保全し、削除後も追跡可能にする。
+
+容量はcache全体の通常ファイルの論理byte数（原本・manifest・転送途中を含む）を計上する。
+転送前に転送対象全ファイルの合計を`capacity --incoming-bytes`で確認し、公開時にも上限を確認する。
+filesystem quotaではなく手動配備手順の上限なので、転送・公開・削除は単一担当が直列に実行する。
+転送前判定は容量予約ではない。`publish`・`prune`・`capacity`同士はcacheの`.lock`で排他する。
+異常終了でlockが残った場合は操作PIDと転送・参照の停止を確認してから、空の`.lock`だけを手動解除する。
+
+削除時は新規投入と読取り開始を止め、投入計画の全GPUジョブが成功し、実行中・再試行待ち・
+手動読取りなどの参照がないことを確認してから完了JSONを作り、`prune`を実行する。
+参照の自動検出やDBポーリングは実装しない。完了JSONは運用者が照合した証跡であり、
+成功ジョブだけを抜き出して対象一覧を縮めてはならない。詳細とコマンドは配備手順を参照する。
+
+### 本番配置と確認（2026-11-02）
+
+- 両ホストの新規release: `/opt/colorstats/releases/raw-replica-cd70dda-20261102a/raw-replica.py`。
+  基準`cd70dda`に今回の未コミット修正を含む固定スナップショットであり、commit版ではない。
+  スクリプトSHA-256は`59bec795fb49bf2fdc83ec75956c0af4b1b8becba5876daef237c57a025c0894`。
+- ubuntu-2設定: 同releaseの`raw-cache.json`。rootは`/mnt/data/raw-cache`、max_bytesは150000000000。
+  設定SHA-256は`128e17c65346cdd2b504e70661156515a34ba473684171a4bcb1c72e4e4aea95`。
+- ubuntu-1のstageは既存パイロットPythonと`b2a7241-issue37-20261102/src`の媒体監視を使用した。
+  ubuntu-2の公開・容量・削除は標準ライブラリだけで実行できる。依存追加・サービス変更はない。
+- DBから選んだ5枚を媒体監視付きでstageし、SHA再検証後に
+  `/mnt/data/raw-cache/batches/production-check-2`へ公開した。
+  原本20,828,151 byte、manifest込み20,833,059 byte。5枚ともsegmentの`_hash`とPillowで読取り成功。
+- 容量超過を拒否し、GPUジョブ未成功・参照ありでは保持、全成功・参照なしで削除した。
+  GPUの条件は模擬であり、本番DBへのジョブ投入や実GPU推論は行っていない。削除後のcache計上は0 byte。
+- 由来manifest・模擬完了JSON・画像寸法とSHAを含む結果はubuntu-2の
+  `/mnt/data/work/issue-42/production-check-2-proof/`に保全した。
+  原本の正本はubuntu-1のまま。既存release、exports・fstab・本番derivedを変更せず、停止フラグを維持した。
+  ubuntu-1の確認用転送コピー5枚も削除し、`/var/tmp/issue-42/production-check-2-manifest.json`を保全した。
+
+本番配備の監査ログ（`C:/Users/ryuma/.codex/logs/commands/`）:
+
+| 内容 | ログ |
+| --- | --- |
+| DB読取りによる5枚の由来選定 | `20261102T042708Z-0f4340f1496a4ad999a966f4e6c1bf7c.jsonl` |
+| ubuntu-2新規releaseとcache設定 | `20261102T042816Z-bb09d35428c54095a155b3b2d638a340.jsonl` |
+| ubuntu-1新規release・媒体監視付きstage | `20261102T042901Z-ab9e10ab39274e7b919ad0312012c5b7.jsonl` |
+| 画像をローカル保存しないSCP転送 | `20261102T042947Z-9f3b894e2e4a427b82201b096ee680dd.jsonl` |
+| SHA検証・公開・容量計上 | `20261102T042955Z-603e8d4011404a8fb3c2fc30aa058b9b.jsonl` |
+| 読取り・容量超過拒否・保持削除 | `20261102T043027Z-657bb8f1996e42ce9524a8f7704fbd4c.jsonl` |
+| ruff・関連16テスト | `20261102T042801Z-29367a93c3ad4ff3af3075f3f1f99598.jsonl` |
+| ubuntu-1確認コピー撤去・停止状態・fstab照合 | `20261102T043301Z-e5760e95b1b24f0bbbe0a25224f202c5.jsonl` |
+| ubuntu-2配備SHA・cache空・停止状態・fstab/exports照合 | `20261102T043340Z-3932461538904fec9961092914910ba8.jsonl` |
 
 ## rawの実機確認
 
@@ -166,12 +232,9 @@ attempt=2として回収した。更新側はattempt=1を維持し、旧所有�
 
 ## 完成条件と未適用範囲
 
-rawの選定・配備案、一時複製による到達確認、隔離NFSの断・復帰記録を対象とする。
-恒久設定の適用と本番ワーカーでの原本入力はユーザー確認後のため、Issue #42全体は未完了。
-PRは`Refs #42`とし、自動closeさせない。
-
-確認事項は採用方式、GPUノードの恒久キャッシュ配置・容量上限・保持期間、
-assetと原本入力runの由来を保持する投入手順。適用とサービス起動は今回の範囲に含めない。
+raw方式の選定・本番配置・GPUノードからの読取り、由来を保持する投入手順と保持削除の確認、
+隔離NFSの断・復帰記録を完了した。Issue #42の完成条件を満たす読取りと運用手順を確認した。
+GPU推論・本番DBへの投入、パイロットの再開、自動schedulerとの接続は今回の対象外。
 
 ## 検証・証跡
 
