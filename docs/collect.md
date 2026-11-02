@@ -265,3 +265,23 @@ ubuntu-1から前回と同じ3層のクエリを各1回、`page=1`・`page_size=
 再計測でも同じ結果が続いた。照合済み原本の検証用取得は、検索結果が得られないため未実施。再開条件は層別検索が応答することとする。
 
 証跡は`%USERPROFILE%/.codex/logs/commands/20261102T063428Z-732bd0f9b3b14769acc0be4d0db9d49.jsonl`（SSH実行）と`20261102T063428Z-94564b290bca463084c5753fe43a992d.jsonl`（ubuntu-1側）に記録した。
+
+#### 2026-11-02 13時（UTC）の再計測（Issue #43）
+
+ubuntu-1から3層を各1回、同じ条件で直列に送った。japanese-castleは58.7秒後にHTTP 500、gothic-templeは60.8秒後にHTTP 504、forest-autumn-dayは54.2秒後にHTTP 200（`result_count` 240）だった。続けてWindowsから既存`OpenverseAdapter`で前回と同じ測定スクリプトを実行した（結果は`data/issue43-validation-20261102T134805Z/`）。
+
+| 層 | 検索 | 照合成功 | 除外内訳 | 原本取得 |
+| --- | --- | --- | --- | --- |
+| japanese-castle | 60.1秒で読取りタイムアウト | 未計測 | 未計測 | なし |
+| gothic-temple | 60.0秒で読取りタイムアウト | 未計測 | 未計測 | なし |
+| forest-autumn-day | 16.0秒でHTTP 200、2件 | 1/2（50%） | `source_license_or_author_unverified` 1件 | HTTP 403 |
+
+照合に成功したのはFlickrのCC BY 2.0画像（作者Jean-Michel Priaux）だった。原本URL（`live.staticflickr.com`）の取得は、source_policyのUser-Agentで0.4秒後にHTTP 403となった。直後の確認では別のUser-Agent文字列で200が返る場合もあり、拒否の条件（User-Agentの判定か一時的な制限か）は特定していない。宣言したUser-Agentを変えて拒否を回避することはしない。
+
+- 不通の原因：Openverse側のoriginの応答遅延である。同じ層でも、HTTP 200（16〜54秒）、500、504、クライアント側の60秒タイムアウトに分かれ、送信元（Windows・ubuntu-1）やネットワークの条件では説明できない。
+- 歩留まり：応答した1層では照合成功は1/2だった。2件だけなので、歩留まりの推定値としては扱わない。
+- 原本取得：照合済みの原本1件の取得は、Flickr CDNがHTTP 403で拒否した。
+
+Openverse経由のFlickr原本は、現行のUser-Agentでは取得できない場合がある。対処は、Flickrの利用条件に沿った取得経路（公式API）を使うか、Openverseを補助ソースにとどめてCommonsを主にするかを、M3の収集方針で決める。
+
+証跡は`%USERPROFILE%/.codex/logs/commands/20261102T134431Z-e494497330ac4586957fd12b60d4e846.jsonl`（ubuntu-1の検索）と`20261102T134805Z-cd78b6a6015f434ba1aec4cae84efc6e.jsonl`（アダプターの測定）に記録した。
