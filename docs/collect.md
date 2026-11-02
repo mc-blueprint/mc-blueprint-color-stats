@@ -179,3 +179,75 @@ DBテストはTEST_DATABASE_URLの専用schemaを使用し、実通信なしで�
 2026-11-02の実API確認では同じ検索を2件に限定して実行し、APIは応答した。
 両候補とも元ページで照合根拠を確認できずreviewとして除外し、実画像は取得していない。
 確認済み候補の原本取得とHTTP再試行は、記録済み検索JSONとモックの元ページ・原本で検証した。
+
+#### 2026-11-02の不通再調査（Issue #43）
+
+初回調査ではubuntu-1（pilotと同じホスト）のDNS解決、IPv4/IPv6のTCP接続、TLS 1.3と証明書検証が成功した。匿名の`HEAD https://api.openverse.org/v1/`はHTTP 200だったが、Cloudflareキャッシュ（`age: 144942`）の応答だった。検索GETはTLS確立・送信後に応答待ちになった。
+
+続いて02:50〜02:58 UTCにWindows・ubuntu-1・ubuntu-2から匿名GETを比較した。基準URLは次のとおりで、User-Agentは`configs/source_policy.yaml`の値を使用した。ホストごとの比較要求は再試行せず直列に送り、比較スクリプト内では各要求後に4秒待機した。アダプターの実測は既存の直列化・待機処理を使用した。全体でも観測した20回/分の匿名枠を下回り、429は観測しなかった。
+
+```text
+https://api.openverse.org/v1/images/?q=Himeji+Castle&page=1&page_size=2&license=cc0%2Cpdm%2Cby%2Cby-sa&mature=false
+```
+
+| 比較 | 結果 |
+| --- | --- |
+| 基準URL、IPv4・HTTP/1.1 | Windows 0.290秒、ubuntu-1 0.111秒、ubuntu-2 0.107秒でHTTP 200。ubuntuの応答JSONは候補2件・result_count 240 |
+| ubuntu-2、UAを`curl/8.5.0`に変更 | HTTP 200、0.056秒、同じ2件 |
+| ubuntu-2、page_sizeのみ1に変更 | HTTP 200、0.062秒、候補1件 |
+| ubuntu-2、qのみ`castle`に変更 | 25秒でタイムアウト、HTTPヘッダー・本文なし。ubuntu-1でも同じ |
+| license・matureを省略 | Windows・ubuntu-2とも25秒でタイムアウト、HTTPヘッダー・本文なし |
+| ubuntu-2、license・matureの代わりに`license_type=commercial` | 25秒でタイムアウト、HTTPヘッダー・本文なし |
+| 基準URL、IPv6・HTTP/1.1 | Windows 0.089秒、ubuntu-2 0.105秒でHTTP 200 |
+| 基準URL、ubuntu-2・IPv4・HTTP/2 | HTTP 200、0.059秒（実際の応答もHTTP/2） |
+| license・mature省略URL、ubuntu-2でHTTP/2またはIPv6 | どちらも25秒でタイムアウト。HTTP/2の試行は応答がなく、応答プロトコルは未確認 |
+| license・mature省略URL、Windowsで最大140秒待機 | TLSは0.095秒で確立。60.824秒でHTTP 504、本文`error code: 504`、`Server: cloudflare`、`CF-RAY: a53fdd962b6e262a-NRT` |
+
+WindowsのcurlはHTTP/2非対応だったため、HTTP/2比較には対応済みのubuntu-2のcurlを使用した。成功した検索はすべて`cf-cache-status: HIT`で、2件検索の`Age`は62316〜62631秒だった。ホスト・UA・IP・HTTP方式を変えても同じ`x-request-id: 71956186-3066-4ab2-b987-f0cf5e86d04e`を返した。匿名枠ヘッダーの20/min・残19、200/day・残199もキャッシュされた値なので、現在の残数や上流の健全性を示すものとして扱わない。
+
+観測された直接原因は検索応答待ちである。約61秒後の504は、既存`HttpClient`の60秒の読取り制限より遅く、アダプター側の`TimeoutError`を説明できる。キャッシュHITは応答し、別URLはCloudflare経由のGateway Timeoutになることから、キャッシュで返せない要求の上流応答に問題があると推定する。Openverse内の検索処理・その手前のゲートウェイ・Cloudflareから上流への経路のどこが根本原因かまでは確定できない。3ホストは同じ拠点内にあり、独立した外部回線での比較は未実施である。
+
+公式[APIページ](https://api.openverse.org/v1/)が参照する[現行OpenAPIスキーマ](https://api.openverse.org/v1/schema/)と照合した。`q`、1始まりの`page`、`page_size`、カンマ区切りの`license`、booleanの`mature`は既存実装と一致する。検索のsecurityには認証なしの選択肢があり、認証の説明も匿名利用を認め、制限超過を429と説明している。[認証階層の説明](https://docs.openverse.org/api/reference/authentication_and_throttling.html)では認証でstandard枠を利用でき、enhanced枠は個別付与となる。APIキー不足を示す401/403や429は今回の直接通信で観測せず、匿名キャッシュHITは取得できた。認証が障害を解消する根拠はなく、登録・認証GETは行っていない。
+
+対処はOpenverseを収集対象から外した現在の設定を維持し、時間を置いて層別GETの復旧を確認すること。タイムアウト延長だけでは504まで待つことになり、UA変更・IP固定・HTTP/2化・照合緩和を採用する根拠もなかったため、アダプターは変更しない。認証比較をユーザーが選ぶ場合は、公式APIの`auth`節に従って`/v1/auth_tokens/register/`で登録し、`/v1/auth_tokens/token/`でトークンを得てBearer認証で比較する。秘密はログ・Gitへ記録せず、認証対応は別途実装が必要となる。
+
+#### 層別実測と照合歩留まり
+
+Python 3.12.15で既存`OpenverseAdapter.search`を各層1回、`page=0`・`limit=2`（API上はpage=1）で実行した。クエリは`configs/collection_targets.yaml`の各層の最初の英語クエリを使用した。検索結果・HTTP記録の保存先は新規作成した`data/issue43-validation-20261102T025234Z/`であり、本番raw・DBは使用していない。
+
+| 層 | クエリ | 検索結果 | 照合成功・除外内訳・原本取得 |
+| --- | --- | --- | --- |
+| japanese-castle | Japanese castle exterior | 60.141秒で読取りタイムアウト | 応答なしのため未計測 |
+| gothic-temple | gothic church exterior | 60.047秒で読取りタイムアウト | 応答なしのため未計測 |
+| forest-autumn-day | autumn forest landscape | 60.047秒で読取りタイムアウト | 応答なしのため未計測 |
+
+応答なしを候補0件・歩留まり0%とは扱わない。補助測定として、キャッシュが応答する`Himeji Castle`を同じアダプターで2件検索し、2件とも元ページのHTMLを取得して照合した。照合成功0/2（0%）、`source_license_or_author_unverified`による除外2/2、原本取得0件だった。この2件は既存fixtureと同じ候補で、新規の独立標本ではない。
+
+元ページを再取得してJSON-LDを確認すると、両者とも対象原本URLが一致するImageObjectを1個持ち、CC BY 2.0のURLも一致した。ただし、作者が次のとおり一致せず、前後空白・大文字小文字だけを除く既存の完全照合では除外となる。「照合根拠がない」という先行調査の説明を、今回の具体的な不一致に更新する。
+
+| Flickr画像ID | APIのcreator | 元ページImageObjectのcreator.name | 除外の具体的理由 |
+| --- | --- | --- | --- |
+| 37899156685 | Dimitry B | Dimitry B. | 末尾ピリオドの差 |
+| 214825444 | Freakland - フリークランド | David Sanz | 作者名の差 |
+
+照合を通った候補がなかったため、実画像の検証用保存先への取得は実施できなかった。3層の歩留まり実測と照合済み原本の取得確認は未完了である。再開条件は層別GETが成功すること。その後に候補数・照合結果・除外理由を記録し、照合成功した原本だけを新規検証領域へ1件以上取得して画像形式・サイズ・ハッシュを確認する。本番DBへは登録しない。
+
+#### 検証・証跡
+
+`python -m pytest tests/test_openverse.py tests/test_collect_http.py -q`は60 passed・1 skipped。DB登録テスト1件は`TEST_DATABASE_URL`未設定のためスキップし、DB検証は行っていない。関連するアダプター・共通HTTP実装とそのテストの`ruff check`、`git diff --check`も成功した。実装・公開API・保存形式への変更はなく、追加依存もない。
+
+以下は`C:/Users/ryuma/.codex/logs/commands/`配下の記録。診断スクリプト・スキーマ・実HTML・測定JSONは担当worktreeのGit除外対象`data/`に保全する。
+
+| 内容 | コマンドログ（.jsonl） |
+| --- | --- |
+| Windows基準GET | `20261102T025024Z-41021ac3f8514c5e8b06de1a9aef1e03` |
+| ubuntu-2の8条件比較 | `20261102T025122Z-9f7d57bad1a3436db0ff486cfc142d65` |
+| 不通URLのHTTP/2・IPv6比較 | `20261102T025355Z-98724ec0d08343519561ad90dd5dcc0e` |
+| Windows不通URL・IPv6比較 | `20261102T025408Z-c0b1e96f4bc440c9b08123ed23ac6f86` |
+| ubuntu-1の同時点比較 | `20261102T025539Z-7aecdb705e4b4c478cffc568cf32be38` |
+| 3層のアダプター実測 | `20261102T025234Z-4372816b333d4d48bbab7d5f78291e94` |
+| 長時間待機での504確認 | `20261102T025621Z-d4caa8040e3a4fa7a58047d3257aaacf` |
+| 姫路城2候補のアダプター照合 | `20261102T025634Z-6c8b50bf630d4377b9ce46b05fa49f85` |
+| 元ページの作者不一致の確認 | `20261102T025747Z-3096193d399d44ad9e7c24c72e80c5ad` |
+| 現行APIスキーマの照合 | `20261102T025532Z-b8563ae4402641c99aa098d4218a6f59` |
+| アダプター・共通HTTPテスト | `20261102T025304Z-d2435932adf1460d974852e4837f65c6` |
