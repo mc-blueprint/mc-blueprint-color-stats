@@ -12,7 +12,7 @@ issue41 = root.parent / "issue41"
 result = root / "sol"
 manifest = read(result / "manifest.json")
 for path, expected in manifest["sources_sha256"].items():
-    assert digest(issue41 / path) == expected, path
+    assert digest(issue41 / path, text=True) == expected, path
 assert select_groups(read(issue41 / "manifest.json"),
                      read(issue41 / "judgments/building-identity.json")) == manifest["groups"]
 assets = {row["asset_id"]: row for row in read(issue41 / "manifest.json")["assets"]}

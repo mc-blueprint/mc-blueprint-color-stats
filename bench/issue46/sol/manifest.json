@@ -138,18 +138,18 @@
     }
   ],
   "sources_sha256": {
-    "manifest.json": "69e21a7d7a2fe4af612a02ebe1062a9a50d4a8da1721ef000adf9e38fdfa53c3",
-    "judgments/building-identity.json": "4533aa6ca1a8cbc6c35cef0f96254672401b72dd293b540fd4e6d8a2ef961e2b",
-    "judgments/batch-01.json": "f7db93f8af53635d6f00271981d984d204e1904b9b8cd4a55d97eaf4f7104a73",
-    "judgments/batch-02.json": "fb241f7b92b9aef05fc4c5c4bc6c8dda38eb71d1224342bb73e270b081aac128",
-    "judgments/batch-03.json": "65df6e608b01848b856d1a962efcda2f8ba4ed909bd2d0339a0fae6eaf06dbe3",
-    "judgments/batch-04.json": "cd211ca46774099217a88b1c8cc47710b08f98eb332b8938d6a0ac47da54aa8d",
-    "judgments/batch-05.json": "f3591f5e33b935c924399022f7513f61b6da25a7171dcd6fac93be99395d96c7",
-    "judgments/batch-06.json": "3ad6ca299d68c66199afe3b0b6d75d01bb6b1f68659694170c9ac2b6ae184fa9",
-    "judgments/batch-07.json": "8c53b1159ce844f50ad17e2730460f1e4084a0bdb0d8d50680e7d6ece08a5ee2",
-    "judgments/batch-08.json": "1a757dd99c9f080a9982b6498787922ee8f8f47c0bc827698ac41bb25db503ff",
-    "judgments/batch-09.json": "3d71f1aafb5876e66ee893655656b5432d9640aa96c393251c1f4efc369966d1",
-    "judgments/batch-10.json": "41fed2f446ff1c2cf807acb288297bfccce55478c850b10c40bf8b35222937e1"
+    "manifest.json": "a9010c182628e06abc9c89f59cd3cc487861f6a56b894f77dceb5d85d45398cf",
+    "judgments/building-identity.json": "afb4401516ce7fefcf0723a6613ecac155ceb57c9362e2459ad592a8efe59fbb",
+    "judgments/batch-01.json": "8125f1a22bdd79bb7e7ab3b1d4a650d77c8bb4b607536a3a9dab28b8ffd9b996",
+    "judgments/batch-02.json": "7adbbd3a52dbca9f4dbc4a8a8dac3eb39ec8be725c8bf4d4684a32cba69ce16e",
+    "judgments/batch-03.json": "e17956b33afee00a36ea784565117f08c199d8ec8efad971b7cf30fa5fbc70af",
+    "judgments/batch-04.json": "1c7d9cc032a4f8393e6dee9008830ea25c361ca50f4712ddf1cbdb657c5f1620",
+    "judgments/batch-05.json": "b0ecdfc918c640c646464963426f3383b4df35d8ce5187ebf20aaff057d586ba",
+    "judgments/batch-06.json": "4c7baa461926a15e201514d989b4774744abd8fcacff03a78fa27c953756424f",
+    "judgments/batch-07.json": "59f3c558a3ea74c4842c477d3f732fd2f828c75324feb2a07b8a6352a715ca04",
+    "judgments/batch-08.json": "001e97bd7fc0000d32ace5755ed34b8f13ce037c4e09e5943ba85ce4d94ea0c7",
+    "judgments/batch-09.json": "421672c652da4a4910dedca0c58c9c3de1b011940176cef8fbbf710e4cbeccea",
+    "judgments/batch-10.json": "c9189f53dfdb8fa61d79d366106426494ce15c1047c6e52b910be2416b37c3b9"
   },
   "draft_sha256": "2f153c8557c765ce481bd649a4974d7b74113430243d612723875cb53958c347",
   "weights_sha256": {
