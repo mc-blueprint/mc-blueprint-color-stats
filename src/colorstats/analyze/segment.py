@@ -20,7 +20,7 @@ from colorstats.schema.models import Asset, Job, ProcessingRun, ProcessingRunInp
 from colorstats.schema.taxonomy import load_taxonomy
 from colorstats.store import temporary_path
 
-CODE_VERSION = "issue-40-v1"
+CODE_VERSION = "issue-45-v2"
 LICENSES = {"open", "noncommercial", "academic_only", "restricted"}
 
 
@@ -237,5 +237,6 @@ def register(session: Session, run, data: dict) -> None:
     run.license_class = _license(*licenses)
     session.add_all(Region(
         asset_id=asset.id, processing_run_id=run.id, taxonomy_version=run.taxonomy_version,
+        normalized_height=None,
         label_source="model", **{**row, "mask_path": run.output_paths[row["mask_path"]]},
     ) for row in data["regions"])

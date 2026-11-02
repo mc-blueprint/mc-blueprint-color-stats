@@ -131,7 +131,7 @@ prep/colorの64件バッチは投入目標であり、M2で速度・メモリと
 |---|---|
 | `subject` | 同一建築・場所・作品の集約単位。統計の重みの基準。`asset.subject_id`は不確実ならNULLとし、候補を別表に持つ |
 | `asset` | `domain`（`mc_vanilla`／`mc_modded_or_shader`／`mc_unknown`／`real_building`／`real_terrain`／`text`）、`license_class`（§8） |
-| `region` | 部位ラベル、`instance_id`、マスク参照、bbox、正規化高さ（0=接地、1=頂部）、面方向の推定、`label_source`（model／human／vlm／schematic） |
+| `region` | 部位ラベル、`instance_id`、マスク参照、bbox、正規化高さ（0=接地、1=頂部。接地・頂部が不明ならNULL）、面方向の推定、`label_source`（model／human／vlm／schematic） |
 | `color_observation` | `observed_oklab`（主色・分位点）、`material_oklab`（推定、NULL可）、`material_confidence`、面積比 |
 | `relation` | `(region_a, region_b, type)`、ΔL・ΔC・Δh（OKLCh）、ΔE_ok、面積比 |
 | `processing_run` | モデル名、重みハッシュ、`license_class`、設定ハッシュ、ノード、日時 |
