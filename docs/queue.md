@@ -156,7 +156,7 @@ PreparedはRunInfo、pickle可能な小さいdata、`[(temporary_path, target_pa
 target_pathは出力の識別名で、実際の保存先はregister時のrun.output_pathsから取得する。
 画像本体・モデルはpipeへ流さず、ファイル参照を返す。
 モデル初期化もprepare側で行う。並列数はワーカープロセス数で調整する。
-実際のstage処理は後続Issueで追加する。
+segmentのpayload・マスク・重み情報の契約は[segment stage](segment.md)を参照する。
 
 ```sh
 uv run alembic upgrade head
@@ -164,7 +164,7 @@ uv run alembic upgrade head
 uv run python -m colorstats.queue --handler prep=colorstats.analyze.prep --stop-file /tmp/prep.stop
 ```
 
-上のprepモジュール名は後続実装の接続例で、現時点では同梱していない。
+prep・color・segmentのハンドラーは`colorstats.analyze`に同梱している。
 `--handler` は繰り返し指定可能。`--once` は最大1件処理して終了する。
 Windowsでも同じCLIを使える。stop-fileを作ると新規取得を止め、計算子プロセスを終了し、
 その終了後に、有効なリースのジョブを理由付きpending（3試行目ならfailed）へ戻す。
