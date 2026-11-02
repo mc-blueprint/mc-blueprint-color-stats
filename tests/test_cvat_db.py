@@ -61,6 +61,7 @@ def test人手領域と完了runを登録し同じZIPの再取込みを拒否す
             assert region.asset_id == asset and region.label_source == "human"
             assert region.label == "wall_main" and region.confidence == 1
             assert region.bbox == [10, 10, 80, 80] and region.area_ratio == 0.49
+            assert region.normalized_height is None
             run = session.get(ProcessingRun, region.processing_run_id)
             assert run.license_class == "open" and run.finished_at is not None
             assert run.failure_reason is None and run.parameters["label_source"] == "human"

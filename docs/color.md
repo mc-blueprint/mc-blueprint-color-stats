@@ -1,10 +1,11 @@
-# color stage のベースライン
+# color stage の全体・部位別観測
 
 M2の部位マスクの出力・座標・不変パスは[segment stage](segment.md)を参照する。
-このcolor stageのRegionへの観測登録は#45で接続する。
+Issue #45で確定Regionへの観測・共起関係の登録を接続する。
 
 Issue #12。画像全体から最大5色を抽出し、色ごとの観測をassetへ直接登録する。
-region・relation・材質色の推定は行わない。DBスキーマの変更はない。
+部位指定時も画像全体の観測を同じrunへ保存する。材質色の推定は行わない。
+既存region・color_observation・relationを使い、DBスキーマの変更はない。
 
 ## 採用した処理
 
@@ -47,7 +48,7 @@ RGBAへ変換し、alpha=255の画素だけを採用する。透明画素の隠�
 
 `extract_colors(image, mask=None, *, clusters=5)`はPillow画像を変更せず観測辞書の配列を返す。
 maskは入力と同じ高さ・幅の2次元bool NumPy配列。形状・型の不一致はValueError。
-M2ではこの入力へ部位マスクを渡せる。regionへの登録はM2側で実装する。
+部位指定時は同じ抽出処理へ各部位マスクを渡し、観測をregionへ登録する。
 
 `colorstats.analyze.color`は既存の`prepare` / `register`契約に従う。
 colorのjobにはasset_idが必要。payload例:
@@ -72,6 +73,58 @@ prepはJPEG化でalphaを失うため、透明画像の選別が必要ならRGBA
 設定ハッシュにはコード版・抽出設定と入力画像／マスクの識別情報・入力runを含める。
 画像・マスクはジョブ投入後に変更しない。再計算は新しい設定ハッシュで投入する。
 ライセンス区分・taxonomy_versionは入力assetと一致する値を呼出し元が指定する。
+
+### 部位入力（Issue #45）
+
+投入側は成功済みsegmentまたはhuman_annotationのrunを1つ選ぶ。
+`region_inputs(session, asset_id, region_run_id)`でDBの領域参照を解決し、
+`region_run_id`と`regions`を組でpayloadへ追加する。新規モデル推論やCVAT取込みは行わない。
+model・humanは別jobにし、両方を混ぜたり後から領域を更新したりしない。
+
+```python
+from colorstats.analyze.color import config_hash, region_inputs
+
+payload["region_run_id"] = str(region_run_id)
+payload["regions"] = region_inputs(session, asset_id, region_run_id)
+queue.enqueue("color", asset_id, config_hash(payload), payload)
+```
+
+領域参照は`region_id`・`mask_path`・`label_source`・`size`（幅、高さ）を持ち、
+UUID順に並ぶ。`config_hash`はコード版・payload・画像と全マスクのSHA-256を含める。
+部位入力ではprepareがハッシュを再計算し、投入後の変更を拒否する。
+registerは確定DB参照とpayloadを再照合する。失敗は全観測・関係・入力run登録を
+同じ取引でロールバックし、キューの通常再試行へ渡す。
+
+segmentのRLEは#40が同時出力する確定PNGを再利用し、RLEデコーダを重複実装しない。
+PNGの寸法をrunのmetricsと照合する。人手polygonは#41が原画像座標へ変換済みのため、
+原画像幅・高さに対するcolor入力幅・高さの比を乗じ、既存PillowのImageDrawで塗りつぶす。
+整数境界上の画素を含むPillowの描画規則を使い、幾何面積とは区別する。
+crop・回転は扱わない。既存のextract_colors・Pillow・NumPyで足りるため依存は追加しない。
+
+入力画像がprep由来なら、同じassetの成功済みprepと不変出力であることを照合する。
+原画像を使う部位jobはasset.storage_pathを指定する。segmentの入力画像・入力prepは
+colorと一致する必要がある。taxonomy不一致・他asset・未完了run・マスク参照の差替えは拒否する。
+入力asset・prep・部位runのライセンス制約を伝播し、processing_run_inputに由来を保存する。
+
+出力JSONの`observations`は従来の全体観測、`regions`は部位ID・マスク画素数`area`と
+部位内の`observations`、`relations`はDBと同じ関係値を保持する。
+全体観測はasset_id、部位観測はregion_idだけを持ち、同じprocessing_run_idで対応付ける。
+部位内観測のarea_ratioは有効部位画素に対するクラスタ比で、各部位で合計1。
+任意のmask_pathは全体・部位の両方へ適用する。どれかの部位に有効画素がなければ失敗する。
+segment未検出でregionsが空なら、全体観測だけを成功登録し、部位runの由来も残す。
+
+各部位の最大面積クラスタを代表主色とし、UUID順の全組合せを`co_occurs`として1回登録する。
+隣接・包含・上下関係は推定しない。差分はB−A、ΔCはOKLabのa/bから計算する彩度の差、
+Δhは度の最短符号付き差（−180以上180未満）、どちらかの彩度が2e-4以下ならNULL。
+無彩色判定の閾値はsRGB灰色の変換誤差を吸収し、run.parametersにも保存する。
+ΔE_okはOKLabのユークリッド距離。関係のarea_ratioは除外前の部位マスク画素数B/Aで、
+重なる部位も独立に数える。全体用mask_pathや黒・白・alpha除外でこの面積は変えない。
+既存regionの面積比は変更しない。
+
+`normalized_height`は接地を0、頂部を1とする高さであり、
+segment・CVAT取込みとも接地・頂部を特定できないためNULLで保存する。
+画像内の縦位置はbboxから求め、正規化高さには代用しない。
+既存runの領域は更新しない。
 
 ```sh
 uv run python -m colorstats.queue --handler color=colorstats.analyze.color --stop-file /tmp/color.stop
