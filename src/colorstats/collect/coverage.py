@@ -74,6 +74,8 @@ def coverage(session, config: dict) -> dict:
                 "stratum": layer["id"],
                 "attributes": layer["attributes"],
                 "images": count,
+                "target_images": layer.get("images"),
+                "image_coverage": count / layer["images"] if "images" in layer else None,
                 "subjects": subjects,
                 "target_subjects": layer["subjects"],
                 "coverage": subjects / layer["subjects"],

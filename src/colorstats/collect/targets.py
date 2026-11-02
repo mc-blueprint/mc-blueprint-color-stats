@@ -48,6 +48,10 @@ def load_targets(path: Path, taxonomy: Path = Path("taxonomy")) -> dict:
         combinations.add(combination)
         if not isinstance(layer["subjects"], int) or layer["subjects"] <= 0:
             raise ValueError("目標subject数は正の整数です")
+        if "images" in layer and (
+            not isinstance(layer["images"], int) or layer["images"] <= 0
+        ):
+            raise ValueError("目標画像数は正の整数です")
         if len(layer["queries"]) < 2 or any(not terms for terms in layer["queries"].values()):
             raise ValueError("各層に複数言語の検索語が必要です")
         for _ in requests(config, layer, random.Random(0)):
@@ -56,13 +60,14 @@ def load_targets(path: Path, taxonomy: Path = Path("taxonomy")) -> dict:
 
 
 def requests(config: dict, layer: dict, rng: random.Random):
-    """同じ層を複数言語・ページで検索する。オフセットをページ単位で無作為化する。"""
+    """各言語の先頭ページと、無作為に選んだ後続ページを検索する。"""
     search = config["search"]
     for provider in search["providers"]:
         for language, terms in layer["queries"].items():
             query = rng.choice(terms)
-            offsets = range(0, search["max_offset"] + 1, search["limit"])
-            for page, offset in enumerate(rng.sample(offsets, min(search["pages"], len(offsets)))):
+            offsets = range(search["limit"], search["max_offset"] + 1, search["limit"])
+            starts = [0, *rng.sample(offsets, min(search["pages"] - 1, len(offsets)))]
+            for page, offset in enumerate(starts):
                 yield SearchRequest(
                     provider, query, language, page, offset, search["limit"], layer["id"]
                 )
