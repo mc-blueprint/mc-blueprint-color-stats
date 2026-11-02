@@ -15,13 +15,13 @@ def summarize_results(root):
 
     def read(path):
         sources[str(path.relative_to(root.parent.parent)).replace("\\", "/")] = (
-            hashlib.sha256(path.read_bytes()).hexdigest())
+            hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest())
         return json.loads(path.read_text(encoding="utf-8"))
 
     schema = read(root / "judgment.schema.json")
     selection_path = data / "gold100/selection.csv"
     sources["data/issue41/gold100/selection.csv"] = hashlib.sha256(
-        selection_path.read_bytes()).hexdigest()
+        selection_path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
     with selection_path.open(encoding="utf-8", newline="") as stream:
         rows = list(csv.DictReader(stream))
     selection = {r["asset_id"]: r for r in rows}
@@ -72,13 +72,19 @@ def summarize_results(root):
                                   "見落としはlabel集合、building_nameはnullを含む完全一致。",
                     }})
     identity["executions"] = executions[:-1]
-    identity["sources_sha256"] = sources
+    # 同定結果は判定時の保存先を出典とする既存形式を維持する。
+    identity["sources_sha256"] = {
+        (f"data/issue41/judge/{Path(path).stem}/judgment.json"
+         if path.startswith("bench/issue41/judgments/") else path): value
+        for path, value in sources.items()}
+    (judgments_root / "building-identity.json").write_text(
+        json.dumps(identity, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     (root / "judgment-summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return summary
 
 
-def judgment_tables(summary):
+def judgment_tables(summary, identity_path="judgments/building-identity.json"):
     lines = ["## 自前100枚のモデル判定（フェーズB・C）", "",
              "初回100枚を集計し、二重判定10枚は一致率だけに使用する。人手正解ではない。", "",
              "| 層 | 画像 | 領域 | correct | wrong_label | spill | not_present |",
@@ -123,7 +129,7 @@ def judgment_tables(summary):
               "名称の意味的一致は自動判定しない。matchは同名群と既存ID群のasset集合一致、",
               "not_groupedは両方が単独、unresolvedは既存候補あり・名称null。",
               "全100枚の名称・判定根拠・既存候補・群比較は",
-              "[保存版](judgments/building-identity.json)に保存し、#46へ引き継ぐ。", "",
+              f"[保存版]({identity_path})に保存し、#46へ引き継ぐ。", "",
               "| 既存の複数画像候補 | 枚数 | 群比較（画像数） |",
               "| --- | ---: | --- |"]
     for group in identity["candidate_groups"]:
@@ -142,7 +148,8 @@ def judgment_tables(summary):
 
 def main():
     root = Path(__file__).resolve().parent
-    mapping_hash = hashlib.sha256((root / "label-map.yaml").read_bytes()).hexdigest()
+    mapping_hash = hashlib.sha256(
+        (root / "label-map.yaml").read_bytes().replace(b"\r\n", b"\n")).hexdigest()
     reports = {}
     manifests = {}
     for dataset in ("cmp", "ade"):
@@ -205,7 +212,8 @@ def main():
     document = root.parent.parent / "docs/evaluation.md"
     text = document.read_text(encoding="utf-8")
     marker = "\n## 自前100枚のモデル判定（フェーズB・C）\n"
-    text = text.split(marker)[0].rstrip() + "\n\n" + "\n".join(tables)
+    text = text.split(marker)[0].rstrip() + "\n\n" + "\n".join(
+        judgment_tables(summary, "../bench/issue41/judgments/building-identity.json"))
     document.write_text(text, encoding="utf-8")
 
 

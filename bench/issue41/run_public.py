@@ -132,7 +132,8 @@ def main():
     settings = {
         "method": "sam2-dino", "threshold": 0.35, "text_threshold": 0.25,
         "max_image_side": 512, "truth_resize": "nearest", "prompts": prompts,
-        "mapping_sha256": hashlib.sha256(args.mapping.read_bytes()).hexdigest(),
+        "mapping_sha256": hashlib.sha256(
+            args.mapping.read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
         "overlap": "同一グループは和集合。異なるグループの重複は誤ラベル側のFP。",
         "ignored": "未対応の正解IDの画素を全グループで無視。未対応予測ラベルも評価外。",
         "model_sha256": {},
@@ -145,6 +146,8 @@ def main():
                         stream, "sha256").hexdigest()
     save(args.output / "settings.json", settings)
     counts = {name: {"tp": 0, "fp": 0, "fn": 0} for name in groups}
+    coverage = {"valid_pixels": 0, "total_pixels": 0, "zero_valid_images": [],
+                "predicted_regions": 0}
     started = time.monotonic()
     for index, (archive, name, annotation) in enumerate(samples):
         key = Path(name).stem
@@ -152,7 +155,7 @@ def main():
         directory.mkdir(exist_ok=True)
         record_path = directory / "result.json"
         if record_path.exists():
-            record = json.loads(record_path.read_text())
+            record = json.loads(record_path.read_text(encoding="utf-8"))
             if record["settings"] != settings:
                 raise ValueError("既存結果の設定が異なります。別のoutputを指定してください")
         else:
@@ -190,10 +193,16 @@ def main():
         for label, values in record["counts"].items():
             for count_key, value in values.items():
                 counts[label][count_key] += value
+        coverage["valid_pixels"] += record["valid_pixels"]
+        coverage["total_pixels"] += record["total_pixels"]
+        coverage["predicted_regions"] += len(record["regions"])
+        if record["valid_pixels"] == 0:
+            coverage["zero_valid_images"].append(name)
         report = {
             "dataset": args.dataset, "completed": index + 1, "selected": len(samples),
             "complete": index + 1 == len(samples), "settings": settings,
             "labels": {label: scores(values) for label, values in counts.items()},
+            "coverage": coverage,
         }
         save(args.output / "report.json", report)
         print(args.dataset, index + 1, "/", len(samples), key,
