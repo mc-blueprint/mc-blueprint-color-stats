@@ -1,0 +1,2027 @@
+{
+  "batch_id": "batch-06",
+  "model": "gpt-6.1-sol",
+  "execution_id": "issue41-b06-run1",
+  "repeat_of": null,
+  "images": [
+    {
+      "asset_id": "58c1f736-0d7a-4b0f-8eef-451d81bf0b88",
+      "regions": [
+        {
+          "draft_id": "50:0",
+          "verdict": "spill",
+          "evidence": "建物全体を覆い、独立した装飾以外の屋根・壁・扉まで含む。"
+        },
+        {
+          "draft_id": "50:1",
+          "verdict": "correct",
+          "evidence": "上屋根左端の小さな突出した瓦飾りに沿う。"
+        },
+        {
+          "draft_id": "50:2",
+          "verdict": "not_present",
+          "evidence": "開口は直線の梁で囲まれ、曲線アーチは見えない。"
+        },
+        {
+          "draft_id": "50:3",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域は上部の瓦屋根で、壁面の水平帯ではない。"
+        },
+        {
+          "draft_id": "50:4",
+          "verdict": "not_present",
+          "evidence": "瓦屋根に煙突は見えない。"
+        },
+        {
+          "draft_id": "50:5",
+          "verdict": "correct",
+          "evidence": "門の右側の縦木柱に沿っている。"
+        },
+        {
+          "draft_id": "50:6",
+          "verdict": "not_present",
+          "evidence": "壁隅の交互積み石装飾は見えない。"
+        },
+        {
+          "draft_id": "50:7",
+          "verdict": "spill",
+          "evidence": "軒先を含むが、建物の壁・扉・屋根全体まで覆う。"
+        },
+        {
+          "draft_id": "50:8",
+          "verdict": "correct",
+          "evidence": "中央通路左側の木製門扉に対応する。"
+        },
+        {
+          "draft_id": "50:9",
+          "verdict": "not_present",
+          "evidence": "屋根から立ち上がる採光用小屋根は見えない。"
+        },
+        {
+          "draft_id": "50:10",
+          "verdict": "spill",
+          "evidence": "軒を含むが建物の壁と扉まで広く覆う。"
+        },
+        {
+          "draft_id": "50:11",
+          "verdict": "spill",
+          "evidence": "上屋根の軒先だけでなく屋根面と側面まで広く含む。"
+        },
+        {
+          "draft_id": "50:12",
+          "verdict": "spill",
+          "evidence": "下屋根の張り出しに対応するが瓦屋根面全体まで含む。"
+        },
+        {
+          "draft_id": "50:13",
+          "verdict": "wrong_label",
+          "evidence": "奥の通路の細い柵状部分で、外周を囲むフェンスではない。"
+        },
+        {
+          "draft_id": "50:14",
+          "verdict": "wrong_label",
+          "evidence": "手前の屋外の石敷きで、建物内部の床ではない。"
+        },
+        {
+          "draft_id": "50:15",
+          "verdict": "not_present",
+          "evidence": "妻端の三角形の破風装飾はこの正面では確認できない。"
+        },
+        {
+          "draft_id": "50:16",
+          "verdict": "not_present",
+          "evidence": "左端の領域は矩形の側壁で、三角形の妻壁は見えない。"
+        },
+        {
+          "draft_id": "50:17",
+          "verdict": "not_present",
+          "evidence": "欧風の壁面に露出した柱梁格子は見えない。"
+        },
+        {
+          "draft_id": "50:18",
+          "verdict": "wrong_label",
+          "evidence": "建物上部から扉までで、基壇の領域ではない。"
+        },
+        {
+          "draft_id": "50:19",
+          "verdict": "correct",
+          "evidence": "通路奥の低い柵状の手すりに対応する。小さく支柱の細部は不鮮明。"
+        },
+        {
+          "draft_id": "50:20",
+          "verdict": "not_present",
+          "evidence": "壁面の彫刻浮彫は確認できない。"
+        },
+        {
+          "draft_id": "50:21",
+          "verdict": "spill",
+          "evidence": "最上部の棟を含むが屋根の斜面全体まで広く含む。"
+        },
+        {
+          "draft_id": "50:22",
+          "verdict": "wrong_label",
+          "evidence": "下屋根の前側斜面で、棟の線には対応しない。"
+        },
+        {
+          "draft_id": "50:23",
+          "verdict": "correct",
+          "evidence": "上部の瓦屋根面をおおむね覆う。"
+        },
+        {
+          "draft_id": "50:24",
+          "verdict": "spill",
+          "evidence": "屋根に加えて上層の白壁と窓列を大きく含む。"
+        },
+        {
+          "draft_id": "50:25",
+          "verdict": "correct",
+          "evidence": "下段の瓦屋根の斜面に沿う。"
+        },
+        {
+          "draft_id": "50:26",
+          "verdict": "not_present",
+          "evidence": "上層には格子窓が見えるが、窓を閉じる鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "50:27",
+          "verdict": "not_present",
+          "evidence": "前景は平坦な石敷きと低い囲いで、入口階段は見えない。"
+        },
+        {
+          "draft_id": "50:28",
+          "verdict": "not_present",
+          "evidence": "建物表面を覆うつる植物などは見えない。"
+        },
+        {
+          "draft_id": "50:29",
+          "verdict": "spill",
+          "evidence": "壁を含むが瓦屋根・扉・木柱も一体で覆う。"
+        },
+        {
+          "draft_id": "50:30",
+          "verdict": "spill",
+          "evidence": "側壁も含むが屋根から正面全体まで覆い、側壁に限定されない。"
+        },
+        {
+          "draft_id": "50:31",
+          "verdict": "correct",
+          "evidence": "上層の連続する白い格子窓枠に対応する。"
+        },
+        {
+          "draft_id": "50:32",
+          "verdict": "wrong_label",
+          "evidence": "下層の通り抜け開口と奥の景色を示し、ガラス窓ではない。"
+        },
+        {
+          "draft_id": "50:33",
+          "verdict": "wrong_label",
+          "evidence": "格子窓の区画は合うが白い枠まで面状に覆う。ガラスの有無は縮小画像では不確か。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "beam",
+          "evidence": "門扉上部に横架材と軒下の木組みが見えるが、beam候補がない。"
+        },
+        {
+          "label": "path",
+          "evidence": "門前の石敷きが見えるがpath候補がない。"
+        }
+      ],
+      "building_name": "鶴丸城御楼門",
+      "evidence": [
+        "タイトルの鶴丸城とGoromon Gateカテゴリに、白い上層壁・横長の格子窓列・二重の瓦屋根・木造の大きな門扉が一致する。"
+      ]
+    },
+    {
+      "asset_id": "04a55453-192e-491c-b687-46db0f13c440",
+      "regions": [
+        {
+          "draft_id": "51:0",
+          "verdict": "wrong_label",
+          "evidence": "中央建物の入口付近の矩形部分で、独立した装飾とは判断できない。"
+        },
+        {
+          "draft_id": "51:1",
+          "verdict": "not_present",
+          "evidence": "指定箇所は橋の付近で、曲線のアーチ構造は画像内で明瞭に確認できない。"
+        },
+        {
+          "draft_id": "51:2",
+          "verdict": "correct",
+          "evidence": "前景の橋の横桁に対応するが、細い橋脚も一部含む。"
+        },
+        {
+          "draft_id": "51:3",
+          "verdict": "correct",
+          "evidence": "前景の橋を支える左寄りの縦支柱に対応する。"
+        },
+        {
+          "draft_id": "51:4",
+          "verdict": "correct",
+          "evidence": "橋の右寄りの縦支柱に対応する。"
+        },
+        {
+          "draft_id": "51:5",
+          "verdict": "wrong_label",
+          "evidence": "左端の建物の壁面で、独立した柱ではない。"
+        },
+        {
+          "draft_id": "51:6",
+          "verdict": "not_present",
+          "evidence": "左端の土壁に隅石の交互積みは確認できない。"
+        },
+        {
+          "draft_id": "51:7",
+          "verdict": "not_present",
+          "evidence": "中央の土壁にも隅石の交互積みは確認できない。"
+        },
+        {
+          "draft_id": "51:8",
+          "verdict": "wrong_label",
+          "evidence": "橋の桁と橋脚で、建物の軒蛇腹ではない。"
+        },
+        {
+          "draft_id": "51:9",
+          "verdict": "correct",
+          "evidence": "右寄りの小建物の暗い入口に対応する。遠景で細部は不鮮明。"
+        },
+        {
+          "draft_id": "51:10",
+          "verdict": "not_present",
+          "evidence": "中央の矩形土楼であり、屋根上の採光小屋根は見えない。"
+        },
+        {
+          "draft_id": "51:11",
+          "verdict": "wrong_label",
+          "evidence": "建物前の橋または小道の水平面で、屋根の軒ではない。"
+        },
+        {
+          "draft_id": "51:12",
+          "verdict": "wrong_label",
+          "evidence": "前景の橋の桁と橋脚であり、建物の軒ではない。"
+        },
+        {
+          "draft_id": "51:13",
+          "verdict": "wrong_label",
+          "evidence": "奥の横長の領域は橋の路面・縁で、周囲を囲う柵とは確認できない。"
+        },
+        {
+          "draft_id": "51:14",
+          "verdict": "wrong_label",
+          "evidence": "前景の橋の横桁で、妻端の破風飾りではない。"
+        },
+        {
+          "draft_id": "51:15",
+          "verdict": "correct",
+          "evidence": "左端の建物の妻側の壁に沿う。上端の三角部分は画像端で一部欠ける。"
+        },
+        {
+          "draft_id": "51:16",
+          "verdict": "not_present",
+          "evidence": "土楼の壁面に木骨組格子は見えない。"
+        },
+        {
+          "draft_id": "51:17",
+          "verdict": "wrong_label",
+          "evidence": "細長い電柱状の支柱で、照明器具は確認できない。"
+        },
+        {
+          "draft_id": "51:18",
+          "verdict": "wrong_label",
+          "evidence": "細長い電柱状の支柱で、灯具の形は確認できない。"
+        },
+        {
+          "draft_id": "51:19",
+          "verdict": "correct",
+          "evidence": "建物前を横に通る橋状の歩行路に対応する。"
+        },
+        {
+          "draft_id": "51:20",
+          "verdict": "wrong_label",
+          "evidence": "中央土楼の上部まで覆う壁面で、基壇ではない。"
+        },
+        {
+          "draft_id": "51:21",
+          "verdict": "wrong_label",
+          "evidence": "右端建物の上部壁面で、基壇ではない。"
+        },
+        {
+          "draft_id": "51:22",
+          "verdict": "wrong_label",
+          "evidence": "橋桁に加え下へ伸びる橋脚を塗り、手すりの線を指していない。"
+        },
+        {
+          "draft_id": "51:23",
+          "verdict": "spill",
+          "evidence": "中央の屋根に対応するが棟に加え瓦面全体まで覆う。"
+        },
+        {
+          "draft_id": "51:24",
+          "verdict": "spill",
+          "evidence": "右端の屋根全体で、棟の細い線に限定されない。"
+        },
+        {
+          "draft_id": "51:25",
+          "verdict": "spill",
+          "evidence": "左端の小屋根全体で、棟に限定されない。"
+        },
+        {
+          "draft_id": "51:26",
+          "verdict": "spill",
+          "evidence": "右寄りの小屋根全体で、棟に限定されない。"
+        },
+        {
+          "draft_id": "51:27",
+          "verdict": "correct",
+          "evidence": "中央土楼の横長の瓦屋根面に沿う。"
+        },
+        {
+          "draft_id": "51:28",
+          "verdict": "correct",
+          "evidence": "右端建物の瓦屋根面に沿う。"
+        },
+        {
+          "draft_id": "51:29",
+          "verdict": "correct",
+          "evidence": "左端手前の建物の瓦屋根面に沿う。"
+        },
+        {
+          "draft_id": "51:30",
+          "verdict": "correct",
+          "evidence": "右寄りの小建物の屋根面に沿う。"
+        },
+        {
+          "draft_id": "51:31",
+          "verdict": "correct",
+          "evidence": "左奥の建物の横長の屋根面に沿う。"
+        },
+        {
+          "draft_id": "51:32",
+          "verdict": "correct",
+          "evidence": "中央土楼の土色の主要外壁に沿う。"
+        },
+        {
+          "draft_id": "51:33",
+          "verdict": "correct",
+          "evidence": "右端の建物の外壁に沿う。"
+        },
+        {
+          "draft_id": "51:34",
+          "verdict": "correct",
+          "evidence": "左端手前の建物の外壁に沿う。"
+        },
+        {
+          "draft_id": "51:35",
+          "verdict": "correct",
+          "evidence": "中央建物の外壁であり、脇の建物の壁としても領域は整合する。"
+        },
+        {
+          "draft_id": "51:36",
+          "verdict": "correct",
+          "evidence": "左端手前の別棟の壁面に沿う。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "vegetation_tree_canopy",
+          "evidence": "背景の山林と建物周囲の樹冠に候補がない。"
+        },
+        {
+          "label": "water",
+          "evidence": "前景の橋の下に水面と橋の反射が見えるが候補がない。"
+        },
+        {
+          "label": "window_frame",
+          "evidence": "中央土楼の外壁に複数の小窓が見えるが、窓枠の候補がない。遠景で細部は不鮮明。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "山裾の土色の矩形土楼、上部の小窓列と横長の瓦屋根がタイトルの土楼景観と整合する。",
+        "ただしDingri Lou and Hengji Louのどちらが個々の棟かを識別する固有の細部が不足するため、名称は確定しない。"
+      ]
+    },
+    {
+      "asset_id": "3f4fea5f-b6a4-4851-90f1-9ae2e5ef6bff",
+      "regions": [
+        {
+          "draft_id": "52:0",
+          "verdict": "not_present",
+          "evidence": "門は水平梁による矩形開口で、曲線アーチは見えない。"
+        },
+        {
+          "draft_id": "52:1",
+          "verdict": "spill",
+          "evidence": "上部の水平装飾帯を含むが、門・塀・階段まで全面を覆う。"
+        },
+        {
+          "draft_id": "52:2",
+          "verdict": "wrong_label",
+          "evidence": "石段左脇の斜めの石縁で、水平の梁ではない。"
+        },
+        {
+          "draft_id": "52:3",
+          "verdict": "not_present",
+          "evidence": "屋根に煙突は見えない。"
+        },
+        {
+          "draft_id": "52:4",
+          "verdict": "correct",
+          "evidence": "右側の柱脚を含む門柱の下部に沿う。"
+        },
+        {
+          "draft_id": "52:5",
+          "verdict": "correct",
+          "evidence": "左側の門柱下部に沿う。"
+        },
+        {
+          "draft_id": "52:6",
+          "verdict": "correct",
+          "evidence": "右側の石製門柱の細い部分に沿う。"
+        },
+        {
+          "draft_id": "52:7",
+          "verdict": "not_present",
+          "evidence": "灰色の塀と石柱に交互積みの隅石装飾は見えない。"
+        },
+        {
+          "draft_id": "52:8",
+          "verdict": "spill",
+          "evidence": "上部の水平繰形を含むが門・壁・階段全体を覆う。"
+        },
+        {
+          "draft_id": "52:9",
+          "verdict": "wrong_label",
+          "evidence": "入口の石段と縁石で、軒の蛇腹ではない。"
+        },
+        {
+          "draft_id": "52:10",
+          "verdict": "correct",
+          "evidence": "朱色の両開き扉に沿う。"
+        },
+        {
+          "draft_id": "52:11",
+          "verdict": "not_present",
+          "evidence": "門の瓦屋根に採光小屋根はない。"
+        },
+        {
+          "draft_id": "52:12",
+          "verdict": "spill",
+          "evidence": "軒を含むが門扉・壁・階段まで全面を覆う。"
+        },
+        {
+          "draft_id": "52:13",
+          "verdict": "spill",
+          "evidence": "軒下の張り出しは含むが上部の梁装飾と屋根全体まで含む。"
+        },
+        {
+          "draft_id": "52:14",
+          "verdict": "not_present",
+          "evidence": "囲いは煉瓦塀で、扉部分を塗った候補に対応するフェンスはない。"
+        },
+        {
+          "draft_id": "52:15",
+          "verdict": "wrong_label",
+          "evidence": "屋外の石段であり、床面の候補ではない。"
+        },
+        {
+          "draft_id": "52:16",
+          "verdict": "wrong_label",
+          "evidence": "階段脇の地面と縁石で、建物内部の床ではない。"
+        },
+        {
+          "draft_id": "52:17",
+          "verdict": "not_present",
+          "evidence": "正面に妻端の破風飾りは見えない。"
+        },
+        {
+          "draft_id": "52:18",
+          "verdict": "not_present",
+          "evidence": "彩色梁はあるが壁内に露出する木骨格子は見えない。"
+        },
+        {
+          "draft_id": "52:19",
+          "verdict": "wrong_label",
+          "evidence": "入口階段を覆い、通路の水平な舗装面を指していない。"
+        },
+        {
+          "draft_id": "52:20",
+          "verdict": "wrong_label",
+          "evidence": "門柱・扉・上部屋根を広く覆い、基壇を指していない。"
+        },
+        {
+          "draft_id": "52:21",
+          "verdict": "correct",
+          "evidence": "最上部の横長の瓦の棟線におおむね沿う。"
+        },
+        {
+          "draft_id": "52:22",
+          "verdict": "correct",
+          "evidence": "横長の小さな瓦屋根面をおおむね覆う。"
+        },
+        {
+          "draft_id": "52:23",
+          "verdict": "spill",
+          "evidence": "屋根だけでなく下の彩色梁と柱頭まで大きく含む。"
+        },
+        {
+          "draft_id": "52:24",
+          "verdict": "correct",
+          "evidence": "上部の瓦屋根面の細い帯に沿う。"
+        },
+        {
+          "draft_id": "52:25",
+          "verdict": "not_present",
+          "evidence": "赤い部分は門扉で、窓用の鎧戸は見えない。"
+        },
+        {
+          "draft_id": "52:26",
+          "verdict": "correct",
+          "evidence": "入口正面の石段をおおむね覆う。"
+        },
+        {
+          "draft_id": "52:27",
+          "verdict": "not_present",
+          "evidence": "建物に付着する植物は見えない。"
+        },
+        {
+          "draft_id": "52:28",
+          "verdict": "correct",
+          "evidence": "右側の灰色の煉瓦塀の面に沿う。"
+        },
+        {
+          "draft_id": "52:29",
+          "verdict": "spill",
+          "evidence": "壁も含むが門扉と屋根・彩色梁まで覆う。"
+        },
+        {
+          "draft_id": "52:30",
+          "verdict": "spill",
+          "evidence": "側壁を含むが門と階段を含むほぼ全面を覆う。"
+        },
+        {
+          "draft_id": "52:31",
+          "verdict": "not_present",
+          "evidence": "赤い部分は門扉で、この画像に窓枠は確認できない。"
+        },
+        {
+          "draft_id": "52:32",
+          "verdict": "not_present",
+          "evidence": "彩色梁の円形装飾であり、ガラス窓は見えない。"
+        },
+        {
+          "draft_id": "52:33",
+          "verdict": "not_present",
+          "evidence": "彩色梁の円形装飾であり、ガラス窓は見えない。"
+        },
+        {
+          "draft_id": "52:34",
+          "verdict": "not_present",
+          "evidence": "彩色梁の円形装飾であり、ガラス窓は見えない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "beam",
+          "evidence": "扉上の彩色された横梁は見えるがbeam候補は石段脇を示している。"
+        },
+        {
+          "label": "light_fixture",
+          "evidence": "門の左右に垂れ下がる白い灯具が見えるが候補がない。"
+        },
+        {
+          "label": "relief",
+          "evidence": "扉上部の彩色円形装飾が見えるがrelief候補がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "灰色の煉瓦塀、石段、朱色の両開き扉、彩色した梁と反りのある瓦屋根が北京胡同の門というタイトルと整合する。",
+        "個別の門を特定する建築名や固有の所在情報がない。"
+      ]
+    },
+    {
+      "asset_id": "ff20b1a7-1490-4f35-81f5-54575a28da9f",
+      "regions": [
+        {
+          "draft_id": "53:0",
+          "verdict": "wrong_label",
+          "evidence": "手前の円形土楼全体で、独立した装飾領域ではない。"
+        },
+        {
+          "draft_id": "53:1",
+          "verdict": "wrong_label",
+          "evidence": "左寄りの円形土楼の壁と屋根で、装飾領域ではない。"
+        },
+        {
+          "draft_id": "53:2",
+          "verdict": "wrong_label",
+          "evidence": "奥の矩形土楼全体で、独立した装飾ではない。"
+        },
+        {
+          "draft_id": "53:3",
+          "verdict": "not_present",
+          "evidence": "土楼は見えるが、遠景のためアーチ形の部位は確認できない。"
+        },
+        {
+          "draft_id": "53:4",
+          "verdict": "not_present",
+          "evidence": "奥の建物にもアーチ形の部位は確認できない。"
+        },
+        {
+          "draft_id": "53:5",
+          "verdict": "not_present",
+          "evidence": "手前の土楼の全体像で、アーチ部位は確認できない。"
+        },
+        {
+          "draft_id": "53:6",
+          "verdict": "not_present",
+          "evidence": "環状屋根は見えるが、曲線アーチの開口は確認できない。"
+        },
+        {
+          "draft_id": "53:7",
+          "verdict": "not_present",
+          "evidence": "遠景の建物で、独立した梁は確認できない。"
+        },
+        {
+          "draft_id": "53:8",
+          "verdict": "not_present",
+          "evidence": "屋根から突出する煙突はこの縮小像では確認できない。"
+        },
+        {
+          "draft_id": "53:9",
+          "verdict": "not_present",
+          "evidence": "小さな土楼全体で、煙突は確認できない。"
+        },
+        {
+          "draft_id": "53:10",
+          "verdict": "not_present",
+          "evidence": "奥の矩形土楼で、煙突は確認できない。"
+        },
+        {
+          "draft_id": "53:11",
+          "verdict": "not_present",
+          "evidence": "手前の土楼で、独立した柱は確認できない。"
+        },
+        {
+          "draft_id": "53:12",
+          "verdict": "not_present",
+          "evidence": "左寄り土楼で、独立した柱は確認できない。"
+        },
+        {
+          "draft_id": "53:13",
+          "verdict": "not_present",
+          "evidence": "奥の矩形土楼で、独立した柱は確認できない。"
+        },
+        {
+          "draft_id": "53:14",
+          "verdict": "not_present",
+          "evidence": "手前の円形土楼に交互積みの隅石は確認できない。"
+        },
+        {
+          "draft_id": "53:15",
+          "verdict": "not_present",
+          "evidence": "左寄りの円形土楼に交互積みの隅石は確認できない。"
+        },
+        {
+          "draft_id": "53:16",
+          "verdict": "not_present",
+          "evidence": "奥の矩形土楼に交互積みの隅石は確認できない。"
+        },
+        {
+          "draft_id": "53:17",
+          "verdict": "not_present",
+          "evidence": "画像の解像度では壁上端の独立した蛇腹装飾は確認できない。"
+        },
+        {
+          "draft_id": "53:18",
+          "verdict": "not_present",
+          "evidence": "左寄りの土楼に屋根上の採光小屋根は確認できない。"
+        },
+        {
+          "draft_id": "53:19",
+          "verdict": "not_present",
+          "evidence": "手前の土楼に採光小屋根は確認できない。"
+        },
+        {
+          "draft_id": "53:20",
+          "verdict": "not_present",
+          "evidence": "奥の矩形土楼に採光小屋根は確認できない。"
+        },
+        {
+          "draft_id": "53:21",
+          "verdict": "spill",
+          "evidence": "軒線を含むが左寄りの土楼の壁まで丸ごと覆う。"
+        },
+        {
+          "draft_id": "53:22",
+          "verdict": "spill",
+          "evidence": "軒線を含むが奥の矩形土楼の壁まで覆う。"
+        },
+        {
+          "draft_id": "53:23",
+          "verdict": "spill",
+          "evidence": "軒を含むが手前の円形土楼の壁と中庭まで覆う。"
+        },
+        {
+          "draft_id": "53:24",
+          "verdict": "not_present",
+          "evidence": "遠景で妻端の破風飾りは確認できない。"
+        },
+        {
+          "draft_id": "53:25",
+          "verdict": "not_present",
+          "evidence": "手前の主な建物は円形で、三角形の妻壁は確認できない。"
+        },
+        {
+          "draft_id": "53:26",
+          "verdict": "not_present",
+          "evidence": "遠景で壁面の木骨格子は確認できない。"
+        },
+        {
+          "draft_id": "53:27",
+          "verdict": "not_present",
+          "evidence": "左寄りの土楼にも木骨格子は確認できない。"
+        },
+        {
+          "draft_id": "53:28",
+          "verdict": "wrong_label",
+          "evidence": "水路沿いの長い領域であり、道の面というより水路と岸を塗っている。境界は遠景で不鮮明。"
+        },
+        {
+          "draft_id": "53:29",
+          "verdict": "wrong_label",
+          "evidence": "手前の土楼の屋根と上部壁面まで含み、基壇を示していない。"
+        },
+        {
+          "draft_id": "53:30",
+          "verdict": "wrong_label",
+          "evidence": "左寄りの土楼全体を塗り、基壇に限定されない。"
+        },
+        {
+          "draft_id": "53:31",
+          "verdict": "wrong_label",
+          "evidence": "奥の矩形土楼全体を塗り、基壇に限定されない。"
+        },
+        {
+          "draft_id": "53:32",
+          "verdict": "not_present",
+          "evidence": "水路状の領域に手すりは確認できない。"
+        },
+        {
+          "draft_id": "53:33",
+          "verdict": "not_present",
+          "evidence": "遠景で彫刻浮彫は確認できない。"
+        },
+        {
+          "draft_id": "53:34",
+          "verdict": "not_present",
+          "evidence": "左寄りの土楼に彫刻浮彫は確認できない。"
+        },
+        {
+          "draft_id": "53:35",
+          "verdict": "not_present",
+          "evidence": "奥の矩形土楼に彫刻浮彫は確認できない。"
+        },
+        {
+          "draft_id": "53:36",
+          "verdict": "spill",
+          "evidence": "手前の環状屋根を含むが棟線だけでなく屋根面全体まで覆う。"
+        },
+        {
+          "draft_id": "53:37",
+          "verdict": "correct",
+          "evidence": "手前の土楼の環状の瓦屋根に対応する。"
+        },
+        {
+          "draft_id": "53:38",
+          "verdict": "correct",
+          "evidence": "左奥の土楼の屋根面に対応する。"
+        },
+        {
+          "draft_id": "53:39",
+          "verdict": "correct",
+          "evidence": "中央奥の小さな建物の屋根面に対応する。細部は遠景で不鮮明。"
+        },
+        {
+          "draft_id": "53:40",
+          "verdict": "correct",
+          "evidence": "奥の小さな建物の屋根面に対応する。細部は遠景で不鮮明。"
+        },
+        {
+          "draft_id": "53:41",
+          "verdict": "not_present",
+          "evidence": "手前の土楼に窓用鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "53:42",
+          "verdict": "not_present",
+          "evidence": "左寄りの土楼にも窓用鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "53:43",
+          "verdict": "not_present",
+          "evidence": "水路状の帯を示しており、階段は確認できない。"
+        },
+        {
+          "draft_id": "53:44",
+          "verdict": "not_present",
+          "evidence": "手前の建物に付着する植物は確認できない。"
+        },
+        {
+          "draft_id": "53:45",
+          "verdict": "not_present",
+          "evidence": "左寄りの土楼に付着する植物は確認できない。"
+        },
+        {
+          "draft_id": "53:46",
+          "verdict": "spill",
+          "evidence": "外壁は含むが円形建物の屋根と中庭まで一体で覆う。"
+        },
+        {
+          "draft_id": "53:47",
+          "verdict": "spill",
+          "evidence": "奥の矩形土楼の壁に加えて屋根まで覆う。"
+        },
+        {
+          "draft_id": "53:48",
+          "verdict": "spill",
+          "evidence": "左寄りの円形土楼の壁と屋根を一体で覆う。"
+        },
+        {
+          "draft_id": "53:49",
+          "verdict": "spill",
+          "evidence": "手前の土楼の壁を含むが屋根と中庭まで覆う。"
+        },
+        {
+          "draft_id": "53:50",
+          "verdict": "spill",
+          "evidence": "奥の矩形土楼の壁に加えて屋根を覆う。"
+        },
+        {
+          "draft_id": "53:51",
+          "verdict": "spill",
+          "evidence": "左寄りの土楼の壁と屋根を一体で覆う。"
+        },
+        {
+          "draft_id": "53:52",
+          "verdict": "not_present",
+          "evidence": "小さな環状の建物または中庭を示し、窓枠は確認できない。"
+        },
+        {
+          "draft_id": "53:53",
+          "verdict": "not_present",
+          "evidence": "小さな環状の建物または中庭を示し、ガラス窓は確認できない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "vegetation_tree_canopy",
+          "evidence": "前景から山腹に広がる樹冠が見えるが候補がない。"
+        },
+        {
+          "label": "water",
+          "evidence": "左から中央下へ伸びる淡い水路が見えるが候補がない。"
+        },
+        {
+          "label": "ground_grass",
+          "evidence": "前景下端に草地が見えるが候補がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "山間の村に複数の円形・矩形の土楼が見え、タイトルとHongkeng Villageの記載に整合する。",
+        "遠景で複数棟が写り、個別土楼を区別する入口や窓配置は確認できない。"
+      ]
+    },
+    {
+      "asset_id": "4e1c1726-882c-4428-8179-4391275ae469",
+      "regions": [
+        {
+          "draft_id": "54:0",
+          "verdict": "not_present",
+          "evidence": "入口は矩形で、曲線のアーチは見えない。"
+        },
+        {
+          "draft_id": "54:1",
+          "verdict": "correct",
+          "evidence": "正面屋根上の小さな煙突状の突出物に沿う。細部は不鮮明。"
+        },
+        {
+          "draft_id": "54:2",
+          "verdict": "correct",
+          "evidence": "右端の柱の下部に沿う。"
+        },
+        {
+          "draft_id": "54:3",
+          "verdict": "correct",
+          "evidence": "左棟前の縦柱に沿う。"
+        },
+        {
+          "draft_id": "54:4",
+          "verdict": "not_present",
+          "evidence": "交互積みの隅石装飾は見えず、候補は石段である。"
+        },
+        {
+          "draft_id": "54:5",
+          "verdict": "correct",
+          "evidence": "中央の縦格子の木製入口扉に沿う。"
+        },
+        {
+          "draft_id": "54:6",
+          "verdict": "not_present",
+          "evidence": "屋根から突出する採光小屋根は見えない。"
+        },
+        {
+          "draft_id": "54:7",
+          "verdict": "not_present",
+          "evidence": "左下は壁に組み込まれた菱形の装飾パネルで、フェンスはない。"
+        },
+        {
+          "draft_id": "54:8",
+          "verdict": "correct",
+          "evidence": "中庭の平坦な舗装床に沿う。"
+        },
+        {
+          "draft_id": "54:9",
+          "verdict": "not_present",
+          "evidence": "石段を塗っており、妻端の破風飾りは見えない。"
+        },
+        {
+          "draft_id": "54:10",
+          "verdict": "spill",
+          "evidence": "左棟の柱梁格子を含むが瓦屋根と壁面パネルまで丸ごと覆う。"
+        },
+        {
+          "draft_id": "54:11",
+          "verdict": "wrong_label",
+          "evidence": "屋根上の煙突状突出物で、照明器具ではない。"
+        },
+        {
+          "draft_id": "54:12",
+          "verdict": "correct",
+          "evidence": "中庭の舗装された歩行面をおおむね覆う。"
+        },
+        {
+          "draft_id": "54:13",
+          "verdict": "not_present",
+          "evidence": "菱形の壁面パネルで、手すりは見えない。"
+        },
+        {
+          "draft_id": "54:14",
+          "verdict": "correct",
+          "evidence": "左下の菱形の装飾パネルに沿う。浮彫の深さは縮小像では不確か。"
+        },
+        {
+          "draft_id": "54:15",
+          "verdict": "spill",
+          "evidence": "正面の棟を含むが瓦屋根面全体まで覆う。"
+        },
+        {
+          "draft_id": "54:16",
+          "verdict": "wrong_label",
+          "evidence": "左棟の軒先の瓦列で、屋根上部の棟ではない。"
+        },
+        {
+          "draft_id": "54:17",
+          "verdict": "wrong_label",
+          "evidence": "右端の縦向きの壁面で、屋根の棟ではない。"
+        },
+        {
+          "draft_id": "54:18",
+          "verdict": "correct",
+          "evidence": "正面棟の瓦屋根面に沿う。"
+        },
+        {
+          "draft_id": "54:19",
+          "verdict": "correct",
+          "evidence": "左側小棟の瓦屋根面に沿う。"
+        },
+        {
+          "draft_id": "54:20",
+          "verdict": "wrong_label",
+          "evidence": "中央右の格子窓で、別体の鎧戸とは確認できない。"
+        },
+        {
+          "draft_id": "54:21",
+          "verdict": "wrong_label",
+          "evidence": "中央左の格子窓で、別体の鎧戸とは確認できない。"
+        },
+        {
+          "draft_id": "54:22",
+          "verdict": "wrong_label",
+          "evidence": "中央の入口扉であり、窓の鎧戸ではない。"
+        },
+        {
+          "draft_id": "54:23",
+          "verdict": "wrong_label",
+          "evidence": "中央左の格子窓で、別体の鎧戸とは確認できない。"
+        },
+        {
+          "draft_id": "54:24",
+          "verdict": "wrong_label",
+          "evidence": "右寄りの格子建具で、別体の鎧戸とは確認できない。"
+        },
+        {
+          "draft_id": "54:25",
+          "verdict": "wrong_label",
+          "evidence": "右上の格子窓と周囲の壁で、鎧戸とは確認できない。"
+        },
+        {
+          "draft_id": "54:26",
+          "verdict": "correct",
+          "evidence": "中央入口前の石段に沿う。"
+        },
+        {
+          "draft_id": "54:27",
+          "verdict": "not_present",
+          "evidence": "候補は床際の鉢植えまたは植込みで、壁への付着植物は見えない。"
+        },
+        {
+          "draft_id": "54:28",
+          "verdict": "not_present",
+          "evidence": "左の植込みは地面から生え、壁への付着植物ではない。"
+        },
+        {
+          "draft_id": "54:29",
+          "verdict": "spill",
+          "evidence": "主要壁面に加え正面と左棟の瓦屋根・扉を大きく含む。"
+        },
+        {
+          "draft_id": "54:30",
+          "verdict": "correct",
+          "evidence": "右端の側壁の細い面に沿う。"
+        },
+        {
+          "draft_id": "54:31",
+          "verdict": "spill",
+          "evidence": "左側の格子パネルを含むが周囲の柱と壁・上部まで大きく含む。"
+        },
+        {
+          "draft_id": "54:32",
+          "verdict": "spill",
+          "evidence": "右の窓枠を含むが右上の壁面まで大きく含む。"
+        },
+        {
+          "draft_id": "54:33",
+          "verdict": "correct",
+          "evidence": "入口左の細い格子窓の区画に対応する。"
+        },
+        {
+          "draft_id": "54:34",
+          "verdict": "correct",
+          "evidence": "入口右の細い格子窓の区画に対応する。"
+        },
+        {
+          "draft_id": "54:35",
+          "verdict": "spill",
+          "evidence": "左寄りの窓を含むが隣の壁面パネルまで広く含む。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "beam",
+          "evidence": "軒下の水平な木梁が見えるが候補がない。"
+        },
+        {
+          "label": "eave",
+          "evidence": "正面と側棟に軒の張り出しが見えるが候補がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "瓦屋根、木製の格子建具、中央入口と石段、左右の壁画が中庭形式の中国家屋というタイトルと整合する。",
+        "Baiyuという名称以外に宿の固有名や所在を裏付ける情報がない。"
+      ]
+    },
+    {
+      "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+      "regions": [
+        {
+          "draft_id": "55:0",
+          "verdict": "spill",
+          "evidence": "装飾を含むが塔・窓・壁など建物全体を塗っている。"
+        },
+        {
+          "draft_id": "55:1",
+          "verdict": "wrong_label",
+          "evidence": "中央のバラ窓を塗り、尖頭アーチの輪郭ではない。"
+        },
+        {
+          "draft_id": "55:2",
+          "verdict": "correct",
+          "evidence": "左側の尖頭入口のアーチに沿う。"
+        },
+        {
+          "draft_id": "55:3",
+          "verdict": "correct",
+          "evidence": "中央の尖頭入口のアーチに沿う。"
+        },
+        {
+          "draft_id": "55:4",
+          "verdict": "correct",
+          "evidence": "右側の尖頭入口のアーチに沿う。"
+        },
+        {
+          "draft_id": "55:5",
+          "verdict": "spill",
+          "evidence": "水平帯を含むが塔から正面全体まで広く覆う。"
+        },
+        {
+          "draft_id": "55:6",
+          "verdict": "wrong_label",
+          "evidence": "手前の舗装の模様で、壁面の水平帯ではない。"
+        },
+        {
+          "draft_id": "55:7",
+          "verdict": "not_present",
+          "evidence": "手前の舗装を塗っており、独立した横梁は見えない。"
+        },
+        {
+          "draft_id": "55:8",
+          "verdict": "not_present",
+          "evidence": "候補は高い尖塔で、煙突は見えない。"
+        },
+        {
+          "draft_id": "55:9",
+          "verdict": "not_present",
+          "evidence": "候補は大聖堂全体で、煙突は見えない。"
+        },
+        {
+          "draft_id": "55:10",
+          "verdict": "spill",
+          "evidence": "塔の縦部材を含むが右側の塔全体まで覆う。"
+        },
+        {
+          "draft_id": "55:11",
+          "verdict": "not_present",
+          "evidence": "石壁は見えるが交互積みの隅石装飾は確認できない。"
+        },
+        {
+          "draft_id": "55:12",
+          "verdict": "spill",
+          "evidence": "壁上の繰形を含むが建物全体まで覆う。"
+        },
+        {
+          "draft_id": "55:13",
+          "verdict": "not_present",
+          "evidence": "建物全体を塗っており、屋根から突出する採光小屋根は確認できない。"
+        },
+        {
+          "draft_id": "55:14",
+          "verdict": "not_present",
+          "evidence": "中央のバラ窓であり、採光小屋根は確認できない。"
+        },
+        {
+          "draft_id": "55:15",
+          "verdict": "spill",
+          "evidence": "屋根際の張り出しを含むが塔と壁全体まで覆う。"
+        },
+        {
+          "draft_id": "55:16",
+          "verdict": "wrong_label",
+          "evidence": "広場との境界の低い柵状構造で、外周フェンスより手すりに相当する。"
+        },
+        {
+          "draft_id": "55:17",
+          "verdict": "correct",
+          "evidence": "手前の広場の舗装面に沿う。"
+        },
+        {
+          "draft_id": "55:18",
+          "verdict": "spill",
+          "evidence": "中央妻端の装飾を含むが塔・壁全体まで広く覆う。"
+        },
+        {
+          "draft_id": "55:19",
+          "verdict": "spill",
+          "evidence": "中央の三角形の妻壁を含むが両塔と下部壁まで覆う。"
+        },
+        {
+          "draft_id": "55:20",
+          "verdict": "not_present",
+          "evidence": "石造ゴシック建築で、壁面の木骨組はない。"
+        },
+        {
+          "draft_id": "55:21",
+          "verdict": "correct",
+          "evidence": "右端の街路灯の発光部付近に対応する。小さく輪郭は不鮮明。"
+        },
+        {
+          "draft_id": "55:22",
+          "verdict": "wrong_label",
+          "evidence": "建物足元の細い縦部材で、灯具か柵支柱か判別困難。明瞭な照明器具とは判断できない。"
+        },
+        {
+          "draft_id": "55:23",
+          "verdict": "correct",
+          "evidence": "手前の舗装された歩行空間に沿う。"
+        },
+        {
+          "draft_id": "55:24",
+          "verdict": "spill",
+          "evidence": "基部を含むが塔先端から正面全体まで覆う。"
+        },
+        {
+          "draft_id": "55:25",
+          "verdict": "correct",
+          "evidence": "建物前の低い手すり・柵の列に沿う。"
+        },
+        {
+          "draft_id": "55:26",
+          "verdict": "spill",
+          "evidence": "彫刻装飾を含むが建物の壁・窓・塔全体を覆う。"
+        },
+        {
+          "draft_id": "55:27",
+          "verdict": "spill",
+          "evidence": "棟と尖塔上端を含むが建物全体まで覆う。"
+        },
+        {
+          "draft_id": "55:28",
+          "verdict": "spill",
+          "evidence": "屋根を含むが塔と壁全体を大きく含む。"
+        },
+        {
+          "draft_id": "55:29",
+          "verdict": "not_present",
+          "evidence": "バラ窓を塗っており、窓を閉じる鎧戸は見えない。"
+        },
+        {
+          "draft_id": "55:30",
+          "verdict": "not_present",
+          "evidence": "前景は平坦な舗装広場で、塗られた帯状領域に階段は確認できない。"
+        },
+        {
+          "draft_id": "55:31",
+          "verdict": "not_present",
+          "evidence": "建物に付着する植物は見えない。"
+        },
+        {
+          "draft_id": "55:32",
+          "verdict": "spill",
+          "evidence": "主要外壁を含むが屋根・窓・塔まで一体で覆う。"
+        },
+        {
+          "draft_id": "55:33",
+          "verdict": "spill",
+          "evidence": "側面の壁を含むが正面と塔全体まで覆う。"
+        },
+        {
+          "draft_id": "55:34",
+          "verdict": "correct",
+          "evidence": "中央の円形バラ窓の枠とトレーサリーに対応する。"
+        },
+        {
+          "draft_id": "55:35",
+          "verdict": "correct",
+          "evidence": "中央のバラ窓の区画に沿う。細い石のトレーサリーの混入はあるが大きな逸脱ではない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": "レオン大聖堂",
+      "evidence": [
+        "タイトルのLeónと西正面カテゴリに、二本の高さ・頂部形状が異なる塔、中央の大きなバラ窓、三連の尖頭入口が一致する。",
+        "identity-candidatesの8f6b6fed-cfb5-4bbc-b27f-098cec40cf01は同名建築候補だが、その画像は今回の入力に含まれず、画像間の同一性までは確定しない。"
+      ]
+    },
+    {
+      "asset_id": "9fccd38d-e7f8-4e20-bd89-7a687161e89b",
+      "regions": [
+        {
+          "draft_id": "56:0",
+          "verdict": "spill",
+          "evidence": "投影模様と石の装飾を含むが正面全体を覆う。"
+        },
+        {
+          "draft_id": "56:1",
+          "verdict": "spill",
+          "evidence": "三連アーチを含むが妻壁と塔・壁全体まで覆う。"
+        },
+        {
+          "draft_id": "56:2",
+          "verdict": "spill",
+          "evidence": "右の尖頭アーチを含むがその内側の柱・壁と下部まで広く含む。"
+        },
+        {
+          "draft_id": "56:3",
+          "verdict": "spill",
+          "evidence": "水平帯を含むが正面の壁と屋根際全体まで広く覆う。"
+        },
+        {
+          "draft_id": "56:4",
+          "verdict": "not_present",
+          "evidence": "石造正面に独立した横梁は確認できない。"
+        },
+        {
+          "draft_id": "56:5",
+          "verdict": "not_present",
+          "evidence": "右端の縦の石造物であり、独立した横梁は確認できない。"
+        },
+        {
+          "draft_id": "56:6",
+          "verdict": "not_present",
+          "evidence": "大聖堂にも右の石造支柱にも煙突は確認できない。"
+        },
+        {
+          "draft_id": "56:7",
+          "verdict": "spill",
+          "evidence": "正面の縦柱を含むが壁・アーチ・妻端全体まで覆う。"
+        },
+        {
+          "draft_id": "56:8",
+          "verdict": "correct",
+          "evidence": "右隣の石造門柱状の縦支柱に対応する。"
+        },
+        {
+          "draft_id": "56:9",
+          "verdict": "not_present",
+          "evidence": "交互積みの隅石装飾は投影下の画像から確認できない。"
+        },
+        {
+          "draft_id": "56:10",
+          "verdict": "spill",
+          "evidence": "水平な繰形を含むが正面全体まで覆う。"
+        },
+        {
+          "draft_id": "56:11",
+          "verdict": "not_present",
+          "evidence": "三角形の妻壁と尖塔はあるが、採光小屋根は確認できない。"
+        },
+        {
+          "draft_id": "56:12",
+          "verdict": "spill",
+          "evidence": "軒際を含むが三連アーチと壁全体まで覆う。"
+        },
+        {
+          "draft_id": "56:13",
+          "verdict": "wrong_label",
+          "evidence": "正面下部の壁・入口周囲で、独立したフェンスの面ではない。"
+        },
+        {
+          "draft_id": "56:14",
+          "verdict": "not_present",
+          "evidence": "正面の建物全体を塗っており、外周フェンスは明瞭に確認できない。"
+        },
+        {
+          "draft_id": "56:15",
+          "verdict": "spill",
+          "evidence": "手前の地面を含むが観客の頭や体を大量に含む。暗さで境界の細部は不明。"
+        },
+        {
+          "draft_id": "56:16",
+          "verdict": "spill",
+          "evidence": "妻端の装飾を含むが三連アーチ以下の正面全体まで覆う。"
+        },
+        {
+          "draft_id": "56:17",
+          "verdict": "spill",
+          "evidence": "三つの妻壁を含むが柱やアーチなど正面全体まで覆う。"
+        },
+        {
+          "draft_id": "56:18",
+          "verdict": "not_present",
+          "evidence": "石造正面で、壁内に露出した木骨組は見えない。"
+        },
+        {
+          "draft_id": "56:19",
+          "verdict": "correct",
+          "evidence": "右下の小さな発光する灯具に対応する。小さいため器具形状は不鮮明。"
+        },
+        {
+          "draft_id": "56:20",
+          "verdict": "correct",
+          "evidence": "下部中央左寄りの小さな灯具に対応する。暗く器具の輪郭は不鮮明。"
+        },
+        {
+          "draft_id": "56:21",
+          "verdict": "spill",
+          "evidence": "手前の歩行部分を含むが観客のシルエットを大量に含む。"
+        },
+        {
+          "draft_id": "56:22",
+          "verdict": "spill",
+          "evidence": "基部を含むがアーチ・妻端・塔など正面全体を覆う。"
+        },
+        {
+          "draft_id": "56:23",
+          "verdict": "not_present",
+          "evidence": "建物全面を塗っており、明瞭な手すりは確認できない。"
+        },
+        {
+          "draft_id": "56:24",
+          "verdict": "spill",
+          "evidence": "石の彫刻装飾を含むが正面全体まで覆う。投影図柄は浮彫と区別した。"
+        },
+        {
+          "draft_id": "56:25",
+          "verdict": "spill",
+          "evidence": "上端を含むが棟線以外の正面全体まで覆う。"
+        },
+        {
+          "draft_id": "56:26",
+          "verdict": "wrong_label",
+          "evidence": "切妻の正面壁と三連アーチを主に覆い、屋根の斜面を捉えていない。"
+        },
+        {
+          "draft_id": "56:27",
+          "verdict": "not_present",
+          "evidence": "大アーチを塗っており、窓用の鎧戸は見えない。"
+        },
+        {
+          "draft_id": "56:28",
+          "verdict": "not_present",
+          "evidence": "前景は観客で隠れ、階段として識別できる段差は見えない。"
+        },
+        {
+          "draft_id": "56:29",
+          "verdict": "not_present",
+          "evidence": "投影された色彩はあるが建物に付着する植物は見えない。"
+        },
+        {
+          "draft_id": "56:30",
+          "verdict": "correct",
+          "evidence": "三連アーチを含む正面の石造壁体をおおむね覆う。アーチの奥の細部は暗い。"
+        },
+        {
+          "draft_id": "56:31",
+          "verdict": "spill",
+          "evidence": "主に正面全体を覆い、脇の壁に限定されない。"
+        },
+        {
+          "draft_id": "56:32",
+          "verdict": "spill",
+          "evidence": "窓の細部だけでなく正面の石壁・柱まで広く覆う。"
+        },
+        {
+          "draft_id": "56:33",
+          "verdict": "wrong_label",
+          "evidence": "左の大アーチの輪郭と内壁を覆い、ガラス窓の枠に限定されない。"
+        },
+        {
+          "draft_id": "56:34",
+          "verdict": "wrong_label",
+          "evidence": "右の大アーチと壁を覆い、ガラス窓の枠に限定されない。"
+        },
+        {
+          "draft_id": "56:35",
+          "verdict": "spill",
+          "evidence": "上部の小窓を含むが石壁と大アーチ・柱全体まで広く覆う。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "door",
+          "evidence": "三連の大アーチの奥の下部に入口が見えるがdoor候補がない。暗さと観客による遮蔽で細部は不明。"
+        }
+      ],
+      "building_name": "ピーターバラ大聖堂",
+      "evidence": [
+        "タイトルと撮影座標・西正面カテゴリに、三つの巨大な尖頭アーチと三つの切妻、その間の細い尖塔という特徴的な西正面が一致する。",
+        "色彩は建築表面への投影で、輪郭と三連アーチの配置を根拠に同定した。"
+      ]
+    },
+    {
+      "asset_id": "160954cd-7e99-4085-b14e-4e7535a89b8f",
+      "regions": [
+        {
+          "draft_id": "57:0",
+          "verdict": "spill",
+          "evidence": "石の装飾を含むが画面全体の壁・窓・開口まで覆う。"
+        },
+        {
+          "draft_id": "57:1",
+          "verdict": "spill",
+          "evidence": "尖頭アーチを含むが周辺の石壁全体まで覆う。"
+        },
+        {
+          "draft_id": "57:2",
+          "verdict": "spill",
+          "evidence": "水平な石の帯を含むが画面全体まで覆う。"
+        },
+        {
+          "draft_id": "57:3",
+          "verdict": "not_present",
+          "evidence": "石造の壁と窓の細部で、独立した横梁は見えない。"
+        },
+        {
+          "draft_id": "57:4",
+          "verdict": "not_present",
+          "evidence": "煙突は見えない。"
+        },
+        {
+          "draft_id": "57:5",
+          "verdict": "spill",
+          "evidence": "縦の石柱を含むが画面全体の壁・窓まで覆う。"
+        },
+        {
+          "draft_id": "57:6",
+          "verdict": "spill",
+          "evidence": "左の縦柱を含むが壁の面や彫刻・複数の縦部材まで広く含む。"
+        },
+        {
+          "draft_id": "57:7",
+          "verdict": "not_present",
+          "evidence": "交互積みの隅石装飾は見えない。"
+        },
+        {
+          "draft_id": "57:8",
+          "verdict": "spill",
+          "evidence": "突出部下の水平繰形を含むが画面全体まで覆う。"
+        },
+        {
+          "draft_id": "57:9",
+          "verdict": "not_present",
+          "evidence": "突出部は石造トレーサリーで、採光小屋根は見えない。"
+        },
+        {
+          "draft_id": "57:10",
+          "verdict": "spill",
+          "evidence": "突出部の下端を含むが周囲の石壁全体まで覆う。"
+        },
+        {
+          "draft_id": "57:11",
+          "verdict": "wrong_label",
+          "evidence": "赤い三角形の領域は石のトレーサリーと尖頭装飾で、軒の水平な張り出しではない。"
+        },
+        {
+          "draft_id": "57:12",
+          "verdict": "not_present",
+          "evidence": "フェンスは見えない。"
+        },
+        {
+          "draft_id": "57:13",
+          "verdict": "not_present",
+          "evidence": "地面や床の面は画角に入っていない。"
+        },
+        {
+          "draft_id": "57:14",
+          "verdict": "spill",
+          "evidence": "三角形の装飾端を含むが画面全体まで覆う。"
+        },
+        {
+          "draft_id": "57:15",
+          "verdict": "spill",
+          "evidence": "三角形の石造面を含むが周囲の柱・壁・窓まで覆う。"
+        },
+        {
+          "draft_id": "57:16",
+          "verdict": "not_present",
+          "evidence": "木骨組は見えない。"
+        },
+        {
+          "draft_id": "57:17",
+          "verdict": "correct",
+          "evidence": "下部の曲がったアームと吊り下げ灯具に沿う。"
+        },
+        {
+          "draft_id": "57:18",
+          "verdict": "not_present",
+          "evidence": "建物を支える基壇や接地部は画角に入っていない。"
+        },
+        {
+          "draft_id": "57:19",
+          "verdict": "not_present",
+          "evidence": "独立した手すりは見えない。"
+        },
+        {
+          "draft_id": "57:20",
+          "verdict": "spill",
+          "evidence": "石彫装飾を含むが窓・壁全体まで覆う。"
+        },
+        {
+          "draft_id": "57:21",
+          "verdict": "spill",
+          "evidence": "左側の石彫を含むが幅のある柱・壁面まで広く含む。"
+        },
+        {
+          "draft_id": "57:22",
+          "verdict": "not_present",
+          "evidence": "屋根の棟は画角に入っていない。"
+        },
+        {
+          "draft_id": "57:23",
+          "verdict": "not_present",
+          "evidence": "赤い三角形は透かし彫りの石造装飾で、屋根の斜面は見えない。"
+        },
+        {
+          "draft_id": "57:24",
+          "verdict": "not_present",
+          "evidence": "窓はあるが鎧戸は見えない。"
+        },
+        {
+          "draft_id": "57:25",
+          "verdict": "not_present",
+          "evidence": "上部の尖頭窓であり、鎧戸は見えない。"
+        },
+        {
+          "draft_id": "57:26",
+          "verdict": "not_present",
+          "evidence": "石造外壁に付着する植物は見えない。"
+        },
+        {
+          "draft_id": "57:27",
+          "verdict": "not_present",
+          "evidence": "左側の複雑な石彫であり、付着植物は見えない。"
+        },
+        {
+          "draft_id": "57:28",
+          "verdict": "correct",
+          "evidence": "接写された石造外壁をおおむね覆う。窓の混入はあるが主体は壁体である。"
+        },
+        {
+          "draft_id": "57:29",
+          "verdict": "spill",
+          "evidence": "主に正面の壁全体を覆い、脇の壁面に限定されない。"
+        },
+        {
+          "draft_id": "57:30",
+          "verdict": "correct",
+          "evidence": "右下の細い尖頭窓の区画と枠に対応する。"
+        },
+        {
+          "draft_id": "57:31",
+          "verdict": "correct",
+          "evidence": "上部の縦長の尖頭窓と枠の区画に対応する。"
+        },
+        {
+          "draft_id": "57:32",
+          "verdict": "correct",
+          "evidence": "右下の尖頭窓の暗い内側に対応する。ガラスの細部は不鮮明。"
+        },
+        {
+          "draft_id": "57:33",
+          "verdict": "correct",
+          "evidence": "上部の細い尖頭窓の区画に対応する。ガラスの細部は不鮮明。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "door",
+          "evidence": "中央下の装飾突出部の下に背の高い入口状の開口が見えるがdoor候補がない。扉の細部は陰影で不鮮明。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "タイトルと出典カテゴリはウィーンのシュテファン大聖堂を指す。",
+        "画像では華やかな石造トレーサリーと尖頭窓、突出した三角形の装飾が確認できるが、塔や屋根の全容がなく、名称の独立した照合には固有の識別材料が不足する。"
+      ]
+    },
+    {
+      "asset_id": "19823cb9-3881-4336-8d0e-a9cbf1c37621",
+      "regions": [
+        {
+          "draft_id": "58:0",
+          "verdict": "correct",
+          "evidence": "屋根の後ろの細いミナレット状の尖塔に対応する。独立した突出装飾として扱う。"
+        },
+        {
+          "draft_id": "58:1",
+          "verdict": "correct",
+          "evidence": "後陣正面の盲アーチ上部の曲線に沿う。"
+        },
+        {
+          "draft_id": "58:2",
+          "verdict": "correct",
+          "evidence": "右側の縦長開口のアーチ状輪郭におおむね対応する。小さく細部は不鮮明。"
+        },
+        {
+          "draft_id": "58:3",
+          "verdict": "not_present",
+          "evidence": "前景の木の幹であり、独立した横梁は見えない。"
+        },
+        {
+          "draft_id": "58:4",
+          "verdict": "not_present",
+          "evidence": "屋根の後ろの尖塔はミナレット状で、煙突は見えない。"
+        },
+        {
+          "draft_id": "58:5",
+          "verdict": "not_present",
+          "evidence": "前景の木の幹であり、独立した建築柱は見えない。"
+        },
+        {
+          "draft_id": "58:6",
+          "verdict": "not_present",
+          "evidence": "左寄りの細い木の幹であり、独立した建築柱は見えない。"
+        },
+        {
+          "draft_id": "58:7",
+          "verdict": "not_present",
+          "evidence": "ドームと後陣は見えるが、屋根上の採光小屋根は見えない。"
+        },
+        {
+          "draft_id": "58:8",
+          "verdict": "spill",
+          "evidence": "屋根際を含むが後陣の壁全体まで広く覆う。"
+        },
+        {
+          "draft_id": "58:9",
+          "verdict": "wrong_label",
+          "evidence": "建物前の土と木の根を塗っており、床面ではない。"
+        },
+        {
+          "draft_id": "58:10",
+          "verdict": "spill",
+          "evidence": "壁下端を含むが後陣の壁・屋根と尖塔まで広く含む。"
+        },
+        {
+          "draft_id": "58:11",
+          "verdict": "wrong_label",
+          "evidence": "主に曲面の屋根の斜面を塗り、棟の線に沿っていない。"
+        },
+        {
+          "draft_id": "58:12",
+          "verdict": "correct",
+          "evidence": "後陣上部の曲面の屋根に沿う。"
+        },
+        {
+          "draft_id": "58:13",
+          "verdict": "correct",
+          "evidence": "複数の丸屋根・曲面屋根の見えている面をおおむね覆う。"
+        },
+        {
+          "draft_id": "58:14",
+          "verdict": "wrong_label",
+          "evidence": "左壁の細い暗い窓状開口で、鎧戸とは確認できない。"
+        },
+        {
+          "draft_id": "58:15",
+          "verdict": "wrong_label",
+          "evidence": "左上の細い窓状開口で、鎧戸とは確認できない。"
+        },
+        {
+          "draft_id": "58:16",
+          "verdict": "wrong_label",
+          "evidence": "左端の細い窓状開口で、鎧戸とは確認できない。"
+        },
+        {
+          "draft_id": "58:17",
+          "verdict": "not_present",
+          "evidence": "後陣の盲アーチ壁面を塗っており、入口階段は見えない。"
+        },
+        {
+          "draft_id": "58:18",
+          "verdict": "spill",
+          "evidence": "外壁を含むが上の屋根とミナレットまで覆う。"
+        },
+        {
+          "draft_id": "58:19",
+          "verdict": "spill",
+          "evidence": "脇の壁を含むが後陣正面・屋根まで広く覆う。"
+        },
+        {
+          "draft_id": "58:20",
+          "verdict": "correct",
+          "evidence": "右の縦長の窓状開口の区画に対応する。遮蔽と縮小で枠の細部は不鮮明。"
+        },
+        {
+          "draft_id": "58:21",
+          "verdict": "spill",
+          "evidence": "小さな窓を含むが建物全体・空・枝まで大量に覆う。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "tree_trunk",
+          "evidence": "建物前を縦に遮る二本の太い幹が見えるが、候補はbeamやcolumnとされている。"
+        },
+        {
+          "label": "ground_soil",
+          "evidence": "前景の土の地面と根が見えるが候補がない。"
+        },
+        {
+          "label": "vegetation_low",
+          "evidence": "右下の低い緑の植生が見えるが候補がない。"
+        }
+      ],
+      "building_name": "カレンデルハーネ・モスク",
+      "evidence": [
+        "タイトル・カテゴリのKalenderhane Mosqueに、石と煉瓦の帯状壁、丸屋根、張り出した多角形の後陣と尖頭の細いミナレットの配置が整合する。",
+        "前景の樹木で一部が遮られるが、後陣の縦長の盲アーチと上部のドーム状屋根が確認できる。"
+      ]
+    },
+    {
+      "asset_id": "be5e7fb9-fee4-4df1-9875-002c0f22b654",
+      "regions": [
+        {
+          "draft_id": "59:0",
+          "verdict": "correct",
+          "evidence": "左端の小さな円形渦巻き飾りに沿う。"
+        },
+        {
+          "draft_id": "59:1",
+          "verdict": "correct",
+          "evidence": "中央の楕円形紋章の装飾に沿う。"
+        },
+        {
+          "draft_id": "59:2",
+          "verdict": "correct",
+          "evidence": "右端の小さな円形渦巻き飾りに沿う。"
+        },
+        {
+          "draft_id": "59:3",
+          "verdict": "correct",
+          "evidence": "上部の半円アーチの石の輪郭におおむね沿う。"
+        },
+        {
+          "draft_id": "59:4",
+          "verdict": "correct",
+          "evidence": "半円アーチの細い外縁に沿う。"
+        },
+        {
+          "draft_id": "59:5",
+          "verdict": "wrong_label",
+          "evidence": "中央の楕円形紋章で、壁を水平に巡る帯ではない。"
+        },
+        {
+          "draft_id": "59:6",
+          "verdict": "spill",
+          "evidence": "入口上の横架材を含むが下の文字パネルや両脇の柱まで広く含む。"
+        },
+        {
+          "draft_id": "59:7",
+          "verdict": "not_present",
+          "evidence": "左の小さな渦巻き飾りであり、煙突は見えない。"
+        },
+        {
+          "draft_id": "59:8",
+          "verdict": "correct",
+          "evidence": "左端の石造柱の上部と縦材に沿う。"
+        },
+        {
+          "draft_id": "59:9",
+          "verdict": "spill",
+          "evidence": "両脇柱を含むが中央の紋章・文字パネル・上部装飾まで大きく含む。"
+        },
+        {
+          "draft_id": "59:10",
+          "verdict": "correct",
+          "evidence": "右端の石造柱の上部と縦材に沿う。"
+        },
+        {
+          "draft_id": "59:11",
+          "verdict": "not_present",
+          "evidence": "半円アーチの繰形と柱で、交互積みの隅石装飾は見えない。"
+        },
+        {
+          "draft_id": "59:12",
+          "verdict": "not_present",
+          "evidence": "中央の彫刻パネルと柱で、交互積みの隅石装飾は見えない。"
+        },
+        {
+          "draft_id": "59:13",
+          "verdict": "wrong_label",
+          "evidence": "曲線のアーチ枠で、軒や壁頂部の水平な蛇腹ではない。"
+        },
+        {
+          "draft_id": "59:14",
+          "verdict": "not_present",
+          "evidence": "文字のある装飾パネルを塗っており、扉そのものはこの画角に見えない。"
+        },
+        {
+          "draft_id": "59:15",
+          "verdict": "not_present",
+          "evidence": "半円アーチと壁面で、採光小屋根は見えない。"
+        },
+        {
+          "draft_id": "59:16",
+          "verdict": "not_present",
+          "evidence": "屋内側のアーチ装飾の接写で、屋根の軒は見えない。"
+        },
+        {
+          "draft_id": "59:17",
+          "verdict": "not_present",
+          "evidence": "装飾パネルを覆っており、フェンスは見えない。"
+        },
+        {
+          "draft_id": "59:18",
+          "verdict": "not_present",
+          "evidence": "画面下端は文字パネルと柱の続きで、床面は見えない。"
+        },
+        {
+          "draft_id": "59:19",
+          "verdict": "not_present",
+          "evidence": "半円アーチの装飾はあるが、妻端の破風飾りは見えない。"
+        },
+        {
+          "draft_id": "59:20",
+          "verdict": "not_present",
+          "evidence": "半円アーチの装飾はあるが、妻端の破風飾りは見えない。"
+        },
+        {
+          "draft_id": "59:21",
+          "verdict": "not_present",
+          "evidence": "半円アーチ上の壁面で、三角形の妻壁は見えない。"
+        },
+        {
+          "draft_id": "59:22",
+          "verdict": "not_present",
+          "evidence": "石の装飾で、木骨組の壁は見えない。"
+        },
+        {
+          "draft_id": "59:23",
+          "verdict": "not_present",
+          "evidence": "左の丸い渦巻きは石の装飾で、灯具は見えない。"
+        },
+        {
+          "draft_id": "59:24",
+          "verdict": "not_present",
+          "evidence": "上部入口装飾の接写で、接地部の基壇は見えない。"
+        },
+        {
+          "draft_id": "59:25",
+          "verdict": "not_present",
+          "evidence": "中央の紋章と文字パネルで、基壇は画角に入っていない。"
+        },
+        {
+          "draft_id": "59:26",
+          "verdict": "not_present",
+          "evidence": "彫刻パネルを塗っており、手すりは見えない。"
+        },
+        {
+          "draft_id": "59:27",
+          "verdict": "correct",
+          "evidence": "中央上部の楕円紋章と渦巻き状の石彫装飾に沿う。"
+        },
+        {
+          "draft_id": "59:28",
+          "verdict": "correct",
+          "evidence": "楕円形の紋章の浮彫に対応する。"
+        },
+        {
+          "draft_id": "59:29",
+          "verdict": "correct",
+          "evidence": "下部の金色の文字が並ぶ装飾パネルに沿う。"
+        },
+        {
+          "draft_id": "59:30",
+          "verdict": "not_present",
+          "evidence": "半円アーチの縁であり、屋根の棟は見えない。"
+        },
+        {
+          "draft_id": "59:31",
+          "verdict": "not_present",
+          "evidence": "半円アーチの縁であり、屋根の棟は見えない。"
+        },
+        {
+          "draft_id": "59:32",
+          "verdict": "not_present",
+          "evidence": "半円アーチ上の壁面で、屋根面は見えない。"
+        },
+        {
+          "draft_id": "59:33",
+          "verdict": "not_present",
+          "evidence": "アーチ周囲の壁であり、屋根面は見えない。"
+        },
+        {
+          "draft_id": "59:34",
+          "verdict": "not_present",
+          "evidence": "半円アーチ枠を塗っており、鎧戸は見えない。"
+        },
+        {
+          "draft_id": "59:35",
+          "verdict": "not_present",
+          "evidence": "文字パネルを塗っており、鎧戸は見えない。"
+        },
+        {
+          "draft_id": "59:36",
+          "verdict": "not_present",
+          "evidence": "中央の石彫装飾で、付着植物は見えない。"
+        },
+        {
+          "draft_id": "59:37",
+          "verdict": "correct",
+          "evidence": "半円アーチ周囲の漆喰壁面におおむね沿う。"
+        },
+        {
+          "draft_id": "59:38",
+          "verdict": "wrong_label",
+          "evidence": "主に正面上部の壁面で、脇の壁ではない。"
+        },
+        {
+          "draft_id": "59:39",
+          "verdict": "wrong_label",
+          "evidence": "半円アーチの外側の石の縁で、ガラス窓に直接接する枠ではない。"
+        },
+        {
+          "draft_id": "59:40",
+          "verdict": "wrong_label",
+          "evidence": "半円アーチの外縁の石材で、内側の格子開口の窓枠とは位置が異なる。"
+        },
+        {
+          "draft_id": "59:41",
+          "verdict": "correct",
+          "evidence": "半円形の上部開口のガラスと装飾格子の区画をおおむね覆う。透明性は縮小画像では不確か。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "オスマン風の半円アーチ、渦巻き彫刻と楕円形の紋章、金色の文字パネルがOrtaköy Mosqueという出典カテゴリと整合する。",
+        "入口装飾の接写だけでドーム・ミナレット・全体配置を照合できず、他のオスマン建築と区別する材料が不足するため名称は確定しない。"
+      ]
+    }
+  ]
+}

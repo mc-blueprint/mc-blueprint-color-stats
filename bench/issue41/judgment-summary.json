@@ -1,0 +1,3130 @@
+{
+  "images": {
+    "152cadd8-7323-4de2-ba65-fce95747d576": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 55,
+      "counts": {
+        "correct": 12,
+        "wrong_label": 2,
+        "spill": 14,
+        "not_present": 27
+      },
+      "rates": {
+        "correct": 0.21818181818181817,
+        "wrong_label": 0.03636363636363636,
+        "spill": 0.2545454545454545,
+        "not_present": 0.4909090909090909
+      },
+      "missed_major_parts": [
+        "band_course",
+        "wall_main"
+      ]
+    },
+    "43e514be-8b23-48a9-b70b-2f4dd2b3edf5": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 58,
+      "counts": {
+        "correct": 9,
+        "wrong_label": 4,
+        "spill": 17,
+        "not_present": 28
+      },
+      "rates": {
+        "correct": 0.15517241379310345,
+        "wrong_label": 0.06896551724137931,
+        "spill": 0.29310344827586204,
+        "not_present": 0.4827586206896552
+      },
+      "missed_major_parts": [
+        "wall_main"
+      ]
+    },
+    "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 16,
+      "counts": {
+        "correct": 8,
+        "wrong_label": 2,
+        "spill": 3,
+        "not_present": 3
+      },
+      "rates": {
+        "correct": 0.5,
+        "wrong_label": 0.125,
+        "spill": 0.1875,
+        "not_present": 0.1875
+      },
+      "missed_major_parts": [
+        "ground_grass",
+        "roof_surface",
+        "vegetation_tree_canopy",
+        "wall_main"
+      ]
+    },
+    "5fe4bf8c-bc24-4838-80b2-261f412d48e8": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 29,
+      "counts": {
+        "correct": 10,
+        "wrong_label": 3,
+        "spill": 11,
+        "not_present": 5
+      },
+      "rates": {
+        "correct": 0.3448275862068966,
+        "wrong_label": 0.10344827586206896,
+        "spill": 0.3793103448275862,
+        "not_present": 0.1724137931034483
+      },
+      "missed_major_parts": [
+        "gable_wall",
+        "roof_surface",
+        "wall_main"
+      ]
+    },
+    "78f5d063-b33b-4808-b31a-8d441737484d": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 55,
+      "counts": {
+        "correct": 18,
+        "wrong_label": 2,
+        "spill": 12,
+        "not_present": 23
+      },
+      "rates": {
+        "correct": 0.32727272727272727,
+        "wrong_label": 0.03636363636363636,
+        "spill": 0.21818181818181817,
+        "not_present": 0.41818181818181815
+      },
+      "missed_major_parts": [
+        "band_course",
+        "wall_main"
+      ]
+    },
+    "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 38,
+      "counts": {
+        "correct": 10,
+        "wrong_label": 1,
+        "spill": 15,
+        "not_present": 12
+      },
+      "rates": {
+        "correct": 0.2631578947368421,
+        "wrong_label": 0.02631578947368421,
+        "spill": 0.39473684210526316,
+        "not_present": 0.3157894736842105
+      },
+      "missed_major_parts": [
+        "relief",
+        "wall_main"
+      ]
+    },
+    "9d176920-0aac-4077-95b1-a5aef5677aac": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 31,
+      "counts": {
+        "correct": 8,
+        "wrong_label": 2,
+        "spill": 14,
+        "not_present": 7
+      },
+      "rates": {
+        "correct": 0.25806451612903225,
+        "wrong_label": 0.06451612903225806,
+        "spill": 0.45161290322580644,
+        "not_present": 0.22580645161290322
+      },
+      "missed_major_parts": [
+        "gable_wall",
+        "wall_main",
+        "window_glass"
+      ]
+    },
+    "a86f43ed-fdc4-4cea-8335-76d67291002d": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 36,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 4,
+        "spill": 2,
+        "not_present": 27
+      },
+      "rates": {
+        "correct": 0.08333333333333333,
+        "wrong_label": 0.1111111111111111,
+        "spill": 0.05555555555555555,
+        "not_present": 0.75
+      },
+      "missed_major_parts": []
+    },
+    "b2a4d9a0-a875-42c3-933e-d158784b3a69": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 34,
+      "counts": {
+        "correct": 4,
+        "wrong_label": 2,
+        "spill": 14,
+        "not_present": 14
+      },
+      "rates": {
+        "correct": 0.11764705882352941,
+        "wrong_label": 0.058823529411764705,
+        "spill": 0.4117647058823529,
+        "not_present": 0.4117647058823529
+      },
+      "missed_major_parts": [
+        "gable_wall",
+        "ground_grass",
+        "roof_surface",
+        "vegetation_tree_canopy",
+        "wall_main"
+      ]
+    },
+    "b95b59ef-83ed-41ab-a211-cbddcead59f3": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 54,
+      "counts": {
+        "correct": 18,
+        "wrong_label": 2,
+        "spill": 14,
+        "not_present": 20
+      },
+      "rates": {
+        "correct": 0.3333333333333333,
+        "wrong_label": 0.037037037037037035,
+        "spill": 0.25925925925925924,
+        "not_present": 0.37037037037037035
+      },
+      "missed_major_parts": [
+        "band_course",
+        "wall_main"
+      ]
+    },
+    "e6ebd198-c97c-4fb8-be9e-c5d25d34e219": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 42,
+      "counts": {
+        "correct": 14,
+        "wrong_label": 2,
+        "spill": 14,
+        "not_present": 12
+      },
+      "rates": {
+        "correct": 0.3333333333333333,
+        "wrong_label": 0.047619047619047616,
+        "spill": 0.3333333333333333,
+        "not_present": 0.2857142857142857
+      },
+      "missed_major_parts": []
+    },
+    "42debd18-3658-4024-83d3-70f4553022af": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 32,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 4,
+        "spill": 14,
+        "not_present": 11
+      },
+      "rates": {
+        "correct": 0.09375,
+        "wrong_label": 0.125,
+        "spill": 0.4375,
+        "not_present": 0.34375
+      },
+      "missed_major_parts": [
+        "vegetation_tree_canopy"
+      ]
+    },
+    "f15d1706-9298-420a-a52f-e5f7cc6194f1": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 32,
+      "counts": {
+        "correct": 6,
+        "wrong_label": 6,
+        "spill": 6,
+        "not_present": 14
+      },
+      "rates": {
+        "correct": 0.1875,
+        "wrong_label": 0.1875,
+        "spill": 0.1875,
+        "not_present": 0.4375
+      },
+      "missed_major_parts": [
+        "accent_other",
+        "stairs_entry"
+      ]
+    },
+    "1a77c325-feb8-4f70-8ee5-74e50b2e9dbb": {
+      "domain": "real_building",
+      "stratum": "japanese-temple",
+      "regions": 22,
+      "counts": {
+        "correct": 8,
+        "wrong_label": 8,
+        "spill": 3,
+        "not_present": 3
+      },
+      "rates": {
+        "correct": 0.36363636363636365,
+        "wrong_label": 0.36363636363636365,
+        "spill": 0.13636363636363635,
+        "not_present": 0.13636363636363635
+      },
+      "missed_major_parts": [
+        "beam",
+        "door",
+        "wall_main"
+      ]
+    },
+    "0969919d-870b-4b25-9601-4b8296cfe578": {
+      "domain": "real_building",
+      "stratum": "medieval-house",
+      "regions": 36,
+      "counts": {
+        "correct": 12,
+        "wrong_label": 10,
+        "spill": 4,
+        "not_present": 10
+      },
+      "rates": {
+        "correct": 0.3333333333333333,
+        "wrong_label": 0.2777777777777778,
+        "spill": 0.1111111111111111,
+        "not_present": 0.2777777777777778
+      },
+      "missed_major_parts": [
+        "window_glass"
+      ]
+    },
+    "dbb97cc3-14aa-440b-bd89-9d07982f4717": {
+      "domain": "real_building",
+      "stratum": "modern-house",
+      "regions": 33,
+      "counts": {
+        "correct": 7,
+        "wrong_label": 1,
+        "spill": 7,
+        "not_present": 18
+      },
+      "rates": {
+        "correct": 0.21212121212121213,
+        "wrong_label": 0.030303030303030304,
+        "spill": 0.21212121212121213,
+        "not_present": 0.5454545454545454
+      },
+      "missed_major_parts": [
+        "ground_grass",
+        "tree_trunk",
+        "vegetation_tree_canopy",
+        "wall_main"
+      ]
+    },
+    "0bec8585-bdc5-4856-9bde-8bd6b4e6e52e": {
+      "domain": "real_building",
+      "stratum": "chinese-house",
+      "regions": 28,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 5,
+        "spill": 4,
+        "not_present": 17
+      },
+      "rates": {
+        "correct": 0.07142857142857142,
+        "wrong_label": 0.17857142857142858,
+        "spill": 0.14285714285714285,
+        "not_present": 0.6071428571428571
+      },
+      "missed_major_parts": [
+        "beam",
+        "eave",
+        "plinth"
+      ]
+    },
+    "48582fbc-428f-4cac-aff7-e19e53749ecc": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 39,
+      "counts": {
+        "correct": 8,
+        "wrong_label": 4,
+        "spill": 17,
+        "not_present": 10
+      },
+      "rates": {
+        "correct": 0.20512820512820512,
+        "wrong_label": 0.10256410256410256,
+        "spill": 0.4358974358974359,
+        "not_present": 0.2564102564102564
+      },
+      "missed_major_parts": []
+    },
+    "4bb9c00c-5ea7-4902-b897-dc72a17d762e": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 30,
+      "counts": {
+        "correct": 5,
+        "wrong_label": 7,
+        "spill": 3,
+        "not_present": 15
+      },
+      "rates": {
+        "correct": 0.16666666666666666,
+        "wrong_label": 0.23333333333333334,
+        "spill": 0.1,
+        "not_present": 0.5
+      },
+      "missed_major_parts": [
+        "door",
+        "ground_grass",
+        "tree_trunk"
+      ]
+    },
+    "387e2ba9-cd21-41f5-a470-2d9b09417610": {
+      "domain": "real_building",
+      "stratum": "japanese-temple",
+      "regions": 30,
+      "counts": {
+        "correct": 5,
+        "wrong_label": 9,
+        "spill": 9,
+        "not_present": 7
+      },
+      "rates": {
+        "correct": 0.16666666666666666,
+        "wrong_label": 0.3,
+        "spill": 0.3,
+        "not_present": 0.23333333333333334
+      },
+      "missed_major_parts": [
+        "beam",
+        "light_fixture",
+        "railing",
+        "vegetation_low"
+      ]
+    },
+    "40e6cdac-535b-4852-b17c-977a2bf02fef": {
+      "domain": "real_building",
+      "stratum": "medieval-house",
+      "regions": 53,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 8,
+        "spill": 18,
+        "not_present": 26
+      },
+      "rates": {
+        "correct": 0.018867924528301886,
+        "wrong_label": 0.1509433962264151,
+        "spill": 0.33962264150943394,
+        "not_present": 0.49056603773584906
+      },
+      "missed_major_parts": []
+    },
+    "0b2cd407-bb8e-4b6b-b06e-659f7de531bb": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 41,
+      "counts": {
+        "correct": 6,
+        "wrong_label": 1,
+        "spill": 23,
+        "not_present": 11
+      },
+      "rates": {
+        "correct": 0.14634146341463414,
+        "wrong_label": 0.024390243902439025,
+        "spill": 0.5609756097560976,
+        "not_present": 0.2682926829268293
+      },
+      "missed_major_parts": []
+    },
+    "16ebd1da-48f4-4a13-bed7-26898cc25e85": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 39,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 8,
+        "spill": 1,
+        "not_present": 28
+      },
+      "rates": {
+        "correct": 0.05128205128205128,
+        "wrong_label": 0.20512820512820512,
+        "spill": 0.02564102564102564,
+        "not_present": 0.717948717948718
+      },
+      "missed_major_parts": []
+    },
+    "f9eae5ad-ae90-4127-9400-136f6bb5bc98": {
+      "domain": "real_building",
+      "stratum": "medieval-house",
+      "regions": 55,
+      "counts": {
+        "correct": 8,
+        "wrong_label": 13,
+        "spill": 27,
+        "not_present": 7
+      },
+      "rates": {
+        "correct": 0.14545454545454545,
+        "wrong_label": 0.23636363636363636,
+        "spill": 0.4909090909090909,
+        "not_present": 0.12727272727272726
+      },
+      "missed_major_parts": [
+        "gable_wall",
+        "vegetation_low"
+      ]
+    },
+    "3fcf5929-cc75-453f-a95e-7c47aa745076": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 53,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 3,
+        "spill": 16,
+        "not_present": 31
+      },
+      "rates": {
+        "correct": 0.05660377358490566,
+        "wrong_label": 0.05660377358490566,
+        "spill": 0.3018867924528302,
+        "not_present": 0.5849056603773585
+      },
+      "missed_major_parts": [
+        "ground_soil",
+        "vegetation_low"
+      ]
+    },
+    "3b1e801f-0278-430b-b2d1-47bf8e6f3c5a": {
+      "domain": "real_building",
+      "stratum": "japanese-temple",
+      "regions": 33,
+      "counts": {
+        "correct": 6,
+        "wrong_label": 5,
+        "spill": 7,
+        "not_present": 15
+      },
+      "rates": {
+        "correct": 0.18181818181818182,
+        "wrong_label": 0.15151515151515152,
+        "spill": 0.21212121212121213,
+        "not_present": 0.45454545454545453
+      },
+      "missed_major_parts": [
+        "door"
+      ]
+    },
+    "854143c0-659e-4546-9723-f00bd05e94a4": {
+      "domain": "real_building",
+      "stratum": "medieval-house",
+      "regions": 41,
+      "counts": {
+        "correct": 6,
+        "wrong_label": 3,
+        "spill": 13,
+        "not_present": 19
+      },
+      "rates": {
+        "correct": 0.14634146341463414,
+        "wrong_label": 0.07317073170731707,
+        "spill": 0.3170731707317073,
+        "not_present": 0.4634146341463415
+      },
+      "missed_major_parts": [
+        "ground_grass",
+        "tree_trunk",
+        "vegetation_tree_canopy"
+      ]
+    },
+    "2c774ca1-3139-4797-9d34-3c3bf08d3544": {
+      "domain": "real_building",
+      "stratum": "chinese-house",
+      "regions": 35,
+      "counts": {
+        "correct": 7,
+        "wrong_label": 3,
+        "spill": 11,
+        "not_present": 14
+      },
+      "rates": {
+        "correct": 0.2,
+        "wrong_label": 0.08571428571428572,
+        "spill": 0.3142857142857143,
+        "not_present": 0.4
+      },
+      "missed_major_parts": [
+        "beam"
+      ]
+    },
+    "f331a956-ff98-4a04-9083-55323fafa77e": {
+      "domain": "real_building",
+      "stratum": "japanese-temple",
+      "regions": 43,
+      "counts": {
+        "correct": 8,
+        "wrong_label": 14,
+        "spill": 4,
+        "not_present": 17
+      },
+      "rates": {
+        "correct": 0.18604651162790697,
+        "wrong_label": 0.32558139534883723,
+        "spill": 0.09302325581395349,
+        "not_present": 0.3953488372093023
+      },
+      "missed_major_parts": [
+        "column",
+        "light_fixture",
+        "railing"
+      ]
+    },
+    "3c9776c3-bb29-4e64-b583-0db13aa1bf51": {
+      "domain": "real_building",
+      "stratum": "chinese-house",
+      "regions": 29,
+      "counts": {
+        "correct": 8,
+        "wrong_label": 4,
+        "spill": 8,
+        "not_present": 9
+      },
+      "rates": {
+        "correct": 0.27586206896551724,
+        "wrong_label": 0.13793103448275862,
+        "spill": 0.27586206896551724,
+        "not_present": 0.3103448275862069
+      },
+      "missed_major_parts": [
+        "vegetation_tree_canopy"
+      ]
+    },
+    "b0a15697-a70b-4282-b5b8-a5e1e7660e48": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 36,
+      "counts": {
+        "correct": 7,
+        "wrong_label": 2,
+        "spill": 12,
+        "not_present": 15
+      },
+      "rates": {
+        "correct": 0.19444444444444445,
+        "wrong_label": 0.05555555555555555,
+        "spill": 0.3333333333333333,
+        "not_present": 0.4166666666666667
+      },
+      "missed_major_parts": [
+        "arch",
+        "band_course",
+        "gable_trim",
+        "relief",
+        "tree_trunk",
+        "vegetation_tree_canopy",
+        "wall_main",
+        "window_frame"
+      ]
+    },
+    "d6731faf-a8ff-4341-a6d3-a6f499e90bca": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 24,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 3,
+        "spill": 5,
+        "not_present": 14
+      },
+      "rates": {
+        "correct": 0.08333333333333333,
+        "wrong_label": 0.125,
+        "spill": 0.20833333333333334,
+        "not_present": 0.5833333333333334
+      },
+      "missed_major_parts": [
+        "arch",
+        "cornice",
+        "path",
+        "tree_trunk",
+        "vegetation_tree_canopy"
+      ]
+    },
+    "a895d199-82eb-4f0a-aeb8-be7cbd3e2702": {
+      "domain": "real_building",
+      "stratum": "japanese-temple",
+      "regions": 34,
+      "counts": {
+        "correct": 5,
+        "wrong_label": 6,
+        "spill": 9,
+        "not_present": 14
+      },
+      "rates": {
+        "correct": 0.14705882352941177,
+        "wrong_label": 0.17647058823529413,
+        "spill": 0.2647058823529412,
+        "not_present": 0.4117647058823529
+      },
+      "missed_major_parts": [
+        "beam",
+        "eave",
+        "floor_visible",
+        "gable_trim",
+        "ridge"
+      ]
+    },
+    "59017535-7ec5-4407-a9c8-85799c3fd173": {
+      "domain": "real_building",
+      "stratum": "medieval-house",
+      "regions": 48,
+      "counts": {
+        "correct": 13,
+        "wrong_label": 5,
+        "spill": 16,
+        "not_present": 14
+      },
+      "rates": {
+        "correct": 0.2708333333333333,
+        "wrong_label": 0.10416666666666667,
+        "spill": 0.3333333333333333,
+        "not_present": 0.2916666666666667
+      },
+      "missed_major_parts": [
+        "eave",
+        "gable_trim",
+        "gable_wall",
+        "half_timber",
+        "ridge",
+        "roof_surface",
+        "wall_main",
+        "window_frame"
+      ]
+    },
+    "914bee76-4a56-437e-9fff-eafbdbfa33e5": {
+      "domain": "real_building",
+      "stratum": "chinese-house",
+      "regions": 34,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 6,
+        "spill": 15,
+        "not_present": 11
+      },
+      "rates": {
+        "correct": 0.058823529411764705,
+        "wrong_label": 0.17647058823529413,
+        "spill": 0.4411764705882353,
+        "not_present": 0.3235294117647059
+      },
+      "missed_major_parts": [
+        "beam",
+        "column",
+        "eave",
+        "floor_visible",
+        "railing",
+        "ridge",
+        "wall_main"
+      ]
+    },
+    "673d2e20-09dc-4b9a-8765-a6e4b9e1ec0e": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 26,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 3,
+        "spill": 13,
+        "not_present": 8
+      },
+      "rates": {
+        "correct": 0.07692307692307693,
+        "wrong_label": 0.11538461538461539,
+        "spill": 0.5,
+        "not_present": 0.3076923076923077
+      },
+      "missed_major_parts": [
+        "eave",
+        "gable_trim",
+        "gable_wall",
+        "plinth",
+        "ridge",
+        "roof_surface",
+        "vegetation_tree_canopy",
+        "wall_main",
+        "window_frame"
+      ]
+    },
+    "3707541e-0b97-4643-a595-1d30e268b740": {
+      "domain": "real_building",
+      "stratum": "japanese-temple",
+      "regions": 38,
+      "counts": {
+        "correct": 10,
+        "wrong_label": 9,
+        "spill": 11,
+        "not_present": 8
+      },
+      "rates": {
+        "correct": 0.2631578947368421,
+        "wrong_label": 0.23684210526315788,
+        "spill": 0.2894736842105263,
+        "not_present": 0.21052631578947367
+      },
+      "missed_major_parts": [
+        "beam",
+        "eave",
+        "floor_visible",
+        "gable_trim",
+        "gable_wall",
+        "ridge",
+        "tree_trunk",
+        "vegetation_tree_canopy"
+      ]
+    },
+    "f3c8152c-2346-4d4d-abdd-974656bc1afb": {
+      "domain": "real_building",
+      "stratum": "medieval-house",
+      "regions": 48,
+      "counts": {
+        "correct": 12,
+        "wrong_label": 4,
+        "spill": 16,
+        "not_present": 16
+      },
+      "rates": {
+        "correct": 0.25,
+        "wrong_label": 0.08333333333333333,
+        "spill": 0.3333333333333333,
+        "not_present": 0.3333333333333333
+      },
+      "missed_major_parts": [
+        "beam",
+        "eave",
+        "half_timber",
+        "ridge",
+        "wall_main",
+        "window_frame"
+      ]
+    },
+    "a4490929-6042-4aeb-ab78-58057a0734d3": {
+      "domain": "real_building",
+      "stratum": "chinese-house",
+      "regions": 34,
+      "counts": {
+        "correct": 10,
+        "wrong_label": 5,
+        "spill": 3,
+        "not_present": 16
+      },
+      "rates": {
+        "correct": 0.29411764705882354,
+        "wrong_label": 0.14705882352941177,
+        "spill": 0.08823529411764706,
+        "not_present": 0.47058823529411764
+      },
+      "missed_major_parts": [
+        "eave",
+        "light_fixture",
+        "wall_main",
+        "wall_secondary"
+      ]
+    },
+    "b763e852-ab11-4431-adb3-1bfa0ae832ac": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 35,
+      "counts": {
+        "correct": 6,
+        "wrong_label": 0,
+        "spill": 14,
+        "not_present": 15
+      },
+      "rates": {
+        "correct": 0.17142857142857143,
+        "wrong_label": 0.0,
+        "spill": 0.4,
+        "not_present": 0.42857142857142855
+      },
+      "missed_major_parts": [
+        "arch",
+        "gable_trim",
+        "relief",
+        "wall_main",
+        "window_frame",
+        "window_glass"
+      ]
+    },
+    "d139bff8-3dee-4cbb-b89d-88dd1ec7a08c": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 12,
+      "counts": {
+        "correct": 4,
+        "wrong_label": 0,
+        "spill": 0,
+        "not_present": 8
+      },
+      "rates": {
+        "correct": 0.3333333333333333,
+        "wrong_label": 0.0,
+        "spill": 0.0,
+        "not_present": 0.6666666666666666
+      },
+      "missed_major_parts": [
+        "roof_surface",
+        "vegetation_tree_canopy",
+        "wall_main"
+      ]
+    },
+    "70368a88-5d0b-4110-a247-3cfe5a049f88": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 22,
+      "counts": {
+        "correct": 9,
+        "wrong_label": 0,
+        "spill": 1,
+        "not_present": 12
+      },
+      "rates": {
+        "correct": 0.4090909090909091,
+        "wrong_label": 0.0,
+        "spill": 0.045454545454545456,
+        "not_present": 0.5454545454545454
+      },
+      "missed_major_parts": [
+        "beam",
+        "ground_grass",
+        "railing",
+        "vegetation_tree_canopy"
+      ]
+    },
+    "7f54d2ab-574b-4cb6-91c8-e0517c963b66": {
+      "domain": "real_building",
+      "stratum": "japanese-temple",
+      "regions": 23,
+      "counts": {
+        "correct": 5,
+        "wrong_label": 1,
+        "spill": 6,
+        "not_present": 11
+      },
+      "rates": {
+        "correct": 0.21739130434782608,
+        "wrong_label": 0.043478260869565216,
+        "spill": 0.2608695652173913,
+        "not_present": 0.4782608695652174
+      },
+      "missed_major_parts": [
+        "beam",
+        "gable_trim",
+        "roof_surface",
+        "stairs_entry"
+      ]
+    },
+    "96ad64b7-ca77-4254-9e99-e3d4a87eb372": {
+      "domain": "real_building",
+      "stratum": "medieval-house",
+      "regions": 41,
+      "counts": {
+        "correct": 7,
+        "wrong_label": 6,
+        "spill": 12,
+        "not_present": 16
+      },
+      "rates": {
+        "correct": 0.17073170731707318,
+        "wrong_label": 0.14634146341463414,
+        "spill": 0.2926829268292683,
+        "not_present": 0.3902439024390244
+      },
+      "missed_major_parts": [
+        "dormer",
+        "wall_main"
+      ]
+    },
+    "26e3b86b-8deb-4244-8b60-0f487ce9ebf9": {
+      "domain": "real_building",
+      "stratum": "chinese-house",
+      "regions": 35,
+      "counts": {
+        "correct": 9,
+        "wrong_label": 10,
+        "spill": 3,
+        "not_present": 13
+      },
+      "rates": {
+        "correct": 0.2571428571428571,
+        "wrong_label": 0.2857142857142857,
+        "spill": 0.08571428571428572,
+        "not_present": 0.37142857142857144
+      },
+      "missed_major_parts": [
+        "column",
+        "railing"
+      ]
+    },
+    "14be4d6a-4eee-400e-bbc9-bb6c7da375d0": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 42,
+      "counts": {
+        "correct": 5,
+        "wrong_label": 2,
+        "spill": 15,
+        "not_present": 20
+      },
+      "rates": {
+        "correct": 0.11904761904761904,
+        "wrong_label": 0.047619047619047616,
+        "spill": 0.35714285714285715,
+        "not_present": 0.47619047619047616
+      },
+      "missed_major_parts": [
+        "relief",
+        "wall_main"
+      ]
+    },
+    "bf39a4f2-28b3-4616-a82d-232588f8b531": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 25,
+      "counts": {
+        "correct": 4,
+        "wrong_label": 4,
+        "spill": 10,
+        "not_present": 7
+      },
+      "rates": {
+        "correct": 0.16,
+        "wrong_label": 0.16,
+        "spill": 0.4,
+        "not_present": 0.28
+      },
+      "missed_major_parts": [
+        "ground_soil",
+        "plinth",
+        "roof_surface",
+        "vegetation_tree_canopy",
+        "wall_main"
+      ]
+    },
+    "4b7aa7db-6a4a-4f08-8142-9c9bdf4f7203": {
+      "domain": "real_building",
+      "stratum": "japanese-temple",
+      "regions": 28,
+      "counts": {
+        "correct": 7,
+        "wrong_label": 3,
+        "spill": 6,
+        "not_present": 12
+      },
+      "rates": {
+        "correct": 0.25,
+        "wrong_label": 0.10714285714285714,
+        "spill": 0.21428571428571427,
+        "not_present": 0.42857142857142855
+      },
+      "missed_major_parts": [
+        "beam",
+        "gable_trim",
+        "ground_soil",
+        "wall_main"
+      ]
+    },
+    "75854a4c-5c10-45f8-aceb-efd0c41352e0": {
+      "domain": "real_building",
+      "stratum": "medieval-house",
+      "regions": 55,
+      "counts": {
+        "correct": 13,
+        "wrong_label": 4,
+        "spill": 22,
+        "not_present": 16
+      },
+      "rates": {
+        "correct": 0.23636363636363636,
+        "wrong_label": 0.07272727272727272,
+        "spill": 0.4,
+        "not_present": 0.2909090909090909
+      },
+      "missed_major_parts": [
+        "gable_wall",
+        "half_timber",
+        "wall_main"
+      ]
+    },
+    "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 30,
+      "counts": {
+        "correct": 6,
+        "wrong_label": 4,
+        "spill": 13,
+        "not_present": 7
+      },
+      "rates": {
+        "correct": 0.2,
+        "wrong_label": 0.13333333333333333,
+        "spill": 0.43333333333333335,
+        "not_present": 0.23333333333333334
+      },
+      "missed_major_parts": [
+        "roof_surface",
+        "wall_main"
+      ]
+    },
+    "58c1f736-0d7a-4b0f-8eef-451d81bf0b88": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 34,
+      "counts": {
+        "correct": 7,
+        "wrong_label": 7,
+        "spill": 9,
+        "not_present": 11
+      },
+      "rates": {
+        "correct": 0.20588235294117646,
+        "wrong_label": 0.20588235294117646,
+        "spill": 0.2647058823529412,
+        "not_present": 0.3235294117647059
+      },
+      "missed_major_parts": [
+        "beam",
+        "path"
+      ]
+    },
+    "04a55453-192e-491c-b687-46db0f13c440": {
+      "domain": "real_building",
+      "stratum": "chinese-house",
+      "regions": 37,
+      "counts": {
+        "correct": 16,
+        "wrong_label": 12,
+        "spill": 4,
+        "not_present": 5
+      },
+      "rates": {
+        "correct": 0.43243243243243246,
+        "wrong_label": 0.32432432432432434,
+        "spill": 0.10810810810810811,
+        "not_present": 0.13513513513513514
+      },
+      "missed_major_parts": [
+        "vegetation_tree_canopy",
+        "water",
+        "window_frame"
+      ]
+    },
+    "3f4fea5f-b6a4-4851-90f1-9ae2e5ef6bff": {
+      "domain": "real_building",
+      "stratum": "chinese-house",
+      "regions": 35,
+      "counts": {
+        "correct": 9,
+        "wrong_label": 6,
+        "spill": 7,
+        "not_present": 13
+      },
+      "rates": {
+        "correct": 0.2571428571428571,
+        "wrong_label": 0.17142857142857143,
+        "spill": 0.2,
+        "not_present": 0.37142857142857144
+      },
+      "missed_major_parts": [
+        "beam",
+        "light_fixture",
+        "relief"
+      ]
+    },
+    "ff20b1a7-1490-4f35-81f5-54575a28da9f": {
+      "domain": "real_building",
+      "stratum": "chinese-house",
+      "regions": 54,
+      "counts": {
+        "correct": 4,
+        "wrong_label": 7,
+        "spill": 10,
+        "not_present": 33
+      },
+      "rates": {
+        "correct": 0.07407407407407407,
+        "wrong_label": 0.12962962962962962,
+        "spill": 0.18518518518518517,
+        "not_present": 0.6111111111111112
+      },
+      "missed_major_parts": [
+        "ground_grass",
+        "vegetation_tree_canopy",
+        "water"
+      ]
+    },
+    "4e1c1726-882c-4428-8179-4391275ae469": {
+      "domain": "real_building",
+      "stratum": "chinese-house",
+      "regions": 36,
+      "counts": {
+        "correct": 13,
+        "wrong_label": 9,
+        "spill": 6,
+        "not_present": 8
+      },
+      "rates": {
+        "correct": 0.3611111111111111,
+        "wrong_label": 0.25,
+        "spill": 0.16666666666666666,
+        "not_present": 0.2222222222222222
+      },
+      "missed_major_parts": [
+        "beam",
+        "eave"
+      ]
+    },
+    "5a1dabcb-511a-4b7c-8ec2-130da1732871": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 36,
+      "counts": {
+        "correct": 9,
+        "wrong_label": 4,
+        "spill": 13,
+        "not_present": 10
+      },
+      "rates": {
+        "correct": 0.25,
+        "wrong_label": 0.1111111111111111,
+        "spill": 0.3611111111111111,
+        "not_present": 0.2777777777777778
+      },
+      "missed_major_parts": []
+    },
+    "9fccd38d-e7f8-4e20-bd89-7a687161e89b": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 36,
+      "counts": {
+        "correct": 4,
+        "wrong_label": 4,
+        "spill": 17,
+        "not_present": 11
+      },
+      "rates": {
+        "correct": 0.1111111111111111,
+        "wrong_label": 0.1111111111111111,
+        "spill": 0.4722222222222222,
+        "not_present": 0.3055555555555556
+      },
+      "missed_major_parts": [
+        "door"
+      ]
+    },
+    "160954cd-7e99-4085-b14e-4e7535a89b8f": {
+      "domain": "real_building",
+      "stratum": "gothic-temple",
+      "regions": 34,
+      "counts": {
+        "correct": 6,
+        "wrong_label": 1,
+        "spill": 12,
+        "not_present": 15
+      },
+      "rates": {
+        "correct": 0.17647058823529413,
+        "wrong_label": 0.029411764705882353,
+        "spill": 0.35294117647058826,
+        "not_present": 0.4411764705882353
+      },
+      "missed_major_parts": [
+        "door"
+      ]
+    },
+    "19823cb9-3881-4336-8d0e-a9cbf1c37621": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 22,
+      "counts": {
+        "correct": 6,
+        "wrong_label": 5,
+        "spill": 5,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.2727272727272727,
+        "wrong_label": 0.22727272727272727,
+        "spill": 0.22727272727272727,
+        "not_present": 0.2727272727272727
+      },
+      "missed_major_parts": [
+        "ground_soil",
+        "tree_trunk",
+        "vegetation_low"
+      ]
+    },
+    "be5e7fb9-fee4-4df1-9875-002c0f22b654": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 42,
+      "counts": {
+        "correct": 12,
+        "wrong_label": 5,
+        "spill": 2,
+        "not_present": 23
+      },
+      "rates": {
+        "correct": 0.2857142857142857,
+        "wrong_label": 0.11904761904761904,
+        "spill": 0.047619047619047616,
+        "not_present": 0.5476190476190477
+      },
+      "missed_major_parts": []
+    },
+    "7e4b611b-fc37-4c2e-ae69-f88cb8806dcc": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 38,
+      "counts": {
+        "correct": 4,
+        "wrong_label": 7,
+        "spill": 11,
+        "not_present": 16
+      },
+      "rates": {
+        "correct": 0.10526315789473684,
+        "wrong_label": 0.18421052631578946,
+        "spill": 0.2894736842105263,
+        "not_present": 0.42105263157894735
+      },
+      "missed_major_parts": [
+        "column",
+        "roof_surface",
+        "wall_main"
+      ]
+    },
+    "379a69a4-db2c-460a-ba24-faa1273745bd": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 41,
+      "counts": {
+        "correct": 12,
+        "wrong_label": 5,
+        "spill": 13,
+        "not_present": 11
+      },
+      "rates": {
+        "correct": 0.2926829268292683,
+        "wrong_label": 0.12195121951219512,
+        "spill": 0.3170731707317073,
+        "not_present": 0.2682926829268293
+      },
+      "missed_major_parts": [
+        "column",
+        "wall_main"
+      ]
+    },
+    "87348653-ce91-4878-bc3b-3708944b6b11": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 38,
+      "counts": {
+        "correct": 10,
+        "wrong_label": 2,
+        "spill": 3,
+        "not_present": 23
+      },
+      "rates": {
+        "correct": 0.2631578947368421,
+        "wrong_label": 0.05263157894736842,
+        "spill": 0.07894736842105263,
+        "not_present": 0.6052631578947368
+      },
+      "missed_major_parts": [
+        "light_fixture",
+        "relief"
+      ]
+    },
+    "3c74d027-c729-4618-ab5f-f41b7c669445": {
+      "domain": "real_building",
+      "stratum": "islamic-temple",
+      "regions": 43,
+      "counts": {
+        "correct": 12,
+        "wrong_label": 6,
+        "spill": 6,
+        "not_present": 19
+      },
+      "rates": {
+        "correct": 0.27906976744186046,
+        "wrong_label": 0.13953488372093023,
+        "spill": 0.13953488372093023,
+        "not_present": 0.4418604651162791
+      },
+      "missed_major_parts": [
+        "arch",
+        "column",
+        "wall_main",
+        "water"
+      ]
+    },
+    "1b0d7678-9f76-4618-8dde-010302ad3f5f": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 29,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 3,
+        "spill": 12,
+        "not_present": 12
+      },
+      "rates": {
+        "correct": 0.06896551724137931,
+        "wrong_label": 0.10344827586206896,
+        "spill": 0.41379310344827586,
+        "not_present": 0.41379310344827586
+      },
+      "missed_major_parts": [
+        "roof_surface",
+        "vegetation_tree_canopy",
+        "wall_main"
+      ]
+    },
+    "0c5a381a-0e26-45d3-bd42-74773d792f7c": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 34,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 11,
+        "spill": 11,
+        "not_present": 11
+      },
+      "rates": {
+        "correct": 0.029411764705882353,
+        "wrong_label": 0.3235294117647059,
+        "spill": 0.3235294117647059,
+        "not_present": 0.3235294117647059
+      },
+      "missed_major_parts": [
+        "roof_surface",
+        "vegetation_tree_canopy",
+        "wall_main",
+        "water"
+      ]
+    },
+    "ac920479-c5b3-4965-9a1e-2b39b03e64f2": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 42,
+      "counts": {
+        "correct": 9,
+        "wrong_label": 7,
+        "spill": 10,
+        "not_present": 16
+      },
+      "rates": {
+        "correct": 0.21428571428571427,
+        "wrong_label": 0.16666666666666666,
+        "spill": 0.23809523809523808,
+        "not_present": 0.38095238095238093
+      },
+      "missed_major_parts": [
+        "ground_grass",
+        "vegetation_tree_canopy"
+      ]
+    },
+    "067f7474-79a8-4794-8c5d-b8747d54acc3": {
+      "domain": "real_building",
+      "stratum": "japanese-castle",
+      "regions": 36,
+      "counts": {
+        "correct": 8,
+        "wrong_label": 9,
+        "spill": 9,
+        "not_present": 10
+      },
+      "rates": {
+        "correct": 0.2222222222222222,
+        "wrong_label": 0.25,
+        "spill": 0.25,
+        "not_present": 0.2777777777777778
+      },
+      "missed_major_parts": [
+        "plinth",
+        "wall_main",
+        "water"
+      ]
+    },
+    "b9fb78d5-19c7-4384-80a2-c17c9f957dc2": {
+      "domain": "real_building",
+      "stratum": "japanese-temple",
+      "regions": 40,
+      "counts": {
+        "correct": 12,
+        "wrong_label": 1,
+        "spill": 10,
+        "not_present": 17
+      },
+      "rates": {
+        "correct": 0.3,
+        "wrong_label": 0.025,
+        "spill": 0.25,
+        "not_present": 0.425
+      },
+      "missed_major_parts": [
+        "beam",
+        "eave",
+        "wall_main"
+      ]
+    },
+    "047884e4-a2cf-408f-a6e7-a085ba2f363d": {
+      "domain": "real_building",
+      "stratum": "medieval-house",
+      "regions": 46,
+      "counts": {
+        "correct": 13,
+        "wrong_label": 5,
+        "spill": 11,
+        "not_present": 17
+      },
+      "rates": {
+        "correct": 0.2826086956521739,
+        "wrong_label": 0.10869565217391304,
+        "spill": 0.2391304347826087,
+        "not_present": 0.3695652173913043
+      },
+      "missed_major_parts": [
+        "gable_wall",
+        "half_timber",
+        "wall_main"
+      ]
+    },
+    "e0bc0047-3799-404b-adbf-82474f1510b9": {
+      "domain": "real_terrain",
+      "stratum": "mountains-summer-day",
+      "regions": 10,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 1,
+        "spill": 1,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.2,
+        "wrong_label": 0.1,
+        "spill": 0.1,
+        "not_present": 0.6
+      },
+      "missed_major_parts": []
+    },
+    "2a2b81a6-ebb8-4e78-8ce0-53a7a30411e7": {
+      "domain": "real_terrain",
+      "stratum": "plains-summer-day",
+      "regions": 12,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 1,
+        "spill": 2,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.25,
+        "wrong_label": 0.08333333333333333,
+        "spill": 0.16666666666666666,
+        "not_present": 0.5
+      },
+      "missed_major_parts": []
+    },
+    "b16fea9c-3ae6-4e4c-83e6-71c486c61909": {
+      "domain": "real_terrain",
+      "stratum": "snowy-winter-day",
+      "regions": 14,
+      "counts": {
+        "correct": 5,
+        "wrong_label": 0,
+        "spill": 0,
+        "not_present": 9
+      },
+      "rates": {
+        "correct": 0.35714285714285715,
+        "wrong_label": 0.0,
+        "spill": 0.0,
+        "not_present": 0.6428571428571429
+      },
+      "missed_major_parts": [
+        "roof_surface",
+        "wall_main"
+      ]
+    },
+    "390d2c1b-5025-45ad-bf05-742744627509": {
+      "domain": "real_terrain",
+      "stratum": "forest-autumn-day",
+      "regions": 18,
+      "counts": {
+        "correct": 7,
+        "wrong_label": 0,
+        "spill": 1,
+        "not_present": 10
+      },
+      "rates": {
+        "correct": 0.3888888888888889,
+        "wrong_label": 0.0,
+        "spill": 0.05555555555555555,
+        "not_present": 0.5555555555555556
+      },
+      "missed_major_parts": []
+    },
+    "c87899e8-9d00-4d2d-adfc-697f59e5bffc": {
+      "domain": "real_terrain",
+      "stratum": "plains-summer-day",
+      "regions": 10,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 2,
+        "spill": 2,
+        "not_present": 3
+      },
+      "rates": {
+        "correct": 0.3,
+        "wrong_label": 0.2,
+        "spill": 0.2,
+        "not_present": 0.3
+      },
+      "missed_major_parts": []
+    },
+    "75ba40eb-8144-43b9-9e7c-d948f70f58f7": {
+      "domain": "real_terrain",
+      "stratum": "snowy-winter-day",
+      "regions": 12,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 0,
+        "spill": 2,
+        "not_present": 7
+      },
+      "rates": {
+        "correct": 0.25,
+        "wrong_label": 0.0,
+        "spill": 0.16666666666666666,
+        "not_present": 0.5833333333333334
+      },
+      "missed_major_parts": []
+    },
+    "74ab03e8-7d5c-4d1f-8b6d-552c90ad9035": {
+      "domain": "real_terrain",
+      "stratum": "snowy-winter-day",
+      "regions": 12,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 0,
+        "spill": 1,
+        "not_present": 8
+      },
+      "rates": {
+        "correct": 0.25,
+        "wrong_label": 0.0,
+        "spill": 0.08333333333333333,
+        "not_present": 0.6666666666666666
+      },
+      "missed_major_parts": []
+    },
+    "1c8d5ee3-a534-4bd6-a64a-da22461c0ce3": {
+      "domain": "real_terrain",
+      "stratum": "desert-summer-day",
+      "regions": 11,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 1,
+        "spill": 2,
+        "not_present": 5
+      },
+      "rates": {
+        "correct": 0.2727272727272727,
+        "wrong_label": 0.09090909090909091,
+        "spill": 0.18181818181818182,
+        "not_present": 0.45454545454545453
+      },
+      "missed_major_parts": []
+    },
+    "268912c7-2dc1-44ca-91d8-0db40a9e761f": {
+      "domain": "real_terrain",
+      "stratum": "forest-autumn-day",
+      "regions": 9,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 1,
+        "spill": 0,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.2222222222222222,
+        "wrong_label": 0.1111111111111111,
+        "spill": 0.0,
+        "not_present": 0.6666666666666666
+      },
+      "missed_major_parts": [
+        "vegetation_low"
+      ]
+    },
+    "e871df57-68a8-41d7-92c3-18d6199e8b59": {
+      "domain": "real_terrain",
+      "stratum": "plains-summer-day",
+      "regions": 11,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 2,
+        "spill": 0,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.2727272727272727,
+        "wrong_label": 0.18181818181818182,
+        "spill": 0.0,
+        "not_present": 0.5454545454545454
+      },
+      "missed_major_parts": []
+    },
+    "4dcb1280-f075-4f51-aa3e-c7f7724e1dcb": {
+      "domain": "real_terrain",
+      "stratum": "desert-summer-day",
+      "regions": 12,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 4,
+        "spill": 0,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.16666666666666666,
+        "wrong_label": 0.3333333333333333,
+        "spill": 0.0,
+        "not_present": 0.5
+      },
+      "missed_major_parts": [
+        "path_natural"
+      ]
+    },
+    "50c02049-7900-4366-be07-e727819a1fed": {
+      "domain": "real_terrain",
+      "stratum": "forest-autumn-day",
+      "regions": 11,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 1,
+        "spill": 2,
+        "not_present": 5
+      },
+      "rates": {
+        "correct": 0.2727272727272727,
+        "wrong_label": 0.09090909090909091,
+        "spill": 0.18181818181818182,
+        "not_present": 0.45454545454545453
+      },
+      "missed_major_parts": [
+        "tree_trunk"
+      ]
+    },
+    "b084f6a0-0be8-49c3-8634-a2d127e59fcf": {
+      "domain": "real_terrain",
+      "stratum": "mountains-summer-day",
+      "regions": 11,
+      "counts": {
+        "correct": 4,
+        "wrong_label": 1,
+        "spill": 0,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.36363636363636365,
+        "wrong_label": 0.09090909090909091,
+        "spill": 0.0,
+        "not_present": 0.5454545454545454
+      },
+      "missed_major_parts": [
+        "fence",
+        "path"
+      ]
+    },
+    "f17e0c67-58ab-46ee-ab2f-cee1211fe94e": {
+      "domain": "real_terrain",
+      "stratum": "plains-summer-day",
+      "regions": 11,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 0,
+        "spill": 3,
+        "not_present": 5
+      },
+      "rates": {
+        "correct": 0.2727272727272727,
+        "wrong_label": 0.0,
+        "spill": 0.2727272727272727,
+        "not_present": 0.45454545454545453
+      },
+      "missed_major_parts": []
+    },
+    "d925fa2e-6863-4e3f-a38b-6b815ddd9930": {
+      "domain": "real_terrain",
+      "stratum": "mountains-summer-day",
+      "regions": 14,
+      "counts": {
+        "correct": 4,
+        "wrong_label": 3,
+        "spill": 2,
+        "not_present": 5
+      },
+      "rates": {
+        "correct": 0.2857142857142857,
+        "wrong_label": 0.21428571428571427,
+        "spill": 0.14285714285714285,
+        "not_present": 0.35714285714285715
+      },
+      "missed_major_parts": [
+        "snow_ice"
+      ]
+    },
+    "6f80a29e-5fda-43eb-92c2-864eccd6c4ed": {
+      "domain": "real_terrain",
+      "stratum": "plains-summer-day",
+      "regions": 11,
+      "counts": {
+        "correct": 5,
+        "wrong_label": 0,
+        "spill": 0,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.45454545454545453,
+        "wrong_label": 0.0,
+        "spill": 0.0,
+        "not_present": 0.5454545454545454
+      },
+      "missed_major_parts": []
+    },
+    "2354e33e-1798-443d-8478-4dfc02ce52cf": {
+      "domain": "real_terrain",
+      "stratum": "snowy-winter-day",
+      "regions": 13,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 2,
+        "spill": 2,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.23076923076923078,
+        "wrong_label": 0.15384615384615385,
+        "spill": 0.15384615384615385,
+        "not_present": 0.46153846153846156
+      },
+      "missed_major_parts": []
+    },
+    "453c3ef0-07ae-4ec5-a8c2-eb7bc884dc9a": {
+      "domain": "real_terrain",
+      "stratum": "desert-summer-day",
+      "regions": 16,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 1,
+        "spill": 3,
+        "not_present": 10
+      },
+      "rates": {
+        "correct": 0.125,
+        "wrong_label": 0.0625,
+        "spill": 0.1875,
+        "not_present": 0.625
+      },
+      "missed_major_parts": []
+    },
+    "c769314c-15b6-4945-9089-242e31a6b431": {
+      "domain": "real_terrain",
+      "stratum": "desert-summer-day",
+      "regions": 11,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 2,
+        "spill": 1,
+        "not_present": 7
+      },
+      "rates": {
+        "correct": 0.09090909090909091,
+        "wrong_label": 0.18181818181818182,
+        "spill": 0.09090909090909091,
+        "not_present": 0.6363636363636364
+      },
+      "missed_major_parts": [
+        "sand"
+      ]
+    },
+    "eda96dec-7a0e-473c-ad97-e4546d8e0d92": {
+      "domain": "real_terrain",
+      "stratum": "desert-summer-day",
+      "regions": 10,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 0,
+        "spill": 1,
+        "not_present": 7
+      },
+      "rates": {
+        "correct": 0.2,
+        "wrong_label": 0.0,
+        "spill": 0.1,
+        "not_present": 0.7
+      },
+      "missed_major_parts": []
+    },
+    "3af9b8d9-a05d-4eeb-b960-0ee6db1af809": {
+      "domain": "real_terrain",
+      "stratum": "desert-summer-day",
+      "regions": 18,
+      "counts": {
+        "correct": 4,
+        "wrong_label": 1,
+        "spill": 1,
+        "not_present": 12
+      },
+      "rates": {
+        "correct": 0.2222222222222222,
+        "wrong_label": 0.05555555555555555,
+        "spill": 0.05555555555555555,
+        "not_present": 0.6666666666666666
+      },
+      "missed_major_parts": []
+    },
+    "491555cc-d4ec-4bd8-9e4f-e41ea603aaff": {
+      "domain": "real_terrain",
+      "stratum": "forest-autumn-day",
+      "regions": 14,
+      "counts": {
+        "correct": 5,
+        "wrong_label": 2,
+        "spill": 0,
+        "not_present": 7
+      },
+      "rates": {
+        "correct": 0.35714285714285715,
+        "wrong_label": 0.14285714285714285,
+        "spill": 0.0,
+        "not_present": 0.5
+      },
+      "missed_major_parts": []
+    },
+    "acd2822b-d35e-4e7c-94d1-33d649be7007": {
+      "domain": "real_terrain",
+      "stratum": "forest-autumn-day",
+      "regions": 8,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 0,
+        "spill": 0,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.25,
+        "wrong_label": 0.0,
+        "spill": 0.0,
+        "not_present": 0.75
+      },
+      "missed_major_parts": []
+    },
+    "97fa50a7-e283-4975-a3f7-d10c11bfd234": {
+      "domain": "real_terrain",
+      "stratum": "forest-autumn-day",
+      "regions": 12,
+      "counts": {
+        "correct": 2,
+        "wrong_label": 1,
+        "spill": 1,
+        "not_present": 8
+      },
+      "rates": {
+        "correct": 0.16666666666666666,
+        "wrong_label": 0.08333333333333333,
+        "spill": 0.08333333333333333,
+        "not_present": 0.6666666666666666
+      },
+      "missed_major_parts": [
+        "path"
+      ]
+    },
+    "16bcbb47-9b41-4ff2-8f8d-4631e05b49ee": {
+      "domain": "real_terrain",
+      "stratum": "mountains-summer-day",
+      "regions": 10,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 0,
+        "spill": 6,
+        "not_present": 1
+      },
+      "rates": {
+        "correct": 0.3,
+        "wrong_label": 0.0,
+        "spill": 0.6,
+        "not_present": 0.1
+      },
+      "missed_major_parts": []
+    },
+    "15633280-9c10-442c-8606-65757d5bbf02": {
+      "domain": "real_terrain",
+      "stratum": "mountains-summer-day",
+      "regions": 12,
+      "counts": {
+        "correct": 4,
+        "wrong_label": 1,
+        "spill": 1,
+        "not_present": 6
+      },
+      "rates": {
+        "correct": 0.3333333333333333,
+        "wrong_label": 0.08333333333333333,
+        "spill": 0.08333333333333333,
+        "not_present": 0.5
+      },
+      "missed_major_parts": [
+        "fence"
+      ]
+    },
+    "6f578009-ac0d-448b-b812-014874d03257": {
+      "domain": "real_terrain",
+      "stratum": "mountains-summer-day",
+      "regions": 13,
+      "counts": {
+        "correct": 0,
+        "wrong_label": 0,
+        "spill": 3,
+        "not_present": 10
+      },
+      "rates": {
+        "correct": 0.0,
+        "wrong_label": 0.0,
+        "spill": 0.23076923076923078,
+        "not_present": 0.7692307692307693
+      },
+      "missed_major_parts": []
+    },
+    "7e83f9a3-fa47-470b-82a4-e5a7ac2e7742": {
+      "domain": "real_terrain",
+      "stratum": "plains-summer-day",
+      "regions": 13,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 1,
+        "spill": 1,
+        "not_present": 8
+      },
+      "rates": {
+        "correct": 0.23076923076923078,
+        "wrong_label": 0.07692307692307693,
+        "spill": 0.07692307692307693,
+        "not_present": 0.6153846153846154
+      },
+      "missed_major_parts": []
+    },
+    "0fbe3f50-b64f-4733-bd11-1f352cfc8e19": {
+      "domain": "real_terrain",
+      "stratum": "snowy-winter-day",
+      "regions": 8,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 0,
+        "spill": 3,
+        "not_present": 4
+      },
+      "rates": {
+        "correct": 0.125,
+        "wrong_label": 0.0,
+        "spill": 0.375,
+        "not_present": 0.5
+      },
+      "missed_major_parts": [
+        "vegetation_tree_canopy"
+      ]
+    },
+    "8281076e-ce63-46f2-8cc8-fd4da401523f": {
+      "domain": "real_terrain",
+      "stratum": "snowy-winter-day",
+      "regions": 12,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 1,
+        "spill": 3,
+        "not_present": 7
+      },
+      "rates": {
+        "correct": 0.08333333333333333,
+        "wrong_label": 0.08333333333333333,
+        "spill": 0.25,
+        "not_present": 0.5833333333333334
+      },
+      "missed_major_parts": []
+    }
+  },
+  "overall": {
+    "regions": 2934,
+    "counts": {
+      "correct": 620,
+      "wrong_label": 364,
+      "spill": 752,
+      "not_present": 1198
+    },
+    "rates": {
+      "correct": 0.2113156100886162,
+      "wrong_label": 0.12406271301976823,
+      "spill": 0.256305385139741,
+      "not_present": 0.40831629175187456
+    }
+  },
+  "labels": {
+    "accent_other": {
+      "regions": 92,
+      "counts": {
+        "correct": 38,
+        "wrong_label": 23,
+        "spill": 29,
+        "not_present": 2
+      },
+      "rates": {
+        "correct": 0.41304347826086957,
+        "wrong_label": 0.25,
+        "spill": 0.31521739130434784,
+        "not_present": 0.021739130434782608
+      }
+    },
+    "arch": {
+      "regions": 106,
+      "counts": {
+        "correct": 20,
+        "wrong_label": 12,
+        "spill": 26,
+        "not_present": 48
+      },
+      "rates": {
+        "correct": 0.18867924528301888,
+        "wrong_label": 0.11320754716981132,
+        "spill": 0.24528301886792453,
+        "not_present": 0.4528301886792453
+      }
+    },
+    "band_course": {
+      "regions": 57,
+      "counts": {
+        "correct": 0,
+        "wrong_label": 12,
+        "spill": 35,
+        "not_present": 10
+      },
+      "rates": {
+        "correct": 0.0,
+        "wrong_label": 0.21052631578947367,
+        "spill": 0.6140350877192983,
+        "not_present": 0.17543859649122806
+      }
+    },
+    "beam": {
+      "regions": 49,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 11,
+        "spill": 15,
+        "not_present": 22
+      },
+      "rates": {
+        "correct": 0.02040816326530612,
+        "wrong_label": 0.22448979591836735,
+        "spill": 0.30612244897959184,
+        "not_present": 0.4489795918367347
+      }
+    },
+    "chimney": {
+      "regions": 86,
+      "counts": {
+        "correct": 10,
+        "wrong_label": 0,
+        "spill": 1,
+        "not_present": 75
+      },
+      "rates": {
+        "correct": 0.11627906976744186,
+        "wrong_label": 0.0,
+        "spill": 0.011627906976744186,
+        "not_present": 0.872093023255814
+      }
+    },
+    "column": {
+      "regions": 143,
+      "counts": {
+        "correct": 66,
+        "wrong_label": 32,
+        "spill": 20,
+        "not_present": 25
+      },
+      "rates": {
+        "correct": 0.46153846153846156,
+        "wrong_label": 0.22377622377622378,
+        "spill": 0.13986013986013987,
+        "not_present": 0.17482517482517482
+      }
+    },
+    "corner_quoin": {
+      "regions": 84,
+      "counts": {
+        "correct": 0,
+        "wrong_label": 4,
+        "spill": 15,
+        "not_present": 65
+      },
+      "rates": {
+        "correct": 0.0,
+        "wrong_label": 0.047619047619047616,
+        "spill": 0.17857142857142858,
+        "not_present": 0.7738095238095238
+      }
+    },
+    "cornice": {
+      "regions": 71,
+      "counts": {
+        "correct": 0,
+        "wrong_label": 13,
+        "spill": 46,
+        "not_present": 12
+      },
+      "rates": {
+        "correct": 0.0,
+        "wrong_label": 0.18309859154929578,
+        "spill": 0.647887323943662,
+        "not_present": 0.16901408450704225
+      }
+    },
+    "door": {
+      "regions": 62,
+      "counts": {
+        "correct": 41,
+        "wrong_label": 9,
+        "spill": 1,
+        "not_present": 11
+      },
+      "rates": {
+        "correct": 0.6612903225806451,
+        "wrong_label": 0.14516129032258066,
+        "spill": 0.016129032258064516,
+        "not_present": 0.1774193548387097
+      }
+    },
+    "dormer": {
+      "regions": 101,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 5,
+        "spill": 5,
+        "not_present": 90
+      },
+      "rates": {
+        "correct": 0.009900990099009901,
+        "wrong_label": 0.04950495049504951,
+        "spill": 0.04950495049504951,
+        "not_present": 0.8910891089108911
+      }
+    },
+    "eave": {
+      "regions": 91,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 9,
+        "spill": 69,
+        "not_present": 10
+      },
+      "rates": {
+        "correct": 0.03296703296703297,
+        "wrong_label": 0.0989010989010989,
+        "spill": 0.7582417582417582,
+        "not_present": 0.10989010989010989
+      }
+    },
+    "fence": {
+      "regions": 68,
+      "counts": {
+        "correct": 9,
+        "wrong_label": 14,
+        "spill": 1,
+        "not_present": 44
+      },
+      "rates": {
+        "correct": 0.1323529411764706,
+        "wrong_label": 0.20588235294117646,
+        "spill": 0.014705882352941176,
+        "not_present": 0.6470588235294118
+      }
+    },
+    "floor_visible": {
+      "regions": 73,
+      "counts": {
+        "correct": 25,
+        "wrong_label": 25,
+        "spill": 3,
+        "not_present": 20
+      },
+      "rates": {
+        "correct": 0.3424657534246575,
+        "wrong_label": 0.3424657534246575,
+        "spill": 0.0410958904109589,
+        "not_present": 0.273972602739726
+      }
+    },
+    "gable_trim": {
+      "regions": 67,
+      "counts": {
+        "correct": 0,
+        "wrong_label": 4,
+        "spill": 29,
+        "not_present": 34
+      },
+      "rates": {
+        "correct": 0.0,
+        "wrong_label": 0.05970149253731343,
+        "spill": 0.43283582089552236,
+        "not_present": 0.5074626865671642
+      }
+    },
+    "gable_wall": {
+      "regions": 59,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 8,
+        "spill": 20,
+        "not_present": 30
+      },
+      "rates": {
+        "correct": 0.01694915254237288,
+        "wrong_label": 0.13559322033898305,
+        "spill": 0.3389830508474576,
+        "not_present": 0.5084745762711864
+      }
+    },
+    "ground_grass": {
+      "regions": 33,
+      "counts": {
+        "correct": 11,
+        "wrong_label": 1,
+        "spill": 4,
+        "not_present": 17
+      },
+      "rates": {
+        "correct": 0.3333333333333333,
+        "wrong_label": 0.030303030303030304,
+        "spill": 0.12121212121212122,
+        "not_present": 0.5151515151515151
+      }
+    },
+    "ground_soil": {
+      "regions": 31,
+      "counts": {
+        "correct": 5,
+        "wrong_label": 5,
+        "spill": 8,
+        "not_present": 13
+      },
+      "rates": {
+        "correct": 0.16129032258064516,
+        "wrong_label": 0.16129032258064516,
+        "spill": 0.25806451612903225,
+        "not_present": 0.41935483870967744
+      }
+    },
+    "half_timber": {
+      "regions": 69,
+      "counts": {
+        "correct": 0,
+        "wrong_label": 0,
+        "spill": 10,
+        "not_present": 59
+      },
+      "rates": {
+        "correct": 0.0,
+        "wrong_label": 0.0,
+        "spill": 0.14492753623188406,
+        "not_present": 0.855072463768116
+      }
+    },
+    "light_fixture": {
+      "regions": 65,
+      "counts": {
+        "correct": 36,
+        "wrong_label": 10,
+        "spill": 1,
+        "not_present": 18
+      },
+      "rates": {
+        "correct": 0.5538461538461539,
+        "wrong_label": 0.15384615384615385,
+        "spill": 0.015384615384615385,
+        "not_present": 0.27692307692307694
+      }
+    },
+    "path": {
+      "regions": 62,
+      "counts": {
+        "correct": 37,
+        "wrong_label": 8,
+        "spill": 3,
+        "not_present": 14
+      },
+      "rates": {
+        "correct": 0.5967741935483871,
+        "wrong_label": 0.12903225806451613,
+        "spill": 0.04838709677419355,
+        "not_present": 0.22580645161290322
+      }
+    },
+    "path_natural": {
+      "regions": 26,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 1,
+        "spill": 1,
+        "not_present": 21
+      },
+      "rates": {
+        "correct": 0.11538461538461539,
+        "wrong_label": 0.038461538461538464,
+        "spill": 0.038461538461538464,
+        "not_present": 0.8076923076923077
+      }
+    },
+    "plinth": {
+      "regions": 74,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 14,
+        "spill": 51,
+        "not_present": 8
+      },
+      "rates": {
+        "correct": 0.013513513513513514,
+        "wrong_label": 0.1891891891891892,
+        "spill": 0.6891891891891891,
+        "not_present": 0.10810810810810811
+      }
+    },
+    "railing": {
+      "regions": 44,
+      "counts": {
+        "correct": 9,
+        "wrong_label": 7,
+        "spill": 4,
+        "not_present": 24
+      },
+      "rates": {
+        "correct": 0.20454545454545456,
+        "wrong_label": 0.1590909090909091,
+        "spill": 0.09090909090909091,
+        "not_present": 0.5454545454545454
+      }
+    },
+    "relief": {
+      "regions": 84,
+      "counts": {
+        "correct": 9,
+        "wrong_label": 14,
+        "spill": 23,
+        "not_present": 38
+      },
+      "rates": {
+        "correct": 0.10714285714285714,
+        "wrong_label": 0.16666666666666666,
+        "spill": 0.27380952380952384,
+        "not_present": 0.4523809523809524
+      }
+    },
+    "ridge": {
+      "regions": 109,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 22,
+        "spill": 55,
+        "not_present": 29
+      },
+      "rates": {
+        "correct": 0.027522935779816515,
+        "wrong_label": 0.2018348623853211,
+        "spill": 0.5045871559633027,
+        "not_present": 0.26605504587155965
+      }
+    },
+    "rock_face": {
+      "regions": 32,
+      "counts": {
+        "correct": 5,
+        "wrong_label": 2,
+        "spill": 8,
+        "not_present": 17
+      },
+      "rates": {
+        "correct": 0.15625,
+        "wrong_label": 0.0625,
+        "spill": 0.25,
+        "not_present": 0.53125
+      }
+    },
+    "rock_scree": {
+      "regions": 31,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 3,
+        "spill": 5,
+        "not_present": 22
+      },
+      "rates": {
+        "correct": 0.03225806451612903,
+        "wrong_label": 0.0967741935483871,
+        "spill": 0.16129032258064516,
+        "not_present": 0.7096774193548387
+      }
+    },
+    "roof_surface": {
+      "regions": 117,
+      "counts": {
+        "correct": 69,
+        "wrong_label": 10,
+        "spill": 24,
+        "not_present": 14
+      },
+      "rates": {
+        "correct": 0.5897435897435898,
+        "wrong_label": 0.08547008547008547,
+        "spill": 0.20512820512820512,
+        "not_present": 0.11965811965811966
+      }
+    },
+    "sand": {
+      "regions": 29,
+      "counts": {
+        "correct": 3,
+        "wrong_label": 1,
+        "spill": 2,
+        "not_present": 23
+      },
+      "rates": {
+        "correct": 0.10344827586206896,
+        "wrong_label": 0.034482758620689655,
+        "spill": 0.06896551724137931,
+        "not_present": 0.7931034482758621
+      }
+    },
+    "shutter": {
+      "regions": 192,
+      "counts": {
+        "correct": 11,
+        "wrong_label": 18,
+        "spill": 2,
+        "not_present": 161
+      },
+      "rates": {
+        "correct": 0.057291666666666664,
+        "wrong_label": 0.09375,
+        "spill": 0.010416666666666666,
+        "not_present": 0.8385416666666666
+      }
+    },
+    "snow_ice": {
+      "regions": 43,
+      "counts": {
+        "correct": 7,
+        "wrong_label": 2,
+        "spill": 5,
+        "not_present": 29
+      },
+      "rates": {
+        "correct": 0.16279069767441862,
+        "wrong_label": 0.046511627906976744,
+        "spill": 0.11627906976744186,
+        "not_present": 0.6744186046511628
+      }
+    },
+    "stairs_entry": {
+      "regions": 43,
+      "counts": {
+        "correct": 19,
+        "wrong_label": 5,
+        "spill": 3,
+        "not_present": 16
+      },
+      "rates": {
+        "correct": 0.4418604651162791,
+        "wrong_label": 0.11627906976744186,
+        "spill": 0.06976744186046512,
+        "not_present": 0.37209302325581395
+      }
+    },
+    "tree_trunk": {
+      "regions": 29,
+      "counts": {
+        "correct": 11,
+        "wrong_label": 4,
+        "spill": 2,
+        "not_present": 12
+      },
+      "rates": {
+        "correct": 0.3793103448275862,
+        "wrong_label": 0.13793103448275862,
+        "spill": 0.06896551724137931,
+        "not_present": 0.41379310344827586
+      }
+    },
+    "vegetation_attached": {
+      "regions": 88,
+      "counts": {
+        "correct": 1,
+        "wrong_label": 6,
+        "spill": 1,
+        "not_present": 80
+      },
+      "rates": {
+        "correct": 0.011363636363636364,
+        "wrong_label": 0.06818181818181818,
+        "spill": 0.011363636363636364,
+        "not_present": 0.9090909090909091
+      }
+    },
+    "vegetation_low": {
+      "regions": 37,
+      "counts": {
+        "correct": 16,
+        "wrong_label": 4,
+        "spill": 5,
+        "not_present": 12
+      },
+      "rates": {
+        "correct": 0.43243243243243246,
+        "wrong_label": 0.10810810810810811,
+        "spill": 0.13513513513513514,
+        "not_present": 0.32432432432432434
+      }
+    },
+    "vegetation_tree_canopy": {
+      "regions": 41,
+      "counts": {
+        "correct": 20,
+        "wrong_label": 6,
+        "spill": 4,
+        "not_present": 11
+      },
+      "rates": {
+        "correct": 0.4878048780487805,
+        "wrong_label": 0.14634146341463414,
+        "spill": 0.0975609756097561,
+        "not_present": 0.2682926829268293
+      }
+    },
+    "wall_main": {
+      "regions": 86,
+      "counts": {
+        "correct": 19,
+        "wrong_label": 3,
+        "spill": 63,
+        "not_present": 1
+      },
+      "rates": {
+        "correct": 0.22093023255813954,
+        "wrong_label": 0.03488372093023256,
+        "spill": 0.7325581395348837,
+        "not_present": 0.011627906976744186
+      }
+    },
+    "wall_secondary": {
+      "regions": 83,
+      "counts": {
+        "correct": 6,
+        "wrong_label": 9,
+        "spill": 66,
+        "not_present": 2
+      },
+      "rates": {
+        "correct": 0.07228915662650602,
+        "wrong_label": 0.10843373493975904,
+        "spill": 0.7951807228915663,
+        "not_present": 0.024096385542168676
+      }
+    },
+    "water": {
+      "regions": 27,
+      "counts": {
+        "correct": 6,
+        "wrong_label": 0,
+        "spill": 0,
+        "not_present": 21
+      },
+      "rates": {
+        "correct": 0.2222222222222222,
+        "wrong_label": 0.0,
+        "spill": 0.0,
+        "not_present": 0.7777777777777778
+      }
+    },
+    "window_frame": {
+      "regions": 159,
+      "counts": {
+        "correct": 55,
+        "wrong_label": 19,
+        "spill": 70,
+        "not_present": 15
+      },
+      "rates": {
+        "correct": 0.34591194968553457,
+        "wrong_label": 0.11949685534591195,
+        "spill": 0.44025157232704404,
+        "not_present": 0.09433962264150944
+      }
+    },
+    "window_glass": {
+      "regions": 91,
+      "counts": {
+        "correct": 42,
+        "wrong_label": 9,
+        "spill": 17,
+        "not_present": 23
+      },
+      "rates": {
+        "correct": 0.46153846153846156,
+        "wrong_label": 0.0989010989010989,
+        "spill": 0.18681318681318682,
+        "not_present": 0.25274725274725274
+      }
+    }
+  },
+  "domains": {
+    "real_building": {
+      "images": 70,
+      "regions": 2575,
+      "counts": {
+        "correct": 532,
+        "wrong_label": 335,
+        "spill": 708,
+        "not_present": 1000
+      },
+      "rates": {
+        "correct": 0.20660194174757282,
+        "wrong_label": 0.13009708737864079,
+        "spill": 0.27495145631067963,
+        "not_present": 0.3883495145631068
+      }
+    },
+    "real_terrain": {
+      "images": 30,
+      "regions": 359,
+      "counts": {
+        "correct": 88,
+        "wrong_label": 29,
+        "spill": 44,
+        "not_present": 198
+      },
+      "rates": {
+        "correct": 0.24512534818941503,
+        "wrong_label": 0.0807799442896936,
+        "spill": 0.12256267409470752,
+        "not_present": 0.5515320334261838
+      }
+    }
+  },
+  "missed_major_parts": {
+    "accent_other": 1,
+    "arch": 4,
+    "band_course": 4,
+    "beam": 15,
+    "column": 6,
+    "cornice": 1,
+    "door": 5,
+    "dormer": 1,
+    "eave": 10,
+    "fence": 2,
+    "floor_visible": 3,
+    "gable_trim": 8,
+    "gable_wall": 9,
+    "ground_grass": 8,
+    "ground_soil": 4,
+    "half_timber": 4,
+    "light_fixture": 5,
+    "path": 4,
+    "path_natural": 1,
+    "plinth": 4,
+    "railing": 5,
+    "relief": 6,
+    "ridge": 6,
+    "roof_surface": 13,
+    "sand": 1,
+    "snow_ice": 1,
+    "stairs_entry": 2,
+    "tree_trunk": 8,
+    "vegetation_low": 5,
+    "vegetation_tree_canopy": 19,
+    "wall_main": 34,
+    "wall_secondary": 1,
+    "water": 5,
+    "window_frame": 6,
+    "window_glass": 3
+  },
+  "repeat": {
+    "verdict": {
+      "matches": 261,
+      "total": 310,
+      "rate": 0.8419354838709677
+    },
+    "missed_major_parts": {
+      "matches": 3,
+      "total": 10,
+      "rate": 0.3
+    },
+    "building_name": {
+      "matches": 8,
+      "total": 10,
+      "rate": 0.8
+    },
+    "images": {
+      "152cadd8-7323-4de2-ba65-fce95747d576": {
+        "verdict": {
+          "matches": 47,
+          "total": 55,
+          "rate": 0.8545454545454545
+        },
+        "missed_major_parts_equal": false,
+        "building_name_equal": true
+      },
+      "e6ebd198-c97c-4fb8-be9e-c5d25d34e219": {
+        "verdict": {
+          "matches": 36,
+          "total": 42,
+          "rate": 0.8571428571428571
+        },
+        "missed_major_parts_equal": false,
+        "building_name_equal": false
+      },
+      "40e6cdac-535b-4852-b17c-977a2bf02fef": {
+        "verdict": {
+          "matches": 45,
+          "total": 53,
+          "rate": 0.8490566037735849
+        },
+        "missed_major_parts_equal": false,
+        "building_name_equal": true
+      },
+      "b0a15697-a70b-4282-b5b8-a5e1e7660e48": {
+        "verdict": {
+          "matches": 33,
+          "total": 36,
+          "rate": 0.9166666666666666
+        },
+        "missed_major_parts_equal": false,
+        "building_name_equal": false
+      },
+      "d139bff8-3dee-4cbb-b89d-88dd1ec7a08c": {
+        "verdict": {
+          "matches": 10,
+          "total": 12,
+          "rate": 0.8333333333333334
+        },
+        "missed_major_parts_equal": true,
+        "building_name_equal": true
+      },
+      "58c1f736-0d7a-4b0f-8eef-451d81bf0b88": {
+        "verdict": {
+          "matches": 27,
+          "total": 34,
+          "rate": 0.7941176470588235
+        },
+        "missed_major_parts_equal": false,
+        "building_name_equal": true
+      },
+      "7e4b611b-fc37-4c2e-ae69-f88cb8806dcc": {
+        "verdict": {
+          "matches": 27,
+          "total": 38,
+          "rate": 0.7105263157894737
+        },
+        "missed_major_parts_equal": false,
+        "building_name_equal": true
+      },
+      "e0bc0047-3799-404b-adbf-82474f1510b9": {
+        "verdict": {
+          "matches": 10,
+          "total": 10,
+          "rate": 1.0
+        },
+        "missed_major_parts_equal": true,
+        "building_name_equal": true
+      },
+      "4dcb1280-f075-4f51-aa3e-c7f7724e1dcb": {
+        "verdict": {
+          "matches": 9,
+          "total": 12,
+          "rate": 0.75
+        },
+        "missed_major_parts_equal": false,
+        "building_name_equal": true
+      },
+      "3af9b8d9-a05d-4eeb-b960-0ee6db1af809": {
+        "verdict": {
+          "matches": 17,
+          "total": 18,
+          "rate": 0.9444444444444444
+        },
+        "missed_major_parts_equal": true,
+        "building_name_equal": true
+      }
+    }
+  },
+  "identity": {
+    "named_images": 49,
+    "distinct_names": 42,
+    "repeated_groups": [
+      {
+        "building_name": "ストラスブール大聖堂",
+        "asset_ids": [
+          "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+          "a86f43ed-fdc4-4cea-8335-76d67291002d"
+        ]
+      },
+      {
+        "building_name": "レオン大聖堂",
+        "asset_ids": [
+          "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+          "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01"
+        ]
+      },
+      {
+        "building_name": "岩のドーム",
+        "asset_ids": [
+          "152cadd8-7323-4de2-ba65-fce95747d576",
+          "78f5d063-b33b-4808-b31a-8d441737484d",
+          "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+        ]
+      },
+      {
+        "building_name": "掛川城天守",
+        "asset_ids": [
+          "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+          "b2a4d9a0-a875-42c3-933e-d158784b3a69"
+        ]
+      },
+      {
+        "building_name": "聖パウルス大聖堂（ミュンスター）",
+        "asset_ids": [
+          "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+          "9d176920-0aac-4077-95b1-a5aef5677aac"
+        ]
+      },
+      {
+        "building_name": "聖ヴィクトル教会（デュルメン）",
+        "asset_ids": [
+          "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+          "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+        ]
+      }
+    ],
+    "candidate_groups": [
+      {
+        "building_id": "dome-of-the-rock",
+        "asset_ids": [
+          "152cadd8-7323-4de2-ba65-fce95747d576",
+          "78f5d063-b33b-4808-b31a-8d441737484d",
+          "b95b59ef-83ed-41ab-a211-cbddcead59f3"
+        ],
+        "comparisons": {
+          "match": 3
+        }
+      },
+      {
+        "building_id": "duelmen-st-viktor",
+        "asset_ids": [
+          "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+          "e6ebd198-c97c-4fb8-be9e-c5d25d34e219"
+        ],
+        "comparisons": {
+          "match": 2
+        }
+      },
+      {
+        "building_id": "huaiyuan-lou",
+        "asset_ids": [
+          "26e3b86b-8deb-4244-8b60-0f487ce9ebf9",
+          "914bee76-4a56-437e-9fff-eafbdbfa33e5"
+        ],
+        "comparisons": {
+          "unresolved": 2
+        }
+      },
+      {
+        "building_id": "kakegawa-keep",
+        "asset_ids": [
+          "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+          "b2a4d9a0-a875-42c3-933e-d158784b3a69"
+        ],
+        "comparisons": {
+          "match": 2
+        }
+      },
+      {
+        "building_id": "leon-cathedral-west",
+        "asset_ids": [
+          "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+          "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01"
+        ],
+        "comparisons": {
+          "match": 2
+        }
+      },
+      {
+        "building_id": "muenster-st-paulus",
+        "asset_ids": [
+          "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+          "9d176920-0aac-4077-95b1-a5aef5677aac"
+        ],
+        "comparisons": {
+          "match": 2
+        }
+      },
+      {
+        "building_id": "strasbourg-cathedral",
+        "asset_ids": [
+          "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+          "a86f43ed-fdc4-4cea-8335-76d67291002d"
+        ],
+        "comparisons": {
+          "match": 2
+        }
+      }
+    ],
+    "comparison_counts": {
+      "match": 13,
+      "not_grouped": 36,
+      "unresolved": 21,
+      "no_candidate": 30
+    }
+  },
+  "sources_sha256": {
+    "bench/issue41/judgment.schema.json": "aadc35b93357b90ef5ce543272042f9fa52a2ff31d375b19ebd3946d02679d99",
+    "data/issue41/gold100/selection.csv": "17542d2dd5800326c9744d3ba1a8e1570d737de4e1619d95d193b500a8e5b337",
+    "data/issue41/judge/batch-01/input.json": "a95125b7541edde82c18026c9575954f4d29b24d71b2aa58079704231b4300e7",
+    "bench/issue41/judgments/batch-01.json": "8125f1a22bdd79bb7e7ab3b1d4a650d77c8bb4b607536a3a9dab28b8ffd9b996",
+    "data/issue41/judge/batch-02/input.json": "dcb370b6cd41e8528ad0847c9b43990ea96677384e80d386ded582c25dfab59f",
+    "bench/issue41/judgments/batch-02.json": "7adbbd3a52dbca9f4dbc4a8a8dac3eb39ec8be725c8bf4d4684a32cba69ce16e",
+    "data/issue41/judge/batch-03/input.json": "9d438fac7036d0a259b1c1bfe18952526bfcc62fc2209ce5060307c70016ac96",
+    "bench/issue41/judgments/batch-03.json": "e17956b33afee00a36ea784565117f08c199d8ec8efad971b7cf30fa5fbc70af",
+    "data/issue41/judge/batch-04/input.json": "10390c83ae8ce488842b53cd9f90c74f0f643c328078f2b71f4c268ec65891cc",
+    "bench/issue41/judgments/batch-04.json": "1c7d9cc032a4f8393e6dee9008830ea25c361ca50f4712ddf1cbdb657c5f1620",
+    "data/issue41/judge/batch-05/input.json": "ae95340d3137bb05a6ac738ba6831965f6690095b69b5653a815b72ffdce575c",
+    "bench/issue41/judgments/batch-05.json": "b0ecdfc918c640c646464963426f3383b4df35d8ce5187ebf20aaff057d586ba",
+    "data/issue41/judge/batch-06/input.json": "a469f871068283ebb1345a648504e0b7f8cd32c8b681c2301cbd9d09f627a54e",
+    "bench/issue41/judgments/batch-06.json": "4c7baa461926a15e201514d989b4774744abd8fcacff03a78fa27c953756424f",
+    "data/issue41/judge/batch-07/input.json": "6c2298eb577dc1e2683d6acbb10d6067eaf166f6e636fb85ceb5126c5363f957",
+    "bench/issue41/judgments/batch-07.json": "59f3c558a3ea74c4842c477d3f732fd2f828c75324feb2a07b8a6352a715ca04",
+    "data/issue41/judge/batch-08/input.json": "0950154f1dff8d59c942f12eee194a04c6a7de4b608e35281ce68500bff6e4bb",
+    "bench/issue41/judgments/batch-08.json": "001e97bd7fc0000d32ace5755ed34b8f13ce037c4e09e5943ba85ce4d94ea0c7",
+    "data/issue41/judge/batch-09/input.json": "04dc0cec8bea9020654711f4b7280cc5d7c55d9d98ca82cb273ef45a54fc32eb",
+    "bench/issue41/judgments/batch-09.json": "3d71f1aafb5876e66ee893655656b5432d9640aa96c393251c1f4efc369966d1",
+    "data/issue41/judge/batch-10/input.json": "655668ae093f30d7ad811920cb871c370f51ac11576e45a13098a088a19ba253",
+    "bench/issue41/judgments/batch-10.json": "c9189f53dfdb8fa61d79d366106426494ce15c1047c6e52b910be2416b37c3b9",
+    "data/issue41/judge/repeat/input.json": "0b564a2d67690b8bcb541c5d3a95b3fd2dae453795dedc2a73fd3fee5c69f883",
+    "bench/issue41/judgments/repeat.json": "b1d4538d350df566db01d2376dfc1dc4996a629705a98cc90907056329ad1060",
+    "data/issue41/judge/repeat-plan.json": "f7caea1049a4e07be1d99785663ffb4aa214a41ac600d3d6289827ca2d91a0d5"
+  },
+  "executions": [
+    {
+      "batch_id": "batch-01",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b01-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-02",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b02-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-03",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b03-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-04",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b04-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-05",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b05-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-06",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b06-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-07",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b07-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-08",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b08-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-09",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b09-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "batch-10",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-b10-run1",
+      "repeat_of": null
+    },
+    {
+      "batch_id": "repeat",
+      "model": "gpt-6.1-sol",
+      "execution_id": "issue41-repeat-run2",
+      "repeat_of": "run1"
+    }
+  ],
+  "definitions": {
+    "verdict": "各draft_idを1件とする領域加重集計。重複マスクも別候補。",
+    "missed_major_parts": "同一画像の同一labelは1件。主要部位の見落とし報告数。",
+    "repeat": "verdictは完全一致領域数/比較領域数。画像別も同式。見落としはlabel集合、building_nameはnullを含む完全一致。"
+  }
+}

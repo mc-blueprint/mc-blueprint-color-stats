@@ -1,0 +1,131 @@
+{
+  "dataset": "cmp",
+  "completed": 606,
+  "selected": 606,
+  "complete": true,
+  "settings": {
+    "method": "sam2-dino",
+    "threshold": 0.35,
+    "text_threshold": 0.25,
+    "max_image_side": 512,
+    "truth_resize": "nearest",
+    "prompts": {
+      "accent_other": "architectural ornament",
+      "band_course": "horizontal stone band",
+      "column": "column",
+      "cornice": "cornice",
+      "door": "door",
+      "gable_wall": "gable wall",
+      "relief": "carved relief",
+      "shutter": "window shutter",
+      "wall_main": "building wall",
+      "wall_secondary": "secondary building wall",
+      "window_frame": "window frame",
+      "window_glass": "window glass"
+    },
+    "mapping_sha256": "06ebe7814b8db2e2b0e2225b1c73350158e2d5db89e32eee12d4009c4a1a1cbd",
+    "overlap": "同一グループは和集合。異なるグループの重複は誤ラベル側のFP。",
+    "ignored": "未対応の正解IDの画素を全グループで無視。未対応予測ラベルも評価外。",
+    "model_sha256": {
+      "sam2/README.md": "dfa401b1b9358b9650ae487dd2f2bb336fd745c3609e3244adf2e97a22343857",
+      "sam2/config.json": "860aff9751b139d83a4ad7df1e5535416fded533e0ead02625edbefcb9953cce",
+      "sam2/model.safetensors": "48c14467e5cf9e51870511feb72c89688e82dd74523142c0538b663e193ac2a7",
+      "sam2/preprocessor_config.json": "6ebf229ee259368ce4a8d4f2fe893a72b053023710853e257253939e601f583d",
+      "sam2/processor_config.json": "f8a68e865cfad115c1c2763f3d93eca7b1c622da06da2a9273eb437fb2389b6d",
+      "sam2/source.json": "d85e211d9c15a306f07c719ffee7c799a073873839f565dd93d9d8314265a72b",
+      "sam2/video_preprocessor_config.json": "9fccfe5f464ec38c2f236d0e6a68e95511c80c22132fc2fa4b9f7b65f24fad95",
+      "dino/README.md": "cf46f74c7b6850f1d5cbe406028324d8798148726016d46a69a365b4a2d3e89f",
+      "dino/added_tokens.json": "909e96cb32d92ce728a01bc99850cbba26196d74115c17ebeb019275412588f2",
+      "dino/config.json": "eec82c5ab66e16df12a9a212e68ac011779927c2536cf9078658e35d85f0c67a",
+      "dino/model.safetensors": "1a2412ef99bd74bcd3c2a246fa1e48581f8889a1300c9051974741314fc042f3",
+      "dino/preprocessor_config.json": "8454179ba95e2ad22947835aad7b45862a601fc0055ab88bf1ee70892d3aea60",
+      "dino/source.json": "53f3336c67751b1becc189603249b8060f680d10bd900780db87c24127e57098",
+      "dino/special_tokens_map.json": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+      "dino/tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+      "dino/tokenizer_config.json": "d40ab645b68211910b9170d22433d43186a6ec8ee6fd10ba170524b25bf4fb56",
+      "dino/vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    }
+  },
+  "labels": {
+    "wall": {
+      "tp": 36228247,
+      "fp": 34856218,
+      "fn": 8706280,
+      "iou": 0.45404071612566094,
+      "precision": 0.5096506951272687,
+      "recall": 0.8062452064978897
+    },
+    "band_course": {
+      "tp": 7463359,
+      "fp": 44155229,
+      "fn": 3404238,
+      "iou": 0.13564114282316214,
+      "precision": 0.14458665548929778,
+      "recall": 0.6867533825554997
+    },
+    "cornice": {
+      "tp": 3173894,
+      "fp": 61327038,
+      "fn": 389445,
+      "iou": 0.04891162829890786,
+      "precision": 0.04920694789340408,
+      "recall": 0.8907078445244755
+    },
+    "column": {
+      "tp": 1115212,
+      "fp": 23560028,
+      "fn": 1162243,
+      "iou": 0.04316256347415884,
+      "precision": 0.04519558877644148,
+      "recall": 0.48967465877481664
+    },
+    "window": {
+      "tp": 8877211,
+      "fp": 5093015,
+      "fn": 5422647,
+      "iou": 0.45775636235023043,
+      "precision": 0.6354378948486589,
+      "recall": 0.6207901505035924
+    },
+    "door": {
+      "tp": 643813,
+      "fp": 721329,
+      "fn": 706147,
+      "iou": 0.3108272191857341,
+      "precision": 0.47160881432114754,
+      "recall": 0.4769126492636819
+    },
+    "shutter": {
+      "tp": 1327415,
+      "fp": 10167558,
+      "fn": 973704,
+      "iou": 0.1064599716553729,
+      "precision": 0.11547787019595436,
+      "recall": 0.5768563033897856
+    },
+    "relief": {
+      "tp": 1141974,
+      "fp": 31358621,
+      "fn": 1092960,
+      "iou": 0.03399384197355713,
+      "precision": 0.035137018260742614,
+      "recall": 0.5109654244823337
+    }
+  },
+  "coverage": {
+    "valid_pixels": 81828789,
+    "total_pixels": 114013272,
+    "zero_valid_images": [],
+    "predicted_regions": 29873,
+    "audit": "全選定画像・全チェックポイント・マスク寸法・TP/FP/FNの集積を照合"
+  },
+  "provenance": {
+    "base_commit": "3833e1a1334172fe80cbd01f1ee6556ccd6ba30b",
+    "predict_sha256": "1a8bbd53a97203f94675cfe09f9f878409a75096b1c41c9147c6e7317b8f1f3e",
+    "gpu": "NVIDIA GeForce RTX 4070",
+    "torch_version": "2.11.0+cu128",
+    "cuda_version": "12.8",
+    "node": "ubuntu-2",
+    "database_used": false
+  }
+}
