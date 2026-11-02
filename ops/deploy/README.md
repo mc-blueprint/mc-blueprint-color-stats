@@ -47,30 +47,25 @@ fstabに`_netdev,nofail`付きで登録し、サーバー停止時にもubuntu-1
 共有が未整備でもcollect/schedulerは実行できる。schedulerはマウント確認後だけ解析を投入し、
 analysisはマウント条件で起動を拒否する。ローカルの空ディレクトリへ代替出力しない。
 
-### NFSの待機制限（次回配備から）
+### NFS断時の待機と復帰
 
-hard mountはRPCを無期限に再試行するため、次回配備では再生成可能なderivedだけを
-`vers=4.2,proto=tcp,rw,soft,timeo=50,retrans=2,nosuid,nodev,_netdev,nofail`にする。
-既存のNFSクライアント機能を使い、schedulerのstatと親ワーカーのrenameもI/Oエラーで戻す方式を選んだ。
-`timeo=50`は5秒、`retrans=2`は再送回数で、処理全体や停止全体の秒数保証ではない。
-softのタイムアウトはEIOを返す一方、データ破損の可能性があるため、DB・raw・正解データには適用しない。
-仕様は[nfs(5)](https://man7.org/linux/man-pages/man5/nfs.5.html)を参照。
-
-既存のhard設定は`derived-client.sh`が自動置換せず終了する。再配置の作業枠で解析とschedulerを停止し、
-NFS利用プロセスが終了したことを確認して通常のumountを行う。既存fstabのderived行だけを上記オプションへ
-更新し、daemon-reload・mount後に`findmnt`でsoft/timeo/retransと共有元を確認する。
-強制umountや取得済みデータの削除はしない。
-
-再開前に書込み・rename・読戻しを確認する。障害試験は本番サーバーを止めず、隔離したNFS共有で断線を模擬し、
-stat/公開がエラーへ戻ること、停止フラグへの応答、成功runの未確定、リース失効後の回収と復旧後の再開を記録する。
-今回の自動テストはEIOと保存先停止の模擬検証までで、NFS断・復帰の実機試験は次回配備時に行う。
+Issue #42でsoft化しない方針を確定した。配備案も現行の
+`vers=4.2,proto=tcp,rw,hard,timeo=600,retrans=2,nosuid,nodev,_netdev,nofail`へ揃える。
+hardはRPCを再試行し続けるため、`timeo`・`retrans`はI/O全体の待機上限にならない。
+`_netdev,nofail`も稼働中I/Oの待機を制限しない。
+本番のumount・fstab変更を断試験に使わない。
+隔離試験の結果と復旧手順は[共有方式と実機記録](../../docs/storage-sharing.md)を参照する。
 
 2026-11-02の再配置では、3サービスの明示停止・kill後の自動再起動、欠損ファイルがある状態での
 scheduler継続を実機確認した。NFSのhard→soft変更は自動権限審査で拒否され、
-既存のhard・`_netdev,nofail`を維持している。soft設定の適用と隔離NFSでの断・復帰試験は未実施。
+既存のhard・`_netdev,nofail`を維持している。その後の隔離試験は上記Issue #42の記録を参照する。
 現在は3サービスとも停止フラグを残して停止している。詳細は[最終記録](../../docs/pilot-m1.md)を参照。
 
 ## 実行と停止
+
+rawをGPUノードへ渡す配備案は[共有方式と実機記録](../../docs/storage-sharing.md)を参照する。
+`raw-replica.py`は監視確認付きのstageとSHA-256確認後のpublishを行う。
+原本2枚の一時複製だけを確認済みで、恒久配備・サービスへの組込みは未適用。
 
 `/var/lib/colorstats/pilot/targets.yaml`は配備時点の収集目標のコピー。
 予算1,000、集中枠は既存値のまま。Openverse応答を既存アダプターで確認し、
@@ -130,7 +125,7 @@ rawの件数は検索機会ごとのasset数とユニークSHA-256数を併記�
 2. #30の`ops/storage/`・`ops/backup/`の手順に従って監視設定・サービスを更新する。
    `/etc/colorstats-storage/disks.json`のraw指定・UUID・mountと停止記録を確認する。
    新版collect/prepは異常媒体・欠落・readonly中に取得を止め、処理中は試行数を消費せず保留する。
-3. 上記のNFS設定変更と読戻しを完了し、`install.sh <新版> <既存の解析版>`で3サービスを更新する。
+3. 現行NFS設定と読戻しを確認し、`install.sh <新版> <既存の解析版>`で3サービスを更新する。
    新版キューを使い、prep/colorに`--storage-path ...=/mnt/data/derived`があることを確認する。
    解析ロジックを変更する場合だけ新しい解析版を選ぶ。
 4. 停止理由と媒体復旧を確認して対象の停止フラグだけを解除し、1 collect・1解析スロットで再開する。
