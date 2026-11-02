@@ -87,6 +87,9 @@ def test_記録レスポンスからメタデータと選ばれ方を保持す�
     assert (candidate.rank, candidate.page) == (17, 3)
     assert result.next_offset == 1
     assert result.parameters["sroffset"] == 17 and result.parameters["uselang"] == "ja"
+    assert result.parameters["srsearch"] == (
+        "姫路城 filetype:bitmap -intitle:canvas -intitle:painting"
+    )
     assert result.parameters["endpoint"] == "https://commons.wikimedia.org/w/api.php"
     assert result.parameters["rank_basis"] == {
         "base": 0,
@@ -95,6 +98,9 @@ def test_記録レスポンスからメタデータと選ばれ方を保持す�
     }
     assert result.parameters["page_basis"]["value"] == 3
     assert parse_qs(urlsplit(requests[0][0].full_url).query)["srsort"] == ["relevance"]
+    assert parse_qs(urlsplit(requests[0][0].full_url).query)["srsearch"] == [
+        "姫路城 filetype:bitmap -intitle:canvas -intitle:painting"
+    ]
     assert parse_qs(urlsplit(requests[1][0].full_url).query)["iiextmetadatalanguage"] == ["ja"]
     adapter.download(candidate, tmp_path / "original")
     assert (tmp_path / "original").read_bytes() == b"original"

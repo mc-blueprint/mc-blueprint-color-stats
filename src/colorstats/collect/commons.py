@@ -72,7 +72,9 @@ class CommonsAdapter(HttpClient):
             "maxlag": self.policy["maxlag"],
             "list": "search",
             "srnamespace": 6,
-            "srsearch": request.query,
+            "srsearch": (
+                f"{request.query} filetype:bitmap -intitle:canvas -intitle:painting"
+            ),
             "srlimit": request.limit,
             "sroffset": request.start,
             "srsort": "relevance",
