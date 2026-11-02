@@ -103,7 +103,7 @@
 |---|---|---|---|
 | `collect` | 検索クエリ／ソースページ1件 | ubuntu-1 | `source`, `asset`, `raw` |
 | `prep` | 1 asset／job（実装済み） | ubuntu-1 CPU | SHA-256、pHash、品質指標、縮小画像 |
-| `segment` | M2で決定（当初目標16件バッチ） | GPU（12GB優先） | `region`、マスク |
+| `segment` | 1 asset／job・batch=1（[実装・計測](segment.md)） | GPU（12GB優先） | `region`、マスク、CVAT XML |
 | `shade` | M2で決定（当初目標16件バッチ） | GPU | 陰影推定、補正の信頼度 |
 | `color` | 1 asset／job（実装済み） | CPU | `color_observation`, `relation` |
 | `review` | 低信頼度サンプル | 人手（CVAT）／VLM（任意・明示時のみ） | ラベル修正、教師データ |
@@ -190,7 +190,7 @@ MCBlueprintはMITで公開・無料配布される。MITは利用者の商用利
 | `restricted` | ND、規約で自動取得を禁止するソース、独自ライセンスの重み（未確認） | 取得しない、または使用前に個別確認 |
 
 - 統計値のみを同梱し、画像・切り抜き・テクスチャは含めない。
-- SAM 2（Apache-2.0）は`open`の想定。SAM 3.1・DINOv3・Grounding DINOの重みのライセンスは採用Issueで一次情報を確認して区分する。
+- SAM 2.1 tiny・Grounding DINO tinyはApache-2.0で`open`、SAM 3.1は独自SAM Licenseで`restricted`とする（[一次情報と確認日](segment.md#重みのライセンス)）。SAM 3.1はユーザー判断により未評価（restricted・ゲート付き）として比較から除外し、実行経路を設けない。#40はSAM 2.1＋Grounding DINOの実行・記録で完成とする。DINOv3は採用Issueで確認する。
 - パックのビルド時に、`noncommercial`／`academic_only`／`restricted`の`processing_run`や`asset`に由来するレコードを除外し、除外件数を`provenance`に記録する。
 
 ## 9. データソース
