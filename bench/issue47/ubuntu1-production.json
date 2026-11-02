@@ -1,0 +1,68 @@
+{
+  "captured_at": "2026-11-02T16:58:38.039140+00:00",
+  "snapshot_at": "2026-11-02T16:58:29.523894+00:00",
+  "all_assets": 7301,
+  "cohort_assets": 7301,
+  "cohort_definition": "asset.search_parameters.collection_biasが存在する層別収集画像",
+  "job_statuses_all_assets": [
+    {
+      "stage": "color",
+      "status": "succeeded",
+      "items": 7297
+    },
+    {
+      "stage": "prep",
+      "status": "failed",
+      "items": 4
+    },
+    {
+      "stage": "prep",
+      "status": "succeeded",
+      "items": 7297
+    }
+  ],
+  "stages": [
+    {
+      "stage": "prep",
+      "successful_runs": 7297,
+      "unique_assets": 7297,
+      "summed_run_seconds": 11667.252494,
+      "items_per_active_second": 0.6254257378720958,
+      "first_started_at": "2026-11-01 12:32:21.278062+00:00",
+      "last_finished_at": "2026-11-02 16:48:57.304599+00:00",
+      "span_seconds": 101796.026537,
+      "output_files": 7297,
+      "missing_output_files": 0,
+      "output_bytes": 439993143,
+      "bytes_per_run": 60297.81321090859,
+      "attempts": {
+        "1": 7296,
+        "2": 1
+      },
+      "code_versions": {
+        "issue-10": 7297
+      }
+    },
+    {
+      "stage": "color",
+      "successful_runs": 7297,
+      "unique_assets": 7297,
+      "summed_run_seconds": 3379.695683,
+      "items_per_active_second": 2.159070130693776,
+      "first_started_at": "2026-11-01 12:33:51.168689+00:00",
+      "last_finished_at": "2026-11-02 16:50:44.132589+00:00",
+      "span_seconds": 101812.9639,
+      "output_files": 7297,
+      "missing_output_files": 0,
+      "output_bytes": 45136603,
+      "bytes_per_run": 6185.638344525148,
+      "attempts": {
+        "1": 7297
+      },
+      "code_versions": {
+        "issue-45-v1": 6543,
+        "issue-12": 754
+      }
+    }
+  ]
+}

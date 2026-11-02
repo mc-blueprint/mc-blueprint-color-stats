@@ -1,0 +1,8 @@
+{
+  "files": 445,
+  "assets": 500,
+  "raw_bytes": 2718504344,
+  "manifest_sha256": "9320a59c9db0e42dd18db70a9ea0d53fbc23469402b86e0732780751b7cc46a2",
+  "max_bytes": 150000000000,
+  "verification": "DBのSHA・原本名・転送後SHA・#42 publishによる再検証"
+}
