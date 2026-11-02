@@ -489,6 +489,42 @@ def test_計算プロセスの突然終了後も別ワーカーで完了する(q
     assert read_job(queue, job_id).status == "succeeded"
 
 
+def test_ワーカーは計算プロセスをjob間で再利用し異常終了後に起動し直す(
+    queue, tmp_path
+):
+    pids = tmp_path / "pids"
+    first = queue.enqueue(
+        "prep",
+        None,
+        "a" * 64,
+        {"started": str(tmp_path / "first"), "pids": str(pids), "exit": True},
+    )
+    second = queue.enqueue(
+        "prep", None, "b" * 64, {"started": str(tmp_path / "second"), "pids": str(pids)}
+    )
+    stop = tmp_path / "stop"
+    worker = Worker(queue, {"prep": "tests.queue_handler"}, stop, poll_interval=0.02)
+    thread = threading.Thread(target=worker.run, daemon=True)
+    thread.start()
+    try:
+        deadline = monotonic() + 15
+        while monotonic() < deadline:
+            if all(read_job(queue, job_id).status == "succeeded" for job_id in (first, second)):
+                break
+            sleep(0.02)
+        assert read_job(queue, first).status == "succeeded"
+        assert read_job(queue, first).attempts == 2
+        assert read_job(queue, second).status == "succeeded"
+        stop.touch()
+        thread.join(timeout=5)
+        assert not thread.is_alive()
+        first_pid, restarted_pid, reused_pid = pids.read_text().splitlines()
+        assert first_pid != restarted_pid == reused_pid
+    finally:
+        stop.touch()
+        thread.join(timeout=5)
+
+
 def test_保存先の保留は試行数を消費せず古い所有権を拒否する(queue):
     job_id = queue.enqueue("prep", None, "a" * 64, {})
     old = queue.claim(["prep"])
