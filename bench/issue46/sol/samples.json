@@ -1,0 +1,2498 @@
+[
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.24144230000484065,
+      0.01005921116211915,
+      0.015409089346182828
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.40422198561963474,
+      0.012251586027511958,
+      0.002172854877624834
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.22858727808527943,
+      0.007964931805890394,
+      -0.0008476062185565814
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6078758409823649,
+      -0.0001396408308798459,
+      0.03796381133381587
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6441810830725471,
+      -0.002996331200802886,
+      0.00826903218648096
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.5794524806610274,
+      -0.001797864953182532,
+      0.0008355087835656485
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6010840554526528,
+      -0.00456428895923529,
+      0.027551355697853247
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6393989165308116,
+      -0.008190353146938384,
+      -0.005265739163282581
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.5742312416215949,
+      -0.005101380090384162,
+      -0.012060319198077213
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5275628887508196,
+      -0.023777576342459174,
+      -0.0012934697296044003
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5725485371445171,
+      -0.02751944994744563,
+      -0.04249302534569128
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.5084085904714392,
+      -0.020109560423730542,
+      -0.04198140139114302
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.21353527587887802,
+      0.01108577309971047,
+      0.02521571336829463
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.4041720104590198,
+      0.02318723223709535,
+      0.041107208730993
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.21435190042498004,
+      0.01020147259425358,
+      0.025855903253046125
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.547683937335043,
+      0.0016826259918711272,
+      0.030546202328161663
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6618371140596877,
+      0.0009904306021453018,
+      0.024231627662731656
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.5499975381631251,
+      -0.000675422550988259,
+      0.03293527122229167
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5397271640747148,
+      -0.0013102774681003518,
+      0.024190815838907292
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6569923045794541,
+      -0.0034978214539096997,
+      0.01540668567238155
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.5420282942605442,
+      -0.0036565433643443246,
+      0.02667461635889151
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.47039256039205957,
+      -0.010798683706416087,
+      0.009991886236649946
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5832187763137993,
+      -0.017118343566740694,
+      -0.004109039934081308
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.4724639803387765,
+      -0.012840915722210505,
+      0.012382290588603649
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3323655780267393,
+      0.037452711031795115,
+      0.03473425127748464
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.3830473714918652,
+      0.035996907582336826,
+      0.03304042200781642
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.3258983216535902,
+      0.03074946800921215,
+      0.02921901888429682
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6232833685878519,
+      -0.00047368834685693157,
+      0.029194872295266946
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6344257680309626,
+      -0.004907114416156077,
+      0.012612044384126206
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.6196491551535561,
+      -0.0077706642303157865,
+      0.01891554458761124
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6076781038239755,
+      -0.001933338644535291,
+      0.02129136466735006
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6232999199770111,
+      -0.00714786138486227,
+      0.0030091753627233594
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.6042980274942171,
+      -0.009051391536296551,
+      0.01067292921564396
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.45601808961996565,
+      -0.017312976768098703,
+      -0.012440611502983636
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5117055653345511,
+      -0.022349671690731116,
+      -0.034743640149627456
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.45548714615484287,
+      -0.021277521058732346,
+      -0.02167035949937299
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.24022269143028308,
+      0.0013502664236972948,
+      -0.0068896630473230394
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.4114226059696475,
+      0.012803848062256405,
+      0.011998388752643667
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.23831528376879632,
+      -0.0020241000234214805,
+      -0.014596379625486594
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3700359314936758,
+      0.012517618343102433,
+      0.008504853427356188
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.36512478931816733,
+      0.005550745637158434,
+      0.006540607645186894
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.364671214544517,
+      0.005898101440973403,
+      -0.0025084005186337683
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5065635297160658,
+      0.01291322621924027,
+      0.020943432369159538
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5087372206273385,
+      0.0064328073043765435,
+      0.018112061227486882
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.49915802536237686,
+      0.003929470275455115,
+      0.006787569189336933
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6452968064772772,
+      0.012948281605174842,
+      0.03559482897127207
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6773416468617297,
+      0.007710133012143291,
+      0.03281455911562395
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.6369100967645,
+      0.003118114494720295,
+      0.018857434434540354
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.23948239451354097,
+      0.006840786939469476,
+      0.038524328357218786
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.3994730738213332,
+      0.02870160391618552,
+      0.0344918277156256
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.22984140104062847,
+      0.02199053696480142,
+      0.03373983924462248
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3045676727443566,
+      0.005269737893097886,
+      0.04044322472627172
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5906297385569902,
+      0.01617887377019303,
+      0.02497118570312001
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.29163947222199965,
+      0.024421733018298954,
+      0.03269897430708726
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3660729966076293,
+      0.001696435988583884,
+      0.05151153246833355
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6824841183450726,
+      0.012866794961187327,
+      0.03690972437167457
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.34940893532022754,
+      0.025259046340389172,
+      0.042114960954587076
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.27877296919969385,
+      -0.004189834241549502,
+      0.012063745287343278
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5948407019183587,
+      0.0040694353295114725,
+      0.011886507268908292
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.2646257940076436,
+      0.013980036371196554,
+      -0.0007536642653656864
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+    "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5106821383828442,
+      -0.0034597076536848127,
+      -0.03117380660975848
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+    "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.4322200405748911,
+      -0.008336319888112884,
+      0.00042522792127702393
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+    "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.5137429163571021,
+      -0.019496244482272673,
+      -0.04742479528015876
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+    "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5551268262667927,
+      0.06199375759503046,
+      0.022634561108407256
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+    "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.3685266039831889,
+      0.012350484423690812,
+      0.012702815334894186
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+    "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.5414721651962194,
+      0.035467903720682085,
+      0.0036258596150241153
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.4056934099754422,
+      -0.02708774639181511,
+      0.007782520950615047
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.4425437812270034,
+      -0.0006481068680116522,
+      -0.001601656429357368
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.38394713340340625,
+      -0.013742101292636389,
+      -0.022525325188621822
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6501626633175692,
+      -0.026299893780298317,
+      0.03528109709433158
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6083536787413133,
+      -0.0014853524937929112,
+      0.003246171271788291
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.6163103793684237,
+      -0.007231738823272123,
+      -0.00718058619315785
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.665190421303269,
+      -0.025969678788657212,
+      0.037734920350407514
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.612306336267547,
+      -0.0013473698479121643,
+      0.004373243991272671
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.6307051530508556,
+      -0.006625887823271813,
+      -0.00519414662201412
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.4066281697290514,
+      -0.027178241885527057,
+      0.007823911158204487
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.4429810350287087,
+      -0.0006319594134693499,
+      -0.0015854730272519824
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.3848259550611335,
+      -0.013796243605555298,
+      -0.022555859936258756
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6254487586903584,
+      0.018948842371555988,
+      0.043952978620976954
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5966366895035251,
+      0.009184663447160622,
+      0.027881042477058485
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.6136493368248273,
+      0.012684948936843389,
+      0.028192303021394517
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6251545928243354,
+      0.018947463869175108,
+      0.04393652342468204
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5964066833596819,
+      0.009179229000810344,
+      0.027859418138595687
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.6133600728228665,
+      0.01268602710213466,
+      0.028183581973889316
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6019348867726967,
+      0.028629499374617638,
+      0.050130026168712455
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5632710161706613,
+      0.0159092890858964,
+      0.031003167454075886
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.5894736282652869,
+      0.021800320380612772,
+      0.035462653176602354
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01",
+    "sha256": "a8e95fc03080586acdb7e3184a9ecc45fa88dfd681103b832d96fa580865f131",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5291558086237697,
+      0.011086743710053519,
+      0.0403146628427122
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01",
+    "sha256": "a8e95fc03080586acdb7e3184a9ecc45fa88dfd681103b832d96fa580865f131",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6963875393414338,
+      0.012110174602290257,
+      0.03140092718398444
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01",
+    "sha256": "a8e95fc03080586acdb7e3184a9ecc45fa88dfd681103b832d96fa580865f131",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.5083747996096762,
+      0.0035045871501450513,
+      0.013099011887756765
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01",
+    "sha256": "a8e95fc03080586acdb7e3184a9ecc45fa88dfd681103b832d96fa580865f131",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5289104252020393,
+      0.01108150129200907,
+      0.04028664050401533
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01",
+    "sha256": "a8e95fc03080586acdb7e3184a9ecc45fa88dfd681103b832d96fa580865f131",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6962785377230652,
+      0.012114149627497435,
+      0.03140319296705972
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "8f6b6fed-cfb5-4bbc-b27f-098cec40cf01",
+    "sha256": "a8e95fc03080586acdb7e3184a9ecc45fa88dfd681103b832d96fa580865f131",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.5081393844688039,
+      0.0035024809772750136,
+      0.013081412758920077
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+    "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.4181648752635192,
+      -0.014600184128819037,
+      0.058617367684686325
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+    "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6118230386298364,
+      -0.012643418024970583,
+      0.09163738710413309
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+    "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.4394911262148954,
+      0.03510236618694813,
+      0.08517128868752401
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+    "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3234561149729122,
+      -0.0006843417756592549,
+      0.038011684277387
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+    "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5398817638560436,
+      0.015377238726683663,
+      0.07155964058376006
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+    "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.3432601799279144,
+      0.0368604236008313,
+      0.06550588880121241
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6987108853024121,
+      -0.01874923014023715,
+      0.01940338652293125
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.7190603552550822,
+      -0.020470132827094787,
+      0.008843099277402318
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.691868956410187,
+      -0.021537020609500235,
+      0.004241762001458231
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.4771724801117492,
+      0.005530395164864423,
+      0.031451887338837636
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6888219032830064,
+      0.005696755878407767,
+      0.03302435470284829
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.470813687826931,
+      0.0021554562051779324,
+      0.02215800657513066
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.41971824465984997,
+      0.0005795719327510039,
+      0.012955908841893297
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6484416543111394,
+      0.00016557951838733025,
+      0.011646080044775388
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.41500646424086546,
+      -0.0017376289468352716,
+      0.003743639102384128
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3188897187419584,
+      0.0031837532124711037,
+      0.02115452610634948
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.611769516123401,
+      0.0028101673963046273,
+      0.02368519544880226
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.3110131074632424,
+      0.0016597680247573997,
+      0.010460037642874063
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5437128412518315,
+      0.03494334704472226,
+      0.06689587397700952
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6998771352664129,
+      0.03228303085521223,
+      0.06084066729532825
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.5269676430900613,
+      0.02930202280993829,
+      0.05329593042292844
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5437083597521759,
+      0.034948055978067195,
+      0.06690365233519147
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.699880579020084,
+      0.03228658466428024,
+      0.06084728058366717
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.5269625159979815,
+      0.029306135974706368,
+      0.05330498535614686
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.49143381978615297,
+      0.03831806496708202,
+      0.06750916929404019
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6329735608856147,
+      0.031486645511506324,
+      0.06237471955703322
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.4751991934427212,
+      0.032197237321125616,
+      0.056272910749394806
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.23039451923141566,
+      0.005100897154821073,
+      0.002590222723054584
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.40831479304888085,
+      -0.006198834853896377,
+      0.02164600115168288
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.23918950242284912,
+      0.019042107046440607,
+      0.031413660786791864
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.2320073556596219,
+      0.004823020058658724,
+      0.0034834108903723502
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.40898147501455373,
+      -0.00670769675794223,
+      0.022612689239403332
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.2410043387033785,
+      0.01895800155534318,
+      0.032047710891702816
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.2318361700674787,
+      0.004878402369490043,
+      0.003354601602731477
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.40923931490049675,
+      -0.006642187010386037,
+      0.02251068172003665
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.24080529465566627,
+      0.019010614950352132,
+      0.03195060726677449
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.23048753193328364,
+      0.005091409906379861,
+      0.002607023497779131
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.4084009516004823,
+      -0.006207868623054801,
+      0.021648811799749673
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "model",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.23928715018909452,
+      0.019036578962687994,
+      0.03143522379709282
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.24144230000484065,
+      0.01005921116211915,
+      0.015409089346182828
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.40422198561963474,
+      0.012251586027511958,
+      0.002172854877624834
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.22858727808527943,
+      0.007964931805890394,
+      -0.0008476062185565814
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5275628887508196,
+      -0.023777576342459174,
+      -0.0012934697296044003
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5725485371445171,
+      -0.02751944994744563,
+      -0.04249302534569128
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+    "sha256": "c41ec9795fc495899576b6b54a71ac43b75b21c83a52ffd90883418fe9551637",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.5084085904714392,
+      -0.020109560423730542,
+      -0.04198140139114302
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.21353527587887802,
+      0.01108577309971047,
+      0.02521571336829463
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.4041720104590198,
+      0.02318723223709535,
+      0.041107208730993
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.21435190042498004,
+      0.01020147259425358,
+      0.025855903253046125
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6024817184968801,
+      0.02224842156006358,
+      0.07422086377444469
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6951690145928534,
+      0.03182841648012045,
+      0.08486992976797485
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.6048815515453315,
+      0.01980880075622614,
+      0.07595963347606241
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.47039256039205957,
+      -0.010798683706416087,
+      0.009991886236649946
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5832187763137993,
+      -0.017118343566740694,
+      -0.004109039934081308
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+    "sha256": "9ce958115682fbee9bbc7174f6d440836a8818a058be304a9b270dd8bd0526fa",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.4724639803387765,
+      -0.012840915722210505,
+      0.012382290588603649
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3323655780267393,
+      0.037452711031795115,
+      0.03473425127748464
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.3830473714918652,
+      0.035996907582336826,
+      0.03304042200781642
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.3258983216535902,
+      0.03074946800921215,
+      0.02921901888429682
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.45601808961996565,
+      -0.017312976768098703,
+      -0.012440611502983636
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5117055653345511,
+      -0.022349671690731116,
+      -0.034743640149627456
+    ]
+  },
+  {
+    "subject_id": "dome-of-the-rock",
+    "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+    "sha256": "7282aeebf0429b20694211a14c4bbecbf3d08dfb778c07c6a2d03dd239fbb7f0",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.45548714615484287,
+      -0.021277521058732346,
+      -0.02167035949937299
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3700359314936758,
+      0.012517618343102433,
+      0.008504853427356188
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.36512478931816733,
+      0.005550745637158434,
+      0.006540607645186894
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.364671214544517,
+      0.005898101440973403,
+      -0.0025084005186337683
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6452968064772772,
+      0.012948281605174842,
+      0.03559482897127207
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6773416468617297,
+      0.007710133012143291,
+      0.03281455911562395
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+    "sha256": "ee96e7a1d72fa1c795d05bcaffb4caff78b5bfe68cd634c6f12dcaee7031792f",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.6369100967645,
+      0.003118114494720295,
+      0.018857434434540354
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.23948239451354097,
+      0.006840786939469476,
+      0.038524328357218786
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.3994730738213332,
+      0.02870160391618552,
+      0.0344918277156256
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.22984140104062847,
+      0.02199053696480142,
+      0.03373983924462248
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3045676727443566,
+      0.005269737893097886,
+      0.04044322472627172
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5906297385569902,
+      0.01617887377019303,
+      0.02497118570312001
+    ]
+  },
+  {
+    "subject_id": "duelmen-st-viktor",
+    "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+    "sha256": "76d57179097467009100eb01aa0c33f430fa933a66f8b4dddd71a1fe4f9141fe",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.29163947222199965,
+      0.024421733018298954,
+      0.03269897430708726
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+    "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.5106821383828442,
+      -0.0034597076536848127,
+      -0.03117380660975848
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+    "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.4322200405748911,
+      -0.008336319888112884,
+      0.00042522792127702393
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+    "sha256": "05700796b328bd01bd39e862d2405070fa9468ee9e5bed98251ce9364eff9772",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.5137429163571021,
+      -0.019496244482272673,
+      -0.04742479528015876
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.4066281697290514,
+      -0.027178241885527057,
+      0.007823911158204487
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.4429810350287087,
+      -0.0006319594134693499,
+      -0.0015854730272519824
+    ]
+  },
+  {
+    "subject_id": "kakegawa-keep",
+    "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+    "sha256": "576450aaf1288da15a6403afc2c5f257b1a39399313b84806b428a362d0ec918",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.3848259550611335,
+      -0.013796243605555298,
+      -0.022555859936258756
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6019348867726967,
+      0.028629499374617638,
+      0.050130026168712455
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5632710161706613,
+      0.0159092890858964,
+      0.031003167454075886
+    ]
+  },
+  {
+    "subject_id": "leon-cathedral-west",
+    "asset_id": "5a1dabcb-511a-4b7c-8ec2-130da1732871",
+    "sha256": "4719f679d76bd5466be65350d0b58a0900362d2a70b51293d2027c1b9c0d92f1",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.5894736282652869,
+      0.021800320380612772,
+      0.035462653176602354
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+    "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3234561149729122,
+      -0.0006843417756592549,
+      0.038011684277387
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+    "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.5398817638560436,
+      0.015377238726683663,
+      0.07155964058376006
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+    "sha256": "e463776c031599ae3130cf512c1e6b0ac19a055c24a0b4a209e92c42d41ba07b",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.3432601799279144,
+      0.0368604236008313,
+      0.06550588880121241
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "gray-world",
+    "material_oklab": [
+      0.6987108853024121,
+      -0.01874923014023715,
+      0.01940338652293125
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.7190603552550822,
+      -0.020470132827094787,
+      0.008843099277402318
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "sol-correct",
+    "label": "roof_surface",
+    "method": "none",
+    "material_oklab": [
+      0.691868956410187,
+      -0.021537020609500235,
+      0.004241762001458231
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.41971824465984997,
+      0.0005795719327510039,
+      0.012955908841893297
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6484416543111394,
+      0.00016557951838733025,
+      0.011646080044775388
+    ]
+  },
+  {
+    "subject_id": "muenster-st-paulus",
+    "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+    "sha256": "3b994067d896c9e830f6a2e386f667abd4676c4dc185da81ec4728f8b428f8bf",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.41500646424086546,
+      -0.0017376289468352716,
+      0.003743639102384128
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "gray-world",
+    "material_oklab": [
+      0.3188897187419584,
+      0.0031837532124711037,
+      0.02115452610634948
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.611769516123401,
+      0.0028101673963046273,
+      0.02368519544880226
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "sol-correct",
+    "label": "door",
+    "method": "none",
+    "material_oklab": [
+      0.3110131074632424,
+      0.0016597680247573997,
+      0.010460037642874063
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "gray-world",
+    "material_oklab": [
+      0.49143381978615297,
+      0.03831806496708202,
+      0.06750916929404019
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.6329735608856147,
+      0.031486645511506324,
+      0.06237471955703322
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+    "sha256": "547dfede0780a80c766eed2f3813b7e96b84c788a8fc02fcaa30f31e14bb5f5e",
+    "label_source": "sol-correct",
+    "label": "window_frame",
+    "method": "none",
+    "material_oklab": [
+      0.4751991934427212,
+      0.032197237321125616,
+      0.056272910749394806
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "sol-correct",
+    "label": "wall_main",
+    "method": "gray-world",
+    "material_oklab": [
+      0.24981166388642354,
+      0.0024677479526320338,
+      0.013039512843742164
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "sol-correct",
+    "label": "wall_main",
+    "method": "intrinsic",
+    "material_oklab": [
+      0.42675685112956635,
+      -0.012507795828122822,
+      0.03482525718359633
+    ]
+  },
+  {
+    "subject_id": "strasbourg-cathedral",
+    "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+    "sha256": "ba0864da9a617f067058966de942c7eacc11ad7128ae643114febc4abfb1a04b",
+    "label_source": "sol-correct",
+    "label": "wall_main",
+    "method": "none",
+    "material_oklab": [
+      0.2609681774926819,
+      0.019598497609839807,
+      0.038347128020484685
+    ]
+  }
+]
