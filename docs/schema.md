@@ -5,7 +5,7 @@ Issue #5の対象は分類体系 `0.1.0` とPostgreSQL 16向け初期revision `0
 
 ## 採用した既存機能
 
-起点の依存はMCBlueprintのみで、DB管理と分類検証の既存実装はなかった。
+起点の依存はmc-blueprintのみで、DB管理と分類検証の既存実装はなかった。
 SQLAlchemy 2.0の宣言的モデルで列・外部キー・制約を共有し、同じSQLAlchemyメタデータを扱えるAlembicでrevision管理と接続なしのSQL生成を行う。
 psycopg 3をPostgreSQLドライバーにする。生SQL＋独自revision管理は差分検出・履歴管理を再実装するため採用しない。SQLiteは分散ライターとJSONBという要件に合わない。
 YAML読取りにはPyYAMLのSafeLoader、構造検証にはjsonschemaのDraft202012Validatorを用いる。既存機能で扱えない文書間参照だけを小さなローダーで検証する。

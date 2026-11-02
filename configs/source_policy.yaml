@@ -2,7 +2,7 @@
 sources:
   wikimedia_commons:
     enabled: true
-    user_agent: "MCBlueprintColorStatsBot/0.1 (https://github.com/rs0325/mc-blueprint-color-stats; https://github.com/rs0325)"
+    user_agent: "mc-blueprint-color-stats-bot/0.1 (https://github.com/mc-blueprint/mc-blueprint-color-stats; https://github.com/mc-blueprint)"
     min_interval: 1.0
     maxlag: 5
     retries: 2
@@ -30,7 +30,7 @@ sources:
       - https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia
   openverse:
     enabled: true
-    user_agent: "MCBlueprintColorStatsBot/0.1 (https://github.com/rs0325/mc-blueprint-color-stats; https://github.com/rs0325)"
+    user_agent: "mc-blueprint-color-stats-bot/0.1 (https://github.com/mc-blueprint/mc-blueprint-color-stats; https://github.com/mc-blueprint)"
     min_interval: 1.0
     retries: 2
     backoff: 5.0

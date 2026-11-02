@@ -96,7 +96,7 @@ def extract_block_colors(jar: Path, version: str) -> list[dict]:
     非対応版はValueError、jarの読込み失敗は元の例外を送出する。
     """
     if version not in supported_versions():
-        raise ValueError(f"MCBlueprint非対応のMinecraft版: {version}")
+        raise ValueError(f"mc-blueprint非対応のMinecraft版: {version}")
     blocks = load_block_data(version)
     with zipfile.ZipFile(jar) as archive:
         names = set(archive.namelist())
