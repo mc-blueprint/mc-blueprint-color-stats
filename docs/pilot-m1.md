@@ -1,14 +1,17 @@
 # M1パイロット実行記録（収集終了）
 
-## Issue #29によるsubjectの再評価（未適用）
+## Issue #29によるsubjectの再評価（Issue #37で本番適用・再集計済み）
 
 以下の旧パイロット報告のsubject586・層別網羅率48.83%・不明subject1件は、旧prepの
 画像クラスタをsubjectとして数えた履歴値であり、同定済み建築・地点の網羅率としては使用しない。
 新prepだけを再実行しても既存の確定値を保護するため、誤った割当ては直らない。
-**同定の根拠を監査し、割当て補正・重複関係の再登録・網羅率の再集計が必要。**
-本Issueでは本番DBへのmigration適用、データ補正、パイロット再開は実施していない。
+**Issue #37で同定根拠の監査、割当て補正、重複関係の再登録、網羅率の再集計を完了した。**
+Issue #29では本番DBへのmigration適用、データ補正、パイロット再開は実施していない。
+Issue #37ではユーザー承認とオーケストレータの監査判断を受け、本番を0005へ更新し、
+旧prep由来の754割当てをNULLへ補正した。同定済みsubjectは0、全12層の網羅率は0%。
+既存NULL 1件を含む755画像すべてが未同定であり、収集は再開していない。
 
-後日の適用担当は次の順で実施する。既存レコード・原本・派生画像・runは削除しない。
+適用手順は次のとおり。既存レコード・原本・派生画像・runは削除しない。
 
 1. collect・prep・schedulerが停止していることを確認し、DBバックアップと旧reportを保全する。
    検証用に復元したDBで先に手順を確認し、revision 0004を適用する。
@@ -35,8 +38,123 @@
    M3で独立標本数やsubject重みを計算済みなら、その集計も再生成する。
    色観測・縮小画像はsubjectを入力にしていないため再生成不要。収集の再開は別途判断する。
 
-全件を自動的にNULLへ戻す操作やsubject行の削除は行わない。根拠を復元できないものは
+監査判断なしに全件を自動的にNULLへ戻す操作やsubject行の削除は行わない。根拠を復元できないものは
 未同定として残し、画像クラスタ数で網羅率を代用しない。
+
+### Issue #37の本番適用結果（2026-11-02）
+
+担当は`complex_worker-issue37`。ユーザー承認済みの本番0004・0005適用とsubject補正を実施した。
+確認者は`orchestrator(claude-opus-5-5)判断/complex_worker照合`。
+**Issue #37の本番適用・補正・再集計は完了。Git公開は今回の指示により未実施。**
+
+#### バックアップと事前検証
+
+- ubuntu-2のバックアップは
+  `/var/lib/colorstats-backup/issue37/colorstats-before-0004-0005.dump`。
+  `pg_dump --format=custom --no-owner --no-acl`で取得し、検証用DBへの復元に成功した。
+  本番適用直前にもSHA-256
+  `fe9a9fdc4febc694aab1e7f63778c4b28ae1212e34264d4d77dacff3acd546c4`を照合した。
+- ubuntu-1の旧report保全先は`/var/lib/colorstats/pilot/issue37-before-report.json`と
+  `issue37-before-final-report-issue27.json`。SHA-256はそれぞれ
+  `f1588bddc67d84315c1480e651b35ebe9faa10670b2eec9abc803ff9627478bb`、
+  `2d503a9975192b99d02ee1d06f2e3fe417acc8b39205d1f174de94bcf83b2073`。最終確認でも不変だった。
+- 使用コードはdevelop `b2a7241`の固定スナップショット、配置先はubuntu-1の
+  `/opt/colorstats/releases/b2a7241-issue37-20261102`。
+  アーカイブSHA-256は`794aa273ebc4c2a55f9c7951cbb8f6767d035f689bce79b9d15c9b57859ffc8a`。
+  `uv.lock`一致を確認した既存venvのPython 3.12を使用した。サービスの配置先は変更していない。
+- 検証用DB `colorstats_issue37_verify_20261102`で0004・0005と
+  `ops/deploy/worker_grants.sql`を適用後、以下の補正・register・再集計を先に通した。
+  旧subjectを意図的に不一致にし、先行UPDATEを含む取引全体がrollbackすることも確認した。
+  DBの認証設定は変更せず、記録付きの一時loopback SSH転送で既存ワーカー認証を使用し、終了後に転送を閉じた。
+
+#### 監査判断と本番への適用
+
+配備中の`targets.yaml`、稼働設定が参照する旧配置と新配置の`configs/collection_targets.yaml`を照合した。
+3ファイルのSHA-256は`263fb7fb35ac3fa9ee6ee3c7c9beac0a989da3acd8ea1d9c908827f18f82bde8`で一致し、
+独立した建築・地点カタログはなく、`subject_aliases`は空だった。
+586 subjectの名前はすべて収集タイトルに一致し、所在地・年代・属性は空。
+予約の非NULL subject_id 147件はすべてこの586行を参照し、対応assetの旧値と一致した。
+独立カタログ由来の割当ては0件。予約一致は旧prep生成subjectの再参照であり、同定の独立根拠にはしない。
+
+この照合とオーケストレータの判断により、旧監査表を上書きせず
+`subject-audit-issue37-final.csv`を作成した。
+全755行の内訳は**754件をNULLへ補正、既存NULL 1件を保持**。
+補正根拠は「独立カタログなし・旧prep集約由来」、確認者は上記の判断・照合担当を記録した。
+旧候補178件の証拠は`subject-evidence-issue37.json`に保全し、未検証の履歴として扱う。
+
+- 本番へ検証済みの0003→0005 SQLと`worker_grants.sql`を適用した。
+  migration直前・直後の旧割当ては監査証拠と一致し、migration自体による変更はなかった。
+  最終の`alembic current`は**`0005 (head)`**、`job.available_at IS NULL`は0件。
+- `current_user=colorstats_worker`で`asset_duplicate`のSELECT/INSERT/UPDATE/DELETE権限がすべてtrue、
+  `alembic_version`のUPDATE権限はfalse。実際のregisterもこのロールで実行した。
+- 全755件の監査時点の旧値を照合後、754件を旧subject_id一致条件付きUPDATEで一つの取引内から補正した。
+  UPDATE件数754、既存NULL保持1、補正後NULLは755。確定監査表との不一致は0件。
+- 成功済み754画像の原本を新prepの`_inspect`で再解析し、寸法・SHA-256・pHashが全件一致した。
+  Pillowの大画像警告1件は出たが、照合不一致・解析失敗は0件だった。
+  `resized`は閉じ、派生ファイルは書き出さず、READ COMMITTED取引内で
+  `register(session, None, data)`を754件実行した。
+- 重複辺は**200件（SHA-256一致185・pHash近似15）**。
+  全asset対から独立計算した辺・根拠・confidenceとの不一致は0件、完全一致群のsubject競合も0件。
+  新候補は0件、旧候補178件（SHA由来167・pHash由来11）とsubject行586件を保持した。
+- subject以外のasset全列、およびsubject・候補・予約・source・job・run・色観測等の
+  他テーブル全行の指紋が補正前後で一致した。ジョブの状態・試行数、SVG失敗1件も維持した。
+  検証用DBと本番の結果はいずれも同じ件数だった。
+
+#### 再集計と保存先
+
+既存の`ops.deploy.pilot.report`と`coverage`を使い、別版の`final-report-issue37.json`を保存した。
+**同定済みsubject 0件、全12層の網羅率0%、不明群755画像（100%）**。
+subject行586件や画像重複群は同定済みsubject数に数えない。
+各層の目標は100、全体で1,200 subject不足。未同定のためsubjectごとの画像上限3枚の充足は判定不能。
+旧subjectに基づく過去の採否・除外件数は実行履歴として残し、補正後の上限判定には流用しない。
+
+層別画像数（すべてsubject不明）はjapanese-castle 119、gothic-temple 115、forest-autumn-day 80、
+modern-house 0、medieval-house 80、japanese-temple 42、islamic-temple 80、chinese-house 44、
+mountains-summer-day 65、plains-summer-day 29、desert-summer-day 21、snowy-winter-day 80。
+collectは成功1,757・失敗2・pending 59、prepは成功754・失敗1、colorは成功754。
+M3のaggregate・shade・segment runおよび集計テーブルのデータはなく、再生成対象はない。
+
+以下はubuntu-1の`/var/lib/colorstats/pilot/`に保全した。主要成果物のSHA-256は
+`final-verification-issue37.json`にも記録した。
+
+| ファイル | SHA-256 |
+| --- | --- |
+| `subject-audit-issue37-final.csv` | `9a79e925533e35c7da01e3eddc157ab5b603d50beb47f529774cc66a3884083a` |
+| `subject-audit-final-summary-issue37.json` | `139de2f23f917288dbff911dc674376232ca9d1ef25186753f901ea71939ade2` |
+| `inspect-result-issue37.json` | `40786a11e099afb5db9a0cd723a99403cb5f4863f375a270753d3d4530765e42` |
+| `register-data-issue37.json` | `5e91f60b4e6deb58b3ae7a7ce244e952a4fff7434828c548871f290dbe507b6d` |
+| `verify-apply-result-issue37.json` | `901420015bb070602c427896e8b9867707616cc2035836756abd1fc636ed3013` |
+| `verify-report-issue37.json` | `1391310a12d98cae814698e5b094044aff8f0dbbbd003f62dc4ca1ec0976de45` |
+| `production-apply-result-issue37.json` | `bc4d86cacda0c6923a7805e8b2310fbec7116a358d2b31f4924c683e56a8875a` |
+| `final-report-issue37.json` | `a061291500208623edd990fb7495f8c54612d443165df957a7b608b5e63dd065` |
+| `final-verification-issue37.json` | `4fbd6cb8babc61d9edd935bde05baecc67afc99a8eea6b68626f586f81bfba08` |
+
+元の`subject-audit-issue37.csv`と`subject-evidence-issue37.json`も保持し、最終確認でSHA-256
+`e1c4463bb68316b778b26d72577fc9495cc8df3736ce968b4f044033912d7a90`、
+`9742268c9e02bee684a42a3d1497b458ab472fba2e89dba3779820f33ef4dd71`の不変を確認した。
+前任の監査要約・重点確認資料・preflight結果も削除していない。
+本番migration記録はubuntu-2の`/var/lib/colorstats-backup/issue37/migration-result-issue37.json`。
+SHA-256は`7a83d6320ce4861a02b90634caae64b25927abed79e9f22a8c5785eedac29543`。
+
+#### 最終状態・検証と残作業
+
+2026-11-02 02:04 UTCの最終確認で3サービスは`inactive`・MainPID 0、停止フラグ3件を保持。
+`database.json`はtoumokorosi所有・mode 600。旧report・元監査資料はSHA-256不変だった。
+asset・原本・派生画像・run・subject・subject_candidateの削除、失敗ジョブ初期化、収集再開、
+NFS/fstab/netplan・媒体操作は行っていない。
+必須の検証用DB通し検証、本番revision・権限・全件照合・再集計・保全確認は成功した。
+アプリコードの変更がないためruff・pytest・パッケージビルドは実行していない。
+残りは別途許可によるGit公開と、対象外の同定根拠整備・収集再開判断。Issueの手動closeも行っていない。
+
+主要ログ（`%USERPROFILE%/.codex/logs/commands/`）:
+
+- バックアップ: `20261102T013703Z-0c43a0dbf6134f59bac4c91f8b39abf3.jsonl`
+- 監査判断照合・確定CSV: `20261102T014755Z-f057c2b19da04ce7b3122ded5973d2cd.jsonl`
+- 原本754件照合: `20261102T014937Z-2c4daee363444b86a5391a5b7f400cc6.jsonl`
+- 検証用DB通し検証: `20261102T015716Z-6ce765682c2b4ddeaf0231a4228e40f9.jsonl`
+- 本番migration・権限: `20261102T020036Z-403e9ef6b4794f4691addeeb7734cdf2.jsonl`
+- 本番補正・register・再集計: `20261102T020048Z-8ebad52610974aa2b89a975bbbfcab4d.jsonl`
+- 最終確認・成果物SHA-256: `20261102T020407Z-195eb8d6f681420fa8a1fa180fe8ceb1.jsonl`
 
 ## 旧パイロットの記録
 
