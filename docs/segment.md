@@ -191,4 +191,5 @@ RLEとマスクの往復は単体テストで確認済み。#41の統合作業�
 `colorstats.cvat prepare-draft`はRLEを保持してCVAT XMLとmodel下書きJSONを作り、
 `import-cvat --draft`は修正polygonを原画像座標へ戻して下書きとの差分を記録する。
 既存segment出力の形式・runは変更しない。操作は[CVAT手順](../ops/cvat/README.md)を参照。
-正解セット作成は#41、正解セットによる精度評価は#47で扱う。
+現在の#41は人手修正を行わず、公開正解データによる画素評価と自前100枚のモデル判定を使う。
+方針・ラベル対応・実行条件・限界は[評価手順](evaluation.md)を参照。#47は結果の集計を扱う。

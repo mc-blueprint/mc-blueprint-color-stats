@@ -1,0 +1,1733 @@
+{
+  "batch_id": "repeat",
+  "model": "gpt-6.1-sol",
+  "execution_id": "issue41-repeat-run2",
+  "repeat_of": "run1",
+  "images": [
+    {
+      "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+      "regions": [
+        {
+          "draft_id": "0:0",
+          "verdict": "wrong_label",
+          "evidence": "金色ドームと胴部全体であり、頂部の装飾だけではない。"
+        },
+        {
+          "draft_id": "0:1",
+          "verdict": "spill",
+          "evidence": "装飾を含むがドーム・外壁・開口部を建物全体で覆う。"
+        },
+        {
+          "draft_id": "0:2",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域はドームと胴部で、下方の入口アーチではない。"
+        },
+        {
+          "draft_id": "0:3",
+          "verdict": "spill",
+          "evidence": "入口アーチを含むがドームと外壁まで広く覆う。"
+        },
+        {
+          "draft_id": "0:4",
+          "verdict": "spill",
+          "evidence": "水平帯を含むがドーム・外壁全体を覆う。"
+        },
+        {
+          "draft_id": "0:5",
+          "verdict": "spill",
+          "evidence": "外壁の水平帯以外に窓・入口・壁面全体を含む。"
+        },
+        {
+          "draft_id": "0:6",
+          "verdict": "not_present",
+          "evidence": "独立した梁は確認できず、赤色は建物全体である。"
+        },
+        {
+          "draft_id": "0:7",
+          "verdict": "not_present",
+          "evidence": "煙突は見えず、赤色はドームである。"
+        },
+        {
+          "draft_id": "0:8",
+          "verdict": "not_present",
+          "evidence": "煙突は見えず、赤色は建物全体である。"
+        },
+        {
+          "draft_id": "0:9",
+          "verdict": "correct",
+          "evidence": "正面左寄りの細い柱に沿っている。"
+        },
+        {
+          "draft_id": "0:10",
+          "verdict": "correct",
+          "evidence": "入口左側の細い柱を捉えている。"
+        },
+        {
+          "draft_id": "0:11",
+          "verdict": "correct",
+          "evidence": "正面右寄りの細い柱に沿っている。"
+        },
+        {
+          "draft_id": "0:12",
+          "verdict": "correct",
+          "evidence": "入口右側の細い柱を捉えている。"
+        },
+        {
+          "draft_id": "0:13",
+          "verdict": "correct",
+          "evidence": "入口脇左の柱の縦方向に沿っている。"
+        },
+        {
+          "draft_id": "0:14",
+          "verdict": "correct",
+          "evidence": "右側の柱の細い縦領域に一致する。"
+        },
+        {
+          "draft_id": "0:15",
+          "verdict": "not_present",
+          "evidence": "隅石積みの明瞭な交互配置は見えない。"
+        },
+        {
+          "draft_id": "0:16",
+          "verdict": "spill",
+          "evidence": "軒蛇腹を含むがドーム・外壁・入口まで覆う。"
+        },
+        {
+          "draft_id": "0:17",
+          "verdict": "spill",
+          "evidence": "上端の蛇腹だけでなく外壁全面を含む。"
+        },
+        {
+          "draft_id": "0:18",
+          "verdict": "correct",
+          "evidence": "中央入口内の下部の扉に対応する。"
+        },
+        {
+          "draft_id": "0:19",
+          "verdict": "not_present",
+          "evidence": "屋根窓は見えず、赤色は建物全体である。"
+        },
+        {
+          "draft_id": "0:20",
+          "verdict": "not_present",
+          "evidence": "屋根窓は見えず、赤色はドームである。"
+        },
+        {
+          "draft_id": "0:21",
+          "verdict": "spill",
+          "evidence": "軒先を含むがドームと外壁全体に及ぶ。"
+        },
+        {
+          "draft_id": "0:22",
+          "verdict": "wrong_label",
+          "evidence": "赤色はドーム面と胴部で、軒先の領域ではない。"
+        },
+        {
+          "draft_id": "0:23",
+          "verdict": "not_present",
+          "evidence": "柵は画面内に確認できない。"
+        },
+        {
+          "draft_id": "0:24",
+          "verdict": "not_present",
+          "evidence": "柵は画面内に確認できず、赤色は外壁である。"
+        },
+        {
+          "draft_id": "0:25",
+          "verdict": "not_present",
+          "evidence": "可視の床面は画角外で、赤色は建物である。"
+        },
+        {
+          "draft_id": "0:26",
+          "verdict": "not_present",
+          "evidence": "三角の破風縁はなく、赤色は建物全体である。"
+        },
+        {
+          "draft_id": "0:27",
+          "verdict": "not_present",
+          "evidence": "切妻壁はなく、赤色は建物全体である。"
+        },
+        {
+          "draft_id": "0:28",
+          "verdict": "not_present",
+          "evidence": "切妻壁はなく、赤色は八角形の外壁である。"
+        },
+        {
+          "draft_id": "0:29",
+          "verdict": "not_present",
+          "evidence": "木骨壁は確認できない。"
+        },
+        {
+          "draft_id": "0:30",
+          "verdict": "not_present",
+          "evidence": "道は画角内に見えない。"
+        },
+        {
+          "draft_id": "0:31",
+          "verdict": "not_present",
+          "evidence": "道は画角内に見えず、赤色は外壁である。"
+        },
+        {
+          "draft_id": "0:32",
+          "verdict": "not_present",
+          "evidence": "独立した台座・基壇は下端で切れて判別できない。"
+        },
+        {
+          "draft_id": "0:33",
+          "verdict": "not_present",
+          "evidence": "手すりは確認できず、赤色は外壁である。"
+        },
+        {
+          "draft_id": "0:34",
+          "verdict": "not_present",
+          "evidence": "手すりは確認できず、赤色は建物全体である。"
+        },
+        {
+          "draft_id": "0:35",
+          "verdict": "not_present",
+          "evidence": "タイル装飾は見えるが、浮彫りと判断できる凹凸は確認できない。"
+        },
+        {
+          "draft_id": "0:36",
+          "verdict": "not_present",
+          "evidence": "ドームに棟線はなく、赤色は曲面屋根全体である。"
+        },
+        {
+          "draft_id": "0:37",
+          "verdict": "not_present",
+          "evidence": "棟線は確認できず、赤色は建物全体である。"
+        },
+        {
+          "draft_id": "0:38",
+          "verdict": "correct",
+          "evidence": "金色のドーム屋根をほぼ捉える。下端の胴部も少し含む。"
+        },
+        {
+          "draft_id": "0:39",
+          "verdict": "spill",
+          "evidence": "屋根を含むが外壁全体と入口まで含む。"
+        },
+        {
+          "draft_id": "0:40",
+          "verdict": "not_present",
+          "evidence": "外開きの鎧戸は見えず、窓の領域である。"
+        },
+        {
+          "draft_id": "0:41",
+          "verdict": "not_present",
+          "evidence": "鎧戸は確認できず、窓の領域である。"
+        },
+        {
+          "draft_id": "0:42",
+          "verdict": "not_present",
+          "evidence": "鎧戸は確認できず、窓の領域である。"
+        },
+        {
+          "draft_id": "0:43",
+          "verdict": "not_present",
+          "evidence": "鎧戸は確認できず、窓の領域である。"
+        },
+        {
+          "draft_id": "0:44",
+          "verdict": "not_present",
+          "evidence": "鎧戸は確認できず、窓の領域である。"
+        },
+        {
+          "draft_id": "0:45",
+          "verdict": "not_present",
+          "evidence": "鎧戸は確認できず、窓の領域である。"
+        },
+        {
+          "draft_id": "0:46",
+          "verdict": "not_present",
+          "evidence": "入口階段は画面下端で確認できない。"
+        },
+        {
+          "draft_id": "0:47",
+          "verdict": "not_present",
+          "evidence": "建物に付着する植生はない。"
+        },
+        {
+          "draft_id": "0:48",
+          "verdict": "spill",
+          "evidence": "主壁を含むが屋根・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "0:49",
+          "verdict": "spill",
+          "evidence": "側面の壁を含むが屋根と正面まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "0:50",
+          "verdict": "spill",
+          "evidence": "窓枠だけでなく窓の内側を面として含む。"
+        },
+        {
+          "draft_id": "0:51",
+          "verdict": "spill",
+          "evidence": "窓枠だけでなく窓の内側を面として含む。"
+        },
+        {
+          "draft_id": "0:52",
+          "verdict": "spill",
+          "evidence": "窓枠だけでなく窓の内側を面として含む。"
+        },
+        {
+          "draft_id": "0:53",
+          "verdict": "spill",
+          "evidence": "窓枠だけでなく窓の内側を面として含む。"
+        },
+        {
+          "draft_id": "0:54",
+          "verdict": "correct",
+          "evidence": "アーチ形の窓内部におおむね一致する。ガラスの細部は小さく不確か。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "タイル張りの主壁が明瞭だが、候補は屋根・開口部まで建物全体を覆う。"
+        },
+        {
+          "label": "arch",
+          "evidence": "中央入口のアーチと外壁の連続アーチ装飾を局所的に捉えた候補がない。"
+        }
+      ],
+      "building_name": "岩のドーム",
+      "evidence": [
+        "金色の大ドーム、窓付きの円筒状胴部、青いタイル張りの八角形外壁と中央アーチ入口が、タイトル・出典URL・dome-of-the-rock候補の記述と一致する。"
+      ]
+    },
+    {
+      "asset_id": "e6ebd198-c97c-4fb8-be9e-c5d25d34e219",
+      "regions": [
+        {
+          "draft_id": "10:0",
+          "verdict": "wrong_label",
+          "evidence": "赤色は教会塔全体で、個別装飾ではない。"
+        },
+        {
+          "draft_id": "10:1",
+          "verdict": "correct",
+          "evidence": "右側の大きな尖頭アーチ窓の形状に沿っている。"
+        },
+        {
+          "draft_id": "10:2",
+          "verdict": "spill",
+          "evidence": "水平帯を含むが塔・屋根・壁全体を覆う。"
+        },
+        {
+          "draft_id": "10:3",
+          "verdict": "not_present",
+          "evidence": "独立した露出梁は見えず、赤色は右の控壁である。"
+        },
+        {
+          "draft_id": "10:4",
+          "verdict": "not_present",
+          "evidence": "赤色は尖塔と塔身で、煙突は見えない。"
+        },
+        {
+          "draft_id": "10:5",
+          "verdict": "not_present",
+          "evidence": "赤色は控壁で、煙突は見えない。"
+        },
+        {
+          "draft_id": "10:6",
+          "verdict": "wrong_label",
+          "evidence": "赤色は壁面の縦の控壁で、独立柱ではない。"
+        },
+        {
+          "draft_id": "10:7",
+          "verdict": "not_present",
+          "evidence": "交互の隅石装飾は暗い画像でも確認できない。"
+        },
+        {
+          "draft_id": "10:8",
+          "verdict": "spill",
+          "evidence": "蛇腹を含むが教会全体を覆う。"
+        },
+        {
+          "draft_id": "10:9",
+          "verdict": "correct",
+          "evidence": "下部の小さな入口扉を捉えている。"
+        },
+        {
+          "draft_id": "10:10",
+          "verdict": "not_present",
+          "evidence": "赤色は壁面の尖頭窓で、屋根窓はない。"
+        },
+        {
+          "draft_id": "10:11",
+          "verdict": "not_present",
+          "evidence": "屋根窓は見えず、建物全体を覆う。"
+        },
+        {
+          "draft_id": "10:12",
+          "verdict": "spill",
+          "evidence": "軒を含むが塔と壁面まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "10:13",
+          "verdict": "not_present",
+          "evidence": "小さな赤色は入口扉で、柵は確認できない。"
+        },
+        {
+          "draft_id": "10:14",
+          "verdict": "correct",
+          "evidence": "前景の舗装面に沿う。暗く細部は不確か。"
+        },
+        {
+          "draft_id": "10:15",
+          "verdict": "correct",
+          "evidence": "前景の地面・舗装面におおむね対応する。"
+        },
+        {
+          "draft_id": "10:16",
+          "verdict": "spill",
+          "evidence": "破風周辺の縁を含むが塔と身廊全体に広がる。"
+        },
+        {
+          "draft_id": "10:17",
+          "verdict": "spill",
+          "evidence": "小さな入口の切妻壁を含むが教会全体を覆う。"
+        },
+        {
+          "draft_id": "10:18",
+          "verdict": "not_present",
+          "evidence": "木骨壁は見えない。"
+        },
+        {
+          "draft_id": "10:19",
+          "verdict": "correct",
+          "evidence": "左下の小さな灯具らしい明点を捉える。暗く形状は不確か。"
+        },
+        {
+          "draft_id": "10:20",
+          "verdict": "correct",
+          "evidence": "塔付近の小さな点灯箇所に対応する。細部は不確か。"
+        },
+        {
+          "draft_id": "10:21",
+          "verdict": "correct",
+          "evidence": "建物前の舗装された通路面に沿う。"
+        },
+        {
+          "draft_id": "10:22",
+          "verdict": "spill",
+          "evidence": "足元の基部を含むが塔・壁・屋根全体を覆う。"
+        },
+        {
+          "draft_id": "10:23",
+          "verdict": "not_present",
+          "evidence": "赤色は窓内部で、浮彫りは識別できない。"
+        },
+        {
+          "draft_id": "10:24",
+          "verdict": "not_present",
+          "evidence": "明瞭な浮彫りは確認できず、建物全体の領域である。"
+        },
+        {
+          "draft_id": "10:25",
+          "verdict": "wrong_label",
+          "evidence": "赤色は尖塔の屋根面全体で、身廊の棟ではない。"
+        },
+        {
+          "draft_id": "10:26",
+          "verdict": "wrong_label",
+          "evidence": "赤色は入口の三角屋根面で、棟だけではない。"
+        },
+        {
+          "draft_id": "10:27",
+          "verdict": "wrong_label",
+          "evidence": "赤色は小さな屋根面で、棟線ではない。"
+        },
+        {
+          "draft_id": "10:28",
+          "verdict": "correct",
+          "evidence": "右上の屋根頂部の斜線に沿っている。"
+        },
+        {
+          "draft_id": "10:29",
+          "verdict": "correct",
+          "evidence": "入口上の三角形の屋根面を捉える。"
+        },
+        {
+          "draft_id": "10:30",
+          "verdict": "correct",
+          "evidence": "身廊の細長い斜めの屋根面に対応する。"
+        },
+        {
+          "draft_id": "10:31",
+          "verdict": "correct",
+          "evidence": "小さな入口屋根の面に対応する。"
+        },
+        {
+          "draft_id": "10:32",
+          "verdict": "wrong_label",
+          "evidence": "右上の棟・縁の細線だけで、屋根面を捉えていない。"
+        },
+        {
+          "draft_id": "10:33",
+          "verdict": "correct",
+          "evidence": "塔の尖った屋根面に一致する。"
+        },
+        {
+          "draft_id": "10:34",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は尖頭窓である。"
+        },
+        {
+          "draft_id": "10:35",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は扉である。"
+        },
+        {
+          "draft_id": "10:36",
+          "verdict": "correct",
+          "evidence": "入口右下の数段の階段らしい横長部分に対応する。暗く細部は不確か。"
+        },
+        {
+          "draft_id": "10:37",
+          "verdict": "not_present",
+          "evidence": "建物に付着した植生はなく、前景の木は独立している。"
+        },
+        {
+          "draft_id": "10:38",
+          "verdict": "spill",
+          "evidence": "主壁を含むが尖塔と屋根・窓も広く含む。"
+        },
+        {
+          "draft_id": "10:39",
+          "verdict": "spill",
+          "evidence": "側壁を含むが塔と屋根を含む建物全体に及ぶ。"
+        },
+        {
+          "draft_id": "10:40",
+          "verdict": "spill",
+          "evidence": "尖頭窓全体を覆い、枠の内側の窓面も含む。"
+        },
+        {
+          "draft_id": "10:41",
+          "verdict": "correct",
+          "evidence": "右側の尖頭窓の内部をおおむね捉える。夜景でガラス細部は不確か。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "石造の身廊と塔の壁が見えるが、壁候補は屋根を含む建物全体である。"
+        }
+      ],
+      "building_name": "聖ヴィクトール教会（デュルメン）",
+      "evidence": [
+        "細い尖塔を載せた角塔、石造の身廊、右側の大きな尖頭窓が、タイトル・出典URLおよびduelmen-st-viktor候補の外観記述と整合する。夜景のため細部の確信度は低い。"
+      ]
+    },
+    {
+      "asset_id": "40e6cdac-535b-4852-b17c-977a2bf02fef",
+      "regions": [
+        {
+          "draft_id": "20:0",
+          "verdict": "spill",
+          "evidence": "灯具の装飾脚を含むがランタン本体まで全体を覆う。"
+        },
+        {
+          "draft_id": "20:1",
+          "verdict": "not_present",
+          "evidence": "背景は矩形窓の木骨壁で、アーチは見えない。"
+        },
+        {
+          "draft_id": "20:2",
+          "verdict": "wrong_label",
+          "evidence": "赤色は前景の多灯式街灯で、背景の水平帯ではない。"
+        },
+        {
+          "draft_id": "20:3",
+          "verdict": "not_present",
+          "evidence": "煙突は見えず、赤色は街灯である。"
+        },
+        {
+          "draft_id": "20:4",
+          "verdict": "wrong_label",
+          "evidence": "赤色は灯具全体で、背景の柱や木骨の縦材ではない。"
+        },
+        {
+          "draft_id": "20:5",
+          "verdict": "not_present",
+          "evidence": "背景に交互の隅石積みは見えない。"
+        },
+        {
+          "draft_id": "20:6",
+          "verdict": "not_present",
+          "evidence": "隅石積みは見えず、赤色は街灯である。"
+        },
+        {
+          "draft_id": "20:7",
+          "verdict": "spill",
+          "evidence": "背景上端の蛇腹を含むが壁・窓全体まで含む。"
+        },
+        {
+          "draft_id": "20:8",
+          "verdict": "wrong_label",
+          "evidence": "赤色は街灯で、背景壁の蛇腹ではない。"
+        },
+        {
+          "draft_id": "20:9",
+          "verdict": "not_present",
+          "evidence": "扉は見えず、赤色は下段の窓である。"
+        },
+        {
+          "draft_id": "20:10",
+          "verdict": "not_present",
+          "evidence": "扉は見えず、赤色は下段の窓である。"
+        },
+        {
+          "draft_id": "20:11",
+          "verdict": "not_present",
+          "evidence": "屋根窓は見えず、赤色は背景の壁面である。"
+        },
+        {
+          "draft_id": "20:12",
+          "verdict": "not_present",
+          "evidence": "屋根窓は見えず、赤色は通常の上段窓である。"
+        },
+        {
+          "draft_id": "20:13",
+          "verdict": "wrong_label",
+          "evidence": "赤色は街灯で、背景上端の軒ではない。"
+        },
+        {
+          "draft_id": "20:14",
+          "verdict": "spill",
+          "evidence": "背景上端の軒を含むが壁・窓全体を覆う。"
+        },
+        {
+          "draft_id": "20:15",
+          "verdict": "not_present",
+          "evidence": "柵は見えず、赤色は街灯である。"
+        },
+        {
+          "draft_id": "20:16",
+          "verdict": "not_present",
+          "evidence": "柵は見えず、赤色は背景壁である。"
+        },
+        {
+          "draft_id": "20:17",
+          "verdict": "not_present",
+          "evidence": "床面は画角内に見えない。"
+        },
+        {
+          "draft_id": "20:18",
+          "verdict": "not_present",
+          "evidence": "床面は画角内に見えず、赤色は背景壁である。"
+        },
+        {
+          "draft_id": "20:19",
+          "verdict": "not_present",
+          "evidence": "破風の斜め縁は画角内に見えない。"
+        },
+        {
+          "draft_id": "20:20",
+          "verdict": "not_present",
+          "evidence": "切妻壁は画角内に見えない。"
+        },
+        {
+          "draft_id": "20:21",
+          "verdict": "spill",
+          "evidence": "木骨材を含むが窓と塗り壁全面まで含む。"
+        },
+        {
+          "draft_id": "20:22",
+          "verdict": "correct",
+          "evidence": "前景の多灯式街灯をおおむね正確に覆う。"
+        },
+        {
+          "draft_id": "20:23",
+          "verdict": "not_present",
+          "evidence": "通路面は画角内に見えない。"
+        },
+        {
+          "draft_id": "20:24",
+          "verdict": "not_present",
+          "evidence": "建物の基壇は画角内に見えない。"
+        },
+        {
+          "draft_id": "20:25",
+          "verdict": "not_present",
+          "evidence": "手すりは見えず、赤色は街灯である。"
+        },
+        {
+          "draft_id": "20:26",
+          "verdict": "spill",
+          "evidence": "街灯下部の浮彫り装飾を含むがランタンまで覆う。"
+        },
+        {
+          "draft_id": "20:27",
+          "verdict": "not_present",
+          "evidence": "屋根の棟は画角内になく、赤色は壁上端の帯である。"
+        },
+        {
+          "draft_id": "20:28",
+          "verdict": "not_present",
+          "evidence": "屋根面は画角内に見えず、赤色は壁上端の帯である。"
+        },
+        {
+          "draft_id": "20:29",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は窓である。"
+        },
+        {
+          "draft_id": "20:30",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は窓である。"
+        },
+        {
+          "draft_id": "20:31",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は窓である。"
+        },
+        {
+          "draft_id": "20:32",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は窓である。"
+        },
+        {
+          "draft_id": "20:33",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は窓である。"
+        },
+        {
+          "draft_id": "20:34",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は窓である。"
+        },
+        {
+          "draft_id": "20:35",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は上段の窓である。"
+        },
+        {
+          "draft_id": "20:36",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は上段の窓である。"
+        },
+        {
+          "draft_id": "20:37",
+          "verdict": "not_present",
+          "evidence": "建物に付着する植生はなく、赤色は街灯である。"
+        },
+        {
+          "draft_id": "20:38",
+          "verdict": "spill",
+          "evidence": "主壁を含むが多数の窓と木骨材も面として含む。"
+        },
+        {
+          "draft_id": "20:39",
+          "verdict": "spill",
+          "evidence": "背景の壁を含むが窓と木骨材も広く含む。"
+        },
+        {
+          "draft_id": "20:40",
+          "verdict": "spill",
+          "evidence": "窓枠とともに窓の内部全体を含む。"
+        },
+        {
+          "draft_id": "20:41",
+          "verdict": "spill",
+          "evidence": "窓枠とともに窓の内部全体を含む。"
+        },
+        {
+          "draft_id": "20:42",
+          "verdict": "spill",
+          "evidence": "窓枠とともに窓の内部全体を含む。"
+        },
+        {
+          "draft_id": "20:43",
+          "verdict": "spill",
+          "evidence": "窓枠とともに窓の内部全体を含む。"
+        },
+        {
+          "draft_id": "20:44",
+          "verdict": "spill",
+          "evidence": "窓枠とともに窓の内部全体を含む。"
+        },
+        {
+          "draft_id": "20:45",
+          "verdict": "spill",
+          "evidence": "窓枠とともに窓の内部全体を含む。"
+        },
+        {
+          "draft_id": "20:46",
+          "verdict": "spill",
+          "evidence": "窓枠とともに窓の内部全体を含む。"
+        },
+        {
+          "draft_id": "20:47",
+          "verdict": "correct",
+          "evidence": "下段左寄りの窓の面におおむね一致する。"
+        },
+        {
+          "draft_id": "20:48",
+          "verdict": "correct",
+          "evidence": "上段右端の窓の面におおむね一致する。"
+        },
+        {
+          "draft_id": "20:49",
+          "verdict": "correct",
+          "evidence": "下段左端の窓の面におおむね一致する。"
+        },
+        {
+          "draft_id": "20:50",
+          "verdict": "correct",
+          "evidence": "下段右端の窓の面におおむね一致する。"
+        },
+        {
+          "draft_id": "20:51",
+          "verdict": "correct",
+          "evidence": "上段左端の窓の面におおむね一致する。"
+        },
+        {
+          "draft_id": "20:52",
+          "verdict": "wrong_label",
+          "evidence": "赤色は前景のランタン全体で、背景の窓ガラスではない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "half_timber",
+          "evidence": "背景に黒い縦横の木骨材が明瞭だが、候補は窓と塗り壁まで含む。"
+        },
+        {
+          "label": "wall_main",
+          "evidence": "背景の塗り壁を窓や木骨材から分けた領域がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "主被写体は装飾のある多灯式街灯で、背景は矩形窓の木骨建築。タイトルとカテゴリは街灯を指しており、背景建築の固有名を同定する根拠はない。"
+      ]
+    },
+    {
+      "asset_id": "b0a15697-a70b-4282-b5b8-a5e1e7660e48",
+      "regions": [
+        {
+          "draft_id": "30:0",
+          "verdict": "spill",
+          "evidence": "装飾を含むがファサードのほぼ全面を覆う。"
+        },
+        {
+          "draft_id": "30:1",
+          "verdict": "spill",
+          "evidence": "尖頭アーチを含むが壁・窓・塔まで全面を覆う。"
+        },
+        {
+          "draft_id": "30:2",
+          "verdict": "spill",
+          "evidence": "水平帯を含むがファサード全体を覆う。"
+        },
+        {
+          "draft_id": "30:3",
+          "verdict": "not_present",
+          "evidence": "露出梁は見えず、石造の正面全体が赤い。"
+        },
+        {
+          "draft_id": "30:4",
+          "verdict": "not_present",
+          "evidence": "煙突は見えず、赤色は正面全体である。"
+        },
+        {
+          "draft_id": "30:5",
+          "verdict": "spill",
+          "evidence": "入口脇の細柱を含むがファサード全体まで覆う。"
+        },
+        {
+          "draft_id": "30:6",
+          "verdict": "wrong_label",
+          "evidence": "赤色は中央入口の扉の細い縁付近で、側方の柱ではない。"
+        },
+        {
+          "draft_id": "30:7",
+          "verdict": "not_present",
+          "evidence": "交互の隅石積みは確認できない。"
+        },
+        {
+          "draft_id": "30:8",
+          "verdict": "spill",
+          "evidence": "蛇腹を含むがファサード全体を覆う。"
+        },
+        {
+          "draft_id": "30:9",
+          "verdict": "correct",
+          "evidence": "中央入口の右側の扉面に対応する。"
+        },
+        {
+          "draft_id": "30:10",
+          "verdict": "correct",
+          "evidence": "右側入口の扉面に一致する。"
+        },
+        {
+          "draft_id": "30:11",
+          "verdict": "correct",
+          "evidence": "中央入口の左側の扉面に対応する。"
+        },
+        {
+          "draft_id": "30:12",
+          "verdict": "not_present",
+          "evidence": "屋根窓は見えず、赤色は正面全体である。"
+        },
+        {
+          "draft_id": "30:13",
+          "verdict": "not_present",
+          "evidence": "明瞭な軒の張り出しは見えず、赤色は石造正面である。"
+        },
+        {
+          "draft_id": "30:14",
+          "verdict": "not_present",
+          "evidence": "柵は確認できず、赤色は正面全体である。"
+        },
+        {
+          "draft_id": "30:15",
+          "verdict": "correct",
+          "evidence": "前景の舗装面をおおむね捉える。"
+        },
+        {
+          "draft_id": "30:16",
+          "verdict": "spill",
+          "evidence": "尖った破風縁を含むが正面全体を覆う。"
+        },
+        {
+          "draft_id": "30:17",
+          "verdict": "spill",
+          "evidence": "三角の入口上部を含むが塔と壁全面に広がる。"
+        },
+        {
+          "draft_id": "30:18",
+          "verdict": "not_present",
+          "evidence": "木骨壁は見えない。"
+        },
+        {
+          "draft_id": "30:19",
+          "verdict": "correct",
+          "evidence": "建物前の舗装された通行面を捉える。"
+        },
+        {
+          "draft_id": "30:20",
+          "verdict": "spill",
+          "evidence": "足元の基部を含むが塔・窓・壁全体まで覆う。"
+        },
+        {
+          "draft_id": "30:21",
+          "verdict": "spill",
+          "evidence": "入口上の浮彫りを含むがファサード全体を覆う。"
+        },
+        {
+          "draft_id": "30:22",
+          "verdict": "not_present",
+          "evidence": "屋根の棟は見えず、赤色は正面上部である。"
+        },
+        {
+          "draft_id": "30:23",
+          "verdict": "not_present",
+          "evidence": "屋根面は見えず、赤色は石造正面の上部である。"
+        },
+        {
+          "draft_id": "30:24",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は大きな尖頭窓である。"
+        },
+        {
+          "draft_id": "30:25",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は上端の塔間の空である。"
+        },
+        {
+          "draft_id": "30:26",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は入口の扉である。"
+        },
+        {
+          "draft_id": "30:27",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は入口の扉である。"
+        },
+        {
+          "draft_id": "30:28",
+          "verdict": "wrong_label",
+          "evidence": "赤色は建物脇の独立した細い樹木で、付着植生ではない。正面に付着植生があるかは解像度上不確か。"
+        },
+        {
+          "draft_id": "30:29",
+          "verdict": "wrong_label",
+          "evidence": "赤色は石造の建物全面で、植生領域ではない。入口上の緑色部分の性質は不確か。"
+        },
+        {
+          "draft_id": "30:30",
+          "verdict": "spill",
+          "evidence": "主壁を含むが窓・入口・塔の全体も覆う。"
+        },
+        {
+          "draft_id": "30:31",
+          "verdict": "spill",
+          "evidence": "副次的な正面壁も含むがファサード全体を覆う。"
+        },
+        {
+          "draft_id": "30:32",
+          "verdict": "spill",
+          "evidence": "大きな尖頭窓の枠と内部の窓面をまとめて覆う。"
+        },
+        {
+          "draft_id": "30:33",
+          "verdict": "wrong_label",
+          "evidence": "赤色は上端の塔間の空で、窓枠ではない。"
+        },
+        {
+          "draft_id": "30:34",
+          "verdict": "correct",
+          "evidence": "大きな尖頭窓のガラス面におおむね一致する。"
+        },
+        {
+          "draft_id": "30:35",
+          "verdict": "wrong_label",
+          "evidence": "赤色は上端の塔間の空で、ガラス窓ではない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "arch",
+          "evidence": "三つの入口に尖頭アーチが見えるが、候補は正面全体を覆う。"
+        },
+        {
+          "label": "wall_main",
+          "evidence": "主たる石造壁が明瞭だが、壁候補は入口・窓・塔を一括で覆う。"
+        },
+        {
+          "label": "column",
+          "evidence": "入口脇の細い石柱群に対応した領域がない。"
+        }
+      ],
+      "building_name": "ララ・ムスタファ・パシャ・モスク",
+      "evidence": [
+        "石造のゴシック正面に三つの尖頭入口、中央の大きな尖頭窓、上部の双塔が見える。タイトル・出典URLおよび旧聖ニコラオス大聖堂を示すカテゴリと整合する。"
+      ]
+    },
+    {
+      "asset_id": "d139bff8-3dee-4cbb-b89d-88dd1ec7a08c",
+      "regions": [
+        {
+          "draft_id": "40:0",
+          "verdict": "correct",
+          "evidence": "中央の半ドーム下のアーチ形開口に対応する。"
+        },
+        {
+          "draft_id": "40:1",
+          "verdict": "not_present",
+          "evidence": "赤色は右側の細いミナレットで、煙突は見えない。"
+        },
+        {
+          "draft_id": "40:2",
+          "verdict": "not_present",
+          "evidence": "赤色は左側のミナレットで、煙突は見えない。"
+        },
+        {
+          "draft_id": "40:3",
+          "verdict": "wrong_label",
+          "evidence": "赤色は左の塔で、柱ではない。小さな前景アーケードの柱とは異なる。"
+        },
+        {
+          "draft_id": "40:4",
+          "verdict": "not_present",
+          "evidence": "赤色は付属棟のドームで、屋根窓はない。"
+        },
+        {
+          "draft_id": "40:5",
+          "verdict": "not_present",
+          "evidence": "赤色は付属棟の壁の縦片で、灯具は判別できない。"
+        },
+        {
+          "draft_id": "40:6",
+          "verdict": "not_present",
+          "evidence": "ドームに棟線はなく、赤色はドーム面である。"
+        },
+        {
+          "draft_id": "40:7",
+          "verdict": "correct",
+          "evidence": "右前景の円形棟のドーム屋根を捉える。"
+        },
+        {
+          "draft_id": "40:8",
+          "verdict": "correct",
+          "evidence": "中央下の小さな付属屋根の曲面に対応する。"
+        },
+        {
+          "draft_id": "40:9",
+          "verdict": "not_present",
+          "evidence": "鎧戸は見えず、赤色は壁面の小部分である。"
+        },
+        {
+          "draft_id": "40:10",
+          "verdict": "not_present",
+          "evidence": "赤色は左上の独立した木の樹冠で、付着植生ではない。"
+        },
+        {
+          "draft_id": "40:11",
+          "verdict": "not_present",
+          "evidence": "赤色は右上の独立した木の樹冠で、付着植生ではない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "ドーム下の大きな石造壁面が見えるが壁候補がない。"
+        },
+        {
+          "label": "roof_surface",
+          "evidence": "本体中央の大ドームと半ドームに屋根領域の候補がない。"
+        },
+        {
+          "label": "vegetation_tree_canopy",
+          "evidence": "画面上の左右の独立した木の樹冠は付着植生候補になっている。"
+        }
+      ],
+      "building_name": "アヤソフィア",
+      "evidence": [
+        "大ドームと段状の半ドームを持つ塊状の本体、周囲の細いミナレットが見える。アヤソフィアを示すタイトル・出典URLと南西外観カテゴリに整合する。"
+      ]
+    },
+    {
+      "asset_id": "58c1f736-0d7a-4b0f-8eef-451d81bf0b88",
+      "regions": [
+        {
+          "draft_id": "50:0",
+          "verdict": "spill",
+          "evidence": "屋根の装飾を含むが門全体を覆う。"
+        },
+        {
+          "draft_id": "50:1",
+          "verdict": "correct",
+          "evidence": "左上の屋根端の小さな装飾に一致する。"
+        },
+        {
+          "draft_id": "50:2",
+          "verdict": "not_present",
+          "evidence": "アーチ開口はなく、矩形の城門である。"
+        },
+        {
+          "draft_id": "50:3",
+          "verdict": "spill",
+          "evidence": "水平の帯を含むが上層屋根面と軒裏を広く含む。"
+        },
+        {
+          "draft_id": "50:4",
+          "verdict": "not_present",
+          "evidence": "煙突はなく、赤色は城門全体である。"
+        },
+        {
+          "draft_id": "50:5",
+          "verdict": "correct",
+          "evidence": "下層右側の縦の木柱に沿っている。"
+        },
+        {
+          "draft_id": "50:6",
+          "verdict": "not_present",
+          "evidence": "交互に積んだ隅石装飾は見えない。"
+        },
+        {
+          "draft_id": "50:7",
+          "verdict": "not_present",
+          "evidence": "西洋式の蛇腹は確認できず、赤色は門全体である。"
+        },
+        {
+          "draft_id": "50:8",
+          "verdict": "correct",
+          "evidence": "門口左側の木製扉面に対応する。"
+        },
+        {
+          "draft_id": "50:9",
+          "verdict": "not_present",
+          "evidence": "屋根窓はなく、赤色は門全体である。"
+        },
+        {
+          "draft_id": "50:10",
+          "verdict": "spill",
+          "evidence": "軒を含むが上下の壁と柱・扉まで全体を覆う。"
+        },
+        {
+          "draft_id": "50:11",
+          "verdict": "spill",
+          "evidence": "上層の軒を含むが瓦屋根面全体まで覆う。"
+        },
+        {
+          "draft_id": "50:12",
+          "verdict": "spill",
+          "evidence": "下層の軒を含むが下層屋根面全体に広がる。"
+        },
+        {
+          "draft_id": "50:13",
+          "verdict": "wrong_label",
+          "evidence": "赤色は門を通した奥の通路の一部で、柵ではない。前景の石柵とは位置が異なる。"
+        },
+        {
+          "draft_id": "50:14",
+          "verdict": "wrong_label",
+          "evidence": "赤色は前景の石製欄干の上面で、床面ではない。門の奥に床・通路は見える。"
+        },
+        {
+          "draft_id": "50:15",
+          "verdict": "not_present",
+          "evidence": "破風の三角の縁はこの正面に見えない。"
+        },
+        {
+          "draft_id": "50:16",
+          "verdict": "not_present",
+          "evidence": "切妻壁は正面に見えず、赤色は左手の石壁である。"
+        },
+        {
+          "draft_id": "50:17",
+          "verdict": "not_present",
+          "evidence": "柱梁はあるが木骨造の充填壁は確認できない。"
+        },
+        {
+          "draft_id": "50:18",
+          "verdict": "spill",
+          "evidence": "下部の基部も含むが門の屋根・上層壁まで覆う。"
+        },
+        {
+          "draft_id": "50:19",
+          "verdict": "wrong_label",
+          "evidence": "赤色は奥の通路で、前景の石欄干ではない。"
+        },
+        {
+          "draft_id": "50:20",
+          "verdict": "not_present",
+          "evidence": "浮彫り装飾は明確に識別できない。"
+        },
+        {
+          "draft_id": "50:21",
+          "verdict": "wrong_label",
+          "evidence": "赤色は上層屋根面全体で、棟の細線ではない。"
+        },
+        {
+          "draft_id": "50:22",
+          "verdict": "wrong_label",
+          "evidence": "赤色は下層屋根面全体で、棟線ではない。"
+        },
+        {
+          "draft_id": "50:23",
+          "verdict": "correct",
+          "evidence": "上層の瓦屋根面におおむね一致する。"
+        },
+        {
+          "draft_id": "50:24",
+          "verdict": "spill",
+          "evidence": "上層屋根に加え上層の白壁と格子まで広く含む。"
+        },
+        {
+          "draft_id": "50:25",
+          "verdict": "correct",
+          "evidence": "下層の瓦屋根面におおむね一致する。"
+        },
+        {
+          "draft_id": "50:26",
+          "verdict": "not_present",
+          "evidence": "鎧戸はなく、赤色は上層の格子窓である。"
+        },
+        {
+          "draft_id": "50:27",
+          "verdict": "not_present",
+          "evidence": "階段は見えず、赤色は前景の石欄干である。"
+        },
+        {
+          "draft_id": "50:28",
+          "verdict": "not_present",
+          "evidence": "建物に付着する植生はなく、赤色は門である。"
+        },
+        {
+          "draft_id": "50:29",
+          "verdict": "spill",
+          "evidence": "壁面を含むが屋根や下層の柱・扉まで覆う。"
+        },
+        {
+          "draft_id": "50:30",
+          "verdict": "spill",
+          "evidence": "副壁を含むが門全体まで覆う。"
+        },
+        {
+          "draft_id": "50:31",
+          "verdict": "spill",
+          "evidence": "窓枠・格子を含むがその間の内部まで帯状に覆う。"
+        },
+        {
+          "draft_id": "50:32",
+          "verdict": "wrong_label",
+          "evidence": "赤色は門を通した屋外の眺めで、ガラスではない。上層格子にガラスがあるかも確認できない。"
+        },
+        {
+          "draft_id": "50:33",
+          "verdict": "not_present",
+          "evidence": "上層は格子状だが、ガラス面の存在は確認できない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "上層の白い壁と下層の木壁が見えるが、壁候補は屋根まで含む。"
+        },
+        {
+          "label": "railing",
+          "evidence": "手前の石製欄干は見えるが、手すり候補は門の奥を指す。"
+        },
+        {
+          "label": "path",
+          "evidence": "門口を通して見える通路面に対応した道の候補がない。"
+        }
+      ],
+      "building_name": "鶴丸城御楼門",
+      "evidence": [
+        "二層の櫓門、上下の瓦屋根、上層の白壁と横長の格子、下層の木製門扉が見える。Tsurumaru Castle GatesのタイトルとGoromon Gateカテゴリに整合する。座標の正確性はこの画像だけでは検証できない。"
+      ]
+    },
+    {
+      "asset_id": "7e4b611b-fc37-4c2e-ae69-f88cb8806dcc",
+      "regions": [
+        {
+          "draft_id": "60:0",
+          "verdict": "not_present",
+          "evidence": "赤い小点に対応する装飾は識別できない。"
+        },
+        {
+          "draft_id": "60:1",
+          "verdict": "wrong_label",
+          "evidence": "赤色はミナレット2本で、個別の小装飾ではない。"
+        },
+        {
+          "draft_id": "60:2",
+          "verdict": "spill",
+          "evidence": "右のアーチ開口を含むが内側全体と下部まで覆う。"
+        },
+        {
+          "draft_id": "60:3",
+          "verdict": "wrong_label",
+          "evidence": "赤色は中央の噴水のドームで、左右のアーチではない。"
+        },
+        {
+          "draft_id": "60:4",
+          "verdict": "spill",
+          "evidence": "左側のアーチ開口を含むが内部の暗部全体まで覆う。"
+        },
+        {
+          "draft_id": "60:5",
+          "verdict": "spill",
+          "evidence": "水平帯を含むがミナレット・壁・アーチを全体で覆う。"
+        },
+        {
+          "draft_id": "60:6",
+          "verdict": "not_present",
+          "evidence": "露出した梁は見えず、石造の建物全体である。"
+        },
+        {
+          "draft_id": "60:7",
+          "verdict": "not_present",
+          "evidence": "赤色はミナレットで、煙突はない。"
+        },
+        {
+          "draft_id": "60:8",
+          "verdict": "not_present",
+          "evidence": "赤色は右のミナレットで、煙突はない。"
+        },
+        {
+          "draft_id": "60:9",
+          "verdict": "not_present",
+          "evidence": "赤色は小さな尖頭構造で、煙突とは判断できない。"
+        },
+        {
+          "draft_id": "60:10",
+          "verdict": "wrong_label",
+          "evidence": "赤色は右のミナレットで、回廊の柱ではない。"
+        },
+        {
+          "draft_id": "60:11",
+          "verdict": "wrong_label",
+          "evidence": "赤色はミナレット2本で、回廊の柱ではない。"
+        },
+        {
+          "draft_id": "60:12",
+          "verdict": "correct",
+          "evidence": "左側アーケードの細い柱に沿っている。"
+        },
+        {
+          "draft_id": "60:13",
+          "verdict": "not_present",
+          "evidence": "交互に積んだ隅石は確認できない。"
+        },
+        {
+          "draft_id": "60:14",
+          "verdict": "spill",
+          "evidence": "蛇腹を含むがミナレットと建物全体まで覆う。"
+        },
+        {
+          "draft_id": "60:15",
+          "verdict": "spill",
+          "evidence": "蛇腹を含むがアーチ・壁・噴水まで広く覆う。"
+        },
+        {
+          "draft_id": "60:16",
+          "verdict": "not_present",
+          "evidence": "屋根窓は見えず、赤色は建物全体である。"
+        },
+        {
+          "draft_id": "60:17",
+          "verdict": "spill",
+          "evidence": "軒周辺を含むがミナレットと壁・開口全体に及ぶ。"
+        },
+        {
+          "draft_id": "60:18",
+          "verdict": "not_present",
+          "evidence": "柵は画面内に確認できない。"
+        },
+        {
+          "draft_id": "60:19",
+          "verdict": "not_present",
+          "evidence": "床面は画面下端で切れて見えず、赤色は建物である。"
+        },
+        {
+          "draft_id": "60:20",
+          "verdict": "not_present",
+          "evidence": "三角形の破風縁は見えない。"
+        },
+        {
+          "draft_id": "60:21",
+          "verdict": "not_present",
+          "evidence": "切妻壁は見えず、赤色はアーケード正面である。"
+        },
+        {
+          "draft_id": "60:22",
+          "verdict": "not_present",
+          "evidence": "木骨壁は見えない。"
+        },
+        {
+          "draft_id": "60:23",
+          "verdict": "not_present",
+          "evidence": "木骨壁は見えず、赤色はアーケード正面である。"
+        },
+        {
+          "draft_id": "60:24",
+          "verdict": "wrong_label",
+          "evidence": "赤色は噴水ドーム頂部の相輪である。回廊の吊り灯らしい線状物とは異なる。"
+        },
+        {
+          "draft_id": "60:25",
+          "verdict": "not_present",
+          "evidence": "通路の床面は画角内に見えない。"
+        },
+        {
+          "draft_id": "60:26",
+          "verdict": "spill",
+          "evidence": "下部の基部を含むがミナレットと建物全体まで覆う。"
+        },
+        {
+          "draft_id": "60:27",
+          "verdict": "not_present",
+          "evidence": "手すりは確認できず、赤色はアーケード正面である。"
+        },
+        {
+          "draft_id": "60:28",
+          "verdict": "not_present",
+          "evidence": "赤色の小領域は壁上部の尖頭構造で、浮彫りは判別できない。"
+        },
+        {
+          "draft_id": "60:29",
+          "verdict": "not_present",
+          "evidence": "赤色はミナレット2本で、浮彫りと分かるものはない。"
+        },
+        {
+          "draft_id": "60:30",
+          "verdict": "not_present",
+          "evidence": "ドームと陸屋根で棟線は見えず、赤色は建物全体である。"
+        },
+        {
+          "draft_id": "60:31",
+          "verdict": "not_present",
+          "evidence": "付着植生は見えない。"
+        },
+        {
+          "draft_id": "60:32",
+          "verdict": "not_present",
+          "evidence": "付着植生は見えず、赤色はミナレットである。"
+        },
+        {
+          "draft_id": "60:33",
+          "verdict": "not_present",
+          "evidence": "付着植生は見えず、赤色は右の塔である。"
+        },
+        {
+          "draft_id": "60:34",
+          "verdict": "spill",
+          "evidence": "主壁を含むがミナレット・アーチ・噴水まで全体を覆う。"
+        },
+        {
+          "draft_id": "60:35",
+          "verdict": "spill",
+          "evidence": "側壁を含むが正面・ミナレット・噴水まで広く覆う。"
+        },
+        {
+          "draft_id": "60:36",
+          "verdict": "spill",
+          "evidence": "上部の窓を含むが建物全体の領域である。"
+        },
+        {
+          "draft_id": "60:37",
+          "verdict": "spill",
+          "evidence": "上部の窓を含むが塔・壁・噴水も全体で覆う。ガラス細部は不確か。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "roof_surface",
+          "evidence": "手前の噴水ドームと奥のドームが見えるが屋根面の候補がない。"
+        },
+        {
+          "label": "arch",
+          "evidence": "左右のアーチの輪郭が明瞭だが、候補は開口内部全体まで含む。"
+        },
+        {
+          "label": "wall_main",
+          "evidence": "石造の回廊壁が見えるが、壁候補は塔と噴水も一括で覆う。"
+        }
+      ],
+      "building_name": "イェニ・モスク（イスタンブール）",
+      "evidence": [
+        "左右のミナレット、石造の尖頭アーケード、中央手前のドーム付き噴水、奥の段状のドーム構成が見える。Yeni Camiのタイトル・出典URLとNew Mosque (İstanbul)カテゴリに整合する。候補内のYeni Valideというカテゴリ表記には揺れがある。"
+      ]
+    },
+    {
+      "asset_id": "e0bc0047-3799-404b-adbf-82474f1510b9",
+      "regions": [
+        {
+          "draft_id": "70:0",
+          "verdict": "spill",
+          "evidence": "草を含むが手前の低木群まで一括で覆う。"
+        },
+        {
+          "draft_id": "70:1",
+          "verdict": "not_present",
+          "evidence": "露出した土面は見えず、赤色は草と低木である。"
+        },
+        {
+          "draft_id": "70:2",
+          "verdict": "not_present",
+          "evidence": "自然道の筋は見えず、赤色は草と低木全体である。"
+        },
+        {
+          "draft_id": "70:3",
+          "verdict": "not_present",
+          "evidence": "礫の斜面は見えず、赤色は低木と草である。"
+        },
+        {
+          "draft_id": "70:4",
+          "verdict": "not_present",
+          "evidence": "端の小領域も岩屑とは確認できず、明瞭な礫地はない。"
+        },
+        {
+          "draft_id": "70:5",
+          "verdict": "not_present",
+          "evidence": "砂地は見えず、赤色は植生である。"
+        },
+        {
+          "draft_id": "70:6",
+          "verdict": "not_present",
+          "evidence": "雪氷は見えず、赤色は草と低木である。"
+        },
+        {
+          "draft_id": "70:7",
+          "verdict": "wrong_label",
+          "evidence": "赤色は遠方の針葉樹の樹冠全体で、幹の線ではない。幹の細部は不確か。"
+        },
+        {
+          "draft_id": "70:8",
+          "verdict": "correct",
+          "evidence": "手前に連なる草と低木の範囲におおむね一致する。"
+        },
+        {
+          "draft_id": "70:9",
+          "verdict": "correct",
+          "evidence": "右奥の単独の針葉樹の樹冠を捉えている。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "前景は草と低木、奥に針葉樹と山並みが見える。建物は写っておらず、固有の建築名は付けない。"
+      ]
+    },
+    {
+      "asset_id": "4dcb1280-f075-4f51-aa3e-c7f7724e1dcb",
+      "regions": [
+        {
+          "draft_id": "80:0",
+          "verdict": "not_present",
+          "evidence": "草地は見えず、赤色は乾いた砂地である。"
+        },
+        {
+          "draft_id": "80:1",
+          "verdict": "wrong_label",
+          "evidence": "赤色は砂の地表で、土の露出面とは見えない。"
+        },
+        {
+          "draft_id": "80:2",
+          "verdict": "spill",
+          "evidence": "左側の踏み跡を含むが広い砂地まで覆う。"
+        },
+        {
+          "draft_id": "80:3",
+          "verdict": "wrong_label",
+          "evidence": "赤色は手前の小さな立石と砂地で、連続した岩壁ではない。遠景の岩肌の細部は不確か。"
+        },
+        {
+          "draft_id": "80:4",
+          "verdict": "wrong_label",
+          "evidence": "赤色は手前の小さな立石で、岩壁ではない。遠景の岩肌の細部は不確か。"
+        },
+        {
+          "draft_id": "80:5",
+          "verdict": "not_present",
+          "evidence": "赤色は単独の立石で、岩屑の堆積斜面は見えない。"
+        },
+        {
+          "draft_id": "80:6",
+          "verdict": "correct",
+          "evidence": "前景から中景の砂の地表におおむね一致する。"
+        },
+        {
+          "draft_id": "80:7",
+          "verdict": "not_present",
+          "evidence": "雪氷はなく、赤色は砂地である。"
+        },
+        {
+          "draft_id": "80:8",
+          "verdict": "not_present",
+          "evidence": "赤色は立石で、樹幹は見えない。"
+        },
+        {
+          "draft_id": "80:9",
+          "verdict": "not_present",
+          "evidence": "低木・草は明確に見えず、赤色は砂地である。"
+        },
+        {
+          "draft_id": "80:10",
+          "verdict": "not_present",
+          "evidence": "赤色は立石で、樹冠は見えない。"
+        },
+        {
+          "draft_id": "80:11",
+          "verdict": "not_present",
+          "evidence": "水面は見えず、赤色は砂地である。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "乾いた砂地に立石列と踏み跡が見える。建物はなく、Sahara44というタイトルだけから固有の建築は同定しない。"
+      ]
+    },
+    {
+      "asset_id": "3af9b8d9-a05d-4eeb-b960-0ee6db1af809",
+      "regions": [
+        {
+          "draft_id": "90:0",
+          "verdict": "not_present",
+          "evidence": "赤色は低い灌木で、草地は確認できない。"
+        },
+        {
+          "draft_id": "90:1",
+          "verdict": "not_present",
+          "evidence": "草地は見えず、赤色は砂地である。"
+        },
+        {
+          "draft_id": "90:2",
+          "verdict": "not_present",
+          "evidence": "赤色は小さな低木で、草地は確認できない。"
+        },
+        {
+          "draft_id": "90:3",
+          "verdict": "wrong_label",
+          "evidence": "赤色は砂の地表で、土面とは見えない。"
+        },
+        {
+          "draft_id": "90:4",
+          "verdict": "not_present",
+          "evidence": "道として区別できる筋はなく、赤色は砂地全体である。"
+        },
+        {
+          "draft_id": "90:5",
+          "verdict": "spill",
+          "evidence": "岩壁を含むが麓の崩落物の斜面まで一括で覆う。"
+        },
+        {
+          "draft_id": "90:6",
+          "verdict": "spill",
+          "evidence": "麓の岩屑を含むが上部の垂直な岩壁まで覆う。"
+        },
+        {
+          "draft_id": "90:7",
+          "verdict": "correct",
+          "evidence": "前景のオレンジ色の砂地を捉える。"
+        },
+        {
+          "draft_id": "90:8",
+          "verdict": "not_present",
+          "evidence": "雪氷はなく、赤色は砂地である。"
+        },
+        {
+          "draft_id": "90:9",
+          "verdict": "not_present",
+          "evidence": "雪氷はなく、赤色は岩山である。"
+        },
+        {
+          "draft_id": "90:10",
+          "verdict": "not_present",
+          "evidence": "雪氷はなく、同じ赤色の領域は岩山である。"
+        },
+        {
+          "draft_id": "90:11",
+          "verdict": "not_present",
+          "evidence": "樹幹はなく、赤色は上部の岩壁である。"
+        },
+        {
+          "draft_id": "90:12",
+          "verdict": "not_present",
+          "evidence": "樹幹はなく、赤色は岩山である。"
+        },
+        {
+          "draft_id": "90:13",
+          "verdict": "correct",
+          "evidence": "右寄りの小さな灌木に一致する。"
+        },
+        {
+          "draft_id": "90:14",
+          "verdict": "correct",
+          "evidence": "前景中央寄りの低い灌木に一致する。"
+        },
+        {
+          "draft_id": "90:15",
+          "verdict": "not_present",
+          "evidence": "樹木の樹冠はなく、赤色は岩山全体である。"
+        },
+        {
+          "draft_id": "90:16",
+          "verdict": "not_present",
+          "evidence": "樹木の樹冠はなく、赤色は砂地である。"
+        },
+        {
+          "draft_id": "90:17",
+          "verdict": "not_present",
+          "evidence": "水面はなく、赤色は砂地である。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "砂地、麓の岩屑斜面、層状の岩壁、点在する低木が見える。建物はなく、Wadi Rumの地形に建築名を付けない。"
+      ]
+    }
+  ]
+}
