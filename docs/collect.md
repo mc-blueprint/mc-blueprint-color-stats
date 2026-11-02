@@ -251,3 +251,17 @@ Python 3.12.15で既存`OpenverseAdapter.search`を各層1回、`page=0`・`limi
 | 元ページの作者不一致の確認 | `20261102T025747Z-3096193d399d44ad9e7c24c72e80c5ad` |
 | 現行APIスキーマの照合 | `20261102T025532Z-b8563ae4402641c99aa098d4218a6f59` |
 | アダプター・共通HTTPテスト | `20261102T025304Z-d2435932adf1460d974852e4837f65c6` |
+
+#### 2026-11-02の再計測（Issue #43）
+
+ubuntu-1から前回と同じ3層のクエリを各1回、`page=1`・`page_size=2`、同じライセンス・mature条件とsource_policyのUser-Agentで直列送信した。要求間は2秒空けた。各要求は約60.8秒後にCloudflare HTTP 504となり、本文はorigin web serverが許容時間内に応答しなかった旨を示した。候補一覧は返らず、候補件数・照合歩留まり・除外理由・原本取得は測定できなかった。APIキーの登録・認証、本番DBへの書込みは行っていない。
+
+| 層 | クエリ | 開始時刻（UTC） | 結果 | CF-RAY |
+| --- | --- | --- | --- | --- |
+| japanese-castle | Japanese castle exterior | 2026-11-02 06:34:29 | 60.852秒後にHTTP 504 | `a5411d1e3ccf2821-NRT` |
+| gothic-temple | gothic church exterior | 2026-11-02 06:35:32 | 60.749秒後にHTTP 504 | `a5411ea6886462b1-NRT` |
+| forest-autumn-day | autumn forest landscape | 2026-11-02 06:36:34 | 60.751秒後にHTTP 504 | `a541202ec9082629-NRT` |
+
+再計測でも同じ結果が続いた。照合済み原本の検証用取得は、検索結果が得られないため未実施。再開条件は層別検索が応答することとする。
+
+証跡は`%USERPROFILE%/.codex/logs/commands/20261102T063428Z-732bd0f9b3b14769acc0be4d0db9d49.jsonl`（SSH実行）と`20261102T063428Z-94564b290bca463084c5753fe43a992d.jsonl`（ubuntu-1側）に記録した。
