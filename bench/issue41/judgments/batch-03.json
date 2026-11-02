@@ -1,0 +1,2287 @@
+{
+  "batch_id": "batch-03",
+  "model": "gpt-6.1-sol",
+  "execution_id": "issue41-b03-run1",
+  "repeat_of": null,
+  "images": [
+    {
+      "asset_id": "40e6cdac-535b-4852-b17c-977a2bf02fef",
+      "regions": [
+        {
+          "draft_id": "20:0",
+          "verdict": "spill",
+          "evidence": "装飾金具だけでなく灯籠のガラスと街灯全体まで含む。"
+        },
+        {
+          "draft_id": "20:1",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:2",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域は街灯全体であり、指定された建築部位ではない。"
+        },
+        {
+          "draft_id": "20:3",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:4",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域は街灯全体であり、指定された建築部位ではない。"
+        },
+        {
+          "draft_id": "20:5",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:6",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:7",
+          "verdict": "spill",
+          "evidence": "背景建物全体を塗っており、上端の水平な縁以外に壁や窓を広く含む。"
+        },
+        {
+          "draft_id": "20:8",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域は街灯全体であり、指定された建築部位ではない。"
+        },
+        {
+          "draft_id": "20:9",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:10",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:11",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:12",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:13",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域は街灯全体であり、指定された建築部位ではない。"
+        },
+        {
+          "draft_id": "20:14",
+          "verdict": "spill",
+          "evidence": "背景建物全体を塗っており、上端の水平な縁以外に壁や窓を広く含む。"
+        },
+        {
+          "draft_id": "20:15",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:16",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:17",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:18",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:19",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:20",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:21",
+          "verdict": "spill",
+          "evidence": "背景の木骨壁に加えて窓の開口部まで一体に覆う。"
+        },
+        {
+          "draft_id": "20:22",
+          "verdict": "correct",
+          "evidence": "複数の灯籠と支持金具からなる街灯をおおむね覆う。"
+        },
+        {
+          "draft_id": "20:23",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:24",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:25",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:26",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域は街灯全体であり、指定された建築部位ではない。"
+        },
+        {
+          "draft_id": "20:27",
+          "verdict": "wrong_label",
+          "evidence": "上端は三角模様を伴う木骨壁・水平な軒縁で、屋根面や棟は見えない。"
+        },
+        {
+          "draft_id": "20:28",
+          "verdict": "wrong_label",
+          "evidence": "上端は三角模様を伴う木骨壁・水平な軒縁で、屋根面や棟は見えない。"
+        },
+        {
+          "draft_id": "20:29",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:30",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:31",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:32",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:33",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:34",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:35",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:36",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:37",
+          "verdict": "not_present",
+          "evidence": "原画像にはこのラベルに該当する部位が確認できない。窓・木骨壁・街灯を区別した。"
+        },
+        {
+          "draft_id": "20:38",
+          "verdict": "spill",
+          "evidence": "背景の木骨壁に加えて窓の開口部まで一体に覆う。"
+        },
+        {
+          "draft_id": "20:39",
+          "verdict": "spill",
+          "evidence": "主壁と同じ背景全体を覆い、補助壁だけを分離していない。"
+        },
+        {
+          "draft_id": "20:40",
+          "verdict": "spill",
+          "evidence": "白い窓枠とその内側のガラスを一体に覆い、枠だけの領域ではない。"
+        },
+        {
+          "draft_id": "20:41",
+          "verdict": "spill",
+          "evidence": "白い窓枠とその内側のガラスを一体に覆い、枠だけの領域ではない。"
+        },
+        {
+          "draft_id": "20:42",
+          "verdict": "spill",
+          "evidence": "白い窓枠とその内側のガラスを一体に覆い、枠だけの領域ではない。"
+        },
+        {
+          "draft_id": "20:43",
+          "verdict": "spill",
+          "evidence": "白い窓枠とその内側のガラスを一体に覆い、枠だけの領域ではない。"
+        },
+        {
+          "draft_id": "20:44",
+          "verdict": "spill",
+          "evidence": "白い窓枠とその内側のガラスを一体に覆い、枠だけの領域ではない。"
+        },
+        {
+          "draft_id": "20:45",
+          "verdict": "spill",
+          "evidence": "白い窓枠とその内側のガラスを一体に覆い、枠だけの領域ではない。"
+        },
+        {
+          "draft_id": "20:46",
+          "verdict": "spill",
+          "evidence": "白い窓枠とその内側のガラスを一体に覆い、枠だけの領域ではない。"
+        },
+        {
+          "draft_id": "20:47",
+          "verdict": "spill",
+          "evidence": "窓のガラスに加えて白い太い外枠・中桟まで一体に覆う。"
+        },
+        {
+          "draft_id": "20:48",
+          "verdict": "spill",
+          "evidence": "窓のガラスに加えて白い太い外枠・中桟まで一体に覆う。"
+        },
+        {
+          "draft_id": "20:49",
+          "verdict": "spill",
+          "evidence": "窓のガラスに加えて白い太い外枠・中桟まで一体に覆う。"
+        },
+        {
+          "draft_id": "20:50",
+          "verdict": "spill",
+          "evidence": "窓のガラスに加えて白い太い外枠・中桟まで一体に覆う。"
+        },
+        {
+          "draft_id": "20:51",
+          "verdict": "spill",
+          "evidence": "窓のガラスに加えて白い太い外枠・中桟まで一体に覆う。"
+        },
+        {
+          "draft_id": "20:52",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域は街灯全体であり、指定された建築部位ではない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": null,
+      "evidence": [
+        "主被写体は六角形の灯籠を束ねた黒い装飾街灯で、背景は青黒い木骨と白い縦長窓の建物。",
+        "title・source_urlはCelleの街灯を示すが背景建物の固有名や番地は示さず、建築の同定根拠が不足する。"
+      ]
+    },
+    {
+      "asset_id": "0b2cd407-bb8e-4b6b-b06e-659f7de531bb",
+      "regions": [
+        {
+          "draft_id": "21:0",
+          "verdict": "spill",
+          "evidence": "装飾だけでなく双塔・壁・窓・入口まで建築全体を覆う。"
+        },
+        {
+          "draft_id": "21:1",
+          "verdict": "correct",
+          "evidence": "中央の円形装飾窓を局所的に捉えている。"
+        },
+        {
+          "draft_id": "21:2",
+          "verdict": "spill",
+          "evidence": "入口のアーチ枠を含むが、その内部の扉や暗い開口部まで塗る。"
+        },
+        {
+          "draft_id": "21:3",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:4",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:5",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:6",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:7",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:8",
+          "verdict": "spill",
+          "evidence": "隅の石組以外に塔と窓・正面壁のほぼ全部を含む。隅石の細別は小さく不確か。"
+        },
+        {
+          "draft_id": "21:9",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:10",
+          "verdict": "correct",
+          "evidence": "入口の暗い扉部分を局所的に覆う。"
+        },
+        {
+          "draft_id": "21:11",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:12",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:13",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:14",
+          "verdict": "wrong_label",
+          "evidence": "前景は屋外広場の舗装で、建物の露出床ではない。"
+        },
+        {
+          "draft_id": "21:15",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:16",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:17",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:18",
+          "verdict": "correct",
+          "evidence": "右下の小さな壁付照明に対応する。小さく細部は不鮮明。"
+        },
+        {
+          "draft_id": "21:19",
+          "verdict": "correct",
+          "evidence": "建物前の屋外舗装部分をおおむね分離している。"
+        },
+        {
+          "draft_id": "21:20",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:21",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:22",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:23",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:24",
+          "verdict": "spill",
+          "evidence": "該当する細部を含むものの、塔から正面壁・窓・入口まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "21:25",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:26",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:27",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:28",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:29",
+          "verdict": "correct",
+          "evidence": "中央入口直前の低い段を覆う。"
+        },
+        {
+          "draft_id": "21:30",
+          "verdict": "not_present",
+          "evidence": "原画像に該当部位を確認できない。赤い窓縁や壁の帯を木梁・雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "21:31",
+          "verdict": "spill",
+          "evidence": "壁面だけでなく塔屋根・窓・開口部を含めて正面全体を塗る。"
+        },
+        {
+          "draft_id": "21:32",
+          "verdict": "spill",
+          "evidence": "壁面だけでなく塔屋根・窓・開口部を含めて正面全体を塗る。"
+        },
+        {
+          "draft_id": "21:33",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて開口部内部まで覆い、枠だけには限定されていない。"
+        },
+        {
+          "draft_id": "21:34",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて開口部内部まで覆い、枠だけには限定されていない。"
+        },
+        {
+          "draft_id": "21:35",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて開口部内部まで覆い、枠だけには限定されていない。"
+        },
+        {
+          "draft_id": "21:36",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて開口部内部まで覆い、枠だけには限定されていない。"
+        },
+        {
+          "draft_id": "21:37",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて開口部内部まで覆い、枠だけには限定されていない。"
+        },
+        {
+          "draft_id": "21:38",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて開口部内部まで覆い、枠だけには限定されていない。"
+        },
+        {
+          "draft_id": "21:39",
+          "verdict": "correct",
+          "evidence": "右下の窓の内側におおむね対応する。小さく枠との境界は不確か。"
+        },
+        {
+          "draft_id": "21:40",
+          "verdict": "spill",
+          "evidence": "円形窓のガラスだけでなく太い放射状の石材装飾まで覆う。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": "リンブルク大聖堂",
+      "evidence": [
+        "赤褐色の縁取りと白い壁面、左右の多層塔、中央の大きな円形窓と深いアーチ入口が見える。",
+        "title・source_urlのLimburg Cathedral、西正面カテゴリ、位置50.388731, 8.066508と正面構成が整合する。"
+      ]
+    },
+    {
+      "asset_id": "16ebd1da-48f4-4a13-bed7-26898cc25e85",
+      "regions": [
+        {
+          "draft_id": "22:0",
+          "verdict": "wrong_label",
+          "evidence": "一個の大きな石を塗っており、独立した装飾部材とは読めない。"
+        },
+        {
+          "draft_id": "22:1",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:2",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:3",
+          "verdict": "wrong_label",
+          "evidence": "水平の帯ではなく石垣面のほぼ全体を覆う。"
+        },
+        {
+          "draft_id": "22:4",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:5",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:6",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:7",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:8",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:9",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:10",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:11",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域は石垣面で、軒先ではない。"
+        },
+        {
+          "draft_id": "22:12",
+          "verdict": "wrong_label",
+          "evidence": "上端の白い塀面を塗っており、軒の縁を捉えていない。"
+        },
+        {
+          "draft_id": "22:13",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:14",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:15",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:16",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:17",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:18",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:19",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:20",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:21",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:22",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:23",
+          "verdict": "not_present",
+          "evidence": "下端は緑褐色の帯で、歩行路と判断できる舗装や輪郭は見えない。"
+        },
+        {
+          "draft_id": "22:24",
+          "verdict": "spill",
+          "evidence": "基部を含むが石垣の上部まで一体に覆い、基壇だけには限定されない。"
+        },
+        {
+          "draft_id": "22:25",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:26",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:27",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:28",
+          "verdict": "correct",
+          "evidence": "上端の灰色の笠・瓦の細い水平頂部を追う。棟と塀の笠の区別には不確かさがある。"
+        },
+        {
+          "draft_id": "22:29",
+          "verdict": "wrong_label",
+          "evidence": "棟ではなく石垣面のほぼ全部を塗る。"
+        },
+        {
+          "draft_id": "22:30",
+          "verdict": "wrong_label",
+          "evidence": "上部の白い塀面を覆い、屋根面ではない。"
+        },
+        {
+          "draft_id": "22:31",
+          "verdict": "wrong_label",
+          "evidence": "下端の緑褐色の帯を塗っており、屋根ではない。"
+        },
+        {
+          "draft_id": "22:32",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:33",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:34",
+          "verdict": "not_present",
+          "evidence": "石垣面に付着植物のまとまりは確認できない。"
+        },
+        {
+          "draft_id": "22:35",
+          "verdict": "correct",
+          "evidence": "大小の石を積んだ主要な壁面をおおむね分離している。"
+        },
+        {
+          "draft_id": "22:36",
+          "verdict": "wrong_label",
+          "evidence": "主被写体の石垣全体で、独立した副壁を捉えていない。"
+        },
+        {
+          "draft_id": "22:37",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        },
+        {
+          "draft_id": "22:38",
+          "verdict": "not_present",
+          "evidence": "原画像は石積みの壁と上端の塀であり、指定された部位は確認できない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": "甲府城の石垣",
+      "evidence": [
+        "大小の不整形石を積んだ長い石垣と、上部の白い塀・灰色の瓦状の水平縁が見える。",
+        "title・source_urlの甲府城石垣およびKofu Castleカテゴリと被写体が整合する。ただし石垣形状だけで城内の区間までは特定できない。"
+      ]
+    },
+    {
+      "asset_id": "f9eae5ad-ae90-4127-9400-136f6bb5bc98",
+      "regions": [
+        {
+          "draft_id": "23:0",
+          "verdict": "spill",
+          "evidence": "装飾だけでなく中央住宅の破風から入口まで全体を含む。"
+        },
+        {
+          "draft_id": "23:1",
+          "verdict": "correct",
+          "evidence": "右側入口の小さな円形装飾を局所的に捉える。"
+        },
+        {
+          "draft_id": "23:2",
+          "verdict": "not_present",
+          "evidence": "中央住宅にアーチ状開口は確認できない。"
+        },
+        {
+          "draft_id": "23:3",
+          "verdict": "spill",
+          "evidence": "指定された線状部材や装飾・基部に限定せず、破風面・窓・壁などを広く塗る。"
+        },
+        {
+          "draft_id": "23:4",
+          "verdict": "correct",
+          "evidence": "隣家の屋根から突出する煙突を局所的に覆う。"
+        },
+        {
+          "draft_id": "23:5",
+          "verdict": "correct",
+          "evidence": "隣家の屋根から突出する煙突を局所的に覆う。"
+        },
+        {
+          "draft_id": "23:6",
+          "verdict": "spill",
+          "evidence": "指定された線状部材や装飾・基部に限定せず、破風面・窓・壁などを広く塗る。"
+        },
+        {
+          "draft_id": "23:7",
+          "verdict": "spill",
+          "evidence": "指定された線状部材や装飾・基部に限定せず、破風面・窓・壁などを広く塗る。"
+        },
+        {
+          "draft_id": "23:8",
+          "verdict": "correct",
+          "evidence": "右下の赤い入口扉におおむね対応する。"
+        },
+        {
+          "draft_id": "23:9",
+          "verdict": "not_present",
+          "evidence": "中央の窓は正面の破風壁内にあり、屋根から突出するドーマーは見えない。"
+        },
+        {
+          "draft_id": "23:10",
+          "verdict": "not_present",
+          "evidence": "中央の窓は正面の破風壁内にあり、屋根から突出するドーマーは見えない。"
+        },
+        {
+          "draft_id": "23:11",
+          "verdict": "spill",
+          "evidence": "指定された線状部材や装飾・基部に限定せず、破風面・窓・壁などを広く塗る。"
+        },
+        {
+          "draft_id": "23:12",
+          "verdict": "spill",
+          "evidence": "指定された線状部材や装飾・基部に限定せず、破風面・窓・壁などを広く塗る。"
+        },
+        {
+          "draft_id": "23:13",
+          "verdict": "wrong_label",
+          "evidence": "入口前の低い長方形はベンチ状の物体で、柵・手すり・階段ではない。小さく形状には不確かさがある。"
+        },
+        {
+          "draft_id": "23:14",
+          "verdict": "wrong_label",
+          "evidence": "左端下の小物を塗り、柵や手すりの連続構造を捉えていない。"
+        },
+        {
+          "draft_id": "23:15",
+          "verdict": "wrong_label",
+          "evidence": "前景の屋外道路を覆い、建物の床ではない。"
+        },
+        {
+          "draft_id": "23:16",
+          "verdict": "spill",
+          "evidence": "指定された線状部材や装飾・基部に限定せず、破風面・窓・壁などを広く塗る。"
+        },
+        {
+          "draft_id": "23:17",
+          "verdict": "wrong_label",
+          "evidence": "右隣家の斜め屋根と壁を覆い、三角形の破風壁に限定されていない。"
+        },
+        {
+          "draft_id": "23:18",
+          "verdict": "spill",
+          "evidence": "指定された線状部材や装飾・基部に限定せず、破風面・窓・壁などを広く塗る。"
+        },
+        {
+          "draft_id": "23:19",
+          "verdict": "correct",
+          "evidence": "右下にある細い灯具におおむね対応する。解像度が低く細部は不確か。"
+        },
+        {
+          "draft_id": "23:20",
+          "verdict": "correct",
+          "evidence": "前景の屋外舗装路を捉える。"
+        },
+        {
+          "draft_id": "23:21",
+          "verdict": "spill",
+          "evidence": "指定された線状部材や装飾・基部に限定せず、破風面・窓・壁などを広く塗る。"
+        },
+        {
+          "draft_id": "23:22",
+          "verdict": "wrong_label",
+          "evidence": "入口前の低い長方形はベンチ状の物体で、柵・手すり・階段ではない。小さく形状には不確かさがある。"
+        },
+        {
+          "draft_id": "23:23",
+          "verdict": "wrong_label",
+          "evidence": "左端下の小物を塗り、柵や手すりの連続構造を捉えていない。"
+        },
+        {
+          "draft_id": "23:24",
+          "verdict": "spill",
+          "evidence": "指定された線状部材や装飾・基部に限定せず、破風面・窓・壁などを広く塗る。"
+        },
+        {
+          "draft_id": "23:25",
+          "verdict": "wrong_label",
+          "evidence": "中央住宅の三角形の正面全体であり、屋根の棟線ではない。"
+        },
+        {
+          "draft_id": "23:26",
+          "verdict": "spill",
+          "evidence": "隣家の棟を含む屋根面全体まで広がっている。"
+        },
+        {
+          "draft_id": "23:27",
+          "verdict": "spill",
+          "evidence": "隣家の棟を含む屋根面全体まで広がっている。"
+        },
+        {
+          "draft_id": "23:28",
+          "verdict": "wrong_label",
+          "evidence": "中央住宅の破風壁を塗っており、屋根面ではない。"
+        },
+        {
+          "draft_id": "23:29",
+          "verdict": "correct",
+          "evidence": "左右の隣家の傾斜した屋根面をおおむね分離している。"
+        },
+        {
+          "draft_id": "23:30",
+          "verdict": "correct",
+          "evidence": "左右の隣家の傾斜した屋根面をおおむね分離している。"
+        },
+        {
+          "draft_id": "23:31",
+          "verdict": "not_present",
+          "evidence": "赤い窓枠は見えるが、開閉する雨戸・鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "23:32",
+          "verdict": "not_present",
+          "evidence": "赤い窓枠は見えるが、開閉する雨戸・鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "23:33",
+          "verdict": "not_present",
+          "evidence": "赤い窓枠は見えるが、開閉する雨戸・鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "23:34",
+          "verdict": "not_present",
+          "evidence": "赤い窓枠は見えるが、開閉する雨戸・鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "23:35",
+          "verdict": "wrong_label",
+          "evidence": "入口前の低い長方形はベンチ状の物体で、柵・手すり・階段ではない。小さく形状には不確かさがある。"
+        },
+        {
+          "draft_id": "23:36",
+          "verdict": "wrong_label",
+          "evidence": "庭先の独立した低木・鉢植えで、建築に付着した植生ではない。"
+        },
+        {
+          "draft_id": "23:37",
+          "verdict": "wrong_label",
+          "evidence": "庭先の独立した低木・鉢植えで、建築に付着した植生ではない。"
+        },
+        {
+          "draft_id": "23:38",
+          "verdict": "wrong_label",
+          "evidence": "庭先の独立した低木・鉢植えで、建築に付着した植生ではない。"
+        },
+        {
+          "draft_id": "23:39",
+          "verdict": "wrong_label",
+          "evidence": "庭先の独立した低木・鉢植えで、建築に付着した植生ではない。"
+        },
+        {
+          "draft_id": "23:40",
+          "verdict": "spill",
+          "evidence": "壁面以外に窓・木骨・屋根や入口まで含む建物単位のマスクである。"
+        },
+        {
+          "draft_id": "23:41",
+          "verdict": "spill",
+          "evidence": "壁面以外に窓・木骨・屋根や入口まで含む建物単位のマスクである。"
+        },
+        {
+          "draft_id": "23:42",
+          "verdict": "spill",
+          "evidence": "壁面以外に窓・木骨・屋根や入口まで含む建物単位のマスクである。"
+        },
+        {
+          "draft_id": "23:43",
+          "verdict": "spill",
+          "evidence": "壁面以外に窓・木骨・屋根や入口まで含む建物単位のマスクである。"
+        },
+        {
+          "draft_id": "23:44",
+          "verdict": "spill",
+          "evidence": "壁面以外に窓・木骨・屋根や入口まで含む建物単位のマスクである。"
+        },
+        {
+          "draft_id": "23:45",
+          "verdict": "spill",
+          "evidence": "壁面以外に窓・木骨・屋根や入口まで含む建物単位のマスクである。"
+        },
+        {
+          "draft_id": "23:46",
+          "verdict": "spill",
+          "evidence": "壁面以外に窓・木骨・屋根や入口まで含む建物単位のマスクである。"
+        },
+        {
+          "draft_id": "23:47",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて内側のガラス、または入口扉まで一体に覆う。"
+        },
+        {
+          "draft_id": "23:48",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて内側のガラス、または入口扉まで一体に覆う。"
+        },
+        {
+          "draft_id": "23:49",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて内側のガラス、または入口扉まで一体に覆う。"
+        },
+        {
+          "draft_id": "23:50",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて内側のガラス、または入口扉まで一体に覆う。"
+        },
+        {
+          "draft_id": "23:51",
+          "verdict": "spill",
+          "evidence": "窓枠に加えて内側のガラス、または入口扉まで一体に覆う。"
+        },
+        {
+          "draft_id": "23:52",
+          "verdict": "spill",
+          "evidence": "窓ガラスと赤い外枠・中桟を一体に覆う。"
+        },
+        {
+          "draft_id": "23:53",
+          "verdict": "spill",
+          "evidence": "窓ガラスと赤い外枠・中桟を一体に覆う。"
+        },
+        {
+          "draft_id": "23:54",
+          "verdict": "spill",
+          "evidence": "窓ガラスと赤い外枠・中桟を一体に覆う。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "gable_wall",
+          "evidence": "中央住宅の主要な三角破風壁に対する候補は右隣家を指し、適切な破風壁の領域がない。"
+        },
+        {
+          "label": "vegetation_low",
+          "evidence": "中央住宅の左手前と両脇に低木・鉢植えが目立つが、付着植生としてのみ提案されている。"
+        }
+      ],
+      "building_name": "Mittlere Holdergasse 42（マールバッハ・アム・ネッカー）",
+      "evidence": [
+        "中央に急な三角破風、赤い木骨の斜材と白い充填壁、中央上階の窓、右下の入口をもつ小住宅が見える。",
+        "title・source_urlの番地、位置48.941397, 9.255533、同番地の木骨住宅カテゴリが中央の住宅の形状と整合する。"
+      ]
+    },
+    {
+      "asset_id": "3fcf5929-cc75-453f-a95e-7c47aa745076",
+      "regions": [
+        {
+          "draft_id": "24:0",
+          "verdict": "spill",
+          "evidence": "装飾に限定せず、ドームから石造壁まで建物全体を塗る。"
+        },
+        {
+          "draft_id": "24:1",
+          "verdict": "spill",
+          "evidence": "窓上部のアーチを含むが、ドームと建物全体を覆う。"
+        },
+        {
+          "draft_id": "24:2",
+          "verdict": "wrong_label",
+          "evidence": "ドームの上面であり、開口を囲うアーチ枠ではない。"
+        },
+        {
+          "draft_id": "24:3",
+          "verdict": "spill",
+          "evidence": "壁上端の帯・縁を含むが、石造壁のほぼ全部を覆う。"
+        },
+        {
+          "draft_id": "24:4",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:5",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:6",
+          "verdict": "not_present",
+          "evidence": "手前の突出部は石造の壁状基部で、独立した柱としての形状は確認できない。"
+        },
+        {
+          "draft_id": "24:7",
+          "verdict": "not_present",
+          "evidence": "手前の突出部は石造の壁状基部で、独立した柱としての形状は確認できない。"
+        },
+        {
+          "draft_id": "24:8",
+          "verdict": "not_present",
+          "evidence": "手前の突出部は石造の壁状基部で、独立した柱としての形状は確認できない。"
+        },
+        {
+          "draft_id": "24:9",
+          "verdict": "spill",
+          "evidence": "隅石を含むが、ドームと壁面のほぼ全部を塗る。"
+        },
+        {
+          "draft_id": "24:10",
+          "verdict": "spill",
+          "evidence": "壁上端の帯・縁を含むが、石造壁のほぼ全部を覆う。"
+        },
+        {
+          "draft_id": "24:11",
+          "verdict": "correct",
+          "evidence": "手前中央左の細い入口扉におおむね対応する。"
+        },
+        {
+          "draft_id": "24:12",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:13",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:14",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:15",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:16",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:17",
+          "verdict": "spill",
+          "evidence": "壁上端の帯・縁を含むが、石造壁のほぼ全部を覆う。"
+        },
+        {
+          "draft_id": "24:18",
+          "verdict": "wrong_label",
+          "evidence": "軒先ではなく半球ドームの表面を覆う。"
+        },
+        {
+          "draft_id": "24:19",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:20",
+          "verdict": "wrong_label",
+          "evidence": "前景の露出土と草のある屋外地面を塗り、建物の床ではない。"
+        },
+        {
+          "draft_id": "24:21",
+          "verdict": "not_present",
+          "evidence": "屋根はドームで、破風の斜め縁は確認できない。"
+        },
+        {
+          "draft_id": "24:22",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:23",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:24",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:25",
+          "verdict": "not_present",
+          "evidence": "前景に明瞭な歩行路の境界や舗装を確認できない。"
+        },
+        {
+          "draft_id": "24:26",
+          "verdict": "spill",
+          "evidence": "建物基部に限定せずドームと壁まで覆う。"
+        },
+        {
+          "draft_id": "24:27",
+          "verdict": "not_present",
+          "evidence": "粗石の凹凸は見えるが、独立した浮彫装飾は確認できない。"
+        },
+        {
+          "draft_id": "24:28",
+          "verdict": "not_present",
+          "evidence": "粗石の凹凸は見えるが、独立した浮彫装飾は確認できない。"
+        },
+        {
+          "draft_id": "24:29",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:30",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:31",
+          "verdict": "correct",
+          "evidence": "半球ドームの露出した屋根面を分離している。"
+        },
+        {
+          "draft_id": "24:32",
+          "verdict": "spill",
+          "evidence": "屋根面に加えて石壁・窓・入口まで塗る。"
+        },
+        {
+          "draft_id": "24:33",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:34",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:35",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:36",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:37",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:38",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:39",
+          "verdict": "correct",
+          "evidence": "入口前の小さな敷石状の段を捉える。段差は小さく不確か。"
+        },
+        {
+          "draft_id": "24:40",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。半球ドーム、石壁、小窓と入口が見える。"
+        },
+        {
+          "draft_id": "24:41",
+          "verdict": "spill",
+          "evidence": "石造壁だけでなく窓や扉、候補によってはドームまで含む。"
+        },
+        {
+          "draft_id": "24:42",
+          "verdict": "spill",
+          "evidence": "石造壁だけでなく窓や扉、候補によってはドームまで含む。"
+        },
+        {
+          "draft_id": "24:43",
+          "verdict": "spill",
+          "evidence": "石造壁だけでなく窓や扉、候補によってはドームまで含む。"
+        },
+        {
+          "draft_id": "24:44",
+          "verdict": "spill",
+          "evidence": "小窓・入口の開口全体を塗り、枠だけに限定されない。"
+        },
+        {
+          "draft_id": "24:45",
+          "verdict": "spill",
+          "evidence": "小窓・入口の開口全体を塗り、枠だけに限定されない。"
+        },
+        {
+          "draft_id": "24:46",
+          "verdict": "spill",
+          "evidence": "小窓・入口の開口全体を塗り、枠だけに限定されない。"
+        },
+        {
+          "draft_id": "24:47",
+          "verdict": "spill",
+          "evidence": "小窓・入口の開口全体を塗り、枠だけに限定されない。"
+        },
+        {
+          "draft_id": "24:48",
+          "verdict": "spill",
+          "evidence": "小窓・入口の開口全体を塗り、枠だけに限定されない。"
+        },
+        {
+          "draft_id": "24:49",
+          "verdict": "not_present",
+          "evidence": "窓の暗い開口は見えるが、透明な板ガラスは確認できない。"
+        },
+        {
+          "draft_id": "24:50",
+          "verdict": "not_present",
+          "evidence": "窓の暗い開口は見えるが、透明な板ガラスは確認できない。"
+        },
+        {
+          "draft_id": "24:51",
+          "verdict": "not_present",
+          "evidence": "窓の暗い開口は見えるが、透明な板ガラスは確認できない。"
+        },
+        {
+          "draft_id": "24:52",
+          "verdict": "not_present",
+          "evidence": "窓の暗い開口は見えるが、透明な板ガラスは確認できない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "ground_soil",
+          "evidence": "前景に露出した土の地面が広がるが、床・pathの候補となっている。"
+        },
+        {
+          "label": "vegetation_low",
+          "evidence": "建物周囲に地面を這う草が見えるが、低い植生としての候補がない。"
+        }
+      ],
+      "building_name": "スルタン・イブラヒム・ハン・モスク（レティムノ）",
+      "evidence": [
+        "淡い大きな半球ドームを載せた方形の粗石造建築で、小窓と低い入口、手前左隅の突出部と隅石が見える。",
+        "title・source_urlのSultan Ibrahim Khan mosque, Rethymnoおよび外観・隅石カテゴリと、このドームと方形石造壁の構成が整合する。"
+      ]
+    },
+    {
+      "asset_id": "3b1e801f-0278-430b-b2d1-47bf8e6f3c5a",
+      "regions": [
+        {
+          "draft_id": "25:0",
+          "verdict": "correct",
+          "evidence": "屋根頂部の鬼瓦状の装飾を局所的に覆う。"
+        },
+        {
+          "draft_id": "25:1",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:2",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:3",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:4",
+          "verdict": "correct",
+          "evidence": "幕の前後に立つ細長い木柱をおおむね追う。"
+        },
+        {
+          "draft_id": "25:5",
+          "verdict": "correct",
+          "evidence": "幕の前後に立つ細長い木柱をおおむね追う。"
+        },
+        {
+          "draft_id": "25:6",
+          "verdict": "correct",
+          "evidence": "幕の前後に立つ細長い木柱をおおむね追う。"
+        },
+        {
+          "draft_id": "25:7",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:8",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:9",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:10",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:11",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:12",
+          "verdict": "spill",
+          "evidence": "軒だけでなく屋根面・壁・幕・柱まで建物の大部分を塗る。"
+        },
+        {
+          "draft_id": "25:13",
+          "verdict": "spill",
+          "evidence": "軒先を含むが、上方の屋根面まで広く覆う。"
+        },
+        {
+          "draft_id": "25:14",
+          "verdict": "wrong_label",
+          "evidence": "建物前の屋外参道の舗装を塗り、建物床面ではない。"
+        },
+        {
+          "draft_id": "25:15",
+          "verdict": "wrong_label",
+          "evidence": "建物前の屋外参道の舗装を塗り、建物床面ではない。"
+        },
+        {
+          "draft_id": "25:16",
+          "verdict": "not_present",
+          "evidence": "この視点では破風斜辺の縁が明瞭には見えず、対象は軒と屋根・幕である。"
+        },
+        {
+          "draft_id": "25:17",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:18",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:19",
+          "verdict": "correct",
+          "evidence": "右側軒下の小さな灯具に対応する。細部は小さく不確か。"
+        },
+        {
+          "draft_id": "25:20",
+          "verdict": "wrong_label",
+          "evidence": "建物前の屋外参道の舗装を塗り、建物床面ではない。"
+        },
+        {
+          "draft_id": "25:21",
+          "verdict": "spill",
+          "evidence": "基部に限定せず屋根・壁・幕・柱まで含む。"
+        },
+        {
+          "draft_id": "25:22",
+          "verdict": "wrong_label",
+          "evidence": "紫幕に印刷された白い紋であり、立体の浮彫ではない。"
+        },
+        {
+          "draft_id": "25:23",
+          "verdict": "wrong_label",
+          "evidence": "紫幕に印刷された白い紋であり、立体の浮彫ではない。"
+        },
+        {
+          "draft_id": "25:24",
+          "verdict": "spill",
+          "evidence": "屋根の棟に加えて広い傾斜屋根面と軒を塗る。"
+        },
+        {
+          "draft_id": "25:25",
+          "verdict": "correct",
+          "evidence": "瓦葺きの屋根面と反りのある縁をおおむね覆う。"
+        },
+        {
+          "draft_id": "25:26",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:27",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:28",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。反りのある軒をアーチやドーマーとは扱わない。"
+        },
+        {
+          "draft_id": "25:29",
+          "verdict": "spill",
+          "evidence": "壁以外に屋根・紫幕・柱・開口部まで建物全体を含む。"
+        },
+        {
+          "draft_id": "25:30",
+          "verdict": "spill",
+          "evidence": "壁以外に屋根・紫幕・柱・開口部まで建物全体を含む。"
+        },
+        {
+          "draft_id": "25:31",
+          "verdict": "spill",
+          "evidence": "左端の開口全体を覆い、窓枠のみを分離していない。"
+        },
+        {
+          "draft_id": "25:32",
+          "verdict": "not_present",
+          "evidence": "左端は暗い開口・建具で、ガラス板の存在を確かめられない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "door",
+          "evidence": "幕の下に木製の入口建具が見えるが、doorの候補がない。"
+        }
+      ],
+      "building_name": "慈眼寺（野崎観音）本堂",
+      "evidence": [
+        "灰色瓦の大屋根、白壁と木柱、三つ巴などの紋を付けた紫の幕が側面から正面へ連続する堂が見える。",
+        "title・source_urlのNozaki-kannonと、慈眼寺本堂を示すカテゴリが寺院建築と紫幕の外観に整合する。"
+      ]
+    },
+    {
+      "asset_id": "854143c0-659e-4546-9723-f00bd05e94a4",
+      "regions": [
+        {
+          "draft_id": "26:0",
+          "verdict": "wrong_label",
+          "evidence": "屋根上の白い煙突を塗っており、独立した装飾ではない。"
+        },
+        {
+          "draft_id": "26:1",
+          "verdict": "wrong_label",
+          "evidence": "屋根上の白い煙突を塗っており、独立した装飾ではない。"
+        },
+        {
+          "draft_id": "26:2",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:3",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:4",
+          "verdict": "correct",
+          "evidence": "屋根から突き出す白い角形煙突を局所的に覆う。"
+        },
+        {
+          "draft_id": "26:5",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:6",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:7",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:8",
+          "verdict": "correct",
+          "evidence": "中央左寄りの細い入口扉に対応する。"
+        },
+        {
+          "draft_id": "26:9",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:10",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:11",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:12",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:13",
+          "verdict": "spill",
+          "evidence": "軒線を含むが屋根面・壁・煙突まで広く塗る。"
+        },
+        {
+          "draft_id": "26:14",
+          "verdict": "wrong_label",
+          "evidence": "前景の車道を覆い、建物の床ではない。"
+        },
+        {
+          "draft_id": "26:15",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:16",
+          "verdict": "spill",
+          "evidence": "切妻の端面に限定されず、屋根・正面壁まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "26:17",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:18",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:19",
+          "verdict": "correct",
+          "evidence": "建物手前の細い街灯ポールと上端灯具を追う。"
+        },
+        {
+          "draft_id": "26:20",
+          "verdict": "correct",
+          "evidence": "前景の舗装された道路をおおむね捉える。"
+        },
+        {
+          "draft_id": "26:21",
+          "verdict": "spill",
+          "evidence": "基部に限定されず屋根・煙突・壁を含む。"
+        },
+        {
+          "draft_id": "26:22",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:23",
+          "verdict": "spill",
+          "evidence": "棟線だけでなく屋根面全体を覆う。"
+        },
+        {
+          "draft_id": "26:24",
+          "verdict": "correct",
+          "evidence": "主屋の暗い傾斜屋根面におおむね対応する。"
+        },
+        {
+          "draft_id": "26:25",
+          "verdict": "correct",
+          "evidence": "右端の隣接部分の小さな傾斜屋根面を捉える。"
+        },
+        {
+          "draft_id": "26:26",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:27",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:28",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:29",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:30",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:31",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。窓は平壁内にあり、前景の樹木は建築付着植生ではない。"
+        },
+        {
+          "draft_id": "26:32",
+          "verdict": "spill",
+          "evidence": "壁面に加えて広い屋根と煙突・窓を覆う。"
+        },
+        {
+          "draft_id": "26:33",
+          "verdict": "spill",
+          "evidence": "壁面に加えて広い屋根と煙突・窓を覆う。"
+        },
+        {
+          "draft_id": "26:34",
+          "verdict": "spill",
+          "evidence": "白い窓枠と内側ガラスを一体に塗り、枠だけには限定されない。"
+        },
+        {
+          "draft_id": "26:35",
+          "verdict": "spill",
+          "evidence": "白い窓枠と内側ガラスを一体に塗り、枠だけには限定されない。"
+        },
+        {
+          "draft_id": "26:36",
+          "verdict": "spill",
+          "evidence": "白い窓枠と内側ガラスを一体に塗り、枠だけには限定されない。"
+        },
+        {
+          "draft_id": "26:37",
+          "verdict": "spill",
+          "evidence": "白い窓枠と内側ガラスを一体に塗り、枠だけには限定されない。"
+        },
+        {
+          "draft_id": "26:38",
+          "verdict": "spill",
+          "evidence": "白い窓枠と内側ガラスを一体に塗り、枠だけには限定されない。"
+        },
+        {
+          "draft_id": "26:39",
+          "verdict": "spill",
+          "evidence": "ガラスに加えて白い外枠と格子を一体に覆う。"
+        },
+        {
+          "draft_id": "26:40",
+          "verdict": "spill",
+          "evidence": "ガラスに加えて白い外枠と格子を一体に覆う。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "vegetation_tree_canopy",
+          "evidence": "右前景の大木の樹冠が目立つが、付着植生として提案されている。"
+        },
+        {
+          "label": "tree_trunk",
+          "evidence": "右前景の太い独立した樹幹に適切なラベルの候補がない。"
+        },
+        {
+          "label": "ground_grass",
+          "evidence": "建物前の芝生帯が明瞭だが、草地の候補がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "道路の向こうに横長の茶色い一階建て、暗い切妻屋根、中央の白い煙突と複数の白い格子窓が見える。",
+        "titleはLihulaと煙突の推測を示すだけで番地・固有名がなく、位置情報だけではこの一般住宅の固有名を確定できない。"
+      ]
+    },
+    {
+      "asset_id": "2c774ca1-3139-4797-9d34-3c3bf08d3544",
+      "regions": [
+        {
+          "draft_id": "27:0",
+          "verdict": "correct",
+          "evidence": "奥の白い面にある小さな円形装飾を捉える。"
+        },
+        {
+          "draft_id": "27:1",
+          "verdict": "not_present",
+          "evidence": "開口は直線の柱・梁で構成され、曲線アーチは確認できない。"
+        },
+        {
+          "draft_id": "27:2",
+          "verdict": "not_present",
+          "evidence": "開口は直線の柱・梁で構成され、曲線アーチは確認できない。"
+        },
+        {
+          "draft_id": "27:3",
+          "verdict": "spill",
+          "evidence": "軒や水平な帯だけでなく門・柱・壁のほぼ全部を覆う。"
+        },
+        {
+          "draft_id": "27:4",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。奥の白い面はドーマーや雨戸ではない。"
+        },
+        {
+          "draft_id": "27:5",
+          "verdict": "correct",
+          "evidence": "門右側の縦長の煉瓦柱をおおむね捉える。"
+        },
+        {
+          "draft_id": "27:6",
+          "verdict": "correct",
+          "evidence": "門右側の縦長の煉瓦柱をおおむね捉える。"
+        },
+        {
+          "draft_id": "27:7",
+          "verdict": "spill",
+          "evidence": "柱の上方・隣接する水平部や壁まで広く含む。"
+        },
+        {
+          "draft_id": "27:8",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。奥の白い面はドーマーや雨戸ではない。"
+        },
+        {
+          "draft_id": "27:9",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。奥の白い面はドーマーや雨戸ではない。"
+        },
+        {
+          "draft_id": "27:10",
+          "verdict": "spill",
+          "evidence": "軒や水平な帯だけでなく門・柱・壁のほぼ全部を覆う。"
+        },
+        {
+          "draft_id": "27:11",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域は奥の白い固定面と石の腰部分で、出入口の扉とは読み取りにくい。開放した門の扉位置は不確か。"
+        },
+        {
+          "draft_id": "27:12",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。奥の白い面はドーマーや雨戸ではない。"
+        },
+        {
+          "draft_id": "27:13",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。奥の白い面はドーマーや雨戸ではない。"
+        },
+        {
+          "draft_id": "27:14",
+          "verdict": "spill",
+          "evidence": "軒や水平な帯だけでなく門・柱・壁のほぼ全部を覆う。"
+        },
+        {
+          "draft_id": "27:15",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。奥の白い面はドーマーや雨戸ではない。"
+        },
+        {
+          "draft_id": "27:16",
+          "verdict": "wrong_label",
+          "evidence": "門前の屋外舗装路であり、建物の床ではない。"
+        },
+        {
+          "draft_id": "27:17",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。奥の白い面はドーマーや雨戸ではない。"
+        },
+        {
+          "draft_id": "27:18",
+          "verdict": "not_present",
+          "evidence": "赤い門柱上の小物は金物状だが、照明としての発光部や傘は確認できない。"
+        },
+        {
+          "draft_id": "27:19",
+          "verdict": "correct",
+          "evidence": "門前の屋外舗装部分を覆う。"
+        },
+        {
+          "draft_id": "27:20",
+          "verdict": "spill",
+          "evidence": "基壇だけでなく屋根・門・柱・壁面を全体的に塗る。"
+        },
+        {
+          "draft_id": "27:21",
+          "verdict": "correct",
+          "evidence": "奥の白い面の下部にある彫りのある石部分を捉える。小さく彫刻の内容は不鮮明。"
+        },
+        {
+          "draft_id": "27:22",
+          "verdict": "spill",
+          "evidence": "棟線だけでなく小屋根・主屋根の瓦面まで覆う。"
+        },
+        {
+          "draft_id": "27:23",
+          "verdict": "spill",
+          "evidence": "棟線だけでなく小屋根・主屋根の瓦面まで覆う。"
+        },
+        {
+          "draft_id": "27:24",
+          "verdict": "correct",
+          "evidence": "左の小屋根と門上の瓦葺き屋根面をおおむね覆う。"
+        },
+        {
+          "draft_id": "27:25",
+          "verdict": "correct",
+          "evidence": "左の小屋根と門上の瓦葺き屋根面をおおむね覆う。"
+        },
+        {
+          "draft_id": "27:26",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。奥の白い面はドーマーや雨戸ではない。"
+        },
+        {
+          "draft_id": "27:27",
+          "verdict": "spill",
+          "evidence": "入口前の低い段を含むが、平坦な舗装面まで大きく広がる。"
+        },
+        {
+          "draft_id": "27:28",
+          "verdict": "not_present",
+          "evidence": "原画像には指定部位を確認できない。奥の白い面はドーマーや雨戸ではない。"
+        },
+        {
+          "draft_id": "27:29",
+          "verdict": "spill",
+          "evidence": "壁以外に屋根・門枠・門柱と奥の白い面を含む。"
+        },
+        {
+          "draft_id": "27:30",
+          "verdict": "spill",
+          "evidence": "壁以外に屋根・門枠・門柱と奥の白い面を含む。"
+        },
+        {
+          "draft_id": "27:31",
+          "verdict": "spill",
+          "evidence": "右壁を含むが門柱や上部の屋根・赤い梁まで覆う。"
+        },
+        {
+          "draft_id": "27:32",
+          "verdict": "wrong_label",
+          "evidence": "右壁の案内板を塗っており、窓枠ではない。"
+        },
+        {
+          "draft_id": "27:33",
+          "verdict": "not_present",
+          "evidence": "奥の白い面に窓枠やガラスを裏付ける格子・反射がなく、窓と確認できない。"
+        },
+        {
+          "draft_id": "27:34",
+          "verdict": "not_present",
+          "evidence": "奥の白い面に窓枠やガラスを裏付ける格子・反射がなく、窓と確認できない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "beam",
+          "evidence": "門開口の上に太い赤い水平梁が見えるが、beam候補がない。"
+        }
+      ],
+      "building_name": "富強胡同6号の門",
+      "evidence": [
+        "灰色煉瓦の門柱と壁、赤い木製門枠、灰色瓦の庇、奥の白い面と下部の石彫状部分が見える。",
+        "title・source_urlがNo.6 Fuqiang Hutongを示し、門脇の表示と胡同住宅の門構えが整合する。表示の全文は小さく判読困難で、奥の建築や所有者名までは同定しない。"
+      ]
+    },
+    {
+      "asset_id": "f331a956-ff98-4a04-9083-55323fafa77e",
+      "regions": [
+        {
+          "draft_id": "28:0",
+          "verdict": "correct",
+          "evidence": "階段脇の文字入り提灯の上部を局所的に捉える。"
+        },
+        {
+          "draft_id": "28:1",
+          "verdict": "correct",
+          "evidence": "社殿の軒下にある金色の吊り装飾を局所的に捉える。小さく材質や名称は不確か。"
+        },
+        {
+          "draft_id": "28:2",
+          "verdict": "correct",
+          "evidence": "階段脇の文字入り提灯の上部を局所的に捉える。"
+        },
+        {
+          "draft_id": "28:3",
+          "verdict": "not_present",
+          "evidence": "唐破風の曲線は屋根縁であり、独立したアーチ構造ではない。"
+        },
+        {
+          "draft_id": "28:4",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:5",
+          "verdict": "wrong_label",
+          "evidence": "中央の石階段を塗り、水平な梁ではない。"
+        },
+        {
+          "draft_id": "28:6",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:7",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:8",
+          "verdict": "wrong_label",
+          "evidence": "左右の石灯籠全体であり、建物を支える柱ではない。"
+        },
+        {
+          "draft_id": "28:9",
+          "verdict": "wrong_label",
+          "evidence": "左右の石灯籠全体であり、建物を支える柱ではない。"
+        },
+        {
+          "draft_id": "28:10",
+          "verdict": "wrong_label",
+          "evidence": "階段脇の提灯とその細い支柱で、建築の柱ではない。"
+        },
+        {
+          "draft_id": "28:11",
+          "verdict": "wrong_label",
+          "evidence": "階段脇の提灯とその細い支柱で、建築の柱ではない。"
+        },
+        {
+          "draft_id": "28:12",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:13",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:14",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:15",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:16",
+          "verdict": "correct",
+          "evidence": "拝殿正面奥の扉・建具におおむね対応する。小さく開口との境は不確か。"
+        },
+        {
+          "draft_id": "28:17",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:18",
+          "verdict": "spill",
+          "evidence": "軒だけでなく屋根面と社殿正面の柱・開口を含む。"
+        },
+        {
+          "draft_id": "28:19",
+          "verdict": "wrong_label",
+          "evidence": "石段の手前にある屋外舗装であり、建物の床ではない。"
+        },
+        {
+          "draft_id": "28:20",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:21",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:22",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:23",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:24",
+          "verdict": "correct",
+          "evidence": "左右の提灯とその支柱をおおむね覆う。"
+        },
+        {
+          "draft_id": "28:25",
+          "verdict": "correct",
+          "evidence": "左右の提灯とその支柱をおおむね覆う。"
+        },
+        {
+          "draft_id": "28:26",
+          "verdict": "wrong_label",
+          "evidence": "中央の鈴緒・注連縄や祭具の範囲で、灯具として確認できない。"
+        },
+        {
+          "draft_id": "28:27",
+          "verdict": "wrong_label",
+          "evidence": "参道の平坦部ではなく中央の階段を塗る。"
+        },
+        {
+          "draft_id": "28:28",
+          "verdict": "spill",
+          "evidence": "基壇だけでなく社殿・階段・石灯籠など全景を含む。"
+        },
+        {
+          "draft_id": "28:29",
+          "verdict": "wrong_label",
+          "evidence": "社殿上部または左の石灯籠全体であり、基壇を分離していない。"
+        },
+        {
+          "draft_id": "28:30",
+          "verdict": "wrong_label",
+          "evidence": "社殿上部または左の石灯籠全体であり、基壇を分離していない。"
+        },
+        {
+          "draft_id": "28:31",
+          "verdict": "wrong_label",
+          "evidence": "石灯籠全体または階段を塗り、浮彫の局所領域ではない。"
+        },
+        {
+          "draft_id": "28:32",
+          "verdict": "wrong_label",
+          "evidence": "石灯籠全体または階段を塗り、浮彫の局所領域ではない。"
+        },
+        {
+          "draft_id": "28:33",
+          "verdict": "wrong_label",
+          "evidence": "石灯籠全体または階段を塗り、浮彫の局所領域ではない。"
+        },
+        {
+          "draft_id": "28:34",
+          "verdict": "spill",
+          "evidence": "棟線だけでなく唐破風の屋根面全体を覆う。"
+        },
+        {
+          "draft_id": "28:35",
+          "verdict": "correct",
+          "evidence": "中央社殿の唐破風の屋根面をおおむね覆う。"
+        },
+        {
+          "draft_id": "28:36",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:37",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:38",
+          "verdict": "correct",
+          "evidence": "正面の長い石階段をおおむね分離している。"
+        },
+        {
+          "draft_id": "28:39",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:40",
+          "verdict": "not_present",
+          "evidence": "指定部位は確認できない。石灯籠・階段・擁壁・提灯窓を建築の隅石や雨戸などとは扱わない。"
+        },
+        {
+          "draft_id": "28:41",
+          "verdict": "spill",
+          "evidence": "壁だけでなく社殿屋根・階段・石灯籠・擁壁まで広く覆う。"
+        },
+        {
+          "draft_id": "28:42",
+          "verdict": "wrong_label",
+          "evidence": "正面の扁額・横木と祭具の領域で、窓枠ではない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "light_fixture",
+          "evidence": "左右の大型石灯籠が明瞭だが、light_fixtureの候補は提灯や中央祭具のみで石灯籠を含まない。"
+        },
+        {
+          "label": "railing",
+          "evidence": "正面石段の左右に細い金属手すりが見えるが、railing候補がない。"
+        },
+        {
+          "label": "column",
+          "evidence": "拝殿正面を支える赤茶色の柱が見えるが、column候補は提灯や石灯籠を指す。"
+        }
+      ],
+      "building_name": "新宮神社（大津市）拝殿",
+      "evidence": [
+        "中央の唐破風屋根をもつ赤茶色の社殿、正面の石階段、左右の石灯籠と文字入りの提灯が対称に並ぶ。",
+        "title・source_urlのShingu-jinja, Otsuおよび拝殿・新宮神社カテゴリが社殿と石段の構成に整合する。"
+      ]
+    },
+    {
+      "asset_id": "3c9776c3-bb29-4e64-b583-0db13aa1bf51",
+      "regions": [
+        {
+          "draft_id": "29:0",
+          "verdict": "correct",
+          "evidence": "門内の赤い吊り灯具状の小物を局所的に覆う。細部は不鮮明。"
+        },
+        {
+          "draft_id": "29:1",
+          "verdict": "not_present",
+          "evidence": "門は直線の柱と梁で構成され、アーチ状開口ではない。"
+        },
+        {
+          "draft_id": "29:2",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。瓦屋根と柱からなる門を煙突・ドーマー・木骨壁などとは扱わない。"
+        },
+        {
+          "draft_id": "29:3",
+          "verdict": "correct",
+          "evidence": "入口を縁取る縦長の柱部分をおおむね追う。"
+        },
+        {
+          "draft_id": "29:4",
+          "verdict": "correct",
+          "evidence": "入口を縁取る縦長の柱部分をおおむね追う。"
+        },
+        {
+          "draft_id": "29:5",
+          "verdict": "correct",
+          "evidence": "入口を縁取る縦長の柱部分をおおむね追う。"
+        },
+        {
+          "draft_id": "29:6",
+          "verdict": "correct",
+          "evidence": "入口を縁取る縦長の柱部分をおおむね追う。"
+        },
+        {
+          "draft_id": "29:7",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。瓦屋根と柱からなる門を煙突・ドーマー・木骨壁などとは扱わない。"
+        },
+        {
+          "draft_id": "29:8",
+          "verdict": "spill",
+          "evidence": "上部の水平な縁だけでなく門柱と開口周囲まで広く覆う。"
+        },
+        {
+          "draft_id": "29:9",
+          "verdict": "wrong_label",
+          "evidence": "赤い領域は門の縦枠・柱で、扉の面を捉えていない。扉は開放状態で見えにくい。"
+        },
+        {
+          "draft_id": "29:10",
+          "verdict": "correct",
+          "evidence": "左端に見切れた背の高い扉面をおおむね覆う。"
+        },
+        {
+          "draft_id": "29:11",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。瓦屋根と柱からなる門を煙突・ドーマー・木骨壁などとは扱わない。"
+        },
+        {
+          "draft_id": "29:12",
+          "verdict": "spill",
+          "evidence": "軒縁を含むが屋根面や前景の枝葉まで大きく塗る。"
+        },
+        {
+          "draft_id": "29:13",
+          "verdict": "wrong_label",
+          "evidence": "門前から奥へ続く屋外路地の舗装であり、建物床面ではない。"
+        },
+        {
+          "draft_id": "29:14",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。瓦屋根と柱からなる門を煙突・ドーマー・木骨壁などとは扱わない。"
+        },
+        {
+          "draft_id": "29:15",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。瓦屋根と柱からなる門を煙突・ドーマー・木骨壁などとは扱わない。"
+        },
+        {
+          "draft_id": "29:16",
+          "verdict": "correct",
+          "evidence": "門内の小さな赤い吊り灯具に対応する。解像度が低く確度は低い。"
+        },
+        {
+          "draft_id": "29:17",
+          "verdict": "spill",
+          "evidence": "屋外路地の舗装を含むが右側の壁面まで塗り足している。"
+        },
+        {
+          "draft_id": "29:18",
+          "verdict": "spill",
+          "evidence": "基部に限定せず門屋根・柱・前景の枝葉まで含む。"
+        },
+        {
+          "draft_id": "29:19",
+          "verdict": "wrong_label",
+          "evidence": "上部の瓦葺き屋根面を塗り、独立した浮彫を捉えていない。"
+        },
+        {
+          "draft_id": "29:20",
+          "verdict": "spill",
+          "evidence": "棟線を含むが瓦屋根面全体と左端の別部分まで覆う。"
+        },
+        {
+          "draft_id": "29:21",
+          "verdict": "correct",
+          "evidence": "門上部の瓦屋根面をおおむね捉える。細かな葉の混入はある。"
+        },
+        {
+          "draft_id": "29:22",
+          "verdict": "not_present",
+          "evidence": "原画像に指定部位を確認できない。瓦屋根と柱からなる門を煙突・ドーマー・木骨壁などとは扱わない。"
+        },
+        {
+          "draft_id": "29:23",
+          "verdict": "wrong_label",
+          "evidence": "枝葉の一部を含むが門屋根・柱・壁が大部分で、付着植生の領域ではない。"
+        },
+        {
+          "draft_id": "29:24",
+          "verdict": "spill",
+          "evidence": "壁面に加えて屋根・柱と門内の開口まで広く塗る。"
+        },
+        {
+          "draft_id": "29:25",
+          "verdict": "spill",
+          "evidence": "壁面に加えて屋根・柱と門内の開口まで広く塗る。"
+        },
+        {
+          "draft_id": "29:26",
+          "verdict": "spill",
+          "evidence": "壁面に加えて屋根・柱と門内の開口まで広く塗る。"
+        },
+        {
+          "draft_id": "29:27",
+          "verdict": "not_present",
+          "evidence": "画像の暗い部分は開いた門と路地で、窓枠や板ガラスを確認できない。"
+        },
+        {
+          "draft_id": "29:28",
+          "verdict": "not_present",
+          "evidence": "画像の暗い部分は開いた門と路地で、窓枠や板ガラスを確認できない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "vegetation_tree_canopy",
+          "evidence": "門屋根の前を覆う独立した樹木の枝葉が目立つが、樹冠としての候補がない。"
+        }
+      ],
+      "building_name": null,
+      "evidence": [
+        "灰色煉瓦と赤い門柱、重なった灰色瓦の門屋根、奥へ続く細い路地が見える。",
+        "title・source_urlとカテゴリは北京の胡同の門という一般的説明に留まり、番地や固有名を示さない。形状だけで特定建築やbatch内の別の門との同一性を確定できない。"
+      ]
+    }
+  ]
+}

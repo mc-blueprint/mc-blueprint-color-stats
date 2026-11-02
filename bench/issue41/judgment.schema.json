@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "領域ごとのモデル判定（人手正解ではない）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["batch_id", "model", "execution_id", "repeat_of", "images"],
+  "properties": {
+    "batch_id": {"type": "string"},
+    "model": {"const": "gpt-6.1-sol"},
+    "execution_id": {"type": "string", "minLength": 1},
+    "repeat_of": {"type": ["string", "null"]},
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["asset_id", "regions", "missed_major_parts", "building_name", "evidence"],
+        "properties": {
+          "asset_id": {"type": "string"},
+          "regions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["draft_id", "verdict", "evidence"],
+              "properties": {
+                "draft_id": {"type": "string"},
+                "verdict": {"enum": ["correct", "wrong_label", "spill", "not_present"]},
+                "evidence": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          "missed_major_parts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "evidence"],
+              "properties": {
+                "label": {"type": "string", "minLength": 1},
+                "evidence": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          "building_name": {"type": ["string", "null"]},
+          "evidence": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    }
+  }
+}

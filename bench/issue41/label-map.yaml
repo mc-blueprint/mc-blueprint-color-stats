@@ -1,0 +1,47 @@
+# 同じグループ内の正解ID・予測ラベルをそれぞれ和集合にする。
+version: issue41-v1
+datasets:
+  cmp:
+    groups:
+      wall: {ids: [2], source: [facade], labels: [wall_main, wall_secondary, gable_wall]}
+      band_course: {ids: [10], source: [molding], labels: [band_course]}
+      cornice: {ids: [5], source: [cornice], labels: [cornice]}
+      column: {ids: [11], source: [pillar], labels: [column]}
+      window: {ids: [3], source: [window], labels: [window_glass, window_frame]}
+      door: {ids: [4], source: [door], labels: [door]}
+      shutter: {ids: [8], source: [blind], labels: [shutter]}
+      relief: {ids: [9], source: [deco], labels: [relief, accent_other]}
+    excluded:
+      1: background（対応語彙なし）
+      6: sill（対応語彙なし）
+      7: balcony（railingは手すりだけで範囲が異なる）
+      12: shop（看板・店頭の混合領域）
+  ade:
+    groups:
+      wall: {ids: [1], source: [wall], labels: [wall_main, wall_secondary, gable_wall]}
+      window: {ids: [9], source: [windowpane], labels: [window_glass, window_frame]}
+      door: {ids: [15], source: [door], labels: [door]}
+      column: {ids: [43], source: [column], labels: [column]}
+      stairs: {ids: [54, 60], source: [stairs, stairway], labels: [stairs_entry]}
+      railing: {ids: [39], source: [railing], labels: [railing]}
+      fence: {ids: [33], source: [fence], labels: [fence]}
+      path: {ids: [12], source: [sidewalk], labels: [path]}
+      path_natural: {ids: [53], source: [path], labels: [path_natural]}
+      ground_soil: {ids: [14], source: [earth], labels: [ground_soil]}
+      ground_grass: {ids: [10], source: [grass], labels: [ground_grass]}
+      rock: {ids: [35], source: [rock], labels: [rock_face, rock_scree]}
+      sand: {ids: [47], source: [sand], labels: [sand]}
+      water: {ids: [22, 27, 61, 114, 129], source: [water, sea, river, waterfall, lake], labels: [water]}
+      tree: {ids: [5], source: [tree], labels: [vegetation_tree_canopy, tree_trunk]}
+    # それ以外のIDはすべて評価外。実データの名称一覧をdataset-manifest.jsonに保存する。
+    excluded_reason: 建物全体・山・植物全般は壁・岩・低木へ一意に対応しない。その他も対応語彙なし。
+ade_selection:
+  split: validation
+  sky_id: 3
+  min_sky_ratio: 0.02
+  outdoor_ids: [5, 10, 14, 22, 27, 35, 47, 61, 114, 129]
+  min_outdoor_ratio_without_sky: 0.50
+  indoor_ids: [4, 6]
+  max_indoor_ratio: 0.01
+  subject_ids: [2, 5, 10, 14, 22, 27, 35, 47, 61, 114, 129]
+  min_subject_ratio: 0.20

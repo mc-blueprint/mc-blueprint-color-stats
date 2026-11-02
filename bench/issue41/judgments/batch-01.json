@@ -1,0 +1,2253 @@
+{
+  "batch_id": "batch-01",
+  "model": "gpt-6.1-sol",
+  "execution_id": "issue41-b01-run1",
+  "repeat_of": null,
+  "images": [
+    {
+      "asset_id": "152cadd8-7323-4de2-ba65-fce95747d576",
+      "regions": [
+        {
+          "draft_id": "0:0",
+          "verdict": "wrong_label",
+          "evidence": "赤領域は金色のドームとその胴部であり、独立した装飾部の領域ではない。頂部の飾りは見える。"
+        },
+        {
+          "draft_id": "0:1",
+          "verdict": "spill",
+          "evidence": "装飾タイルは見えるが、赤領域はドームから外壁全体まで含む。"
+        },
+        {
+          "draft_id": "0:2",
+          "verdict": "wrong_label",
+          "evidence": "入口や窓にはアーチがあるが、赤領域は上部のドームを指す。"
+        },
+        {
+          "draft_id": "0:3",
+          "verdict": "spill",
+          "evidence": "開口アーチを含む一方、屋根と壁面全体に赤領域が広がる。"
+        },
+        {
+          "draft_id": "0:4",
+          "verdict": "spill",
+          "evidence": "外壁上端の水平装飾帯を含むが、壁面全体やドームまで広く覆っている。"
+        },
+        {
+          "draft_id": "0:5",
+          "verdict": "spill",
+          "evidence": "外壁上端の水平装飾帯を含むが、壁面全体やドームまで広く覆っている。"
+        },
+        {
+          "draft_id": "0:6",
+          "verdict": "spill",
+          "evidence": "下部柱間の水平材は見えるが、マスクはドームと壁面全体まで含む。"
+        },
+        {
+          "draft_id": "0:7",
+          "verdict": "not_present",
+          "evidence": "ドームと頂飾りは見えるが、煙突は確認できない。"
+        },
+        {
+          "draft_id": "0:8",
+          "verdict": "not_present",
+          "evidence": "ドームと頂飾りは見えるが、煙突は確認できない。"
+        },
+        {
+          "draft_id": "0:9",
+          "verdict": "correct",
+          "evidence": "赤領域は下部の細い独立した柱に沿っている。下端は画面外に続く。"
+        },
+        {
+          "draft_id": "0:10",
+          "verdict": "correct",
+          "evidence": "赤領域は下部の細い独立した柱に沿っている。下端は画面外に続く。"
+        },
+        {
+          "draft_id": "0:11",
+          "verdict": "correct",
+          "evidence": "赤領域は下部の細い独立した柱に沿っている。下端は画面外に続く。"
+        },
+        {
+          "draft_id": "0:12",
+          "verdict": "correct",
+          "evidence": "赤領域は下部の細い独立した柱に沿っている。下端は画面外に続く。"
+        },
+        {
+          "draft_id": "0:13",
+          "verdict": "correct",
+          "evidence": "赤領域は下部の細い独立した柱に沿っている。下端は画面外に続く。"
+        },
+        {
+          "draft_id": "0:14",
+          "verdict": "correct",
+          "evidence": "赤領域は下部の細い独立した柱に沿っている。下端は画面外に続く。"
+        },
+        {
+          "draft_id": "0:15",
+          "verdict": "not_present",
+          "evidence": "隅部に明確な交互積みの隅石は確認できない。タイル貼りの角を隅石とは判断しない。"
+        },
+        {
+          "draft_id": "0:16",
+          "verdict": "spill",
+          "evidence": "壁上端のコーニスを含むが、外壁面全体やドームにも大きく広がっている。"
+        },
+        {
+          "draft_id": "0:17",
+          "verdict": "spill",
+          "evidence": "壁上端のコーニスを含むが、外壁面全体やドームにも大きく広がっている。"
+        },
+        {
+          "draft_id": "0:18",
+          "verdict": "correct",
+          "evidence": "中央入口の暗い扉の下部に赤領域が重なる。画面下で切れるが位置は一致する。"
+        },
+        {
+          "draft_id": "0:19",
+          "verdict": "not_present",
+          "evidence": "ドームの胴部の窓はあるが、屋根から突出するドーマーは見えない。"
+        },
+        {
+          "draft_id": "0:20",
+          "verdict": "not_present",
+          "evidence": "ドームの胴部の窓はあるが、屋根から突出するドーマーは見えない。"
+        },
+        {
+          "draft_id": "0:21",
+          "verdict": "spill",
+          "evidence": "外壁上端の軒を含むが、ドームと壁面全体を覆っている。"
+        },
+        {
+          "draft_id": "0:22",
+          "verdict": "spill",
+          "evidence": "ドーム基部の張り出しを軒とみなす余地はあるが、赤領域はドームと胴部全体まで含む。"
+        },
+        {
+          "draft_id": "0:23",
+          "verdict": "not_present",
+          "evidence": "この切り取られた構図に独立した柵は確認できない。"
+        },
+        {
+          "draft_id": "0:24",
+          "verdict": "not_present",
+          "evidence": "この切り取られた構図に独立した柵は確認できない。"
+        },
+        {
+          "draft_id": "0:25",
+          "verdict": "not_present",
+          "evidence": "画面下端は外壁と柱で切れており、床面は見えていない。"
+        },
+        {
+          "draft_id": "0:26",
+          "verdict": "not_present",
+          "evidence": "八角形外壁とドームで構成され、切妻やその縁取りは見えない。"
+        },
+        {
+          "draft_id": "0:27",
+          "verdict": "not_present",
+          "evidence": "八角形外壁とドームで構成され、切妻やその縁取りは見えない。"
+        },
+        {
+          "draft_id": "0:28",
+          "verdict": "not_present",
+          "evidence": "八角形外壁とドームで構成され、切妻やその縁取りは見えない。"
+        },
+        {
+          "draft_id": "0:29",
+          "verdict": "not_present",
+          "evidence": "外壁はタイルと石材で、木骨組の露出は確認できない。"
+        },
+        {
+          "draft_id": "0:30",
+          "verdict": "not_present",
+          "evidence": "建物前の地面が画面外で、通路は確認できない。"
+        },
+        {
+          "draft_id": "0:31",
+          "verdict": "not_present",
+          "evidence": "建物前の地面が画面外で、通路は確認できない。"
+        },
+        {
+          "draft_id": "0:32",
+          "verdict": "spill",
+          "evidence": "壁下部の基壇相当部を含むが、ドームや上部外壁まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "0:33",
+          "verdict": "not_present",
+          "evidence": "下部に柱はあるが、手すりの水平・縦格子は見えない。"
+        },
+        {
+          "draft_id": "0:34",
+          "verdict": "not_present",
+          "evidence": "下部に柱はあるが、手すりの水平・縦格子は見えない。"
+        },
+        {
+          "draft_id": "0:35",
+          "verdict": "not_present",
+          "evidence": "彩色タイル模様はあるが、この解像度では独立した浮彫は確認できない。"
+        },
+        {
+          "draft_id": "0:36",
+          "verdict": "not_present",
+          "evidence": "曲面ドームに棟線はない。頂部の飾りを棟とは判断しない。"
+        },
+        {
+          "draft_id": "0:37",
+          "verdict": "not_present",
+          "evidence": "曲面ドームに棟線はない。頂部の飾りを棟とは判断しない。"
+        },
+        {
+          "draft_id": "0:38",
+          "verdict": "spill",
+          "evidence": "金色の屋根面は捉えるが、その下の装飾された垂直な胴部まで含む。"
+        },
+        {
+          "draft_id": "0:39",
+          "verdict": "spill",
+          "evidence": "ドームを含む一方、赤領域が建物の外壁全体へ広がる。"
+        },
+        {
+          "draft_id": "0:40",
+          "verdict": "not_present",
+          "evidence": "赤い小領域はアーチ窓の内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "0:41",
+          "verdict": "not_present",
+          "evidence": "赤い小領域はアーチ窓の内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "0:42",
+          "verdict": "not_present",
+          "evidence": "赤い小領域はアーチ窓の内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "0:43",
+          "verdict": "not_present",
+          "evidence": "赤い小領域はアーチ窓の内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "0:44",
+          "verdict": "not_present",
+          "evidence": "赤い小領域はアーチ窓の内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "0:45",
+          "verdict": "not_present",
+          "evidence": "赤い小領域はアーチ窓の内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "0:46",
+          "verdict": "not_present",
+          "evidence": "入口の下部は画面外で、階段は確認できない。"
+        },
+        {
+          "draft_id": "0:47",
+          "verdict": "not_present",
+          "evidence": "外壁に付着する植物は見えない。"
+        },
+        {
+          "draft_id": "0:48",
+          "verdict": "spill",
+          "evidence": "外壁を含むが、金色ドームと開口部まで一体に覆っており壁面に限定されていない。"
+        },
+        {
+          "draft_id": "0:49",
+          "verdict": "spill",
+          "evidence": "外壁を含むが、金色ドームと開口部まで一体に覆っており壁面に限定されていない。"
+        },
+        {
+          "draft_id": "0:50",
+          "verdict": "correct",
+          "evidence": "赤領域は上段のアーチ窓と周囲の細い枠に沿う。小さいため枠と内部の境界には不確かさがある。"
+        },
+        {
+          "draft_id": "0:51",
+          "verdict": "correct",
+          "evidence": "赤領域は上段のアーチ窓と周囲の細い枠に沿う。小さいため枠と内部の境界には不確かさがある。"
+        },
+        {
+          "draft_id": "0:52",
+          "verdict": "correct",
+          "evidence": "赤領域は上段のアーチ窓と周囲の細い枠に沿う。小さいため枠と内部の境界には不確かさがある。"
+        },
+        {
+          "draft_id": "0:53",
+          "verdict": "correct",
+          "evidence": "赤領域は上段のアーチ窓と周囲の細い枠に沿う。小さいため枠と内部の境界には不確かさがある。"
+        },
+        {
+          "draft_id": "0:54",
+          "verdict": "correct",
+          "evidence": "赤領域は上段アーチ窓の内側に収まる。ガラスと格子の細部は不鮮明だが、窓内部として一致する。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "主要なタイル貼りの外壁を壁面だけに分けた領域がなく、候補はドームまで含む。"
+        },
+        {
+          "label": "band_course",
+          "evidence": "外壁上端の幅の狭い水平装飾帯が見えるが、対応候補は外壁全体へ広がる。"
+        }
+      ],
+      "building_name": "岩のドーム",
+      "evidence": [
+        "title・source_urlのDome of the Rockという固有名と、金色ドーム、装飾された胴部、青いタイル貼りの八角形外壁が整合する。",
+        "78f5d063-b33b-4808-b31a-8d441737484d、b95b59ef-83ed-41ab-a211-cbddcead59f3と金色ドーム、中央アーチ入口、青い窓列が一致する。既存候補の同一群とも整合する。"
+      ]
+    },
+    {
+      "asset_id": "43e514be-8b23-48a9-b70b-2f4dd2b3edf5",
+      "regions": [
+        {
+          "draft_id": "1:0",
+          "verdict": "spill",
+          "evidence": "小さな壁面装飾はあるが、赤領域は石造塔と上部の屋根全体を含む。"
+        },
+        {
+          "draft_id": "1:1",
+          "verdict": "correct",
+          "evidence": "赤領域は窓の上に並ぶ小さな壁面装飾の一つに重なる。細部の意匠は不鮮明。"
+        },
+        {
+          "draft_id": "1:2",
+          "verdict": "correct",
+          "evidence": "赤領域は対になった開口上部の尖頭アーチとその支持部に沿っている。"
+        },
+        {
+          "draft_id": "1:3",
+          "verdict": "correct",
+          "evidence": "赤領域は対になった開口上部の尖頭アーチとその支持部に沿っている。"
+        },
+        {
+          "draft_id": "1:4",
+          "verdict": "spill",
+          "evidence": "窓アーチを含むが、石造壁と塔屋根まで一括して覆っている。"
+        },
+        {
+          "draft_id": "1:5",
+          "verdict": "wrong_label",
+          "evidence": "塔壁の水平帯は存在するが、赤領域は手前の瓦屋根面を指す。"
+        },
+        {
+          "draft_id": "1:6",
+          "verdict": "spill",
+          "evidence": "塔の水平帯を含むが、塔壁と屋根全体を覆っている。"
+        },
+        {
+          "draft_id": "1:7",
+          "verdict": "not_present",
+          "evidence": "この石造塔に露出した梁は確認できない。"
+        },
+        {
+          "draft_id": "1:8",
+          "verdict": "not_present",
+          "evidence": "屋根と塔壁は見えるが煙突は見えない。"
+        },
+        {
+          "draft_id": "1:9",
+          "verdict": "spill",
+          "evidence": "連続アーチ中央の細い支持柱は見えるが、赤領域は塔全体である。"
+        },
+        {
+          "draft_id": "1:10",
+          "verdict": "spill",
+          "evidence": "塔角に隅部の石材列は見えるが、赤領域は屋根と塔壁全体に広がる。隅石の積み方の細部には不確かさがある。"
+        },
+        {
+          "draft_id": "1:11",
+          "verdict": "spill",
+          "evidence": "塔屋根下のコーニスを含むが、塔の外壁と屋根全体を覆う。"
+        },
+        {
+          "draft_id": "1:12",
+          "verdict": "wrong_label",
+          "evidence": "コーニスは塔の軒下にあるが、赤領域は手前の瓦屋根面にある。"
+        },
+        {
+          "draft_id": "1:13",
+          "verdict": "not_present",
+          "evidence": "赤領域は塔上層の細長い窓開口で、扉はこの構図に見えない。"
+        },
+        {
+          "draft_id": "1:14",
+          "verdict": "not_present",
+          "evidence": "赤領域は塔上層の細長い窓開口で、扉はこの構図に見えない。"
+        },
+        {
+          "draft_id": "1:15",
+          "verdict": "not_present",
+          "evidence": "赤領域は塔上層の細長い窓開口で、扉はこの構図に見えない。"
+        },
+        {
+          "draft_id": "1:16",
+          "verdict": "not_present",
+          "evidence": "赤領域は塔上層の細長い窓開口で、扉はこの構図に見えない。"
+        },
+        {
+          "draft_id": "1:17",
+          "verdict": "not_present",
+          "evidence": "小さな屋根の三角形は見えるが、そこに独立した屋根窓は確認できない。赤いアーチ開口は塔壁の窓。"
+        },
+        {
+          "draft_id": "1:18",
+          "verdict": "not_present",
+          "evidence": "小さな屋根の三角形は見えるが、そこに独立した屋根窓は確認できない。赤いアーチ開口は塔壁の窓。"
+        },
+        {
+          "draft_id": "1:19",
+          "verdict": "not_present",
+          "evidence": "小さな屋根の三角形は見えるが、そこに独立した屋根窓は確認できない。赤いアーチ開口は塔壁の窓。"
+        },
+        {
+          "draft_id": "1:20",
+          "verdict": "spill",
+          "evidence": "塔屋根の軒端を含むが、赤領域はその上の大きな屋根面まで覆う。"
+        },
+        {
+          "draft_id": "1:21",
+          "verdict": "spill",
+          "evidence": "塔屋根の軒を含むが、石造塔壁と屋根全体を覆っている。"
+        },
+        {
+          "draft_id": "1:22",
+          "verdict": "spill",
+          "evidence": "手前の瓦屋根の軒側を含む可能性はあるが、屋根面全体が赤く、狭い軒端に限定されない。"
+        },
+        {
+          "draft_id": "1:23",
+          "verdict": "not_present",
+          "evidence": "手前の縞は屋根瓦で、独立した柵は見えない。"
+        },
+        {
+          "draft_id": "1:24",
+          "verdict": "not_present",
+          "evidence": "手前の縞は屋根瓦で、独立した柵は見えない。"
+        },
+        {
+          "draft_id": "1:25",
+          "verdict": "not_present",
+          "evidence": "塔上部と手前の屋根だけが写り、床面は見えていない。"
+        },
+        {
+          "draft_id": "1:26",
+          "verdict": "not_present",
+          "evidence": "塔上部と手前の屋根だけが写り、床面は見えていない。"
+        },
+        {
+          "draft_id": "1:27",
+          "verdict": "spill",
+          "evidence": "屋根下部の小さな三角形の縁を含むが、塔全体を覆っている。"
+        },
+        {
+          "draft_id": "1:28",
+          "verdict": "spill",
+          "evidence": "屋根下部に小さな三角形はあるが、赤領域は塔壁と大屋根全体に広がる。"
+        },
+        {
+          "draft_id": "1:29",
+          "verdict": "wrong_label",
+          "evidence": "赤領域は平らな塔の石造壁面で、屋根の小さな三角形の壁面を指していない。"
+        },
+        {
+          "draft_id": "1:30",
+          "verdict": "not_present",
+          "evidence": "露出木骨壁は確認できず、外壁は石造である。"
+        },
+        {
+          "draft_id": "1:31",
+          "verdict": "not_present",
+          "evidence": "塔上部と屋根の構図に照明器具は確認できない。"
+        },
+        {
+          "draft_id": "1:32",
+          "verdict": "not_present",
+          "evidence": "地上の通路は画面外で見えない。"
+        },
+        {
+          "draft_id": "1:33",
+          "verdict": "not_present",
+          "evidence": "地上の通路は画面外で見えない。"
+        },
+        {
+          "draft_id": "1:34",
+          "verdict": "not_present",
+          "evidence": "塔の基部は画面外で、基壇は確認できない。"
+        },
+        {
+          "draft_id": "1:35",
+          "verdict": "not_present",
+          "evidence": "屋根上にも手前にも手すりは確認できない。"
+        },
+        {
+          "draft_id": "1:36",
+          "verdict": "not_present",
+          "evidence": "屋根上にも手前にも手すりは確認できない。"
+        },
+        {
+          "draft_id": "1:37",
+          "verdict": "spill",
+          "evidence": "壁上部の小さな円形装飾を含むが、屋根と壁全体へ大きく広がる。装飾の凹凸は不鮮明。"
+        },
+        {
+          "draft_id": "1:38",
+          "verdict": "spill",
+          "evidence": "屋根の稜線を含むが、赤領域は屋根の面全体へ広がる。"
+        },
+        {
+          "draft_id": "1:39",
+          "verdict": "wrong_label",
+          "evidence": "赤領域は手前の瓦屋根面であり、上端の棟線を捉えていない。"
+        },
+        {
+          "draft_id": "1:40",
+          "verdict": "correct",
+          "evidence": "赤領域はそれぞれ塔の金属屋根面、手前の瓦屋根面をおおむね捉えている。"
+        },
+        {
+          "draft_id": "1:41",
+          "verdict": "correct",
+          "evidence": "赤領域はそれぞれ塔の金属屋根面、手前の瓦屋根面をおおむね捉えている。"
+        },
+        {
+          "draft_id": "1:42",
+          "verdict": "not_present",
+          "evidence": "赤領域は塔の窓開口や石造アーチで、開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "1:43",
+          "verdict": "not_present",
+          "evidence": "赤領域は塔の窓開口や石造アーチで、開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "1:44",
+          "verdict": "not_present",
+          "evidence": "赤領域は塔の窓開口や石造アーチで、開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "1:45",
+          "verdict": "not_present",
+          "evidence": "赤領域は塔の窓開口や石造アーチで、開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "1:46",
+          "verdict": "not_present",
+          "evidence": "赤領域は塔の窓開口や石造アーチで、開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "1:47",
+          "verdict": "not_present",
+          "evidence": "赤領域は塔の窓開口や石造アーチで、開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "1:48",
+          "verdict": "not_present",
+          "evidence": "塔の上部だけの構図で入口階段は見えない。"
+        },
+        {
+          "draft_id": "1:49",
+          "verdict": "not_present",
+          "evidence": "塔壁に付着する植物は見えない。"
+        },
+        {
+          "draft_id": "1:50",
+          "verdict": "spill",
+          "evidence": "石造壁を含むが、塔の大きな屋根面まで一緒に覆っている。"
+        },
+        {
+          "draft_id": "1:51",
+          "verdict": "spill",
+          "evidence": "石造壁を含むが、塔の大きな屋根面まで一緒に覆っている。"
+        },
+        {
+          "draft_id": "1:52",
+          "verdict": "correct",
+          "evidence": "赤領域は対になった窓の尖頭アーチ周囲と中央の細い枠に沿う。"
+        },
+        {
+          "draft_id": "1:53",
+          "verdict": "correct",
+          "evidence": "赤領域は対になった窓の尖頭アーチ周囲と中央の細い枠に沿う。"
+        },
+        {
+          "draft_id": "1:54",
+          "verdict": "correct",
+          "evidence": "赤領域は対になった窓の尖頭アーチ周囲と中央の細い枠に沿う。"
+        },
+        {
+          "draft_id": "1:55",
+          "verdict": "correct",
+          "evidence": "赤領域は右側の対になったアーチ窓の内部に沿っている。ガラスか開放窓かは細部が不明瞭。"
+        },
+        {
+          "draft_id": "1:56",
+          "verdict": "spill",
+          "evidence": "左窓の内部を含むが、上方の石壁やアーチ枠まで余分に赤く覆っている。"
+        },
+        {
+          "draft_id": "1:57",
+          "verdict": "spill",
+          "evidence": "窓内部を含むが、両側のアーチ枠と周囲の石材までまとめて覆う。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "石造塔壁が主要部位だが、壁候補は大きな屋根面まで含む。"
+        }
+      ],
+      "building_name": "聖ヴィクトル教会（デュルメン）",
+      "evidence": [
+        "titleとsource_urlがデュルメンのSt.-Viktor-Kircheを示す。淡色石造塔、対になった尖頭アーチ窓、暗色の急な金属屋根が既存候補の塔・石造外装の説明と整合する。",
+        "構図は塔上部に限られ、既存同一群の別assetの画像は未確認だが、今回画像の特徴と固有名に矛盾はない。"
+      ]
+    },
+    {
+      "asset_id": "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0",
+      "regions": [
+        {
+          "draft_id": "2:0",
+          "verdict": "not_present",
+          "evidence": "赤領域は門の矩形開口にある。門も天守も和風の直線的構成で、アーチは見えない。"
+        },
+        {
+          "draft_id": "2:1",
+          "verdict": "spill",
+          "evidence": "赤領域は手前の低い横木付きの柵全体であり、梁として横材を含むとしても支柱と背景まで含む。"
+        },
+        {
+          "draft_id": "2:2",
+          "verdict": "correct",
+          "evidence": "赤領域は門の右側の縦長い柱に沿う。小さいが位置と形は一致する。"
+        },
+        {
+          "draft_id": "2:3",
+          "verdict": "spill",
+          "evidence": "門屋根の軒を含むが、瓦屋根の斜面全体まで覆っている。"
+        },
+        {
+          "draft_id": "2:4",
+          "verdict": "correct",
+          "evidence": "赤領域は手前の舗装された広場の地面に沿う。人物や車の大部分は除かれる。"
+        },
+        {
+          "draft_id": "2:5",
+          "verdict": "correct",
+          "evidence": "右寄りの細い灯柱と上端の灯具に赤領域が沿う。"
+        },
+        {
+          "draft_id": "2:6",
+          "verdict": "correct",
+          "evidence": "赤領域は画面手前の舗装された通行部分を捉えている。"
+        },
+        {
+          "draft_id": "2:7",
+          "verdict": "correct",
+          "evidence": "赤領域は画面手前の舗装された通行部分を捉えている。"
+        },
+        {
+          "draft_id": "2:8",
+          "verdict": "correct",
+          "evidence": "赤領域は手前の短い横木と支柱からなる柵状の手すりに沿っている。"
+        },
+        {
+          "draft_id": "2:9",
+          "verdict": "spill",
+          "evidence": "門の屋根の棟は含むが、赤領域は棟だけでなく瓦屋根面全体を覆う。"
+        },
+        {
+          "draft_id": "2:10",
+          "verdict": "correct",
+          "evidence": "赤領域は門の瓦屋根面をおおむね捉えている。"
+        },
+        {
+          "draft_id": "2:11",
+          "verdict": "not_present",
+          "evidence": "赤領域は門柱付近であり、この画像に窓の鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "2:12",
+          "verdict": "correct",
+          "evidence": "門へ上る中央左の石段の踏面と蹴上げに赤領域が沿う。"
+        },
+        {
+          "draft_id": "2:13",
+          "verdict": "not_present",
+          "evidence": "赤領域は地面に生える樹木で、建物外壁に付着した植物は見えない。"
+        },
+        {
+          "draft_id": "2:14",
+          "verdict": "wrong_label",
+          "evidence": "天守に小さな矩形窓は見えるが、赤領域は手前の門の開口を指し、窓枠ではない。"
+        },
+        {
+          "draft_id": "2:15",
+          "verdict": "wrong_label",
+          "evidence": "天守には窓があるが、赤領域は門の開口であり、窓ガラスではない。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "roof_surface",
+          "evidence": "画面奥の天守の重なった瓦屋根が未領域化で、候補は手前の門屋根だけ。"
+        },
+        {
+          "label": "wall_main",
+          "evidence": "天守の白い外壁と門脇の大きな石垣に対応する壁領域がない。"
+        },
+        {
+          "label": "ground_grass",
+          "evidence": "天守下の斜面に広がる黄褐色の草地が領域化されていない。"
+        },
+        {
+          "label": "vegetation_tree_canopy",
+          "evidence": "左右の樹冠と門右脇の樹木が見えるが、付着植物以外の植生候補がない。"
+        }
+      ],
+      "building_name": "掛川城天守",
+      "evidence": [
+        "titleとsource_urlが掛川市の掛川城を示し、丘上の白い天守と重層の瓦屋根・曲線破風が一致する。",
+        "b2a4d9a0-a875-42c3-933e-d158784b3a69と、上層の張り出し、重なった破風、丘上の白壁天守の輪郭が一致する。遠景で細部は小さいが既存候補の同一群と整合する。"
+      ]
+    },
+    {
+      "asset_id": "5fe4bf8c-bc24-4838-80b2-261f412d48e8",
+      "regions": [
+        {
+          "draft_id": "3:0",
+          "verdict": "spill",
+          "evidence": "装飾窓や時計状の円形部はあるが、赤領域は双塔と正面壁の全体を覆う。"
+        },
+        {
+          "draft_id": "3:1",
+          "verdict": "spill",
+          "evidence": "塔上層のアーチ窓に重なるが、赤領域はアーチ縁だけでなく窓内部も覆っている。夜景で枠の区別には不確かさがある。"
+        },
+        {
+          "draft_id": "3:2",
+          "verdict": "spill",
+          "evidence": "塔上層のアーチ窓に重なるが、赤領域はアーチ縁だけでなく窓内部も覆っている。夜景で枠の区別には不確かさがある。"
+        },
+        {
+          "draft_id": "3:3",
+          "verdict": "spill",
+          "evidence": "塔上層のアーチ窓に重なるが、赤領域はアーチ縁だけでなく窓内部も覆っている。夜景で枠の区別には不確かさがある。"
+        },
+        {
+          "draft_id": "3:4",
+          "verdict": "spill",
+          "evidence": "塔上層のアーチ窓に重なるが、赤領域はアーチ縁だけでなく窓内部も覆っている。夜景で枠の区別には不確かさがある。"
+        },
+        {
+          "draft_id": "3:5",
+          "verdict": "spill",
+          "evidence": "塔の水平区切り帯を含むが、双塔と正面壁全体を覆う。"
+        },
+        {
+          "draft_id": "3:6",
+          "verdict": "not_present",
+          "evidence": "矩形の鐘塔は見えるが、排煙用の煙突は確認できない。"
+        },
+        {
+          "draft_id": "3:7",
+          "verdict": "not_present",
+          "evidence": "矩形の鐘塔は見えるが、排煙用の煙突は確認できない。"
+        },
+        {
+          "draft_id": "3:8",
+          "verdict": "wrong_label",
+          "evidence": "細い柱状部は入口付近に見えるが、赤領域は左側の石造鐘塔の全体を指す。暗く細部には不確かさがある。"
+        },
+        {
+          "draft_id": "3:9",
+          "verdict": "spill",
+          "evidence": "塔角の石材列を含むが、双塔と正面壁の全体に広がる。隅石の細部は夜景で不鮮明。"
+        },
+        {
+          "draft_id": "3:10",
+          "verdict": "spill",
+          "evidence": "塔屋根の軒を含むが、赤領域は建物全体まで広がる。"
+        },
+        {
+          "draft_id": "3:11",
+          "verdict": "not_present",
+          "evidence": "前景の暗部に横線はあるが、独立した柵と判断できる格子や支柱は確認できない。"
+        },
+        {
+          "draft_id": "3:12",
+          "verdict": "correct",
+          "evidence": "赤領域は前景の人影をおおむね除いた舗装面に重なる。暗く境界の一部は不鮮明。"
+        },
+        {
+          "draft_id": "3:13",
+          "verdict": "wrong_label",
+          "evidence": "手前には舗装面が見えるが、赤領域は右上の隣接建物の端にあり、床面を指していない。"
+        },
+        {
+          "draft_id": "3:14",
+          "verdict": "not_present",
+          "evidence": "石造の大聖堂であり、外壁に露出木骨壁は見えない。"
+        },
+        {
+          "draft_id": "3:15",
+          "verdict": "correct",
+          "evidence": "赤領域は前景の灯柱または右側の光る照明器具に沿っている。"
+        },
+        {
+          "draft_id": "3:16",
+          "verdict": "correct",
+          "evidence": "赤領域は前景の灯柱または右側の光る照明器具に沿っている。"
+        },
+        {
+          "draft_id": "3:17",
+          "verdict": "correct",
+          "evidence": "赤領域は前景の灯柱または右側の光る照明器具に沿っている。"
+        },
+        {
+          "draft_id": "3:18",
+          "verdict": "correct",
+          "evidence": "赤領域は人影の間の手前の舗装された通行面に沿う。暗部の細かな境界は不確か。"
+        },
+        {
+          "draft_id": "3:19",
+          "verdict": "correct",
+          "evidence": "赤領域は人影の間の手前の舗装された通行面に沿う。暗部の細かな境界は不確か。"
+        },
+        {
+          "draft_id": "3:20",
+          "verdict": "spill",
+          "evidence": "地際の基部を含むが、双塔と上部の正面壁全体まで覆う。"
+        },
+        {
+          "draft_id": "3:21",
+          "verdict": "wrong_label",
+          "evidence": "主建物には屋根の稜線があるが、赤領域は右上の隣接建物の斜めの端を太く覆う。棟そのものとは確認できない。"
+        },
+        {
+          "draft_id": "3:22",
+          "verdict": "not_present",
+          "evidence": "前景に樹木はあるが、建物に付着した植物は確認できない。"
+        },
+        {
+          "draft_id": "3:23",
+          "verdict": "spill",
+          "evidence": "石造外壁を含むが、双塔の屋根と開口部も一括して覆う。"
+        },
+        {
+          "draft_id": "3:24",
+          "verdict": "spill",
+          "evidence": "石造外壁を含むが、双塔の屋根と開口部も一括して覆う。"
+        },
+        {
+          "draft_id": "3:25",
+          "verdict": "correct",
+          "evidence": "赤領域は左鐘塔上層の細長いアーチ窓の枠付近に沿う。夜景と解像度により枠と窓内部の分離は不確かだが位置は一致する。"
+        },
+        {
+          "draft_id": "3:26",
+          "verdict": "correct",
+          "evidence": "赤領域は左鐘塔上層の細長いアーチ窓の枠付近に沿う。夜景と解像度により枠と窓内部の分離は不確かだが位置は一致する。"
+        },
+        {
+          "draft_id": "3:27",
+          "verdict": "correct",
+          "evidence": "赤領域は左鐘塔上層の細長いアーチ窓の枠付近に沿う。夜景と解像度により枠と窓内部の分離は不確かだが位置は一致する。"
+        },
+        {
+          "draft_id": "3:28",
+          "verdict": "correct",
+          "evidence": "赤領域は左鐘塔上層の細長いアーチ窓の枠付近に沿う。夜景と解像度により枠と窓内部の分離は不確かだが位置は一致する。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "roof_surface",
+          "evidence": "両塔の低いピラミッド状屋根が見えるが屋根面の候補がない。"
+        },
+        {
+          "label": "gable_wall",
+          "evidence": "双塔の間に大きな三角形上端の正面壁が見えるが独立した切妻壁候補がない。"
+        },
+        {
+          "label": "wall_main",
+          "evidence": "主要な石造壁面の候補は建物全体で、屋根と壁が分離されていない。"
+        }
+      ],
+      "building_name": "聖パウルス大聖堂（ミュンスター）",
+      "evidence": [
+        "titleとsource_urlはミュンスターのSt.-Paulus-Domを示す。夜間に照らされた角形双塔と中央切妻壁が既存候補の説明に一致する。",
+        "9d176920-0aac-4077-95b1-a5aef5677aacの左側の角形双塔と低い屋根、窓段の構成に共通性があり、昼夜と撮影方向は異なるが同一大聖堂と判断する。"
+      ]
+    },
+    {
+      "asset_id": "78f5d063-b33b-4808-b31a-8d441737484d",
+      "regions": [
+        {
+          "draft_id": "4:0",
+          "verdict": "spill",
+          "evidence": "装飾タイルを含むが、赤領域は金色ドームと外壁の全体を覆う。"
+        },
+        {
+          "draft_id": "4:1",
+          "verdict": "wrong_label",
+          "evidence": "赤領域は金色ドーム面であり、頂飾りなどの局所的装飾部を選んでいない。"
+        },
+        {
+          "draft_id": "4:2",
+          "verdict": "spill",
+          "evidence": "正面入口のアーチを含むが、ドームと外壁全体を覆っている。"
+        },
+        {
+          "draft_id": "4:3",
+          "verdict": "wrong_label",
+          "evidence": "画像には入口アーチがあるが、赤領域は金色ドーム面にある。"
+        },
+        {
+          "draft_id": "4:4",
+          "verdict": "spill",
+          "evidence": "外壁上端の細い水平帯を含むが、赤領域は外壁全体または建物全体へ広がる。"
+        },
+        {
+          "draft_id": "4:5",
+          "verdict": "spill",
+          "evidence": "外壁上端の細い水平帯を含むが、赤領域は外壁全体または建物全体へ広がる。"
+        },
+        {
+          "draft_id": "4:6",
+          "verdict": "spill",
+          "evidence": "下部の柱間に渡る横材を含むが、ドームから外壁まで全体を覆う。"
+        },
+        {
+          "draft_id": "4:7",
+          "verdict": "not_present",
+          "evidence": "ドームと頂飾りはあるが煙突は見えない。"
+        },
+        {
+          "draft_id": "4:8",
+          "verdict": "not_present",
+          "evidence": "ドームと頂飾りはあるが煙突は見えない。"
+        },
+        {
+          "draft_id": "4:9",
+          "verdict": "correct",
+          "evidence": "赤領域は建物下部に並ぶ細い柱の一本に沿っている。"
+        },
+        {
+          "draft_id": "4:10",
+          "verdict": "correct",
+          "evidence": "赤領域は建物下部に並ぶ細い柱の一本に沿っている。"
+        },
+        {
+          "draft_id": "4:11",
+          "verdict": "correct",
+          "evidence": "赤領域は建物下部に並ぶ細い柱の一本に沿っている。"
+        },
+        {
+          "draft_id": "4:12",
+          "verdict": "correct",
+          "evidence": "赤領域は建物下部に並ぶ細い柱の一本に沿っている。"
+        },
+        {
+          "draft_id": "4:13",
+          "verdict": "correct",
+          "evidence": "赤領域は建物下部に並ぶ細い柱の一本に沿っている。"
+        },
+        {
+          "draft_id": "4:14",
+          "verdict": "correct",
+          "evidence": "赤領域は建物下部に並ぶ細い柱の一本に沿っている。"
+        },
+        {
+          "draft_id": "4:15",
+          "verdict": "correct",
+          "evidence": "赤領域は建物下部に並ぶ細い柱の一本に沿っている。"
+        },
+        {
+          "draft_id": "4:16",
+          "verdict": "correct",
+          "evidence": "赤領域は建物下部に並ぶ細い柱の一本に沿っている。"
+        },
+        {
+          "draft_id": "4:17",
+          "verdict": "not_present",
+          "evidence": "外壁の角は見えるが、交互積みの隅石として区別できる部位は確認できない。"
+        },
+        {
+          "draft_id": "4:18",
+          "verdict": "spill",
+          "evidence": "外壁上端のコーニスを含むが、屋根・壁面全体まで覆う。"
+        },
+        {
+          "draft_id": "4:19",
+          "verdict": "correct",
+          "evidence": "赤領域は中央入口の暗い扉面に沿う。"
+        },
+        {
+          "draft_id": "4:20",
+          "verdict": "not_present",
+          "evidence": "屋根から突き出す独立したドーマーはない。"
+        },
+        {
+          "draft_id": "4:21",
+          "verdict": "spill",
+          "evidence": "外壁上端の軒を含むが、建物全体を覆う。"
+        },
+        {
+          "draft_id": "4:22",
+          "verdict": "spill",
+          "evidence": "ドーム裾の縁は含むが、その上の大きなドーム面を覆っている。"
+        },
+        {
+          "draft_id": "4:23",
+          "verdict": "not_present",
+          "evidence": "外壁とは別の柵はこの構図には確認できない。"
+        },
+        {
+          "draft_id": "4:24",
+          "verdict": "not_present",
+          "evidence": "外壁とは別の柵はこの構図には確認できない。"
+        },
+        {
+          "draft_id": "4:25",
+          "verdict": "correct",
+          "evidence": "赤領域は建物前に広がる舗装面に沿っている。"
+        },
+        {
+          "draft_id": "4:26",
+          "verdict": "not_present",
+          "evidence": "ドームと多角形壁面で構成され、切妻壁や破風の縁はない。"
+        },
+        {
+          "draft_id": "4:27",
+          "verdict": "not_present",
+          "evidence": "ドームと多角形壁面で構成され、切妻壁や破風の縁はない。"
+        },
+        {
+          "draft_id": "4:28",
+          "verdict": "not_present",
+          "evidence": "外壁はタイルと石材であり、露出木骨壁ではない。"
+        },
+        {
+          "draft_id": "4:29",
+          "verdict": "not_present",
+          "evidence": "前面に小物はあるが、照明器具と確実に分かる部位は確認できない。"
+        },
+        {
+          "draft_id": "4:30",
+          "verdict": "correct",
+          "evidence": "赤領域は建物手前の舗装された通行面を捉えている。"
+        },
+        {
+          "draft_id": "4:31",
+          "verdict": "spill",
+          "evidence": "地際の基壇を含むが、ドームと上部の壁まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "4:32",
+          "verdict": "not_present",
+          "evidence": "下部に独立柱は見えるが、手すりの連続した横材や格子は確認できない。"
+        },
+        {
+          "draft_id": "4:33",
+          "verdict": "not_present",
+          "evidence": "下部に独立柱は見えるが、手すりの連続した横材や格子は確認できない。"
+        },
+        {
+          "draft_id": "4:34",
+          "verdict": "not_present",
+          "evidence": "彩色タイルの模様はあるが、この解像度で独立した浮彫は確認できない。"
+        },
+        {
+          "draft_id": "4:35",
+          "verdict": "not_present",
+          "evidence": "曲面ドームに屋根の棟はなく、頂飾りを棟と判断しない。"
+        },
+        {
+          "draft_id": "4:36",
+          "verdict": "not_present",
+          "evidence": "曲面ドームに屋根の棟はなく、頂飾りを棟と判断しない。"
+        },
+        {
+          "draft_id": "4:37",
+          "verdict": "correct",
+          "evidence": "赤領域は金色のドーム屋根におおむね沿う。裾の細い縁の混入は軽微。"
+        },
+        {
+          "draft_id": "4:38",
+          "verdict": "spill",
+          "evidence": "屋根面を含むが、ドーム下の外壁まで全体を覆う。"
+        },
+        {
+          "draft_id": "4:39",
+          "verdict": "not_present",
+          "evidence": "赤領域は壁面のアーチ窓内部や柱であり、開閉する鎧戸は見えない。"
+        },
+        {
+          "draft_id": "4:40",
+          "verdict": "not_present",
+          "evidence": "赤領域は壁面のアーチ窓内部や柱であり、開閉する鎧戸は見えない。"
+        },
+        {
+          "draft_id": "4:41",
+          "verdict": "not_present",
+          "evidence": "赤領域は壁面のアーチ窓内部や柱であり、開閉する鎧戸は見えない。"
+        },
+        {
+          "draft_id": "4:42",
+          "verdict": "not_present",
+          "evidence": "赤領域は壁面のアーチ窓内部や柱であり、開閉する鎧戸は見えない。"
+        },
+        {
+          "draft_id": "4:43",
+          "verdict": "not_present",
+          "evidence": "赤領域は壁面のアーチ窓内部や柱であり、開閉する鎧戸は見えない。"
+        },
+        {
+          "draft_id": "4:44",
+          "verdict": "not_present",
+          "evidence": "入口付近に低い敷居らしい段差はあるが、一覧画像では階段状の連続した段を確認できない。マスクも建物全体か柱列を覆う。"
+        },
+        {
+          "draft_id": "4:45",
+          "verdict": "not_present",
+          "evidence": "入口付近に低い敷居らしい段差はあるが、一覧画像では階段状の連続した段を確認できない。マスクも建物全体か柱列を覆う。"
+        },
+        {
+          "draft_id": "4:46",
+          "verdict": "not_present",
+          "evidence": "建物の外壁に付着した植物は見えない。"
+        },
+        {
+          "draft_id": "4:47",
+          "verdict": "spill",
+          "evidence": "外壁を含むが、ドーム屋根と開口部を含めて建物全体を覆っている。"
+        },
+        {
+          "draft_id": "4:48",
+          "verdict": "spill",
+          "evidence": "外壁を含むが、ドーム屋根と開口部を含めて建物全体を覆っている。"
+        },
+        {
+          "draft_id": "4:49",
+          "verdict": "correct",
+          "evidence": "赤領域は上段アーチ窓の位置と輪郭に沿う。細いため枠と内部の区別には多少の不確かさがある。"
+        },
+        {
+          "draft_id": "4:50",
+          "verdict": "correct",
+          "evidence": "赤領域は上段アーチ窓の位置と輪郭に沿う。細いため枠と内部の区別には多少の不確かさがある。"
+        },
+        {
+          "draft_id": "4:51",
+          "verdict": "correct",
+          "evidence": "赤領域は上段アーチ窓の位置と輪郭に沿う。細いため枠と内部の区別には多少の不確かさがある。"
+        },
+        {
+          "draft_id": "4:52",
+          "verdict": "correct",
+          "evidence": "赤領域は上段アーチ窓の位置と輪郭に沿う。細いため枠と内部の区別には多少の不確かさがある。"
+        },
+        {
+          "draft_id": "4:53",
+          "verdict": "correct",
+          "evidence": "赤領域は上段アーチ窓の位置と輪郭に沿う。細いため枠と内部の区別には多少の不確かさがある。"
+        },
+        {
+          "draft_id": "4:54",
+          "verdict": "correct",
+          "evidence": "赤領域は上段アーチ窓の位置と輪郭に沿う。細いため枠と内部の区別には多少の不確かさがある。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "主要な八角形外壁が見えるが、壁面候補はすべて金色ドームまで覆う。"
+        },
+        {
+          "label": "band_course",
+          "evidence": "タイル壁上端の細い水平装飾帯が見えるが、帯だけに沿う領域がない。"
+        }
+      ],
+      "building_name": "岩のドーム",
+      "evidence": [
+        "title・source_urlのDome of the Rockと、金色ドーム、青い装飾タイルの八角形外壁、柱で縁取られた中央入口が整合する。",
+        "152cadd8-7323-4de2-ba65-fce95747d576、b95b59ef-83ed-41ab-a211-cbddcead59f3と、ドーム裾の胴部・アーチ窓列・中央入口の形が一致し、既存の同一群と整合する。"
+      ]
+    },
+    {
+      "asset_id": "87dd50e2-64b3-47c7-8d56-e5d0b795ae2b",
+      "regions": [
+        {
+          "draft_id": "5:0",
+          "verdict": "spill",
+          "evidence": "多数の装飾部を含むが、赤領域は西正面全体と尖塔を覆っている。"
+        },
+        {
+          "draft_id": "5:1",
+          "verdict": "spill",
+          "evidence": "正面の尖頭アーチを含むが、尖塔と外壁全体まで覆う。"
+        },
+        {
+          "draft_id": "5:2",
+          "verdict": "wrong_label",
+          "evidence": "正面には尖頭アーチがあるが、赤領域は中央の円形バラ窓を指す。"
+        },
+        {
+          "draft_id": "5:3",
+          "verdict": "spill",
+          "evidence": "水平帯を含むが、赤領域は西正面と尖塔全体まで広がる。"
+        },
+        {
+          "draft_id": "5:4",
+          "verdict": "not_present",
+          "evidence": "透かし彫り石造外装は見えるが、露出した梁は確認できない。"
+        },
+        {
+          "draft_id": "5:5",
+          "verdict": "not_present",
+          "evidence": "尖塔や小尖塔はあるが煙突は見えない。"
+        },
+        {
+          "draft_id": "5:6",
+          "verdict": "spill",
+          "evidence": "入口や窓を区切る細柱を含むが、建物正面全体を覆う。"
+        },
+        {
+          "draft_id": "5:7",
+          "verdict": "not_present",
+          "evidence": "装飾された石造角部はあるが、交互積みの隅石として独立した部位は確認できない。"
+        },
+        {
+          "draft_id": "5:8",
+          "verdict": "spill",
+          "evidence": "水平に張り出すコーニスを含むが、正面と尖塔全体を覆う。"
+        },
+        {
+          "draft_id": "5:9",
+          "verdict": "correct",
+          "evidence": "赤領域は正面中央下部の扉の小さな矩形面に重なる。遠景で細部は不鮮明。"
+        },
+        {
+          "draft_id": "5:10",
+          "verdict": "not_present",
+          "evidence": "正面の塔や尖塔は見えるが、屋根面から突き出すドーマーは見えない。"
+        },
+        {
+          "draft_id": "5:11",
+          "verdict": "spill",
+          "evidence": "正面上部の軒状の張り出しを含むが、尖塔と正面壁全体に広がる。"
+        },
+        {
+          "draft_id": "5:12",
+          "verdict": "not_present",
+          "evidence": "前面の広場に独立した柵は確認できない。"
+        },
+        {
+          "draft_id": "5:13",
+          "verdict": "correct",
+          "evidence": "赤領域は大聖堂手前の舗装された広場に沿う。人影の一部は小さく境界が不鮮明。"
+        },
+        {
+          "draft_id": "5:14",
+          "verdict": "spill",
+          "evidence": "入口上方の三角形装飾の縁を含むが、正面全体を覆う。"
+        },
+        {
+          "draft_id": "5:15",
+          "verdict": "spill",
+          "evidence": "入口上部の尖った切妻状装飾壁を含むが、尖塔と正面全体を覆う。"
+        },
+        {
+          "draft_id": "5:16",
+          "verdict": "not_present",
+          "evidence": "石造外装であり、露出木骨壁は見えない。"
+        },
+        {
+          "draft_id": "5:17",
+          "verdict": "spill",
+          "evidence": "照明器具らしい小部分は正面下部に見えるが、赤領域は建物全体である。器具の細部には不確かさがある。"
+        },
+        {
+          "draft_id": "5:18",
+          "verdict": "correct",
+          "evidence": "赤領域は正面前の舗装された通行広場を捉える。"
+        },
+        {
+          "draft_id": "5:19",
+          "verdict": "spill",
+          "evidence": "地際の基部を含むが、尖塔を含む正面全体を覆う。"
+        },
+        {
+          "draft_id": "5:20",
+          "verdict": "spill",
+          "evidence": "高所の石造欄干を含むが、建物全体まで広がる。"
+        },
+        {
+          "draft_id": "5:21",
+          "verdict": "spill",
+          "evidence": "正面の彫刻と浮彫を含むが、窓・塔を含む建物全体まで覆う。"
+        },
+        {
+          "draft_id": "5:22",
+          "verdict": "not_present",
+          "evidence": "正面と尖塔は見えるが、背後の屋根の棟線はこの正面構図では確認できない。"
+        },
+        {
+          "draft_id": "5:23",
+          "verdict": "not_present",
+          "evidence": "主屋根の斜面は正面壁に隠れており、尖塔の透かし石造部を屋根面とは判断しない。"
+        },
+        {
+          "draft_id": "5:24",
+          "verdict": "not_present",
+          "evidence": "赤領域は高所の窓であり、開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "5:25",
+          "verdict": "not_present",
+          "evidence": "赤領域は高所の窓であり、開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "5:26",
+          "verdict": "not_present",
+          "evidence": "赤領域は高所の窓であり、開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "5:27",
+          "verdict": "spill",
+          "evidence": "入口付近の低い段を含むが、正面と尖塔全体を覆う。遠景で段の細部は不確か。"
+        },
+        {
+          "draft_id": "5:28",
+          "verdict": "not_present",
+          "evidence": "外壁に付着した植物は見えない。"
+        },
+        {
+          "draft_id": "5:29",
+          "verdict": "spill",
+          "evidence": "石造正面を含むが、窓や彫刻・尖塔を区別せず全体を覆う。"
+        },
+        {
+          "draft_id": "5:30",
+          "verdict": "spill",
+          "evidence": "石造正面を含むが、窓や彫刻・尖塔を区別せず全体を覆う。"
+        },
+        {
+          "draft_id": "5:31",
+          "verdict": "correct",
+          "evidence": "赤領域は正面の縦長い尖頭アーチ窓の枠付近に沿っている。細い石材と窓内部の境界には解像度上の不確かさがある。"
+        },
+        {
+          "draft_id": "5:32",
+          "verdict": "correct",
+          "evidence": "赤領域は正面の縦長い尖頭アーチ窓の枠付近に沿っている。細い石材と窓内部の境界には解像度上の不確かさがある。"
+        },
+        {
+          "draft_id": "5:33",
+          "verdict": "correct",
+          "evidence": "赤領域は正面の縦長い尖頭アーチ窓の枠付近に沿っている。細い石材と窓内部の境界には解像度上の不確かさがある。"
+        },
+        {
+          "draft_id": "5:34",
+          "verdict": "correct",
+          "evidence": "赤領域は正面の縦長い尖頭アーチ窓の枠付近に沿っている。細い石材と窓内部の境界には解像度上の不確かさがある。"
+        },
+        {
+          "draft_id": "5:35",
+          "verdict": "correct",
+          "evidence": "赤領域は正面上部の細い窓の内部に重なる。細部は小さいが窓位置と一致する。"
+        },
+        {
+          "draft_id": "5:36",
+          "verdict": "correct",
+          "evidence": "赤領域は中央の大きな円形バラ窓の内部におおむね一致する。細い石のトレーサリーも少し含む。"
+        },
+        {
+          "draft_id": "5:37",
+          "verdict": "correct",
+          "evidence": "赤領域は正面上部の細い窓の内部に重なる。細部は小さいが窓位置と一致する。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "正面外壁の候補は塔・窓・装飾を一括して覆い、壁面を分けた領域がない。"
+        },
+        {
+          "label": "relief",
+          "evidence": "入口周囲と正面の大きな彫刻装飾群は見えるが、候補は正面全体に広がる。"
+        }
+      ],
+      "building_name": "ストラスブール大聖堂",
+      "evidence": [
+        "titleとsource_urlがStrasbourg Cathedralを指定し、赤褐色石造の西正面、大きな中央バラ窓、向かって左だけの高い透かし尖塔が一致する。",
+        "a86f43ed-fdc4-4cea-8335-76d67291002dは下から見上げた中央入口の彫刻アーチで、今回の西正面中央入口の尖頭形と密な彫刻列と整合する。近接画像との細部の直接一致は限られるが、固有名・西正面中央portalという入力の位置情報も併せて同一建築と判断する。"
+      ]
+    },
+    {
+      "asset_id": "9d176920-0aac-4077-95b1-a5aef5677aac",
+      "regions": [
+        {
+          "draft_id": "6:0",
+          "verdict": "correct",
+          "evidence": "赤領域は左寄り正面の小さな円形装飾窓に重なる。細部は小さいが局所的装飾の位置と一致する。"
+        },
+        {
+          "draft_id": "6:1",
+          "verdict": "spill",
+          "evidence": "装飾を含むが、赤領域は右寄りの大きな切妻正面全体を覆う。"
+        },
+        {
+          "draft_id": "6:2",
+          "verdict": "spill",
+          "evidence": "正面の尖頭アーチ窓を含むが、赤領域は切妻壁と下部の石壁全体へ広がる。"
+        },
+        {
+          "draft_id": "6:3",
+          "verdict": "wrong_label",
+          "evidence": "塔や外壁に水平帯はあるが、赤領域は前景の舗装広場である。"
+        },
+        {
+          "draft_id": "6:4",
+          "verdict": "spill",
+          "evidence": "水平帯を含むが、塔・屋根・正面壁全体に広がる。"
+        },
+        {
+          "draft_id": "6:5",
+          "verdict": "not_present",
+          "evidence": "石造大聖堂であり、露出した梁は確認できない。"
+        },
+        {
+          "draft_id": "6:6",
+          "verdict": "spill",
+          "evidence": "塔角に石材列は見えるが、赤領域は屋根を含む大聖堂の全体を覆う。隅石の積み方の細部は遠景で不鮮明。"
+        },
+        {
+          "draft_id": "6:7",
+          "verdict": "spill",
+          "evidence": "切妻正面の水平な張り出しを含むが、その壁面と窓全体に広がる。"
+        },
+        {
+          "draft_id": "6:8",
+          "verdict": "spill",
+          "evidence": "各部のコーニスを含むが、赤領域は塔・屋根・壁全体に広がる。"
+        },
+        {
+          "draft_id": "6:9",
+          "verdict": "not_present",
+          "evidence": "塔や切妻正面は見えるが、屋根面から独立して突出するドーマーは確認できない。"
+        },
+        {
+          "draft_id": "6:10",
+          "verdict": "spill",
+          "evidence": "右寄り正面の軒端を含むが、切妻壁と開口部全体まで覆う。"
+        },
+        {
+          "draft_id": "6:11",
+          "verdict": "spill",
+          "evidence": "各屋根の軒を含むが、建物全体に広がる。"
+        },
+        {
+          "draft_id": "6:12",
+          "verdict": "correct",
+          "evidence": "赤領域は大聖堂前の舗装された広場面をおおむね捉えている。"
+        },
+        {
+          "draft_id": "6:13",
+          "verdict": "spill",
+          "evidence": "切妻の斜めの縁取りを含むが、切妻正面全体まで覆う。"
+        },
+        {
+          "draft_id": "6:14",
+          "verdict": "spill",
+          "evidence": "切妻の縁取りを含むが、塔・身廊・屋根まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "6:15",
+          "verdict": "not_present",
+          "evidence": "石造外壁と窓のトレーサリーであり、木骨壁は確認できない。"
+        },
+        {
+          "draft_id": "6:16",
+          "verdict": "not_present",
+          "evidence": "石造外壁と窓のトレーサリーであり、木骨壁は確認できない。"
+        },
+        {
+          "draft_id": "6:17",
+          "verdict": "correct",
+          "evidence": "赤領域は広場に立つ細い照明柱と上端の灯具に沿う。"
+        },
+        {
+          "draft_id": "6:18",
+          "verdict": "correct",
+          "evidence": "赤領域は広場に立つ細い照明柱と上端の灯具に沿う。"
+        },
+        {
+          "draft_id": "6:19",
+          "verdict": "correct",
+          "evidence": "赤領域は広場に立つ細い照明柱と上端の灯具に沿う。"
+        },
+        {
+          "draft_id": "6:20",
+          "verdict": "correct",
+          "evidence": "赤領域は前景の舗装された通行広場に沿う。"
+        },
+        {
+          "draft_id": "6:21",
+          "verdict": "spill",
+          "evidence": "地際の基部を含むが、塔や上部外壁まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "6:22",
+          "verdict": "spill",
+          "evidence": "切妻上の彫刻的装飾を含むが、赤領域は窓と壁面全体まで広がる。遠景で凹凸の細部は不鮮明。"
+        },
+        {
+          "draft_id": "6:23",
+          "verdict": "wrong_label",
+          "evidence": "屋根の棟は身廊や塔屋根にあるが、赤領域は正面切妻の斜めの縁飾りを指す。"
+        },
+        {
+          "draft_id": "6:24",
+          "verdict": "correct",
+          "evidence": "赤領域は中央身廊と右側に見える屋根の斜面に沿っている。塔屋根は含まないが見えている対象部分とは一致する。"
+        },
+        {
+          "draft_id": "6:25",
+          "verdict": "not_present",
+          "evidence": "赤領域は尖頭アーチ窓の内部であり、開閉する鎧戸は見えない。"
+        },
+        {
+          "draft_id": "6:26",
+          "verdict": "not_present",
+          "evidence": "赤領域は石造正面や独立した前景の記念碑で、壁面に付着した植物は確認できない。"
+        },
+        {
+          "draft_id": "6:27",
+          "verdict": "not_present",
+          "evidence": "赤領域は石造正面や独立した前景の記念碑で、壁面に付着した植物は確認できない。"
+        },
+        {
+          "draft_id": "6:28",
+          "verdict": "spill",
+          "evidence": "石造壁面を含むが、塔屋根・身廊屋根・開口部まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "6:29",
+          "verdict": "spill",
+          "evidence": "石造壁面を含むが、塔屋根・身廊屋根・開口部まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "6:30",
+          "verdict": "correct",
+          "evidence": "赤領域は右寄り切妻正面の縦長い尖頭アーチ窓と周囲の枠に沿う。枠と内部の厳密な分離には不確かさがある。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "広範な石造壁面が見えるが、壁候補は屋根を含めて建物全体を覆う。"
+        },
+        {
+          "label": "gable_wall",
+          "evidence": "右寄りの大きな三角形上端の切妻壁が見えるが切妻壁の候補がない。"
+        },
+        {
+          "label": "window_glass",
+          "evidence": "右寄りの大きな尖頭窓と左側の円形窓などの窓内部が見えるが、ガラスの候補がない。"
+        }
+      ],
+      "building_name": "聖パウルス大聖堂（ミュンスター）",
+      "evidence": [
+        "titleとsource_urlがミュンスターのSt.-Paulus-Domを指定し、角形の双塔、低いピラミッド状屋根、石造身廊が整合する。",
+        "5fe4bf8c-bc24-4838-80b2-261f412d48e8の夜景と撮影方向は異なるが、左側に見える双塔の輪郭、屋根、アーチ窓の段構成が共通する。既存候補の同一群と一致する。"
+      ]
+    },
+    {
+      "asset_id": "a86f43ed-fdc4-4cea-8335-76d67291002d",
+      "regions": [
+        {
+          "draft_id": "7:0",
+          "verdict": "spill",
+          "evidence": "彫像の装飾を含むが、赤領域は入口上部の石造アーチ全体と左右上部の石造部まで覆う。"
+        },
+        {
+          "draft_id": "7:1",
+          "verdict": "correct",
+          "evidence": "幾重もの彫刻を伴う尖頭アーチの帯に赤領域がおおむね沿っている。画像は下からの見上げで強い遠近がある。"
+        },
+        {
+          "draft_id": "7:2",
+          "verdict": "wrong_label",
+          "evidence": "上部左右の石造部に短い水平の帯は見えるが、赤領域は主に曲がったアーチの彫刻帯である。"
+        },
+        {
+          "draft_id": "7:3",
+          "verdict": "not_present",
+          "evidence": "彫刻を施した石造アーチが主体で、露出した梁は見えない。"
+        },
+        {
+          "draft_id": "7:4",
+          "verdict": "not_present",
+          "evidence": "上端の小さな突起は彫刻や飾りであり、煙突は確認できない。"
+        },
+        {
+          "draft_id": "7:5",
+          "verdict": "not_present",
+          "evidence": "上端の小さな突起は彫刻や飾りであり、煙突は確認できない。"
+        },
+        {
+          "draft_id": "7:6",
+          "verdict": "not_present",
+          "evidence": "写っているのは入口上方の彫刻アーチで、垂直に立つ柱の軸部は画面外で確認できない。"
+        },
+        {
+          "draft_id": "7:7",
+          "verdict": "not_present",
+          "evidence": "装飾石材はあるが、交互積みの隅石は確認できない。"
+        },
+        {
+          "draft_id": "7:8",
+          "verdict": "wrong_label",
+          "evidence": "左右上部に水平な張り出しはあるが、赤領域は中央の曲面アーチ全体である。"
+        },
+        {
+          "draft_id": "7:9",
+          "verdict": "not_present",
+          "evidence": "扉本体は画面下方の外にあり、見えるのはアーチ上部だけである。"
+        },
+        {
+          "draft_id": "7:10",
+          "verdict": "not_present",
+          "evidence": "屋根窓やドーマーは写っていない。"
+        },
+        {
+          "draft_id": "7:11",
+          "verdict": "not_present",
+          "evidence": "石造入口のアーチと彫刻壁が写り、屋根の軒は確認できない。"
+        },
+        {
+          "draft_id": "7:12",
+          "verdict": "not_present",
+          "evidence": "石造入口のアーチと彫刻壁が写り、屋根の軒は確認できない。"
+        },
+        {
+          "draft_id": "7:13",
+          "verdict": "not_present",
+          "evidence": "赤領域は彫刻アーチであり、柵は見えない。"
+        },
+        {
+          "draft_id": "7:14",
+          "verdict": "not_present",
+          "evidence": "上向きの構図で、床面は一切写っていない。"
+        },
+        {
+          "draft_id": "7:15",
+          "verdict": "not_present",
+          "evidence": "左右上端の段状石造部は見えるが、切妻壁やその縁とはこの部分画像だけでは確認できない。"
+        },
+        {
+          "draft_id": "7:16",
+          "verdict": "not_present",
+          "evidence": "左右上端の段状石造部は見えるが、切妻壁やその縁とはこの部分画像だけでは確認できない。"
+        },
+        {
+          "draft_id": "7:17",
+          "verdict": "not_present",
+          "evidence": "石造彫刻であり、木骨壁は見えない。"
+        },
+        {
+          "draft_id": "7:18",
+          "verdict": "not_present",
+          "evidence": "金色に照らされているが、照明器具そのものは写っていない。"
+        },
+        {
+          "draft_id": "7:19",
+          "verdict": "not_present",
+          "evidence": "地上の通路は画面外である。"
+        },
+        {
+          "draft_id": "7:20",
+          "verdict": "not_present",
+          "evidence": "建物基部は画面外で基壇は見えない。"
+        },
+        {
+          "draft_id": "7:21",
+          "verdict": "not_present",
+          "evidence": "赤領域はアーチの彫刻帯で、転落防止の欄干は確認できない。"
+        },
+        {
+          "draft_id": "7:22",
+          "verdict": "correct",
+          "evidence": "赤領域は幾重ものアーチに並ぶ人物像や彫刻装飾の面をおおむね捉える。彫像と浅い浮彫が混在する。"
+        },
+        {
+          "draft_id": "7:23",
+          "verdict": "not_present",
+          "evidence": "屋根は写っておらず、上端の石造装飾を屋根の棟とは判断しない。"
+        },
+        {
+          "draft_id": "7:24",
+          "verdict": "not_present",
+          "evidence": "屋根は写っておらず、上端の石造装飾を屋根の棟とは判断しない。"
+        },
+        {
+          "draft_id": "7:25",
+          "verdict": "not_present",
+          "evidence": "赤領域は入口の石造彫刻で、屋根面は見えていない。"
+        },
+        {
+          "draft_id": "7:26",
+          "verdict": "not_present",
+          "evidence": "窓の鎧戸は写っていない。"
+        },
+        {
+          "draft_id": "7:27",
+          "verdict": "not_present",
+          "evidence": "上向きの部分構図で階段は画面外である。"
+        },
+        {
+          "draft_id": "7:28",
+          "verdict": "not_present",
+          "evidence": "壁面に付着した植物は確認できない。"
+        },
+        {
+          "draft_id": "7:29",
+          "verdict": "spill",
+          "evidence": "左右上方の石造壁を含むが、赤領域の大部分が彫刻アーチ全体にも広がる。"
+        },
+        {
+          "draft_id": "7:30",
+          "verdict": "wrong_label",
+          "evidence": "石造壁は左右上方に見えるが、赤領域は入口の曲がった彫刻アーチの帯である。"
+        },
+        {
+          "draft_id": "7:31",
+          "verdict": "correct",
+          "evidence": "赤領域は左上端の張り出した石造壁部分に沿う。壁と彫刻の境界には多少の不確かさがある。"
+        },
+        {
+          "draft_id": "7:32",
+          "verdict": "wrong_label",
+          "evidence": "石造壁は左右上方に見えるが、赤領域は入口の曲がった彫刻アーチの帯である。"
+        },
+        {
+          "draft_id": "7:33",
+          "verdict": "not_present",
+          "evidence": "この近接した入口上部の構図に、窓枠や窓ガラスは写っていない。"
+        },
+        {
+          "draft_id": "7:34",
+          "verdict": "not_present",
+          "evidence": "この近接した入口上部の構図に、窓枠や窓ガラスは写っていない。"
+        },
+        {
+          "draft_id": "7:35",
+          "verdict": "not_present",
+          "evidence": "この近接した入口上部の構図に、窓枠や窓ガラスは写っていない。"
+        }
+      ],
+      "missed_major_parts": [],
+      "building_name": "ストラスブール大聖堂",
+      "evidence": [
+        "title・source_urlはストラスブール大聖堂西正面中央入口を指定する。見上げ構図の幾重もの尖頭アーチと密集した石造人物彫刻がその入口の説明と整合する。",
+        "87dd50e2-64b3-47c7-8d56-e5d0b795ae2bの正面中央入口と尖頭形・彫刻の密度が整合する。全景との細部の直接照合には限界があるが、同一の固有名と中央portalという位置情報を併用して同一建築と判断する。"
+      ]
+    },
+    {
+      "asset_id": "b2a4d9a0-a875-42c3-933e-d158784b3a69",
+      "regions": [
+        {
+          "draft_id": "8:0",
+          "verdict": "spill",
+          "evidence": "破風や棟端の飾りを含むが、赤領域は白壁と屋根を含めて天守全体を覆う。"
+        },
+        {
+          "draft_id": "8:1",
+          "verdict": "not_present",
+          "evidence": "曲線的な破風はあるが、開口を囲む構造アーチは確認できない。"
+        },
+        {
+          "draft_id": "8:2",
+          "verdict": "spill",
+          "evidence": "外壁の横帯を含むが、赤領域は屋根や壁の全体へ広がる。"
+        },
+        {
+          "draft_id": "8:3",
+          "verdict": "not_present",
+          "evidence": "頂部は瓦屋根と棟飾りで、煙突は見えない。"
+        },
+        {
+          "draft_id": "8:4",
+          "verdict": "not_present",
+          "evidence": "頂部は瓦屋根と棟飾りで、煙突は見えない。"
+        },
+        {
+          "draft_id": "8:5",
+          "verdict": "wrong_label",
+          "evidence": "最上層の開口脇には木柱が見えるが、赤領域は下層右端の壁角にあり、独立した柱を指していない。小さく細部は不鮮明。"
+        },
+        {
+          "draft_id": "8:6",
+          "verdict": "not_present",
+          "evidence": "白壁と瓦屋根で構成され、交互積みの隅石は確認できない。"
+        },
+        {
+          "draft_id": "8:7",
+          "verdict": "spill",
+          "evidence": "屋根下の水平な張り出しを含むが、天守の壁・屋根全体まで広がる。"
+        },
+        {
+          "draft_id": "8:8",
+          "verdict": "wrong_label",
+          "evidence": "下層右側の階段先に入口らしい暗部があるが、赤領域は最上層の中央窓である。入口の細部は不鮮明。"
+        },
+        {
+          "draft_id": "8:9",
+          "verdict": "not_present",
+          "evidence": "重層屋根と破風はあるが、独立した屋根窓・ドーマーは確認できない。"
+        },
+        {
+          "draft_id": "8:10",
+          "verdict": "not_present",
+          "evidence": "重層屋根と破風はあるが、独立した屋根窓・ドーマーは確認できない。"
+        },
+        {
+          "draft_id": "8:11",
+          "verdict": "spill",
+          "evidence": "各層の軒を含むが、白壁と瓦屋根全体まで覆う。"
+        },
+        {
+          "draft_id": "8:12",
+          "verdict": "spill",
+          "evidence": "最上層の軒を含むが、その上の屋根と下の壁まで覆う。"
+        },
+        {
+          "draft_id": "8:13",
+          "verdict": "not_present",
+          "evidence": "赤領域は最上層の欄干であり、地上の独立した柵は見えない。"
+        },
+        {
+          "draft_id": "8:14",
+          "verdict": "not_present",
+          "evidence": "赤領域は前景の草と枝のある斜面で、床面は写っていない。"
+        },
+        {
+          "draft_id": "8:15",
+          "verdict": "spill",
+          "evidence": "破風の縁を含むが、天守の屋根・白壁全体まで広がる。"
+        },
+        {
+          "draft_id": "8:16",
+          "verdict": "not_present",
+          "evidence": "最上層に木部は見えるが、白壁に露出木骨が交差する木骨壁は見えない。"
+        },
+        {
+          "draft_id": "8:17",
+          "verdict": "spill",
+          "evidence": "天守の下部基壇を含むが、屋根や上層壁まで全体を覆う。"
+        },
+        {
+          "draft_id": "8:18",
+          "verdict": "correct",
+          "evidence": "赤領域は最上層の外周に走る細い欄干に沿っている。"
+        },
+        {
+          "draft_id": "8:19",
+          "verdict": "spill",
+          "evidence": "破風中央の小さな紋状装飾を含むが、天守全体を覆う。紋の凹凸は遠景で不確か。"
+        },
+        {
+          "draft_id": "8:20",
+          "verdict": "spill",
+          "evidence": "各瓦屋根の棟を含むが、屋根面と白壁全体まで覆う。"
+        },
+        {
+          "draft_id": "8:21",
+          "verdict": "spill",
+          "evidence": "最上層屋根の棟を含むが、赤領域は屋根面と下の外壁まで広がる。"
+        },
+        {
+          "draft_id": "8:22",
+          "verdict": "spill",
+          "evidence": "瓦屋根面を含むが、白壁や基部まで天守全体を覆う。"
+        },
+        {
+          "draft_id": "8:23",
+          "verdict": "spill",
+          "evidence": "最上層の瓦屋根を含むが、開口脇の縦壁と窓下の白壁帯まで広がる。"
+        },
+        {
+          "draft_id": "8:24",
+          "verdict": "not_present",
+          "evidence": "赤領域は小さな窓や換気開口にある。閉じた戸板の可能性を完全には除けないが、この解像度で開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "8:25",
+          "verdict": "not_present",
+          "evidence": "赤領域は小さな窓や換気開口にある。閉じた戸板の可能性を完全には除けないが、この解像度で開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "8:26",
+          "verdict": "not_present",
+          "evidence": "赤領域は小さな窓や換気開口にある。閉じた戸板の可能性を完全には除けないが、この解像度で開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "8:27",
+          "verdict": "not_present",
+          "evidence": "赤領域は小さな窓や換気開口にある。閉じた戸板の可能性を完全には除けないが、この解像度で開閉する鎧戸は確認できない。"
+        },
+        {
+          "draft_id": "8:28",
+          "verdict": "correct",
+          "evidence": "赤領域は天守右下の入口へ向かう小さな斜めの階段状部分に重なる。遠景で段数は不鮮明。"
+        },
+        {
+          "draft_id": "8:29",
+          "verdict": "not_present",
+          "evidence": "周囲に樹木はあるが、建物外壁に付着した植物は確認できない。"
+        },
+        {
+          "draft_id": "8:30",
+          "verdict": "spill",
+          "evidence": "白い外壁を含むが、瓦屋根と開口部まで天守全体を覆う。"
+        },
+        {
+          "draft_id": "8:31",
+          "verdict": "spill",
+          "evidence": "白い外壁を含むが、瓦屋根と開口部まで天守全体を覆う。"
+        },
+        {
+          "draft_id": "8:32",
+          "verdict": "correct",
+          "evidence": "赤領域は最上層中央の矩形窓と周囲の枠付近に一致する。枠と内部の分離は小さく不確か。"
+        },
+        {
+          "draft_id": "8:33",
+          "verdict": "correct",
+          "evidence": "赤領域は最上層中央の窓開口の内部に沿う。ガラスと暗い開放部の区別は遠景で不確か。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "天守の白壁が主要部位だが、壁面候補は瓦屋根まで含む。"
+        },
+        {
+          "label": "gable_wall",
+          "evidence": "下層の大きな三角形および曲線状破風の白い壁面に対応する領域がない。"
+        },
+        {
+          "label": "roof_surface",
+          "evidence": "重なった瓦屋根が見えるが、全体マスクか最上層の壁まで混入するマスクしかない。"
+        },
+        {
+          "label": "ground_grass",
+          "evidence": "画面下半分の黄褐色の草の斜面が未領域化。"
+        },
+        {
+          "label": "vegetation_tree_canopy",
+          "evidence": "左右の緑の樹冠と建物脇の低い樹冠に対応する植生領域がない。"
+        }
+      ],
+      "building_name": "掛川城天守",
+      "evidence": [
+        "titleとsource_urlが掛川城を示し、白壁の重層天守、上層の張り出し、曲線破風と瓦屋根が一致する。",
+        "49194ec0-982f-4c98-96a9-1aa9fb5bf3a0の奥の天守と、頂部屋根・層の構成・大きな曲線破風が一致する。こちらは接近した構図で、既存候補の同一群と整合する。"
+      ]
+    },
+    {
+      "asset_id": "b95b59ef-83ed-41ab-a211-cbddcead59f3",
+      "regions": [
+        {
+          "draft_id": "9:0",
+          "verdict": "wrong_label",
+          "evidence": "赤領域は金色ドームと胴部であり、頂飾りなどの局所的な装飾部を指していない。"
+        },
+        {
+          "draft_id": "9:1",
+          "verdict": "spill",
+          "evidence": "タイル装飾を含むが、金色ドームと外壁全体を覆っている。"
+        },
+        {
+          "draft_id": "9:2",
+          "verdict": "wrong_label",
+          "evidence": "入口や窓にはアーチがあるが、赤領域はドームを指す。"
+        },
+        {
+          "draft_id": "9:3",
+          "verdict": "spill",
+          "evidence": "入口や窓のアーチを含むが、ドームと外壁全体へ広がる。"
+        },
+        {
+          "draft_id": "9:4",
+          "verdict": "spill",
+          "evidence": "外壁の水平装飾帯を含むが、壁面全体または屋根を含む建物全体を覆う。"
+        },
+        {
+          "draft_id": "9:5",
+          "verdict": "spill",
+          "evidence": "外壁の水平装飾帯を含むが、壁面全体または屋根を含む建物全体を覆う。"
+        },
+        {
+          "draft_id": "9:6",
+          "verdict": "spill",
+          "evidence": "下部の柱間の水平材を含むが、ドームと壁面全体まで覆う。"
+        },
+        {
+          "draft_id": "9:7",
+          "verdict": "not_present",
+          "evidence": "金色ドームと細い頂飾りはあるが、煙突はない。小さい赤領域も煙突ではなく頂飾り。"
+        },
+        {
+          "draft_id": "9:8",
+          "verdict": "not_present",
+          "evidence": "金色ドームと細い頂飾りはあるが、煙突はない。小さい赤領域も煙突ではなく頂飾り。"
+        },
+        {
+          "draft_id": "9:9",
+          "verdict": "not_present",
+          "evidence": "金色ドームと細い頂飾りはあるが、煙突はない。小さい赤領域も煙突ではなく頂飾り。"
+        },
+        {
+          "draft_id": "9:10",
+          "verdict": "correct",
+          "evidence": "赤領域は入口脇または下部柱列の一本の細い柱に沿っている。"
+        },
+        {
+          "draft_id": "9:11",
+          "verdict": "correct",
+          "evidence": "赤領域は入口脇または下部柱列の一本の細い柱に沿っている。"
+        },
+        {
+          "draft_id": "9:12",
+          "verdict": "correct",
+          "evidence": "赤領域は入口脇または下部柱列の一本の細い柱に沿っている。"
+        },
+        {
+          "draft_id": "9:13",
+          "verdict": "correct",
+          "evidence": "赤領域は入口脇または下部柱列の一本の細い柱に沿っている。"
+        },
+        {
+          "draft_id": "9:14",
+          "verdict": "correct",
+          "evidence": "赤領域は入口脇または下部柱列の一本の細い柱に沿っている。"
+        },
+        {
+          "draft_id": "9:15",
+          "verdict": "correct",
+          "evidence": "赤領域は入口脇または下部柱列の一本の細い柱に沿っている。"
+        },
+        {
+          "draft_id": "9:16",
+          "verdict": "correct",
+          "evidence": "赤領域は入口脇または下部柱列の一本の細い柱に沿っている。"
+        },
+        {
+          "draft_id": "9:17",
+          "verdict": "correct",
+          "evidence": "赤領域は入口脇または下部柱列の一本の細い柱に沿っている。"
+        },
+        {
+          "draft_id": "9:18",
+          "verdict": "not_present",
+          "evidence": "タイル・石材の外壁角部はあるが、交互積みの隅石は確認できない。"
+        },
+        {
+          "draft_id": "9:19",
+          "verdict": "spill",
+          "evidence": "壁上端のコーニスを含むが、壁面全体やドームまで広く覆う。"
+        },
+        {
+          "draft_id": "9:20",
+          "verdict": "spill",
+          "evidence": "壁上端のコーニスを含むが、壁面全体やドームまで広く覆う。"
+        },
+        {
+          "draft_id": "9:21",
+          "verdict": "correct",
+          "evidence": "赤領域は中央の入口内の扉面におおむね沿う。"
+        },
+        {
+          "draft_id": "9:22",
+          "verdict": "not_present",
+          "evidence": "ドームの胴部に窓はあるが、独立した屋根窓のドーマーはない。"
+        },
+        {
+          "draft_id": "9:23",
+          "verdict": "not_present",
+          "evidence": "ドームの胴部に窓はあるが、独立した屋根窓のドーマーはない。"
+        },
+        {
+          "draft_id": "9:24",
+          "verdict": "spill",
+          "evidence": "外壁上端の軒を含むが、ドームと建物外壁全体を覆う。"
+        },
+        {
+          "draft_id": "9:25",
+          "verdict": "spill",
+          "evidence": "ドーム裾の縁は含むが、赤領域はドームとその垂直な胴部全体を覆う。"
+        },
+        {
+          "draft_id": "9:26",
+          "verdict": "correct",
+          "evidence": "赤領域は画面右端にある低い横材と縦支柱からなる柵に沿っている。小さく細部は不鮮明。"
+        },
+        {
+          "draft_id": "9:27",
+          "verdict": "correct",
+          "evidence": "赤領域は建物前の広い舗装面をおおむね捉える。"
+        },
+        {
+          "draft_id": "9:28",
+          "verdict": "not_present",
+          "evidence": "多角形外壁とドームで構成され、切妻やその縁取りは見えない。"
+        },
+        {
+          "draft_id": "9:29",
+          "verdict": "not_present",
+          "evidence": "多角形外壁とドームで構成され、切妻やその縁取りは見えない。"
+        },
+        {
+          "draft_id": "9:30",
+          "verdict": "not_present",
+          "evidence": "多角形外壁とドームで構成され、切妻やその縁取りは見えない。"
+        },
+        {
+          "draft_id": "9:31",
+          "verdict": "not_present",
+          "evidence": "外壁はタイルと石材で、露出木骨壁ではない。"
+        },
+        {
+          "draft_id": "9:32",
+          "verdict": "correct",
+          "evidence": "赤領域は建物前の舗装された広い通行面に沿っている。"
+        },
+        {
+          "draft_id": "9:33",
+          "verdict": "spill",
+          "evidence": "建物地際の基部を含むが、ドームと上部外壁まで全体を覆う。"
+        },
+        {
+          "draft_id": "9:34",
+          "verdict": "correct",
+          "evidence": "赤領域は右端の低い柵状の水平材と支柱に沿い、手すりの形として整合する。小さいため用途の区別は不確か。"
+        },
+        {
+          "draft_id": "9:35",
+          "verdict": "not_present",
+          "evidence": "彩色タイルの模様はあるが、独立した浮彫はこの解像度では確認できない。"
+        },
+        {
+          "draft_id": "9:36",
+          "verdict": "not_present",
+          "evidence": "曲面のドームに棟線はなく、頂飾りを棟とは判断しない。"
+        },
+        {
+          "draft_id": "9:37",
+          "verdict": "not_present",
+          "evidence": "曲面のドームに棟線はなく、頂飾りを棟とは判断しない。"
+        },
+        {
+          "draft_id": "9:38",
+          "verdict": "spill",
+          "evidence": "金色ドームを捉えるが、その下の垂直な装飾胴部まで含む。"
+        },
+        {
+          "draft_id": "9:39",
+          "verdict": "spill",
+          "evidence": "屋根面を含むが、下部の外壁全体まで広く覆う。"
+        },
+        {
+          "draft_id": "9:40",
+          "verdict": "not_present",
+          "evidence": "赤領域はアーチ窓内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "9:41",
+          "verdict": "not_present",
+          "evidence": "赤領域はアーチ窓内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "9:42",
+          "verdict": "not_present",
+          "evidence": "赤領域はアーチ窓内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "9:43",
+          "verdict": "not_present",
+          "evidence": "赤領域はアーチ窓内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "9:44",
+          "verdict": "not_present",
+          "evidence": "赤領域はアーチ窓内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "9:45",
+          "verdict": "not_present",
+          "evidence": "赤領域はアーチ窓内部にある。開閉する鎧戸や戸板は確認できない。"
+        },
+        {
+          "draft_id": "9:46",
+          "verdict": "not_present",
+          "evidence": "外壁に付着した植物は見えない。"
+        },
+        {
+          "draft_id": "9:47",
+          "verdict": "spill",
+          "evidence": "外壁を含むが、ドーム屋根と窓・扉まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "9:48",
+          "verdict": "spill",
+          "evidence": "外壁を含むが、ドーム屋根と窓・扉まで建物全体を覆う。"
+        },
+        {
+          "draft_id": "9:49",
+          "verdict": "correct",
+          "evidence": "赤領域は上部外壁のアーチ窓の枠付近に沿っている。小さいため枠と窓内部の境界には不確かさがある。"
+        },
+        {
+          "draft_id": "9:50",
+          "verdict": "correct",
+          "evidence": "赤領域は上部外壁のアーチ窓の枠付近に沿っている。小さいため枠と窓内部の境界には不確かさがある。"
+        },
+        {
+          "draft_id": "9:51",
+          "verdict": "correct",
+          "evidence": "赤領域は上部外壁のアーチ窓の枠付近に沿っている。小さいため枠と窓内部の境界には不確かさがある。"
+        },
+        {
+          "draft_id": "9:52",
+          "verdict": "correct",
+          "evidence": "赤領域は上部外壁のアーチ窓の枠付近に沿っている。小さいため枠と窓内部の境界には不確かさがある。"
+        },
+        {
+          "draft_id": "9:53",
+          "verdict": "correct",
+          "evidence": "赤領域は上部外壁のアーチ窓の枠付近に沿っている。小さいため枠と窓内部の境界には不確かさがある。"
+        }
+      ],
+      "missed_major_parts": [
+        {
+          "label": "wall_main",
+          "evidence": "青い装飾外壁が主要部位だが、壁面候補は金色ドームまで覆う。"
+        },
+        {
+          "label": "band_course",
+          "evidence": "上端の細い水平装飾帯が見えるが、帯だけの領域がない。"
+        }
+      ],
+      "building_name": "岩のドーム",
+      "evidence": [
+        "title・source_urlのDome of the Rockという固有名と、金色ドーム、タイル貼りの八角形外壁、中央アーチ入口、下部柱列が一致する。",
+        "152cadd8-7323-4de2-ba65-fce95747d576、78f5d063-b33b-4808-b31a-8d441737484dと、胴部の模様・上部アーチ窓列・中央入口の形が共通し、既存候補の同一群と整合する。"
+      ]
+    }
+  ]
+}
