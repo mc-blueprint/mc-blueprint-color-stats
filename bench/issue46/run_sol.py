@@ -25,8 +25,12 @@ def save(path, value):
                     encoding="utf-8")
 
 
-def digest(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def digest(path, *, text=False):
+    """SHA-256を返す。text=TrueではCRLFをLFへ正規化する。"""
+    content = path.read_bytes()
+    if text:
+        content = content.replace(b"\r\n", b"\n")
+    return hashlib.sha256(content).hexdigest()
 
 
 def select_groups(manifest, identity):
@@ -88,7 +92,7 @@ def main():
     manifest = read(args.issue41 / "manifest.json")
     identity_path = args.issue41 / "judgments/building-identity.json"
     groups = select_groups(manifest, read(identity_path))
-    if digest(args.draft) != manifest["draft"]["artifact_sha256"]["draft.json"]:
+    if digest(args.draft, text=True) != manifest["draft"]["artifact_sha256"]["draft.json"]:
         raise ValueError("#41の判定対象draftと一致しません")
     drafts = {row["asset_id"]: row for row in read(args.draft)["images"].values()}
     assets = {row["asset_id"]: row for row in manifest["assets"]}
@@ -156,11 +160,12 @@ def main():
     save(args.output / "manifest.json", {
         "basis": "#41 gpt-6.1-sol初回判定。人手正解ではない。",
         "labels": LABELS, "groups": groups, "inputs": inputs,
-        "sources_sha256": {str(p.relative_to(args.issue41)): digest(p) for p in sources},
-        "draft_sha256": digest(args.draft), "weights_sha256": weights,
+        "sources_sha256": {p.relative_to(args.issue41).as_posix(): digest(p, text=True)
+                           for p in sources},
+        "draft_sha256": digest(args.draft, text=True), "weights_sha256": weights,
         "intrinsic_license_class": "academic_only", "implementation": shade._implementation(),
-        "code_sha256": {"run_sol.py": digest(Path(__file__)),
-                        "shade.py": digest(Path(shade.__file__))},
+        "code_sha256": {"run_sol.py": digest(Path(__file__), text=True),
+                        "shade.py": digest(Path(shade.__file__), text=True)},
     })
 
 
