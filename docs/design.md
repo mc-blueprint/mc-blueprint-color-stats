@@ -1,4 +1,4 @@
-# MCBlueprint配色統計 設計書
+# mc-blueprint配色統計 設計書
 
 作成日：2026-11-01  
 状態：**設計確定（初版）**。  
@@ -8,13 +8,13 @@
 
 | リポジトリ | 役割 | 公開 |
 |---|---|---|
-| `rs0325/MCBlueprint` | AIエージェント向けの配布ツールキット（Blueprint JSON → `.schem`）。MIT、Python 3.11以上 | 公開・GitHubで無料配布 |
-| `rs0325/mc-blueprint-color-stats`（本リポジトリ） | 画像・資料の収集、解析、統計、**配色パックの生成** | private |
+| `mc-blueprint/mc-blueprint` | AIエージェント向けの配布ツールキット（Blueprint JSON → `.schem`）。MIT、Python 3.11以上 | 公開・GitHubで無料配布 |
+| `mc-blueprint/mc-blueprint-color-stats`（本リポジトリ） | 画像・資料の収集、解析、統計、**配色パックの生成** | public |
 
-- 本リポジトリは配布物を直接持たない。成果は**配色パック**（バージョン付きJSON、§7）として出力し、MCBlueprintへ同梱する。
-- 生成時の配色選択（パック参照→役割ごとのPalette生成）は**MCBlueprint側に実装**する。MCBlueprintの利用者は本リポジトリなしで動作でき、LLMを呼ばない。MCBlueprint側の変更は同リポジトリのIssueとして別途起票する（M4）。
-- 配色パックの役割名はMCBlueprintのPalette役割（壁・柱・床・屋根・妻壁・土台。`designs/*.md`、`mcblueprint design`の出力）と対応させる（§6.2）。
-- 本リポジトリではMCBlueprintをライブラリとして参照し、Palette検証・プレビュー生成に再利用する（ブロックID検証や`colors.json`を再実装しない）。
+- 本リポジトリは配布物を直接持たない。成果は**配色パック**（バージョン付きJSON、§7）として出力し、mc-blueprintへ同梱する。
+- 生成時の配色選択（パック参照→役割ごとのPalette生成）は**mc-blueprint側に実装**する。mc-blueprintの利用者は本リポジトリなしで動作でき、LLMを呼ばない。mc-blueprint側の変更は同リポジトリのIssueとして別途起票する（M4）。
+- 配色パックの役割名はmc-blueprintのPalette役割（壁・柱・床・屋根・妻壁・土台。`designs/*.md`、`mcblueprint design`の出力）と対応させる（§6.2）。
+- 本リポジトリではmc-blueprintをライブラリとして参照し、Palette検証・プレビュー生成に再利用する（ブロックID検証や`colors.json`を再実装しない）。
 
 ## 2. 要件・アーキテクチャ整合性レビュー
 
@@ -25,9 +25,9 @@
 | R3 | 両1TB SSD | SUNEAST／ORICOは監視付きの暫定候補なので、**再取得可能な原本キャッシュ専用**とし、DB・正解データ・集計結果は置かない |
 | R4 | Windowsの使用範囲 | **H:のみ**使用（空き769GB）。WSL2のディストリビューション、集計用Parquet、CVAT、パックのビルドをH:に置く。C・F・Gは使わない |
 | R5 | 処理順序 | 分類体系とスキーマを先に確定し、収集は1,000枚MVPに限定。大量取得は品質・権利ゲートとベンチマーク後 |
-| R6 | ライセンス | MCBlueprintはMITで無料公開されるため、同梱パックは**商用利用も許すライセンスと両立する入力だけ**から作る（§8） |
+| R6 | ライセンス | mc-blueprintはMITで無料公開されるため、同梱パックは**商用利用も許すライセンスと両立する入力だけ**から作る（§8） |
 | R7 | 統計の単位 | 画像単位ではなく`subject`（同一建築・場所・作品）単位で重み付けする。収集時に撮影地点・タイトル・作者・作品ページを必ず保存 |
-| R8 | ブロック色 | MCBlueprintの`colors.json`はプレビュー用のキーワード単位の代表色で粒度が足りない。本リポジトリで、ユーザーが所有するバニラjarから面ごとのOKLab分位点をローカル抽出し、テクスチャ画像は保存・配布しない |
+| R8 | ブロック色 | mc-blueprintの`colors.json`はプレビュー用のキーワード単位の代表色で粒度が足りない。本リポジトリで、ユーザーが所有するバニラjarから面ごとのOKLab分位点をローカル抽出し、テクスチャ画像は保存・配布しない |
 
 ## 3. 実機構成（2026-11-01 読み取り確認）
 
@@ -55,7 +55,7 @@
             └──────────┬──────────────┘ │ 配色パックのビルド       │
                        │                └──────────┬──────────────┘
                        ▼ 日次バックアップ          ▼
-            ubuntu-0 HDD（DB・正解・集計）   配色パック → MCBlueprint
+            ubuntu-0 HDD（DB・正解・集計）   配色パック → mc-blueprint
 ```
 
 ### 4.1 保存先の割当て
@@ -144,9 +144,9 @@ prep/colorの16件・64件一括処理は採用せず、キューのclaim・完�
 
 ### 6.2 部位ラベル（建築）
 
-2階層。統計は第2階層を基本とし、データが不足するときは第1階層へ平滑化する。右端はMCBlueprintのPalette役割との対応。
+2階層。統計は第2階層を基本とし、データが不足するときは第1階層へ平滑化する。右端はmc-blueprintのPalette役割との対応。
 
-| 第1階層 | 第2階層 | MCBlueprintの役割 |
+| 第1階層 | 第2階層 | mc-blueprintの役割 |
 |---|---|---|
 | `foundation` | `plinth`, `stairs_entry` | 土台 |
 | `wall` | `wall_main`, `wall_secondary`, `gable_wall` | 壁・妻壁 |
@@ -162,28 +162,28 @@ prep/colorの16件・64件一括処理は採用せず、キューのclaim・完�
 
 ### 6.4 シーン属性
 
-- 建築：`style`は閉じた語彙で、MCBlueprint同梱プリセット（`medieval`／`japanese`／`modern`）を含む15〜25種から始める。`building_type`（house／tower／temple／castle／shop／bridge／other）、`scale`（small／medium／large）。
+- 建築：`style`は閉じた語彙で、mc-blueprint同梱プリセット（`medieval`／`japanese`／`modern`）を含む15〜25種から始める。`building_type`（house／tower／temple／castle／shop／bridge／other）、`scale`（small／medium／large）。
 - 地形：Minecraftのバイオームに対応させた`biome_like`、季節、天候・時間帯（照明条件）。
 - 語彙の正本は`taxonomy/*.yaml`。変更するときは`taxonomy_version`を上げる。
 
-## 7. 配色パック（MCBlueprintへの出力）
+## 7. 配色パック（mc-blueprintへの出力）
 
-- 形式：`colorpack.json`。MCBlueprintの`src/mcblueprint/data/`に同梱し、標準ライブラリだけで読める。サイズが数MBを超える場合はgzipを検討する。
-- **契約の正本はMCBlueprint側に置く**：JSON Schema（`schema/colorpack.schema.json`）、役割名、条件の語彙（style・building_type・biome_like）、対応するMinecraftバージョンはMCBlueprintが定義する。読み込む側が形式を決め、本リポジトリはそれに合わせて出力する。
-- 本リポジトリはMCBlueprintをバージョン固定で参照し、ビルドしたパックをそのスキーマで検証する。語彙はMCBlueprintの定義と`taxonomy/`の対応表で変換し、対応のないラベルはパックに出さない。
-- 契約の変更手順：MCBlueprint側でスキーマ・語彙を変更するPRを先にmerge → 本リポジトリの参照バージョンを上げて出力を合わせる。本リポジトリからスキーマを変更しない。
+- 形式：`colorpack.json`。mc-blueprintの`src/mcblueprint/data/`に同梱し、標準ライブラリだけで読める。サイズが数MBを超える場合はgzipを検討する。
+- **契約の正本はmc-blueprint側に置く**：JSON Schema（`schema/colorpack.schema.json`）、役割名、条件の語彙（style・building_type・biome_like）、対応するMinecraftバージョンはmc-blueprintが定義する。読み込む側が形式を決め、本リポジトリはそれに合わせて出力する。
+- 本リポジトリはmc-blueprintをバージョン固定で参照し、ビルドしたパックをそのスキーマで検証する。語彙はmc-blueprintの定義と`taxonomy/`の対応表で変換し、対応のないラベルはパックに出さない。
+- 契約の変更手順：mc-blueprint側でスキーマ・語彙を変更するPRを先にmerge → 本リポジトリの参照バージョンを上げて出力を合わせる。本リポジトリからスキーマを変更しない。
 - 内容：
   - `palette_prior`：条件（style・building_type・biome_like）→役割ごとのベース色分布（OKLab分位点）とサンプル数
   - `relation_rule`：役割の組→ΔL／ΔC／Δhの分布
   - `accent_rule`：アクセントの役割と面積比の上限
   - `block_color`：対応するMinecraft版ごとのブロック面のOKLab分位点・材質タグ
   - `provenance`：統計バージョン、入力件数、`subject`数、使用ソースとライセンスの集計、帰属表示の一覧
-- 選択アルゴリズム（MCBlueprint側）：条件でベースパレットをサンプル→役割間の関係制約で整合を確認→ブロック色距離と材質制約で重み付きPaletteに割り当てる→`seed`で再現する。出力は既存の`palettes`形式なので、Blueprint JSONとValidatorは変更しない。
-- 本リポジトリは、パックの検証（MCBlueprintのスキーマ、ブロックID、サンプルBlueprintのプレビュー生成）までを担う。
+- 選択アルゴリズム（mc-blueprint側）：条件でベースパレットをサンプル→役割間の関係制約で整合を確認→ブロック色距離と材質制約で重み付きPaletteに割り当てる→`seed`で再現する。出力は既存の`palettes`形式なので、Blueprint JSONとValidatorは変更しない。
+- 本リポジトリは、パックの検証（mc-blueprintのスキーマ、ブロックID、サンプルBlueprintのプレビュー生成）までを担う。
 
 ## 8. ライセンス方針
 
-MCBlueprintはMITで公開・無料配布される。MITは利用者の商用利用を妨げないため、同梱パックは次の区分で管理する。
+mc-blueprintはMITで公開・無料配布される。MITは利用者の商用利用を妨げないため、同梱パックは次の区分で管理する。
 
 | `license_class` | 例 | 同梱パックへの使用 |
 |---|---|---|
@@ -238,7 +238,7 @@ MCBlueprintはMITで公開・無料配布される。MITは利用者の商用利
 
 ## 11. リポジトリ構成
 
-`rs0325/mc-blueprint-color-stats`（private）。Python 3.12、`uv`でロック、ruff・pytest、GitHub Actions。デフォルトブランチは`develop`、リリースは`main`。
+`mc-blueprint/mc-blueprint-color-stats`（public）。Python 3.12、`uv`でロック、ruff・pytest、GitHub Actions。デフォルトブランチは`develop`、リリースは`main`。
 
 ```
 mc-blueprint-color-stats/
@@ -270,10 +270,10 @@ mc-blueprint-color-stats/
 |---|---|---|---|
 | 本パッケージ（`pyproject.toml`、Gitタグ`vX.Y.Z`） | CLI・設定・DBスキーマの非互換変更 | 互換を保つ機能追加 | 不具合修正 |
 | 分類体系`taxonomy_version` | ラベルの削除・統合・意味変更（再解析が必要） | ラベル・属性の追加 | 説明文の修正 |
-| 配色パック`pack_version` | パックの互換性を壊す変更（MCBlueprintのスキーマのMAJOR変更に追従） | 条件・役割・ブロック・Minecraft版の追加 | 同じ形式での統計の再計算 |
+| 配色パック`pack_version` | パックの互換性を壊す変更（mc-blueprintのスキーマのMAJOR変更に追従） | 条件・役割・ブロック・Minecraft版の追加 | 同じ形式での統計の再計算 |
 
-- 1.0.0までは開発版（0.y.z）とし、最初の配色パックをMCBlueprintへ同梱する時点で1.0.0にする。
-- パックには`schema_version`（準拠したMCBlueprintのスキーマのバージョン）、`taxonomy_version`、生成した本パッケージのバージョンを記録する。
+- 1.0.0までは開発版（0.y.z）とし、最初の配色パックをmc-blueprintへ同梱する時点で1.0.0にする。
+- パックには`schema_version`（準拠したmc-blueprintのスキーマのバージョン）、`taxonomy_version`、生成した本パッケージのバージョンを記録する。
 
 ## 12. マイルストーンとIssue案
 
@@ -323,11 +323,11 @@ mc-blueprint-color-stats/
 
 `subject`の推定と重み付け／条件付き分布と平滑化／偏りレポート。
 
-### M4 MCBlueprint接続
+### M4 mc-blueprint接続
 
-`rs0325/MCBlueprint`（先行）：配色パックのスキーマ・語彙の定義。  
+`mc-blueprint/mc-blueprint`（先行）：配色パックのスキーマ・語彙の定義。\
 本リポジトリ：スキーマに沿った配色パックの生成・検証（SemVerで版付け）。  
-`rs0325/MCBlueprint`（後続）：パックの同梱と配色選択コマンド。生成結果のプレビューで人手評価する。
+`mc-blueprint/mc-blueprint`（後続）：パックの同梱と配色選択コマンド。生成結果のプレビューで人手評価する。
 
 ### M5 拡張（数十万枚〜）
 
