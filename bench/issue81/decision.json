@@ -1,0 +1,1441 @@
+{
+  "plan_sha256": "e9082b43e44ad0b4c46e4bc0d3446c706c913f389ef51d0ae188a6a67bd4ca75",
+  "baseline_sha256": "b5eed0b22cd71c43efae796c0e05026cd0e650a8c7a6f9c6fef186e2c7c5ef5c",
+  "definition_sha256": "f080343da324e8b3cc80a36fcee14ab79178fc96196f1be0c2c808de139f3d80",
+  "mapping_sha256": "857d74db426de1c7d7005a5ef98bfb69d80dd12ffec130816132445b010c2d0e",
+  "code_sha256": {
+    "bench/issue81/evaluate.py": "4495b228345217a88b938aba160b2ea486eb2d45d7329d0bcd31bd10b68e645e",
+    "src/colorstats/segmentation_quality.py": "5636fdc68443707080f2d4cb4c7ce13b5079007e7ef25515198d5d5d891c40e1",
+    "src/colorstats/segmentation_evaluation.py": "c7c4c85292d9aa184af403320d533f52aac342645c07544963b7063ff3c910d6"
+  },
+  "confusion_sha256": "b954ab12f79e5e050d39b04e69cc4a496c6a0f830a26c766cc4315c835ded92e",
+  "threshold": 0.5,
+  "inference": false,
+  "reports": {
+    "before": {
+      "tune": {
+        "cmp": {
+          "wall": {
+            "tp": 19083658,
+            "fp": 18937508,
+            "fn": 4718593,
+            "iou": 0.4465083202738696,
+            "precision": 0.5019219557864164,
+            "recall": 0.8017585395599769
+          },
+          "band_course": {
+            "tp": 4126790,
+            "fp": 24146445,
+            "fn": 1857169,
+            "iou": 0.13696431020307592,
+            "precision": 0.14596101224355826,
+            "recall": 0.6896420914648647
+          },
+          "cornice": {
+            "tp": 1778427,
+            "fp": 32545809,
+            "fn": 193983,
+            "iou": 0.05152140091584679,
+            "precision": 0.051812573483063104,
+            "recall": 0.9016517863932955
+          },
+          "column": {
+            "tp": 527944,
+            "fp": 12021299,
+            "fn": 692136,
+            "iou": 0.03987077176780455,
+            "precision": 0.04206978859202902,
+            "recall": 0.4327126090092453
+          },
+          "window": {
+            "tp": 4801432,
+            "fp": 2492090,
+            "fn": 2924176,
+            "iou": 0.4699132818370635,
+            "precision": 0.6583145975291499,
+            "recall": 0.621495680339981
+          },
+          "door": {
+            "tp": 327589,
+            "fp": 407050,
+            "fn": 361739,
+            "iou": 0.2987920224594072,
+            "precision": 0.44591833540010806,
+            "recall": 0.47522949887426597
+          },
+          "shutter": {
+            "tp": 644637,
+            "fp": 5492663,
+            "fn": 531121,
+            "iou": 0.09667011126022187,
+            "precision": 0.1050359278510094,
+            "recall": 0.5482735392827436
+          },
+          "relief": {
+            "tp": 713548,
+            "fp": 16993737,
+            "fn": 577780,
+            "iou": 0.03902354189060854,
+            "precision": 0.04029686086828105,
+            "recall": 0.552569138127571
+          }
+        },
+        "ade": {
+          "wall": {
+            "tp": 298475,
+            "fp": 2246530,
+            "fn": 180807,
+            "iou": 0.10949948125549377,
+            "precision": 0.11727874797888413,
+            "recall": 0.6227544535367487
+          },
+          "window": {
+            "tp": 14269,
+            "fp": 4946098,
+            "fn": 6078,
+            "iou": 0.002873081248257053,
+            "precision": 0.0028766016708037935,
+            "recall": 0.7012827443849217
+          },
+          "door": {
+            "tp": 5418,
+            "fp": 857273,
+            "fn": 3675,
+            "iou": 0.0062537080171659555,
+            "precision": 0.006280348351843244,
+            "recall": 0.5958429561200924
+          },
+          "column": {
+            "tp": 0,
+            "fp": 722083,
+            "fn": 1284,
+            "iou": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "stairs": {
+            "tp": 64442,
+            "fp": 777979,
+            "fn": 40472,
+            "iou": 0.07298959217028564,
+            "precision": 0.07649619370837146,
+            "recall": 0.6142364222124788
+          },
+          "railing": {
+            "tp": 2950,
+            "fp": 1274181,
+            "fn": 11055,
+            "iou": 0.0022900419659893836,
+            "precision": 0.002309864845501362,
+            "recall": 0.21063905747947162
+          },
+          "fence": {
+            "tp": 82702,
+            "fp": 1394766,
+            "fn": 77029,
+            "iou": 0.053201775236619946,
+            "precision": 0.055975493208651556,
+            "recall": 0.517757980604892
+          },
+          "path": {
+            "tp": 791931,
+            "fp": 3771679,
+            "fn": 501687,
+            "iou": 0.1563444354793016,
+            "precision": 0.1735316996851177,
+            "recall": 0.6121830401246736
+          },
+          "path_natural": {
+            "tp": 164621,
+            "fp": 4344069,
+            "fn": 58932,
+            "iou": 0.03604085451904733,
+            "precision": 0.036511935839456694,
+            "recall": 0.7363846604608303
+          },
+          "ground_soil": {
+            "tp": 1308860,
+            "fp": 4396624,
+            "fn": 729639,
+            "iou": 0.20339315969562663,
+            "precision": 0.22940385075131225,
+            "recall": 0.6420704645918394
+          },
+          "ground_grass": {
+            "tp": 2692601,
+            "fp": 2795768,
+            "fn": 515383,
+            "iou": 0.44848637985046685,
+            "precision": 0.4906013061439564,
+            "recall": 0.8393436500930179
+          },
+          "rock": {
+            "tp": 615839,
+            "fp": 2203956,
+            "fn": 93990,
+            "iou": 0.2113536173739655,
+            "precision": 0.21839850060022095,
+            "recall": 0.8675878274908464
+          },
+          "sand": {
+            "tp": 322726,
+            "fp": 5363138,
+            "fn": 76430,
+            "iou": 0.05600651407234688,
+            "precision": 0.05675935970329223,
+            "recall": 0.8085209792662518
+          },
+          "water": {
+            "tp": 1591653,
+            "fp": 2062961,
+            "fn": 208857,
+            "iou": 0.4119748795836697,
+            "precision": 0.43551877161308966,
+            "recall": 0.8840011996600963
+          },
+          "tree": {
+            "tp": 2659981,
+            "fp": 629184,
+            "fn": 2415419,
+            "iou": 0.4662883393425358,
+            "precision": 0.8087101133570375,
+            "recall": 0.5240928793789652
+          }
+        }
+      },
+      "holdout": {
+        "cmp": {
+          "wall": {
+            "tp": 17144589,
+            "fp": 15918710,
+            "fn": 3987687,
+            "iou": 0.46272962884172636,
+            "precision": 0.5185383648497992,
+            "recall": 0.811298745104408
+          },
+          "band_course": {
+            "tp": 3336569,
+            "fp": 20008784,
+            "fn": 1547069,
+            "iou": 0.1340395482609125,
+            "precision": 0.14292219098164846,
+            "recall": 0.6832138254309594
+          },
+          "cornice": {
+            "tp": 1395467,
+            "fp": 28781229,
+            "fn": 195462,
+            "iou": 0.04594559925573942,
+            "precision": 0.046243200382175706,
+            "recall": 0.8771397089373567
+          },
+          "column": {
+            "tp": 587268,
+            "fp": 11538729,
+            "fn": 470107,
+            "iou": 0.04662298755234158,
+            "precision": 0.04843049194222958,
+            "recall": 0.5554018205461638
+          },
+          "window": {
+            "tp": 4075779,
+            "fp": 2600925,
+            "fn": 2498471,
+            "iou": 0.44421812118024995,
+            "precision": 0.6104477598527657,
+            "recall": 0.6199610601969806
+          },
+          "door": {
+            "tp": 316224,
+            "fp": 314279,
+            "fn": 344408,
+            "iou": 0.3243619161133683,
+            "precision": 0.5015424193064902,
+            "recall": 0.478668910982211
+          },
+          "shutter": {
+            "tp": 682778,
+            "fp": 4674895,
+            "fn": 442583,
+            "iou": 0.11771514912445244,
+            "precision": 0.12743928194199236,
+            "recall": 0.6067190883636451
+          },
+          "relief": {
+            "tp": 428426,
+            "fp": 14364884,
+            "fn": 515180,
+            "iou": 0.027986169765927275,
+            "precision": 0.028960793764208282,
+            "recall": 0.45403060175539367
+          }
+        },
+        "ade": {
+          "wall": {
+            "tp": 180518,
+            "fp": 2395888,
+            "fn": 110801,
+            "iou": 0.06717681220687502,
+            "precision": 0.07006582037147872,
+            "recall": 0.6196574888695897
+          },
+          "window": {
+            "tp": 4644,
+            "fp": 5045011,
+            "fn": 5815,
+            "iou": 0.0009186089522833683,
+            "precision": 0.0009196667891172764,
+            "recall": 0.444019504732766
+          },
+          "door": {
+            "tp": 8844,
+            "fp": 762187,
+            "fn": 3401,
+            "iou": 0.011419982645345234,
+            "precision": 0.011470355926026321,
+            "recall": 0.7222539812168232
+          },
+          "column": {
+            "tp": 0,
+            "fp": 707008,
+            "fn": 6023,
+            "iou": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "stairs": {
+            "tp": 106025,
+            "fp": 908156,
+            "fn": 23864,
+            "iou": 0.10213911728296943,
+            "precision": 0.10454248304789776,
+            "recall": 0.816273895402998
+          },
+          "railing": {
+            "tp": 33574,
+            "fp": 797777,
+            "fn": 29442,
+            "iou": 0.03900356996397508,
+            "precision": 0.04038486752286339,
+            "recall": 0.5327853243620668
+          },
+          "fence": {
+            "tp": 176677,
+            "fp": 1387611,
+            "fn": 80690,
+            "iou": 0.10740386801525613,
+            "precision": 0.11294403588086081,
+            "recall": 0.6864788414987159
+          },
+          "path": {
+            "tp": 1100228,
+            "fp": 3256931,
+            "fn": 477545,
+            "iou": 0.22756884392508828,
+            "precision": 0.2525104087319283,
+            "recall": 0.6973297172660452
+          },
+          "path_natural": {
+            "tp": 89908,
+            "fp": 4022621,
+            "fn": 18627,
+            "iou": 0.021763399881292306,
+            "precision": 0.02186197349611395,
+            "recall": 0.8283779425991615
+          },
+          "ground_soil": {
+            "tp": 1413992,
+            "fp": 3684826,
+            "fn": 726889,
+            "iou": 0.24271594846771388,
+            "precision": 0.27731760576666986,
+            "recall": 0.660472020630759
+          },
+          "ground_grass": {
+            "tp": 1696161,
+            "fp": 2912355,
+            "fn": 322985,
+            "iou": 0.34394416628933056,
+            "precision": 0.36804928093989475,
+            "recall": 0.84003880848636
+          },
+          "rock": {
+            "tp": 152539,
+            "fp": 2162411,
+            "fn": 35822,
+            "iou": 0.06488889607328997,
+            "precision": 0.06589299984880884,
+            "recall": 0.8098226278263547
+          },
+          "sand": {
+            "tp": 191626,
+            "fp": 4690506,
+            "fn": 80609,
+            "iou": 0.03861293587555748,
+            "precision": 0.03925047499739868,
+            "recall": 0.7038992047312065
+          },
+          "water": {
+            "tp": 1882700,
+            "fp": 2065179,
+            "fn": 311683,
+            "iou": 0.44199380124059706,
+            "precision": 0.47688898266638874,
+            "recall": 0.8579632634777065
+          },
+          "tree": {
+            "tp": 3152085,
+            "fp": 513795,
+            "fn": 2489867,
+            "iou": 0.5120556449119823,
+            "precision": 0.8598440210808864,
+            "recall": 0.558686957989008
+          }
+        }
+      }
+    },
+    "after": {
+      "tune": {
+        "cmp": {
+          "wall": {
+            "tp": 19083658,
+            "fp": 18937508,
+            "fn": 4718593,
+            "iou": 0.4465083202738696,
+            "precision": 0.5019219557864164,
+            "recall": 0.8017585395599769
+          },
+          "band_course": {
+            "tp": 4126790,
+            "fp": 24146445,
+            "fn": 1857169,
+            "iou": 0.13696431020307592,
+            "precision": 0.14596101224355826,
+            "recall": 0.6896420914648647
+          },
+          "cornice": {
+            "tp": 1778427,
+            "fp": 32545809,
+            "fn": 193983,
+            "iou": 0.05152140091584679,
+            "precision": 0.051812573483063104,
+            "recall": 0.9016517863932955
+          },
+          "column": {
+            "tp": 527944,
+            "fp": 12021299,
+            "fn": 692136,
+            "iou": 0.03987077176780455,
+            "precision": 0.04206978859202902,
+            "recall": 0.4327126090092453
+          },
+          "window": {
+            "tp": 4801432,
+            "fp": 2492090,
+            "fn": 2924176,
+            "iou": 0.4699132818370635,
+            "precision": 0.6583145975291499,
+            "recall": 0.621495680339981
+          },
+          "door": {
+            "tp": 327589,
+            "fp": 407050,
+            "fn": 361739,
+            "iou": 0.2987920224594072,
+            "precision": 0.44591833540010806,
+            "recall": 0.47522949887426597
+          },
+          "shutter": {
+            "tp": 644637,
+            "fp": 5492663,
+            "fn": 531121,
+            "iou": 0.09667011126022187,
+            "precision": 0.1050359278510094,
+            "recall": 0.5482735392827436
+          },
+          "relief": {
+            "tp": 713548,
+            "fp": 16993737,
+            "fn": 577780,
+            "iou": 0.03902354189060854,
+            "precision": 0.04029686086828105,
+            "recall": 0.552569138127571
+          }
+        },
+        "ade": {
+          "stairs": {
+            "tp": 64442,
+            "fp": 777979,
+            "fn": 40472,
+            "iou": 0.07298959217028564,
+            "precision": 0.07649619370837146,
+            "recall": 0.6142364222124788
+          },
+          "railing": {
+            "tp": 2950,
+            "fp": 1274181,
+            "fn": 11055,
+            "iou": 0.0022900419659893836,
+            "precision": 0.002309864845501362,
+            "recall": 0.21063905747947162
+          },
+          "fence": {
+            "tp": 82702,
+            "fp": 1394766,
+            "fn": 77029,
+            "iou": 0.053201775236619946,
+            "precision": 0.055975493208651556,
+            "recall": 0.517757980604892
+          },
+          "path": {
+            "tp": 791931,
+            "fp": 3771679,
+            "fn": 501687,
+            "iou": 0.1563444354793016,
+            "precision": 0.1735316996851177,
+            "recall": 0.6121830401246736
+          },
+          "path_natural": {
+            "tp": 164621,
+            "fp": 4344069,
+            "fn": 58932,
+            "iou": 0.03604085451904733,
+            "precision": 0.036511935839456694,
+            "recall": 0.7363846604608303
+          },
+          "ground_soil": {
+            "tp": 1308860,
+            "fp": 4396624,
+            "fn": 729639,
+            "iou": 0.20339315969562663,
+            "precision": 0.22940385075131225,
+            "recall": 0.6420704645918394
+          },
+          "ground_grass": {
+            "tp": 2692601,
+            "fp": 2795768,
+            "fn": 515383,
+            "iou": 0.44848637985046685,
+            "precision": 0.4906013061439564,
+            "recall": 0.8393436500930179
+          },
+          "rock": {
+            "tp": 615839,
+            "fp": 2203956,
+            "fn": 93990,
+            "iou": 0.2113536173739655,
+            "precision": 0.21839850060022095,
+            "recall": 0.8675878274908464
+          },
+          "sand": {
+            "tp": 322726,
+            "fp": 5363138,
+            "fn": 76430,
+            "iou": 0.05600651407234688,
+            "precision": 0.05675935970329223,
+            "recall": 0.8085209792662518
+          },
+          "water": {
+            "tp": 1591653,
+            "fp": 2062961,
+            "fn": 208857,
+            "iou": 0.4119748795836697,
+            "precision": 0.43551877161308966,
+            "recall": 0.8840011996600963
+          },
+          "tree": {
+            "tp": 2659981,
+            "fp": 629184,
+            "fn": 2415419,
+            "iou": 0.4662883393425358,
+            "precision": 0.8087101133570375,
+            "recall": 0.5240928793789652
+          }
+        }
+      },
+      "holdout": {
+        "cmp": {
+          "wall": {
+            "tp": 17144589,
+            "fp": 15918710,
+            "fn": 3987687,
+            "iou": 0.46272962884172636,
+            "precision": 0.5185383648497992,
+            "recall": 0.811298745104408
+          },
+          "band_course": {
+            "tp": 3336569,
+            "fp": 20008784,
+            "fn": 1547069,
+            "iou": 0.1340395482609125,
+            "precision": 0.14292219098164846,
+            "recall": 0.6832138254309594
+          },
+          "cornice": {
+            "tp": 1395467,
+            "fp": 28781229,
+            "fn": 195462,
+            "iou": 0.04594559925573942,
+            "precision": 0.046243200382175706,
+            "recall": 0.8771397089373567
+          },
+          "column": {
+            "tp": 587268,
+            "fp": 11538729,
+            "fn": 470107,
+            "iou": 0.04662298755234158,
+            "precision": 0.04843049194222958,
+            "recall": 0.5554018205461638
+          },
+          "window": {
+            "tp": 4075779,
+            "fp": 2600925,
+            "fn": 2498471,
+            "iou": 0.44421812118024995,
+            "precision": 0.6104477598527657,
+            "recall": 0.6199610601969806
+          },
+          "door": {
+            "tp": 316224,
+            "fp": 314279,
+            "fn": 344408,
+            "iou": 0.3243619161133683,
+            "precision": 0.5015424193064902,
+            "recall": 0.478668910982211
+          },
+          "shutter": {
+            "tp": 682778,
+            "fp": 4674895,
+            "fn": 442583,
+            "iou": 0.11771514912445244,
+            "precision": 0.12743928194199236,
+            "recall": 0.6067190883636451
+          },
+          "relief": {
+            "tp": 428426,
+            "fp": 14364884,
+            "fn": 515180,
+            "iou": 0.027986169765927275,
+            "precision": 0.028960793764208282,
+            "recall": 0.45403060175539367
+          }
+        },
+        "ade": {
+          "stairs": {
+            "tp": 106025,
+            "fp": 908156,
+            "fn": 23864,
+            "iou": 0.10213911728296943,
+            "precision": 0.10454248304789776,
+            "recall": 0.816273895402998
+          },
+          "railing": {
+            "tp": 33574,
+            "fp": 797777,
+            "fn": 29442,
+            "iou": 0.03900356996397508,
+            "precision": 0.04038486752286339,
+            "recall": 0.5327853243620668
+          },
+          "fence": {
+            "tp": 176677,
+            "fp": 1387611,
+            "fn": 80690,
+            "iou": 0.10740386801525613,
+            "precision": 0.11294403588086081,
+            "recall": 0.6864788414987159
+          },
+          "path": {
+            "tp": 1100228,
+            "fp": 3256931,
+            "fn": 477545,
+            "iou": 0.22756884392508828,
+            "precision": 0.2525104087319283,
+            "recall": 0.6973297172660452
+          },
+          "path_natural": {
+            "tp": 89908,
+            "fp": 4022621,
+            "fn": 18627,
+            "iou": 0.021763399881292306,
+            "precision": 0.02186197349611395,
+            "recall": 0.8283779425991615
+          },
+          "ground_soil": {
+            "tp": 1413992,
+            "fp": 3684826,
+            "fn": 726889,
+            "iou": 0.24271594846771388,
+            "precision": 0.27731760576666986,
+            "recall": 0.660472020630759
+          },
+          "ground_grass": {
+            "tp": 1696161,
+            "fp": 2912355,
+            "fn": 322985,
+            "iou": 0.34394416628933056,
+            "precision": 0.36804928093989475,
+            "recall": 0.84003880848636
+          },
+          "rock": {
+            "tp": 152539,
+            "fp": 2162411,
+            "fn": 35822,
+            "iou": 0.06488889607328997,
+            "precision": 0.06589299984880884,
+            "recall": 0.8098226278263547
+          },
+          "sand": {
+            "tp": 191626,
+            "fp": 4690506,
+            "fn": 80609,
+            "iou": 0.03861293587555748,
+            "precision": 0.03925047499739868,
+            "recall": 0.7038992047312065
+          },
+          "water": {
+            "tp": 1882700,
+            "fp": 2065179,
+            "fn": 311683,
+            "iou": 0.44199380124059706,
+            "precision": 0.47688898266638874,
+            "recall": 0.8579632634777065
+          },
+          "tree": {
+            "tp": 3152085,
+            "fp": 513795,
+            "fn": 2489867,
+            "iou": 0.5120556449119823,
+            "precision": 0.8598440210808864,
+            "recall": 0.558686957989008
+          }
+        }
+      }
+    }
+  },
+  "coverage": {
+    "tune": {
+      "cmp": {
+        "images": 324,
+        "total_pixels": 60505110,
+        "valid_pixels": 43860722,
+        "ignored_pixels": 16644388
+      },
+      "ade": {
+        "images": 310,
+        "total_pixels": 45092187,
+        "valid_pixels": 15537205,
+        "ignored_pixels": 29554982
+      }
+    },
+    "holdout": {
+      "cmp": {
+        "images": 282,
+        "total_pixels": 53508162,
+        "valid_pixels": 37968067,
+        "ignored_pixels": 15540095
+      },
+      "ade": {
+        "images": 307,
+        "total_pixels": 45015651,
+        "valid_pixels": 14913584,
+        "ignored_pixels": 30102067
+      }
+    }
+  },
+  "ade_selection": {
+    "validation": 2000,
+    "selected": 617,
+    "exact_manifest_match": true
+  },
+  "label_support": {
+    "accent_other": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "relief",
+          "labels": [
+            "relief",
+            "accent_other"
+          ],
+          "tp": 428426,
+          "fp": 14364884,
+          "fn": 515180,
+          "iou": 0.027986169765927275,
+          "precision": 0.028960793764208282,
+          "recall": 0.45403060175539367
+        }
+      ]
+    },
+    "arch": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "band_course": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "band_course",
+          "labels": [
+            "band_course"
+          ],
+          "tp": 3336569,
+          "fp": 20008784,
+          "fn": 1547069,
+          "iou": 0.1340395482609125,
+          "precision": 0.14292219098164846,
+          "recall": 0.6832138254309594
+        }
+      ]
+    },
+    "beam": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "chimney": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "column": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "column",
+          "labels": [
+            "column"
+          ],
+          "tp": 587268,
+          "fp": 11538729,
+          "fn": 470107,
+          "iou": 0.04662298755234158,
+          "precision": 0.04843049194222958,
+          "recall": 0.5554018205461638
+        }
+      ]
+    },
+    "corner_quoin": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "cornice": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "cornice",
+          "labels": [
+            "cornice"
+          ],
+          "tp": 1395467,
+          "fp": 28781229,
+          "fn": 195462,
+          "iou": 0.04594559925573942,
+          "precision": 0.046243200382175706,
+          "recall": 0.8771397089373567
+        }
+      ]
+    },
+    "door": {
+      "status": "validated",
+      "supported": true,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "door",
+          "labels": [
+            "door"
+          ],
+          "tp": 316224,
+          "fp": 314279,
+          "fn": 344408,
+          "iou": 0.3243619161133683,
+          "precision": 0.5015424193064902,
+          "recall": 0.478668910982211
+        }
+      ]
+    },
+    "dormer": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "eave": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "fence": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "fence",
+          "labels": [
+            "fence"
+          ],
+          "tp": 176677,
+          "fp": 1387611,
+          "fn": 80690,
+          "iou": 0.10740386801525613,
+          "precision": 0.11294403588086081,
+          "recall": 0.6864788414987159
+        }
+      ]
+    },
+    "floor_visible": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "gable_trim": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "gable_wall": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "wall",
+          "labels": [
+            "wall_main",
+            "wall_secondary",
+            "gable_wall"
+          ],
+          "tp": 17144589,
+          "fp": 15918710,
+          "fn": 3987687,
+          "iou": 0.46272962884172636,
+          "precision": 0.5185383648497992,
+          "recall": 0.811298745104408
+        }
+      ]
+    },
+    "ground_grass": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "ground_grass",
+          "labels": [
+            "ground_grass"
+          ],
+          "tp": 1696161,
+          "fp": 2912355,
+          "fn": 322985,
+          "iou": 0.34394416628933056,
+          "precision": 0.36804928093989475,
+          "recall": 0.84003880848636
+        }
+      ]
+    },
+    "ground_soil": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "ground_soil",
+          "labels": [
+            "ground_soil"
+          ],
+          "tp": 1413992,
+          "fp": 3684826,
+          "fn": 726889,
+          "iou": 0.24271594846771388,
+          "precision": 0.27731760576666986,
+          "recall": 0.660472020630759
+        }
+      ]
+    },
+    "half_timber": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "light_fixture": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "path": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "path",
+          "labels": [
+            "path"
+          ],
+          "tp": 1100228,
+          "fp": 3256931,
+          "fn": 477545,
+          "iou": 0.22756884392508828,
+          "precision": 0.2525104087319283,
+          "recall": 0.6973297172660452
+        }
+      ]
+    },
+    "path_natural": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "path_natural",
+          "labels": [
+            "path_natural"
+          ],
+          "tp": 89908,
+          "fp": 4022621,
+          "fn": 18627,
+          "iou": 0.021763399881292306,
+          "precision": 0.02186197349611395,
+          "recall": 0.8283779425991615
+        }
+      ]
+    },
+    "plinth": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "railing": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "railing",
+          "labels": [
+            "railing"
+          ],
+          "tp": 33574,
+          "fp": 797777,
+          "fn": 29442,
+          "iou": 0.03900356996397508,
+          "precision": 0.04038486752286339,
+          "recall": 0.5327853243620668
+        }
+      ]
+    },
+    "relief": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "relief",
+          "labels": [
+            "relief",
+            "accent_other"
+          ],
+          "tp": 428426,
+          "fp": 14364884,
+          "fn": 515180,
+          "iou": 0.027986169765927275,
+          "precision": 0.028960793764208282,
+          "recall": 0.45403060175539367
+        }
+      ]
+    },
+    "ridge": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "rock_face": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "rock",
+          "labels": [
+            "rock_face",
+            "rock_scree"
+          ],
+          "tp": 152539,
+          "fp": 2162411,
+          "fn": 35822,
+          "iou": 0.06488889607328997,
+          "precision": 0.06589299984880884,
+          "recall": 0.8098226278263547
+        }
+      ]
+    },
+    "rock_scree": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "rock",
+          "labels": [
+            "rock_face",
+            "rock_scree"
+          ],
+          "tp": 152539,
+          "fp": 2162411,
+          "fn": 35822,
+          "iou": 0.06488889607328997,
+          "precision": 0.06589299984880884,
+          "recall": 0.8098226278263547
+        }
+      ]
+    },
+    "roof_surface": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "sand": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "sand",
+          "labels": [
+            "sand"
+          ],
+          "tp": 191626,
+          "fp": 4690506,
+          "fn": 80609,
+          "iou": 0.03861293587555748,
+          "precision": 0.03925047499739868,
+          "recall": 0.7038992047312065
+        }
+      ]
+    },
+    "shutter": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "shutter",
+          "labels": [
+            "shutter"
+          ],
+          "tp": 682778,
+          "fp": 4674895,
+          "fn": 442583,
+          "iou": 0.11771514912445244,
+          "precision": 0.12743928194199236,
+          "recall": 0.6067190883636451
+        }
+      ]
+    },
+    "snow_ice": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "stairs_entry": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "stairs",
+          "labels": [
+            "stairs_entry"
+          ],
+          "tp": 106025,
+          "fp": 908156,
+          "fn": 23864,
+          "iou": 0.10213911728296943,
+          "precision": 0.10454248304789776,
+          "recall": 0.816273895402998
+        }
+      ]
+    },
+    "tree_trunk": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "tree",
+          "labels": [
+            "vegetation_tree_canopy",
+            "tree_trunk"
+          ],
+          "tp": 3152085,
+          "fp": 513795,
+          "fn": 2489867,
+          "iou": 0.5120556449119823,
+          "precision": 0.8598440210808864,
+          "recall": 0.558686957989008
+        }
+      ]
+    },
+    "vegetation_attached": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "vegetation_low": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "vegetation_tree_canopy": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "tree",
+          "labels": [
+            "vegetation_tree_canopy",
+            "tree_trunk"
+          ],
+          "tp": 3152085,
+          "fp": 513795,
+          "fn": 2489867,
+          "iou": 0.5120556449119823,
+          "precision": 0.8598440210808864,
+          "recall": 0.558686957989008
+        }
+      ]
+    },
+    "wall_main": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "wall",
+          "labels": [
+            "wall_main",
+            "wall_secondary",
+            "gable_wall"
+          ],
+          "tp": 17144589,
+          "fp": 15918710,
+          "fn": 3987687,
+          "iou": 0.46272962884172636,
+          "precision": 0.5185383648497992,
+          "recall": 0.811298745104408
+        }
+      ]
+    },
+    "wall_secondary": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "wall",
+          "labels": [
+            "wall_main",
+            "wall_secondary",
+            "gable_wall"
+          ],
+          "tp": 17144589,
+          "fp": 15918710,
+          "fn": 3987687,
+          "iou": 0.46272962884172636,
+          "precision": 0.5185383648497992,
+          "recall": 0.811298745104408
+        }
+      ]
+    },
+    "water": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "water",
+          "labels": [
+            "water"
+          ],
+          "tp": 1882700,
+          "fp": 2065179,
+          "fn": 311683,
+          "iou": 0.44199380124059706,
+          "precision": 0.47688898266638874,
+          "recall": 0.8579632634777065
+        }
+      ]
+    },
+    "window_frame": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "window",
+          "labels": [
+            "window_glass",
+            "window_frame"
+          ],
+          "tp": 4075779,
+          "fp": 2600925,
+          "fn": 2498471,
+          "iou": 0.44421812118024995,
+          "precision": 0.6104477598527657,
+          "recall": 0.6199610601969806
+        }
+      ]
+    },
+    "window_glass": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "window",
+          "labels": [
+            "window_glass",
+            "window_frame"
+          ],
+          "tp": 4075779,
+          "fp": 2600925,
+          "fn": 2498471,
+          "iou": 0.44421812118024995,
+          "precision": 0.6104477598527657,
+          "recall": 0.6199610601969806
+        }
+      ]
+    }
+  },
+  "group_support": {
+    "real_building/wall": {
+      "status": "validated",
+      "supported": true,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "wall",
+          "labels": [
+            "real_building/wall"
+          ],
+          "tp": 17144589,
+          "fp": 15918710,
+          "fn": 3987687,
+          "iou": 0.46272962884172636,
+          "precision": 0.5185383648497992,
+          "recall": 0.811298745104408
+        }
+      ],
+      "members": [
+        "wall_main",
+        "wall_secondary",
+        "gable_wall"
+      ]
+    },
+    "real_terrain/tree": {
+      "status": "validated",
+      "supported": true,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "tree",
+          "labels": [
+            "real_terrain/tree"
+          ],
+          "tp": 3152085,
+          "fp": 513795,
+          "fn": 2489867,
+          "iou": 0.5120556449119823,
+          "precision": 0.8598440210808864,
+          "recall": 0.558686957989008
+        }
+      ],
+      "members": [
+        "vegetation_tree_canopy",
+        "tree_trunk"
+      ]
+    }
+  },
+  "supported_labels": [
+    "door"
+  ],
+  "supported_groups": [
+    "real_building/wall",
+    "real_terrain/tree"
+  ],
+  "domains": {
+    "real_building": {
+      "supported": [
+        "door"
+      ],
+      "group_only": [
+        "accent_other",
+        "gable_wall",
+        "relief",
+        "wall_main",
+        "wall_secondary",
+        "window_frame",
+        "window_glass"
+      ],
+      "below_gate": [
+        "band_course",
+        "column",
+        "cornice",
+        "fence",
+        "path",
+        "railing",
+        "shutter",
+        "stairs_entry"
+      ],
+      "unmapped": [
+        "arch",
+        "beam",
+        "chimney",
+        "corner_quoin",
+        "dormer",
+        "eave",
+        "floor_visible",
+        "gable_trim",
+        "half_timber",
+        "light_fixture",
+        "plinth",
+        "ridge",
+        "roof_surface",
+        "vegetation_attached"
+      ]
+    },
+    "real_terrain": {
+      "supported": [],
+      "group_only": [
+        "rock_face",
+        "rock_scree",
+        "tree_trunk",
+        "vegetation_tree_canopy"
+      ],
+      "below_gate": [
+        "ground_grass",
+        "ground_soil",
+        "path_natural",
+        "sand",
+        "water"
+      ],
+      "unmapped": [
+        "snow_ice",
+        "vegetation_low"
+      ]
+    }
+  },
+  "seconds": 32.704
+}

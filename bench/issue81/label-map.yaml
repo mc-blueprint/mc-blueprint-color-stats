@@ -1,0 +1,232 @@
+version: issue81-v1
+datasets:
+  cmp:
+    groups:
+      wall:
+        ids:
+        - 2
+        source:
+        - facade
+        labels:
+        - wall_main
+        - wall_secondary
+        - gable_wall
+      band_course:
+        ids:
+        - 10
+        source:
+        - molding
+        labels:
+        - band_course
+      cornice:
+        ids:
+        - 5
+        source:
+        - cornice
+        labels:
+        - cornice
+      column:
+        ids:
+        - 11
+        source:
+        - pillar
+        labels:
+        - column
+      window:
+        ids:
+        - 3
+        source:
+        - window
+        labels:
+        - window_glass
+        - window_frame
+      door:
+        ids:
+        - 4
+        source:
+        - door
+        labels:
+        - door
+      shutter:
+        ids:
+        - 8
+        source:
+        - blind
+        labels:
+        - shutter
+      relief:
+        ids:
+        - 9
+        source:
+        - deco
+        labels:
+        - relief
+        - accent_other
+    excluded:
+      1: background（対応語彙なし）
+      6: sill（対応語彙なし）
+      7: balcony（railingは手すりだけで範囲が異なる）
+      12: shop（看板・店頭の混合領域）
+    valid_ids:
+    - 2
+    - 3
+    - 4
+    - 5
+    - 8
+    - 9
+    - 10
+    - 11
+  ade:
+    groups:
+      stairs:
+        ids:
+        - 54
+        - 60
+        source:
+        - stairs
+        - stairway
+        labels:
+        - stairs_entry
+      railing:
+        ids:
+        - 39
+        source:
+        - railing
+        labels:
+        - railing
+      fence:
+        ids:
+        - 33
+        source:
+        - fence
+        labels:
+        - fence
+      path:
+        ids:
+        - 12
+        source:
+        - sidewalk
+        labels:
+        - path
+      path_natural:
+        ids:
+        - 53
+        source:
+        - path
+        labels:
+        - path_natural
+      ground_soil:
+        ids:
+        - 14
+        source:
+        - earth
+        labels:
+        - ground_soil
+      ground_grass:
+        ids:
+        - 10
+        source:
+        - grass
+        labels:
+        - ground_grass
+      rock:
+        ids:
+        - 35
+        source:
+        - rock
+        labels:
+        - rock_face
+        - rock_scree
+      sand:
+        ids:
+        - 47
+        source:
+        - sand
+        labels:
+        - sand
+      water:
+        ids:
+        - 22
+        - 27
+        - 61
+        - 114
+        - 129
+        source:
+        - water
+        - sea
+        - river
+        - waterfall
+        - lake
+        labels:
+        - water
+      tree:
+        ids:
+        - 5
+        source:
+        - tree
+        labels:
+        - vegetation_tree_canopy
+        - tree_trunk
+    excluded_reason: 建物全体・山・植物全般は壁・岩・低木へ一意に対応しない。その他も対応語彙なし。
+    valid_ids:
+    - 1
+    - 5
+    - 9
+    - 10
+    - 12
+    - 14
+    - 15
+    - 22
+    - 27
+    - 33
+    - 35
+    - 39
+    - 43
+    - 47
+    - 53
+    - 54
+    - 60
+    - 61
+    - 114
+    - 129
+ade_selection:
+  split: validation
+  sky_id: 3
+  min_sky_ratio: 0.02
+  outdoor_ids:
+  - 5
+  - 10
+  - 14
+  - 22
+  - 27
+  - 35
+  - 47
+  - 61
+  - 114
+  - 129
+  min_outdoor_ratio_without_sky: 0.5
+  indoor_ids:
+  - 4
+  - 6
+  max_indoor_ratio: 0.01
+  subject_ids:
+  - 2
+  - 5
+  - 10
+  - 14
+  - 22
+  - 27
+  - 35
+  - 47
+  - 61
+  - 114
+  - 129
+  min_subject_ratio: 0.2
+roles:
+  real_building/wall:
+  - wall_main
+  - wall_secondary
+  - gable_wall
+  real_terrain/tree:
+  - vegetation_tree_canopy
+  - tree_trunk
