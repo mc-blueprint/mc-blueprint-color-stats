@@ -145,3 +145,74 @@ SHA群の弱い対象名も競合根拠に含め、スナップショットのid
 現在のrun参照と対象も一致する場合だけ再評価し、同じ対象へ確定できなければNULLへ戻す。
 reconsider_run・reconsidered_assignments・preserved_prior_assignments・revoked_assignmentsを
 runとスナップショットへ保存する。取消と再推定、属性再計算も同じ取引内で確定する。
+
+### Issue #79: CommonsカテゴリとWikidataの自動対象キー
+
+既存の手作業カタログを残し、`stats/wikidata.py`で対象を追加する。
+保存カテゴリのCommons pageprops.wikibase_itemから、カテゴリ項目ならP301の主題、
+実対象項目ならその項目を参照する。既知項目のP373・P910も保存カテゴリと照合する。
+一般カテゴリを親へたどって対象へ昇格させない。
+P31とP279の上位クラスを照合し、建築・構造物、名前付きの山・湖・公園・河川・島・
+森林・砂漠・山脈・丘・洞窟のうち単一domainで、地球上のP625が一意な項目だけを使う。
+行政区画・集落・地域・様式・クラス・一覧・Wikimediaカテゴリは除外する。
+項目のラベル・別名、座標、クラスとrevision、カテゴリから項目への対応を保存する。
+
+追加キーは`wikidata:Q...`。手作業カテゴリが同じQIDへ結び付く場合は手作業のキー・UUIDを
+保持してカテゴリと名称を統合する。カテゴリに直接リンクがない手作業対象は、公式項目の
+カテゴリ・名称・所在地を確認したwikidata_idを規則へ明示する。
+名称一致だけで既存subjectを再利用しない。
+固有カテゴリ＋名称、または固有カテゴリ＋P625と撮影GPSの整合を要求する。
+距離は従来の最大撮影範囲の半分（建築2km・地形20km）以内とし、GPSが矛盾すれば
+名称一致でも確定しない。名称＋固有カテゴリで支持される撮影位置は、追加キー・座標照合で
+候補が除外されても撮影範囲検査から取り除かず、範囲検査が緩まないようにする。
+従来の撮影範囲・SHA競合・複数対象の抑止は維持する。
+複数domainの対象カテゴリが併存する画像も保留する。既存確定値は保持する。
+
+`subject_candidate.evidence.basis`にwikidata_id、coordinates、location_match、
+location_conflict、origin（対象キーがautomatic/manual）を追加する。
+`processing_run.parameters.subject_keys`にもwikidata_idを追加し、
+`parameters.wikidata`とスナップショットに要求hash→応答hash・項目revision・分類根拠を保存する。
+confirmed_subjectsはdomain別の確定subject数、originsは確定assetのキー由来内訳。
+SHA継承等で直接の対象根拠がない行はpreserved_or_shaとする。候補数と対象数を混同しない。
+テーブル・Enum・マイグレーション・既存の取消契約は変更しない。
+
+取得は既存CommonsAdapterとsource_policy.yamlのUser-Agentをそのまま使う。
+直列取得・min_interval・maxlag・Retry-Afterを維持し、要求hash別JSONを保持する。
+欠損・壊れた応答・API不通は実行失敗とし、部分カタログで本番反映を続けない。
+初回通信はdry-runで済ませ、本実行では同じキャッシュと`--offline`を指定する。
+通信を伴う本実行では書込みロックも長くなるため、この順序を守る。
+
+```sh
+python -m colorstats.stats.subject_cli --wikidata-cache /保存先/cache --snapshot /新規/dry.json --code-version <内容版> --dry-run
+python -m colorstats.stats.subject_cli --wikidata-cache /保存先/cache --offline --snapshot /新規/applied.json --code-version <内容版>
+```
+
+取得だけを先に分離する場合は`bench/issue79/production.py export`でカテゴリを抽出し、
+`bench/issue79/prepare.py <入力JSON> <cache> <出力JSON>`で追加済み規則を保存する。
+そのJSONを`--rules`へ渡しても同じ判定・取得根拠を使用する。
+オフライン再生成も同prepare.pyへ`--offline`を指定する。
+APIキャッシュ・追加済み規則・完全スナップショットは実測報告に記した外部保存先を正本とする。
+
+利用方針の一次情報（2026-11-03確認）:
+[API利用規約](https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_API_Usage_Guidelines)、
+[User-Agent方針](https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy/en)、
+[API Etiquette](https://www.mediawiki.org/wiki/API:Etiquette)、
+[Wikidata Data access](https://www.wikidata.org/wiki/Help:Data_access)。
+
+反証修正では、建築クラスでも道路・街路・建築群・複合施設・城郭全体を候補に止める。
+Buddhist temple・Shinto shrineを直接のP31とする施設全体、P527に別の建物を持つ項目、
+P2670が建物の種類を指す項目も単一建物として確定しない。
+本堂等の具体的な建物クラス、窓など建物に該当しない部分は施設全体と区別する。
+一般の構造物・柱・身廊等の建築要素は、P527/P2670の建物群の根拠として数えない。
+名称の語句や本番の個別QIDを除外判定に使わず、クラスと部分構造を根拠にする。
+候補キーのcandidate_onlyとgranularity、および推定理由target_granularityへ保存する。
+既存確定は維持し、取り消す場合は成功runを明示した再評価だけを使う。
+
+P301等で複数の対象domainの物理対象へ結び付くカテゴリはambiguous_categoriesに対応項目を残す。
+カメラ等のメタデータ主題は物理対象の複数キーとは区別し、元の全主題はcategory_itemsへ保持する。
+単独カテゴリも一致していてもmultiple_targetsで新規確定とSHA継承を抑止する。
+各要求カテゴリの正規化・redirect後のページ、および要求QIDの応答を全件確認し、
+応答そのものが脱落していればキャッシュ・実通信のどちらでも失敗させる。
+Commonsが明示的にmissingを返したページは「応答済み・対象情報なし」として扱い、
+空のpagesや要求QIDの脱落・missing項目とは区別する。
+preferred座標と他の有効P625が併存する場合は、一意性を保証できないため引き続き除外する。

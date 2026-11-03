@@ -1,0 +1,849 @@
+{
+  "entities": {
+    "Q28233040": {
+      "id": "Q28233040",
+      "lastrevid": 2524993149,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "Liathmore Churches"
+        }
+      },
+      "claims": {
+        "P31": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q16970",
+                  "numeric-id": 16970
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ],
+        "P625": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "globecoordinate",
+                "value": {
+                  "altitude": null,
+                  "globe": "http://www.wikidata.org/entity/Q2",
+                  "latitude": 52.670556,
+                  "longitude": -7.668611,
+                  "precision": 0.014813977004423
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ],
+        "P527": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q140775739",
+                  "numeric-id": 140775739
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ],
+        "P2670": []
+      }
+    },
+    "Q3049365": {
+      "id": "Q3049365",
+      "lastrevid": 2551580063,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "Eihō-ji Temple"
+        }
+      },
+      "claims": {
+        "P31": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q5393308",
+                  "numeric-id": 5393308
+                }
+              },
+              "snaktype": "value"
+            }
+          },
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q10901138",
+                  "numeric-id": 10901138
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ],
+        "P625": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "globecoordinate",
+                "value": {
+                  "altitude": null,
+                  "globe": "http://www.wikidata.org/entity/Q2",
+                  "latitude": 35.34676944,
+                  "longitude": 137.1302389,
+                  "precision": 2.77777777778e-06
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ],
+        "P527": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q107020351",
+                  "numeric-id": 107020351
+                }
+              },
+              "snaktype": "value"
+            }
+          },
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q107020353",
+                  "numeric-id": 107020353
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ],
+        "P2670": []
+      }
+    },
+    "Q20971160": {
+      "id": "Q20971160",
+      "lastrevid": 2491097778,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "Rue de la Marne de Châlons-en-Champagne"
+        }
+      },
+      "claims": {
+        "P31": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q79007",
+                  "numeric-id": 79007
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ],
+        "P625": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "globecoordinate",
+                "value": {
+                  "altitude": null,
+                  "globe": "http://www.wikidata.org/entity/Q2",
+                  "latitude": 48.95569,
+                  "longitude": 4.357171,
+                  "precision": 1e-06
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ],
+        "P527": [],
+        "P2670": []
+      }
+    },
+    "Q140775739": {
+      "id": "Q140775739",
+      "lastrevid": 2525289563,
+      "labels": {},
+      "claims": {
+        "P31": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q16970",
+                  "numeric-id": 16970
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q107020351": {
+      "id": "Q107020351",
+      "lastrevid": 2362705468,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "Founder's Hall, Eihō-ji"
+        }
+      },
+      "claims": {
+        "P31": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q3192000",
+                  "numeric-id": 3192000
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q107020353": {
+      "id": "Q107020353",
+      "lastrevid": 2362705474,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "Kannon Hall, Eihō-ji"
+        }
+      },
+      "claims": {
+        "P31": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q124684324",
+                  "numeric-id": 124684324
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q10901138": {
+      "id": "Q10901138",
+      "lastrevid": 2560675940,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "chokugan-ji"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q5393308",
+                  "numeric-id": 5393308
+                }
+              },
+              "snaktype": "value"
+            }
+          },
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q11588473",
+                  "numeric-id": 11588473
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q11588473": {
+      "id": "Q11588473",
+      "lastrevid": 2560928287,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "kiganjo"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q1370598",
+                  "numeric-id": 1370598
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q79007": {
+      "id": "Q79007",
+      "lastrevid": 2556595511,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "street"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q811979",
+                  "numeric-id": 811979
+                }
+              },
+              "snaktype": "value"
+            }
+          },
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q34442",
+                  "numeric-id": 34442
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q811979": {
+      "id": "Q811979",
+      "lastrevid": 2562848577,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "built structure"
+        }
+      },
+      "claims": {
+        "P279": []
+      }
+    },
+    "Q1370598": {
+      "id": "Q1370598",
+      "lastrevid": 2549803890,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "structure of worship"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q811979",
+                  "numeric-id": 811979
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q5393308": {
+      "id": "Q5393308",
+      "lastrevid": 2530390442,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "Buddhist temple"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q44539",
+                  "numeric-id": 44539
+                }
+              },
+              "snaktype": "value"
+            }
+          },
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q1370598",
+                  "numeric-id": 1370598
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q124684324": {
+      "id": "Q124684324",
+      "lastrevid": 2329556225,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "Kannon-dō"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q11377515",
+                  "numeric-id": 11377515
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q3192000": {
+      "id": "Q3192000",
+      "lastrevid": 2430677211,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "kaisan-dō"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q11377515",
+                  "numeric-id": 11377515
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q16970": {
+      "id": "Q16970",
+      "lastrevid": 2562522644,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "church building"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q24398318",
+                  "numeric-id": 24398318
+                }
+              },
+              "snaktype": "value"
+            }
+          },
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q44539",
+                  "numeric-id": 44539
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q11377515": {
+      "id": "Q11377515",
+      "lastrevid": 2506624718,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "dō"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q24398318",
+                  "numeric-id": 24398318
+                }
+              },
+              "snaktype": "value"
+            }
+          },
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q5393308",
+                  "numeric-id": 5393308
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q24398318": {
+      "id": "Q24398318",
+      "lastrevid": 2549804036,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "religious building"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q41176",
+                  "numeric-id": 41176
+                }
+              },
+              "snaktype": "value"
+            }
+          },
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q1370598",
+                  "numeric-id": 1370598
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q34442": {
+      "id": "Q34442",
+      "lastrevid": 2556578908,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "road"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q123414165",
+                  "numeric-id": 123414165
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q44539": {
+      "id": "Q44539",
+      "lastrevid": 2557409814,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "temple"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q697295",
+                  "numeric-id": 697295
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q123414165": {
+      "id": "Q123414165",
+      "lastrevid": 2516855740,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "road or street"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q811979",
+                  "numeric-id": 811979
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    },
+    "Q41176": {
+      "id": "Q41176",
+      "lastrevid": 2562308438,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "building"
+        }
+      },
+      "claims": {
+        "P279": []
+      }
+    },
+    "Q697295": {
+      "id": "Q697295",
+      "lastrevid": 2560603737,
+      "labels": {
+        "en": {
+          "language": "en",
+          "value": "shrine"
+        }
+      },
+      "claims": {
+        "P279": [
+          {
+            "rank": "normal",
+            "mainsnak": {
+              "datavalue": {
+                "type": "wikibase-entityid",
+                "value": {
+                  "entity-type": "item",
+                  "id": "Q24398318",
+                  "numeric-id": 24398318
+                }
+              },
+              "snaktype": "value"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "examples": [
+    {
+      "qid": "Q20971160",
+      "asset_id": "df9fa207-e1ea-461d-b830-13ff8778754b",
+      "domain": "real_building",
+      "input": {
+        "title": "File:Châlons-en-Champagne (Marne) (42037218782).jpg",
+        "description": "Châlons-en-Champagne (Marne)\n Cathédrale Saint-Étienne.\n La cathédrale a été consacrée par le pape Eugène III en 1147.\n De l'ancienne cathédrale romane du XIIe siècle ne subsistent que la base de la tour Nord et la crypte . \n Après l'incendie de 1138, le transept nord est reconstruit. \n La nef et le transept sud sont reconstruits en style gothique au XIIIe siècle (Un nouvel incendie en 1230 amène une large reconstruction).Un déambulatoire avec trois chapelles est ajouté à la fin du XIIIe.\n La nef est agrandie au XVe siècle. \n Au XVIe siècle, une flèche est ajoutée à la tour nord.\n La façade occidentale, baroque, du XVIIe siècle, a été dessinée par l'architecte Claude Monnart.\n En 1668, la foudre tombe sur la flèche de la tour nord, les dégâts entraînent la reconstruction de l'abside. \n La cathédrale a été restaurée et largemnt modifiée au XIXe siècle (suppression des chapelles latérales, suppression des flèches érigées après 1668, reconstruction de la façade du croisillon sud).\n Une flèche a été supprimée au XXe siècle. \n \n \n<a href=\" https://fr.wikipedia.org/wiki/Cathédrale_Saint-Étienne_de_Châlons \" rel=\"nofollow\">fr.wikipedia.org/wiki/Cathédrale_Saint-Étienne_de_Châlons</a>",
+        "categories": [
+          "cc-by-2.0",
+          "façade septentrionale de la cathédrale de châlons-en-champagne",
+          "files with coordinates missing sdc location of creation (48° n, 4° e)",
+          "flickr images reviewed by flickreviewr 2",
+          "grand est photographs taken on 2018-04-24",
+          "photographs by daniel jolivet",
+          "rue de la marne de châlons-en-champagne",
+          "west facade of cathédrale saint-étienne de châlons"
+        ],
+        "location": "48.955594, 4.356644"
+      },
+      "category": "rue de la marne de châlons-en-champagne"
+    },
+    {
+      "qid": "Q28233040",
+      "asset_id": "b54ccac4-7859-4be7-9991-2415e26253c4",
+      "domain": "real_building",
+      "input": {
+        "title": "File:Liathmore later church exterior west gable window.jpg",
+        "description": "Gothic ogee headed window with spandrel carvings in the west gable of the later of the two churches at Liathmore.",
+        "categories": [
+          "cc-by-sa-4.0",
+          "files with coordinates missing sdc location of creation",
+          "liathmore churches",
+          "self-published work"
+        ],
+        "location": "52.669632, -7.668593"
+      },
+      "category": "liathmore churches"
+    },
+    {
+      "qid": "Q3049365",
+      "asset_id": "0ff57728-df37-43cc-b93c-93f5151f3f85",
+      "domain": "real_building",
+      "input": {
+        "title": "File:Eihoji Hondo.JPG",
+        "description": "永保寺の本堂、岐阜県、日本",
+        "categories": [
+          "cc-by-sa-4.0,3.0,2.5,2.0,1.0",
+          "eihoji",
+          "files with coordinates missing sdc location of creation",
+          "gfdl",
+          "japan photographs taken on 2011-06-07",
+          "license migration redundant",
+          "self-published work",
+          "taken with sony dsc-hx5v"
+        ],
+        "location": "35.346583, 137.130583"
+      },
+      "category": "eihoji"
+    }
+  ],
+  "projection": "公式応答のうち建築クラス・道路・部分建物の判定経路を保持し、上位の汎用オントロジーを省略"
+}
