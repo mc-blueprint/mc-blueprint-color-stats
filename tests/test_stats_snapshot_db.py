@@ -215,7 +215,7 @@ def test_reject_mixed_runs_without_success_manifest(queue, asset, tmp_path, fail
     assert not (tmp_path / "failed/manifest.json").exists()
 
 
-def test_missing_and_duplicate_asset_and_output_failure(queue, asset, tmp_path):
+def test_missing_and_duplicate_asset_and_output_failure(queue, asset, tmp_path, monkeypatch):
     selection = prepare(queue, asset)
     missing = copy.deepcopy(selection)
     missing["assets"][0]["asset_id"] = str(uuid4())
@@ -230,9 +230,23 @@ def test_missing_and_duplicate_asset_and_output_failure(queue, asset, tmp_path):
     with pytest.raises(OSError):
         build(queue, selection, parent / "child")
     assert parent.read_text(encoding="utf-8") == "保持"
+    original = Path.open
+
+    def fail_execution(path, *args, **kwargs):
+        if path.name == "execution.json":
+            raise OSError("計測出力の失敗")
+        return original(path, *args, **kwargs)
+
+    with monkeypatch.context() as patcher:
+        patcher.setattr(Path, "open", fail_execution)
+        with pytest.raises(OSError, match="計測出力"):
+            build(queue, selection, tmp_path / "execution-failed")
+    assert not (tmp_path / "execution-failed/manifest.json").exists()
 
 
-def test_union_uses_pixels_and_freezes_colors_without_images(queue, asset, tmp_path):
+@pytest.mark.parametrize("excluded", [False, True])
+def test_union_uses_pixels_and_freezes_colors_without_images(queue, asset, tmp_path, excluded):
+    import numpy as np
     from PIL import Image
     from sqlalchemy import select
 
@@ -243,7 +257,11 @@ def test_union_uses_pixels_and_freezes_colors_without_images(queue, asset, tmp_p
     chosen = selection["assets"][0]
     selection["assets"] = [chosen]
     image = tmp_path / "image.png"
-    Image.new("RGB", (20, 20), (120, 80, 50)).save(image)
+    if excluded:
+        Image.new("RGB", (20, 20), (120, 80, 50)).save(image)
+    else:
+        pixels = np.random.default_rng(74).integers(20, 220, (20, 20, 3), dtype="uint8")
+        Image.fromarray(pixels).save(image)
     with Session(queue.engine) as session, session.begin():
         segment = session.get(ProcessingRun, UUID(chosen["segment_run_id"]))
         regions = list(session.scalars(select(Region).where(
@@ -251,8 +269,6 @@ def test_union_uses_pixels_and_freezes_colors_without_images(queue, asset, tmp_p
         ).order_by(Region.id)))
         outputs = {}
         for index, region in enumerate(regions):
-            import numpy as np
-
             pixels = np.zeros((20, 20), dtype="uint8")
             pixels[:, :15] = 255
             if index == 1:
@@ -273,17 +289,46 @@ def test_union_uses_pixels_and_freezes_colors_without_images(queue, asset, tmp_p
         run = session.get(ProcessingRun, UUID(chosen["color_run_id"]))
         run.parameters = {"payload": payload}
         run.config_hash = color.config_hash(payload)
+    if excluded:
+        from colorstats.schema.models import Subject
+
+        with Session(queue.engine) as session, session.begin():
+            target = session.get(Asset, UUID(chosen["asset_id"]))
+            origin = session.get(Source, target.source_id)
+            origin.license = "cc-by-sa-4.0"
+            target.quality = {**target.quality, "license": origin.license}
+            subject = Subject(name="除外前対象", domain="real_building",
+                              taxonomy_version="0.1.0", scene_attributes={})
+            session.add(subject)
+            session.flush()
+            target.subject_id = subject.id
     quality = load_quality(Path(__file__).resolve().parents[1] / "configs/segment_stats.yaml")
     result = execute(queue.engine, selection, tmp_path / "fixed", quality=quality,
                      code_version="fixture")
-    assert result["counts"]["groups_eligible"] == 1
+    assert result["counts"]["groups_eligible"] == (0 if excluded else 1)
     with duckdb.connect() as db:
         row = db.execute("SELECT role, data FROM read_parquet(?)",
                          [str(tmp_path / "fixed/groups.parquet")]).fetchone()
     assert row[0] == "real_building/wall"
     data = json.loads(row[1])
     assert data["area_ratio"] == 1
-    assert len(data["observations"]) == 1
+    assert len(data["observations"]) == (1 if excluded else 5)
+    with duckdb.connect() as db:
+        gate = db.execute(
+            "SELECT g.eligible, g.quality_eligible, g.reasons, a.subject_id, "
+            "a.rights_eligible, a.analysis_available FROM read_parquet(?) g "
+            "JOIN read_parquet(?) a ON a.id = g.asset_id",
+            [str(tmp_path / "fixed/groups.parquet"), str(tmp_path / "fixed/assets.parquet")],
+        ).fetchone()
+    assert gate[0] is not excluded
+    assert gate[1] and gate[5]
+    assert gate[4] is not excluded
+    if excluded:
+        assert gate[3]
+        assert "license_conditions" in json.loads(gate[2])
+    repeated = execute(queue.engine, selection, tmp_path / "repeated", quality=quality,
+                       code_version="fixture")
+    assert repeated["snapshot_id"] == result["snapshot_id"]
     image.unlink()
     assert verify(tmp_path / "fixed", result["snapshot_id"]) == result
     with pytest.raises(FileNotFoundError):
@@ -344,3 +389,34 @@ def test_subject_attributes_candidates_and_all_input_rights_are_frozen(queue, as
     changed = build(queue, selection, tmp_path / "changed")
     assert changed["counts"]["representatives"] == 0
     assert changed["exclusions"]["restricted_run"] == 1
+
+
+def test_bulk_reads_finish_before_union_processing(queue, asset, tmp_path, monkeypatch):
+    from colorstats.stats import snapshot
+
+    selection = prepare(queue, asset)
+    statements = []
+    completed = False
+
+    def record(connection, cursor, statement, parameters, context, executemany):
+        statements.append(statement)
+
+    original = snapshot._groups
+
+    def after_transaction(*args):
+        nonlocal completed
+        assert queue.engine.pool.checkedout() == 0
+        completed = True
+        yield from original(*args)
+
+    monkeypatch.setattr(snapshot, "_groups", after_transaction)
+    event.listen(queue.engine, "before_cursor_execute", record)
+    try:
+        first = build(queue, selection, tmp_path / "first")
+    finally:
+        event.remove(queue.engine, "before_cursor_execute", record)
+    assert completed
+    assert len(statements) <= 14
+    second = build(queue, selection, tmp_path / "second")
+    assert first["snapshot_id"] == second["snapshot_id"]
+    assert first == second

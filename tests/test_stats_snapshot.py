@@ -107,6 +107,10 @@ def test_quality_artifacts_are_fixed_and_crlf_independent(tmp_path):
     assert quality["group_members"]["real_building/wall"] == [
         "wall_main", "wall_secondary", "gable_wall",
     ]
+    assert quality["group_members"]["real_terrain/tree"] == [
+        "vegetation_tree_canopy", "tree_trunk",
+    ]
+    assert quality["supported_by_domain"] == {"real_building": ["door"], "real_terrain": []}
     import yaml
 
     config = yaml.safe_load((root / "configs/segment_stats.yaml").read_text(encoding="utf-8"))
