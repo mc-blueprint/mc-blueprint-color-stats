@@ -1,0 +1,895 @@
+{
+  "plan_sha256": "e9082b43e44ad0b4c46e4bc0d3446c706c913f389ef51d0ae188a6a67bd4ca75",
+  "baseline_sha256": "b5eed0b22cd71c43efae796c0e05026cd0e650a8c7a6f9c6fef186e2c7c5ef5c",
+  "tuning_sha256": "f433968ef41e215f6da68118555a114a561f327da783cb4e886cfe5ab0e8e4e3",
+  "candidate_threshold": 0.45,
+  "accepted": false,
+  "checks": {
+    "detail_iou": false,
+    "detail_precision": false,
+    "wall_precision": false,
+    "major_iou": false,
+    "ade_iou": true
+  },
+  "deltas": {
+    "detail_iou": -0.005833871316815661,
+    "detail_precision": 0.008933133518519959,
+    "wall_precision": -0.00026562409190533653,
+    "major_iou": -0.04713273185250805,
+    "ade_iou": 0.02933992748447259
+  },
+  "adopted_threshold": 0.35,
+  "candidate": {
+    "cmp": {
+      "wall": {
+        "tp": 16557550,
+        "fp": 15390011,
+        "fn": 4574726,
+        "iou": 0.4533546872352216,
+        "precision": 0.5182727407578939,
+        "recall": 0.783519484602605
+      },
+      "band_course": {
+        "tp": 1375900,
+        "fp": 7175574,
+        "fn": 3507738,
+        "iou": 0.1140953488503229,
+        "precision": 0.16089623847303985,
+        "recall": 0.2817366889192033
+      },
+      "cornice": {
+        "tp": 779017,
+        "fp": 16098007,
+        "fn": 811912,
+        "iou": 0.04403978848699549,
+        "precision": 0.04615843409359375,
+        "recall": 0.4896617008050014
+      },
+      "column": {
+        "tp": 182380,
+        "fp": 2905675,
+        "fn": 874995,
+        "iou": 0.046020110773268064,
+        "precision": 0.05905982892144084,
+        "recall": 0.17248374512353706
+      },
+      "window": {
+        "tp": 2184791,
+        "fp": 848665,
+        "fn": 4389459,
+        "iou": 0.294330596537883,
+        "precision": 0.7202316433796963,
+        "recall": 0.33232551241586494
+      },
+      "door": {
+        "tp": 210906,
+        "fp": 52620,
+        "fn": 449726,
+        "iou": 0.2956963317312815,
+        "precision": 0.8003233077571094,
+        "recall": 0.3192488405042444
+      },
+      "shutter": {
+        "tp": 412909,
+        "fp": 2773780,
+        "fn": 712452,
+        "iou": 0.1058974271512623,
+        "precision": 0.12957304587928098,
+        "recall": 0.3669124840828854
+      },
+      "relief": {
+        "tp": 170907,
+        "fp": 4341976,
+        "fn": 772699,
+        "iou": 0.03233456599481382,
+        "precision": 0.03787091311695871,
+        "recall": 0.18112114590199724
+      }
+    },
+    "ade": {
+      "wall": {
+        "tp": 102925,
+        "fp": 929742,
+        "fn": 188394,
+        "iou": 0.0842914481749888,
+        "precision": 0.09966910920945474,
+        "recall": 0.3533068560581356
+      },
+      "window": {
+        "tp": 516,
+        "fp": 2108321,
+        "fn": 9943,
+        "iou": 0.00024353637470619886,
+        "precision": 0.00024468462949009336,
+        "recall": 0.04933550052586289
+      },
+      "door": {
+        "tp": 4243,
+        "fp": 199508,
+        "fn": 8002,
+        "iou": 0.020037496517168588,
+        "precision": 0.02082443767147155,
+        "recall": 0.3465087790935076
+      },
+      "column": {
+        "tp": 0,
+        "fp": 329255,
+        "fn": 6023,
+        "iou": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "stairs": {
+        "tp": 84273,
+        "fp": 190670,
+        "fn": 45616,
+        "iou": 0.2628938822494455,
+        "precision": 0.3065108040575683,
+        "recall": 0.6488078282225592
+      },
+      "railing": {
+        "tp": 23997,
+        "fp": 405038,
+        "fn": 39019,
+        "iou": 0.05126972528810778,
+        "precision": 0.055932499679513324,
+        "recall": 0.38080804874952395
+      },
+      "fence": {
+        "tp": 151239,
+        "fp": 473583,
+        "fn": 106128,
+        "iou": 0.2069074492099323,
+        "precision": 0.2420513362205556,
+        "recall": 0.5876394409539685
+      },
+      "path": {
+        "tp": 804181,
+        "fp": 1912385,
+        "fn": 773592,
+        "iou": 0.2304139239541591,
+        "precision": 0.29602851541247294,
+        "recall": 0.5096937265373409
+      },
+      "path_natural": {
+        "tp": 85583,
+        "fp": 2533305,
+        "fn": 22952,
+        "iou": 0.03239522454047179,
+        "precision": 0.03267913709941013,
+        "recall": 0.7885290459298844
+      },
+      "ground_soil": {
+        "tp": 1238566,
+        "fp": 2159551,
+        "fn": 902315,
+        "iou": 0.28800966972620423,
+        "precision": 0.364485978558125,
+        "recall": 0.5785309879437484
+      },
+      "ground_grass": {
+        "tp": 1591162,
+        "fp": 1334533,
+        "fn": 427984,
+        "iou": 0.4744526831578097,
+        "precision": 0.5438577842187925,
+        "recall": 0.7880371206440743
+      },
+      "rock": {
+        "tp": 139228,
+        "fp": 953941,
+        "fn": 49133,
+        "iou": 0.12188370500970847,
+        "precision": 0.12736182603055887,
+        "recall": 0.7391551329627682
+      },
+      "sand": {
+        "tp": 173320,
+        "fp": 3374407,
+        "fn": 98915,
+        "iou": 0.04752865787209164,
+        "precision": 0.048853815414771205,
+        "recall": 0.636655830440612
+      },
+      "water": {
+        "tp": 1707936,
+        "fp": 1026951,
+        "fn": 486447,
+        "iou": 0.5301952545125715,
+        "precision": 0.6244996594009186,
+        "recall": 0.7783217423758751
+      },
+      "tree": {
+        "tp": 1807375,
+        "fp": 166147,
+        "fn": 3834577,
+        "iou": 0.3111818514112793,
+        "precision": 0.9158119341968318,
+        "recall": 0.32034568886796627
+      }
+    }
+  },
+  "coverage": {
+    "cmp": {
+      "images": 282,
+      "valid_pixels": 37968067,
+      "total_pixels": 53508162
+    },
+    "ade": {
+      "images": 307,
+      "valid_pixels": 14913584,
+      "total_pixels": 45015651
+    }
+  },
+  "label_support": {
+    "accent_other": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "relief",
+          "labels": [
+            "relief",
+            "accent_other"
+          ],
+          "tp": 428426,
+          "fp": 14364884,
+          "fn": 515180,
+          "iou": 0.027986169765927275,
+          "precision": 0.028960793764208282,
+          "recall": 0.45403060175539367
+        }
+      ]
+    },
+    "arch": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "band_course": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "band_course",
+          "labels": [
+            "band_course"
+          ],
+          "tp": 3336569,
+          "fp": 20008784,
+          "fn": 1547069,
+          "iou": 0.1340395482609125,
+          "precision": 0.14292219098164846,
+          "recall": 0.6832138254309594
+        }
+      ]
+    },
+    "beam": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "chimney": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "column": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "column",
+          "labels": [
+            "column"
+          ],
+          "tp": 587268,
+          "fp": 11538729,
+          "fn": 470107,
+          "iou": 0.04662298755234158,
+          "precision": 0.04843049194222958,
+          "recall": 0.5554018205461638
+        },
+        {
+          "dataset": "ade",
+          "group": "column",
+          "labels": [
+            "column"
+          ],
+          "tp": 0,
+          "fp": 707008,
+          "fn": 6023,
+          "iou": 0.0,
+          "precision": 0.0,
+          "recall": 0.0
+        }
+      ]
+    },
+    "corner_quoin": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "cornice": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "cornice",
+          "labels": [
+            "cornice"
+          ],
+          "tp": 1395467,
+          "fp": 28781229,
+          "fn": 195462,
+          "iou": 0.04594559925573942,
+          "precision": 0.046243200382175706,
+          "recall": 0.8771397089373567
+        }
+      ]
+    },
+    "door": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "door",
+          "labels": [
+            "door"
+          ],
+          "tp": 316224,
+          "fp": 314279,
+          "fn": 344408,
+          "iou": 0.3243619161133683,
+          "precision": 0.5015424193064902,
+          "recall": 0.478668910982211
+        },
+        {
+          "dataset": "ade",
+          "group": "door",
+          "labels": [
+            "door"
+          ],
+          "tp": 8844,
+          "fp": 762187,
+          "fn": 3401,
+          "iou": 0.011419982645345234,
+          "precision": 0.011470355926026321,
+          "recall": 0.7222539812168232
+        }
+      ]
+    },
+    "dormer": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "eave": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "fence": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "fence",
+          "labels": [
+            "fence"
+          ],
+          "tp": 176677,
+          "fp": 1387611,
+          "fn": 80690,
+          "iou": 0.10740386801525613,
+          "precision": 0.11294403588086081,
+          "recall": 0.6864788414987159
+        }
+      ]
+    },
+    "floor_visible": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "gable_trim": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "gable_wall": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "wall",
+          "labels": [
+            "wall_main",
+            "wall_secondary",
+            "gable_wall"
+          ],
+          "tp": 17144589,
+          "fp": 15918710,
+          "fn": 3987687,
+          "iou": 0.46272962884172636,
+          "precision": 0.5185383648497992,
+          "recall": 0.811298745104408
+        },
+        {
+          "dataset": "ade",
+          "group": "wall",
+          "labels": [
+            "wall_main",
+            "wall_secondary",
+            "gable_wall"
+          ],
+          "tp": 180518,
+          "fp": 2395888,
+          "fn": 110801,
+          "iou": 0.06717681220687502,
+          "precision": 0.07006582037147872,
+          "recall": 0.6196574888695897
+        }
+      ]
+    },
+    "ground_grass": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "ground_grass",
+          "labels": [
+            "ground_grass"
+          ],
+          "tp": 1696161,
+          "fp": 2912355,
+          "fn": 322985,
+          "iou": 0.34394416628933056,
+          "precision": 0.36804928093989475,
+          "recall": 0.84003880848636
+        }
+      ]
+    },
+    "ground_soil": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "ground_soil",
+          "labels": [
+            "ground_soil"
+          ],
+          "tp": 1413992,
+          "fp": 3684826,
+          "fn": 726889,
+          "iou": 0.24271594846771388,
+          "precision": 0.27731760576666986,
+          "recall": 0.660472020630759
+        }
+      ]
+    },
+    "half_timber": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "light_fixture": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "path": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "path",
+          "labels": [
+            "path"
+          ],
+          "tp": 1100228,
+          "fp": 3256931,
+          "fn": 477545,
+          "iou": 0.22756884392508828,
+          "precision": 0.2525104087319283,
+          "recall": 0.6973297172660452
+        }
+      ]
+    },
+    "path_natural": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "path_natural",
+          "labels": [
+            "path_natural"
+          ],
+          "tp": 89908,
+          "fp": 4022621,
+          "fn": 18627,
+          "iou": 0.021763399881292306,
+          "precision": 0.02186197349611395,
+          "recall": 0.8283779425991615
+        }
+      ]
+    },
+    "plinth": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "railing": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "railing",
+          "labels": [
+            "railing"
+          ],
+          "tp": 33574,
+          "fp": 797777,
+          "fn": 29442,
+          "iou": 0.03900356996397508,
+          "precision": 0.04038486752286339,
+          "recall": 0.5327853243620668
+        }
+      ]
+    },
+    "relief": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "relief",
+          "labels": [
+            "relief",
+            "accent_other"
+          ],
+          "tp": 428426,
+          "fp": 14364884,
+          "fn": 515180,
+          "iou": 0.027986169765927275,
+          "precision": 0.028960793764208282,
+          "recall": 0.45403060175539367
+        }
+      ]
+    },
+    "ridge": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "rock_face": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "rock",
+          "labels": [
+            "rock_face",
+            "rock_scree"
+          ],
+          "tp": 152539,
+          "fp": 2162411,
+          "fn": 35822,
+          "iou": 0.06488889607328997,
+          "precision": 0.06589299984880884,
+          "recall": 0.8098226278263547
+        }
+      ]
+    },
+    "rock_scree": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "rock",
+          "labels": [
+            "rock_face",
+            "rock_scree"
+          ],
+          "tp": 152539,
+          "fp": 2162411,
+          "fn": 35822,
+          "iou": 0.06488889607328997,
+          "precision": 0.06589299984880884,
+          "recall": 0.8098226278263547
+        }
+      ]
+    },
+    "roof_surface": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "sand": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "sand",
+          "labels": [
+            "sand"
+          ],
+          "tp": 191626,
+          "fp": 4690506,
+          "fn": 80609,
+          "iou": 0.03861293587555748,
+          "precision": 0.03925047499739868,
+          "recall": 0.7038992047312065
+        }
+      ]
+    },
+    "shutter": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "shutter",
+          "labels": [
+            "shutter"
+          ],
+          "tp": 682778,
+          "fp": 4674895,
+          "fn": 442583,
+          "iou": 0.11771514912445244,
+          "precision": 0.12743928194199236,
+          "recall": 0.6067190883636451
+        }
+      ]
+    },
+    "snow_ice": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "stairs_entry": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "stairs",
+          "labels": [
+            "stairs_entry"
+          ],
+          "tp": 106025,
+          "fp": 908156,
+          "fn": 23864,
+          "iou": 0.10213911728296943,
+          "precision": 0.10454248304789776,
+          "recall": 0.816273895402998
+        }
+      ]
+    },
+    "tree_trunk": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "tree",
+          "labels": [
+            "vegetation_tree_canopy",
+            "tree_trunk"
+          ],
+          "tp": 3152085,
+          "fp": 513795,
+          "fn": 2489867,
+          "iou": 0.5120556449119823,
+          "precision": 0.8598440210808864,
+          "recall": 0.558686957989008
+        }
+      ]
+    },
+    "vegetation_attached": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "vegetation_low": {
+      "status": "unmapped",
+      "supported": false,
+      "evidence": []
+    },
+    "vegetation_tree_canopy": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "tree",
+          "labels": [
+            "vegetation_tree_canopy",
+            "tree_trunk"
+          ],
+          "tp": 3152085,
+          "fp": 513795,
+          "fn": 2489867,
+          "iou": 0.5120556449119823,
+          "precision": 0.8598440210808864,
+          "recall": 0.558686957989008
+        }
+      ]
+    },
+    "wall_main": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "wall",
+          "labels": [
+            "wall_main",
+            "wall_secondary",
+            "gable_wall"
+          ],
+          "tp": 17144589,
+          "fp": 15918710,
+          "fn": 3987687,
+          "iou": 0.46272962884172636,
+          "precision": 0.5185383648497992,
+          "recall": 0.811298745104408
+        },
+        {
+          "dataset": "ade",
+          "group": "wall",
+          "labels": [
+            "wall_main",
+            "wall_secondary",
+            "gable_wall"
+          ],
+          "tp": 180518,
+          "fp": 2395888,
+          "fn": 110801,
+          "iou": 0.06717681220687502,
+          "precision": 0.07006582037147872,
+          "recall": 0.6196574888695897
+        }
+      ]
+    },
+    "wall_secondary": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "wall",
+          "labels": [
+            "wall_main",
+            "wall_secondary",
+            "gable_wall"
+          ],
+          "tp": 17144589,
+          "fp": 15918710,
+          "fn": 3987687,
+          "iou": 0.46272962884172636,
+          "precision": 0.5185383648497992,
+          "recall": 0.811298745104408
+        },
+        {
+          "dataset": "ade",
+          "group": "wall",
+          "labels": [
+            "wall_main",
+            "wall_secondary",
+            "gable_wall"
+          ],
+          "tp": 180518,
+          "fp": 2395888,
+          "fn": 110801,
+          "iou": 0.06717681220687502,
+          "precision": 0.07006582037147872,
+          "recall": 0.6196574888695897
+        }
+      ]
+    },
+    "water": {
+      "status": "below_gate",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "ade",
+          "group": "water",
+          "labels": [
+            "water"
+          ],
+          "tp": 1882700,
+          "fp": 2065179,
+          "fn": 311683,
+          "iou": 0.44199380124059706,
+          "precision": 0.47688898266638874,
+          "recall": 0.8579632634777065
+        }
+      ]
+    },
+    "window_frame": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "window",
+          "labels": [
+            "window_glass",
+            "window_frame"
+          ],
+          "tp": 4075779,
+          "fp": 2600925,
+          "fn": 2498471,
+          "iou": 0.44421812118024995,
+          "precision": 0.6104477598527657,
+          "recall": 0.6199610601969806
+        },
+        {
+          "dataset": "ade",
+          "group": "window",
+          "labels": [
+            "window_glass",
+            "window_frame"
+          ],
+          "tp": 4644,
+          "fp": 5045011,
+          "fn": 5815,
+          "iou": 0.0009186089522833683,
+          "precision": 0.0009196667891172764,
+          "recall": 0.444019504732766
+        }
+      ]
+    },
+    "window_glass": {
+      "status": "group_only",
+      "supported": false,
+      "evidence": [
+        {
+          "dataset": "cmp",
+          "group": "window",
+          "labels": [
+            "window_glass",
+            "window_frame"
+          ],
+          "tp": 4075779,
+          "fp": 2600925,
+          "fn": 2498471,
+          "iou": 0.44421812118024995,
+          "precision": 0.6104477598527657,
+          "recall": 0.6199610601969806
+        },
+        {
+          "dataset": "ade",
+          "group": "window",
+          "labels": [
+            "window_glass",
+            "window_frame"
+          ],
+          "tp": 4644,
+          "fp": 5045011,
+          "fn": 5815,
+          "iou": 0.0009186089522833683,
+          "precision": 0.0009196667891172764,
+          "recall": 0.444019504732766
+        }
+      ]
+    }
+  },
+  "supported": []
+}

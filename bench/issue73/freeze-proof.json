@@ -1,0 +1,17 @@
+{
+  "initial_plan_sha256": "68c2699c46a932df810514e658da5eea866c29d2da2de1105bea40a43fd42d64",
+  "initial_baseline_sha256": "79ca7865dd79c1a9fe08fd35222152e40cebbcf060d23637023bb2779b2079dd",
+  "final_plan_sha256": "e9082b43e44ad0b4c46e4bc0d3446c706c913f389ef51d0ae188a6a67bd4ca75",
+  "final_baseline_sha256": "b5eed0b22cd71c43efae796c0e05026cd0e650a8c7a6f9c6fef186e2c7c5ef5c",
+  "initial_code_sha256": {
+    "bench/issue73/evaluate.py": "7942daada0d4d7c924dda8f6b9eb4db89ae86aa69de63b898c7e15e37feba6ba",
+    "src/colorstats/segmentation_quality.py": "7f70c4206159f90fd571bd949f183e379e11f0bcc0a98e1d2934f57158451c89",
+    "src/colorstats/segmentation_evaluation.py": "a9f16928be662778923ab814600c30b940d11996dd82c1eeb9ea41aad0128ee5",
+    "src/colorstats/analyze/segment_models.py": "1a8bbd53a97203f94675cfe09f9f878409a75096b1c41c9147c6e7317b8f1f3e"
+  },
+  "same_input_groups_and_hashes": true,
+  "same_tune_and_holdout_baseline": true,
+  "same_gates_and_candidates": true,
+  "initial_output": "/mnt/data/work/issue-73/evaluation",
+  "final_output": "/mnt/data/work/issue-73/evaluation-final"
+}
