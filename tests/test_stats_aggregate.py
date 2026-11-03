@@ -34,7 +34,8 @@ def settings():
 
 
 def snapshot(root, subjects=40, *, unknown=0, split=None, duplicates=False,
-             reverse=False, input_runs=(), zero=False, invalid=False, multi=False, terrain=False):
+             reverse=False, input_runs=(), zero=False, invalid=False, multi=False, terrain=False,
+             subject=None, subject_only=False):
     root.mkdir()
     quality = {
         "supported_by_domain": {DOMAIN: ["door"], "real_terrain": []},
@@ -55,7 +56,8 @@ def snapshot(root, subjects=40, *, unknown=0, split=None, duplicates=False,
             if terrain:
                 attrs = {"biome_like": "forest"}
             data = {
-                "scene_attributes": attrs, "quality": {}, "subject": {"scene_attributes": {}},
+                "scene_attributes": {} if subject_only else attrs, "quality": {},
+                "subject": {"scene_attributes": attrs if subject_only else {}} | (subject or {}),
                 "selection": {r["stage"] + "_run_id": r["id"] for r in input_runs},
             }
             db.execute("INSERT INTO assets VALUES (?,?,?,?,?,?,?,?)", [
@@ -298,3 +300,45 @@ def test_effective_support_below_count_boundary(tmp_path, settings):
     assert row["subject_count"] == 40
     assert row["effective_sample_size"] == pytest.approx(27.9)
     assert row["quality"]["status"] == "unsupported"
+
+
+def test_subject_only_conditions_keep_direct_support(tmp_path, settings):
+    root = tmp_path / "subject-only"
+    result = aggregate(root, snapshot(root, 30, subject_only=True), settings)
+    for condition in (
+        {"domain": DOMAIN, "style": "gothic"},
+        {"domain": DOMAIN, "style": "gothic", "building_type": "temple"},
+    ):
+        for parts, kind in ((("wall",), "palette"), (("wall", "door"), "relation")):
+            row = cell(result, parts, condition, kind)
+            assert row["subject_count"] == row["effective_sample_size"] == 30
+            assert row["quality"]["status"] == "direct"
+            assert row["quality"]["lambda"] == 1
+            parent = cell(result, parts, kind=kind)
+            assert row["distribution"]["cdf"] == parent["distribution"]["cdf"]
+
+
+def test_subject_location_era_use_actual_collection_strata(tmp_path):
+    settings = load_settings(ROOT / "configs/stats.yaml",
+                             ROOT / "configs/collection_targets.yaml", ROOT / "taxonomy")
+    root = tmp_path / "subject-columns"
+    result = aggregate(root, snapshot(root, 30, subject={
+        "location": "europe", "era": "medieval",
+    }), settings)
+    condition = {"domain": DOMAIN, "style": "gothic", "building_type": "temple"}
+    row = cell(result, condition=condition)
+    assert row["quality"]["status"] == "direct"
+    assert row["subject_count"] == row["effective_sample_size"] == 30
+    assert row["quality"]["unassigned_subjects"] == 0
+    assert row["quality"]["missing_target_mass"] == 0
+
+
+@pytest.mark.parametrize(("key", "value"), [("region", "asia"), ("era", "modern")])
+def test_asset_conflicting_subject_columns_remain_unassigned(settings, key, value):
+    asset = {"eligible": True, "subject_id": "s", "domain": DOMAIN, "data": {
+        "scene_attributes": {"style": "gothic", "building_type": "temple", key: value},
+        "subject": {"scene_attributes": {}, "location": "europe", "era": "medieval"},
+    }}
+    assigned, reasons = weights.assign_strata({"a": asset}, settings["strata"])
+    assert assigned == {"s": None}
+    assert reasons == {"s": ["attributes_conflict"]}
