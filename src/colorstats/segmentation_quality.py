@@ -119,3 +119,24 @@ def label_support(reports, mapping, labels):
             "supported": supported, "evidence": evidence,
         }
     return result
+
+
+def group_support(reports, mapping, roles):
+    """明示した和集合と完全一致する正解群だけで粗い役割の支持を返す。
+
+    rolesは役割名から構成ラベルへの対応。子ラベルや部分集合の支持は保証しない。
+    同一役割が複数データに対応する場合は全対応のゲート通過を必要とする。
+    """
+    grouped = {"datasets": {}}
+    for dataset, definition in mapping["datasets"].items():
+        groups = {}
+        for name, value in definition["groups"].items():
+            matched = [role for role, members in roles.items()
+                       if set(value["labels"]) == set(members)]
+            if matched:
+                groups[name] = {**value, "labels": matched}
+        grouped["datasets"][dataset] = {"groups": groups}
+    result = label_support(reports, grouped, roles)
+    for role, row in result.items():
+        row["members"] = roles[role]
+    return result

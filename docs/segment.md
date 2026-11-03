@@ -205,7 +205,18 @@ text_threshold=0.25／shade noneを維持する。局所調整0.45は事前の�
 既存の`config_hash(payload)`を置き換えない。設定ファイルの自動読込みは行わず、
 #66の投入側が明示的に採用する。
 
-`quality.supported_labels`は空であり、既定の全量解析は診断として保持する。
-検出confidenceが高くてもvalidatedとは扱わず、未支持ラベルをM4向け主統計へ入れない。
-建築・地形それぞれの支持役割が必要なM3有用性条件は未達。公開正解画像を統計入力に
-しない。既存のRegion・run・マスク保存形式は変更しない。
+[#81の対応表診断](../bench/issue81/results.md)を反映し、
+`quality.supported_labels=[door]`、
+`quality.supported_groups=[real_building/wall, real_terrain/tree]`とする。
+構成ラベルと支持の正本は`quality.label_support`が参照するdecision.json。
+wallは第一階層、treeは幹＋樹冠の和集合であり、terrain taxonomyの新しい語彙ではない。
+
+#66/#75が和集合を採用するときは同じasset内でマスクを結合し、色・面積・関係を直接求める。
+子ラベルの色や重複面積を足して代用せず、個別ラベルやopeningへ支持を転用しない。
+保存形式は維持し、和集合のsnapshot表現は後続で契約を明示する。
+`group_aggregation=mask_union_per_asset`はこの引継ぎ条件であり、
+設定だけで既存stageが和集合を生成するわけではない。
+
+支持は公開正解の対応画素内の条件付き精度に限る。全画素の精度や実写真一般へ拡張しない。
+他ラベルは診断用途に保ち、公開正解画像は本番統計へ入れない。
+M3有用性条件の確定subject>=10・n_eff>=10は#66/#75で未検証である。

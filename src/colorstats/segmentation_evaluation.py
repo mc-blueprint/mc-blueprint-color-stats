@@ -3,14 +3,17 @@
 import numpy as np
 
 
-def pixel_counts(truth, predictions, groups):
+def pixel_counts(truth, predictions, groups, *, valid_ids=None):
     """グループごとのTP/FP/FNを返す（同寸のID正解とbool予測）。
 
     対応のない正解IDの画素は無視する。同一グループの候補は和集合にし、
     異なるグループへの重複予測は残して誤ラベル側のFPとして数える。
     predictionsは(label, mask)の列で、未検出ラベルは空マスクとして扱う。
+    valid_idsを指定すると、対応群を外しても評価画素集合を固定できる。
     """
-    valid = np.isin(truth, [i for group in groups.values() for i in group["ids"]])
+    if valid_ids is None:
+        valid_ids = [i for group in groups.values() for i in group["ids"]]
+    valid = np.isin(truth, valid_ids)
     merged = {name: np.zeros(truth.shape, dtype=bool) for name in groups}
     for label, mask in predictions:
         if mask.shape != truth.shape or mask.dtype != np.bool_:
