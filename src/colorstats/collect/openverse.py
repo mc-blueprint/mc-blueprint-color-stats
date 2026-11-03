@@ -6,7 +6,7 @@ from pathlib import Path
 from urllib.parse import urlencode, urlsplit
 
 from colorstats.collect import Candidate, SearchResult
-from colorstats.collect.http import HttpClient
+from colorstats.collect.http import HttpClient, MeasurementLimit
 from colorstats.collect.policy import license_class
 
 ENDPOINT = "https://api.openverse.org/v1/images/"
@@ -128,7 +128,23 @@ class OpenverseAdapter(HttpClient):
             "license": "cc0,pdm,by,by-sa",
             "mature": "false",
         }
-        data = self.get(ENDPOINT + "?" + urlencode(params))
+        effective = {
+            **params,
+            "endpoint": ENDPOINT,
+            "api": "Openverse API v1",
+            "rank_basis": {
+                "base": 0,
+                "scope": "search",
+                "calculation": "request.start + index",
+            },
+            "page_basis": {"base": 0, "value": request.start, "api_value": api_page},
+        }
+        self.observe("search", {"effective": effective})
+        data = self.get(ENDPOINT + "?" + urlencode(params), api=True)
+        end = request.start + len(data.get("results", []))
+        next_offset = end if data.get("result_count", 0) > end else None
+        self.observe("search", {"api_next_offset": next_offset})
+        self.observe("search", {"api_results": data.get("results", [])})
         candidates = []
         for index, item in enumerate(data.get("results", [])):
             landing = item.get("foreign_landing_url") or ""
@@ -147,10 +163,20 @@ class OpenverseAdapter(HttpClient):
             if not license_url:
                 reasons.append("missing_license_url")
             verified = False
+            self.observe("search", {"pending_candidate": {
+                "source_url": landing, "original_url": media, "rank": request.start + index,
+            }})
             if not reasons:
                 try:
                     page = self.get(landing, text=True)
                     verified = _verify_source(page, item)
+                except MeasurementLimit as error:
+                    self.observe("exclusion", {
+                        "source_url": landing, "original_url": media,
+                        "rank": request.start + index,
+                        "reason": "verification_stopped:" + str(error),
+                    })
+                    raise
                 except Exception:
                     verified = False
                 if not verified:
@@ -188,19 +214,8 @@ class OpenverseAdapter(HttpClient):
                     exclusion_reason=",".join(reasons) or None,
                 )
             )
-        effective = {
-            **params,
-            "endpoint": ENDPOINT,
-            "api": "Openverse API v1",
-            "rank_basis": {
-                "base": 0,
-                "scope": "search",
-                "calculation": "request.start + index",
-            },
-            "page_basis": {"base": 0, "value": request.start, "api_value": api_page},
-        }
-        end = request.start + len(data.get("results", []))
-        next_offset = end if data.get("result_count", 0) > end else None
+            self.record_candidate(candidates[-1], verified=verified)
+
         return SearchResult(candidates, effective, next_offset)
 
     def download(self, candidate, target: Path):
