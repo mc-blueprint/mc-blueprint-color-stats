@@ -1,0 +1,107 @@
+# 固有カテゴリは保存メタデータを確認したものだけを明示する。
+# カテゴリ単独・名称単独では確定せず、スコアは確率ではない。
+version: 2
+taxonomy_version: 0.1.0
+max_camera_span_km: {real_building: 4, real_terrain: 40}
+multiple_pattern: '(?i)\b(panorama|skyline|view from|between)\b|in the background|を望む'
+subjects:
+  - key: strasbourg-cathedral
+    name: Strasbourg Cathedral
+    domain: real_building
+    aliases: [Strasbourg Cathedral, Cathédrale Notre-Dame de Strasbourg, Notre-Dame de Strasbourg, ストラスブール大聖堂]
+    categories: [West facade of Cathédrale Notre-Dame de Strasbourg, Central portal of the western facade of Notre-Dame de Strasbourg, Strasbourg Cathedral by night]
+    attributes: {building_type: temple}
+  - key: leon-cathedral
+    name: Cathedral of León
+    domain: real_building
+    aliases: [Cathedral of León, Cathedral leon, Catedral Gótica de León, レオン大聖堂]
+    categories: [West facade of the Cathedral of León]
+    attributes: {building_type: temple}
+  - key: dome-of-the-rock
+    name: Dome of the Rock
+    domain: real_building
+    aliases: [Dome of the Rock, 岩のドーム]
+    categories: [Dome of the Rock, Facade of the Dome of the Rock]
+    attributes: {building_type: temple}
+  - key: kakegawa-keep
+    name: Kakegawa Castle Keep Tower
+    domain: real_building
+    aliases: [Kakegawa Castle, 掛川城]
+    categories: [Kakegawa Castle Keep Tower, Remote views of the Kakegawa Castle Keep Tower]
+    attributes: {building_type: castle}
+  - key: muenster-cathedral
+    name: St. Paul's Cathedral (Münster)
+    domain: real_building
+    aliases: [St.-Paulus-Dom, "St. Paul's Cathedral", St Paul's Cathedral, 聖パウルス大聖堂]
+    categories: ["St. Paul's Cathedral (Münster) at night", "Western towers and choir of St. Paul's Cathedral (Münster) exterior", "Exterior view of St. Paul's Cathedral (Münster)"]
+    attributes: {building_type: temple}
+  - key: duelmen-st-viktor
+    name: St. Viktor (Dülmen)
+    domain: real_building
+    aliases: [St.-Viktor-Kirche, St. Viktor, 聖ヴィクトル教会]
+    categories: [Exterior of St. Viktor (Dülmen)]
+    attributes: {building_type: temple}
+  - key: glessner-house
+    name: John J. Glessner House
+    domain: real_building
+    aliases: [John J. Glessner House, Glessner House]
+    categories: [John J. Glessner House]
+    attributes: {building_type: house}
+  - key: habitat-67
+    name: Habitat 67
+    domain: real_building
+    aliases: [Habitat 67]
+    categories: [Habitat 67]
+    attributes: {building_type: house}
+  - key: rokusho-matsue
+    name: Rokusho-jinja (Matsue)
+    domain: real_building
+    aliases: [Rokusho-jinja, 六所神社]
+    categories: [Rokusho-jinja (Matsue)]
+    attributes: {building_type: temple}
+  - key: sahimeyama-jinja
+    name: Sahimeyama-jinja
+    domain: real_building
+    aliases: [Sahimeyama-jinja, 佐毘売山神社]
+    categories: [Sahimeyama-jinja]
+    attributes: {building_type: temple}
+  - key: achensee
+    name: Achensee
+    domain: real_terrain
+    aliases: [Achensee]
+    categories: [Achensee]
+    attributes: {}
+  - key: sossusvlei
+    name: Sossusvlei
+    domain: real_terrain
+    aliases: [Sossusvlei]
+    categories: [Sossusvlei]
+    attributes: {}
+attributes:
+  style:
+    gothic: ['^gothic (?:architecture|churches|cathedrals)(?: in |$)']
+    romanesque: ['^romanesque (?:architecture|churches|cathedrals)(?: in |$)']
+    modern: ['^modernist (?:houses|buildings)(?: in |$)']
+    baroque: ['^baroque (?:architecture|churches)(?: in |$)']
+  building_type:
+    temple: ['^(?:gothic |romanesque |baroque )?(?:churches|temples|mosques|cathedrals)(?: in |$)']
+    house: ['^(?:modernist |medieval |[0-9]{4}s )?houses(?: in |$)']
+    castle: ['^castles(?: in |$)']
+    bridge: ['^bridges(?: in |$)']
+    tower: ['^towers(?: in |$)']
+  biome_like:
+    forest: ['^forests(?: in |$)']
+    desert: ['^(?:dunes of the namib desert|namib desert)$']
+    mountains: ['^mountains(?: of |in |$)']
+  season:
+    autumn: ['^autumn (?:in |at )']
+    winter: ['^winter (?:in |at )']
+    summer: ['^summer (?:in |at )']
+    spring: ['^spring (?:in |at )']
+  time_of_day:
+    night: ['^night (?:in |at )']
+    dawn: ['^dawn (?:in |at )']
+    dusk: ['^dusk (?:in |at )']
+  weather:
+    fog: ['^fog (?:in |at )']
+    snow: ['^snowfall (?:in |at )']

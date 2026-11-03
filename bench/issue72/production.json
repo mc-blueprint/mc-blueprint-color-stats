@@ -1,0 +1,325 @@
+{
+  "recorded_at": "2026-11-03",
+  "base_commit": "6e312464fb77137d242b1a916531aa5c73d8c19b",
+  "branch": "feature/issue-72",
+  "code_version": "6e31246+i72-review-ab889e537543e9d3",
+  "config_hash": "86e2a4eeab4af82889bb70cdb35d091af594ef30b72c835d9448fcc0ba85f014",
+  "postgresql": "16.15",
+  "host": "ubuntu-2",
+  "audit": {
+    "counts": {
+      "confirmed": 144,
+      "candidate": 1694,
+      "unknown": 5769
+    },
+    "asset_count": 7607,
+    "sha_count": 3575,
+    "confirmed_sha_count": 104,
+    "confirmed_subject_count": 10,
+    "confirmed_subjects_by_domain": {
+      "real_building": 9,
+      "real_terrain": 1
+    },
+    "sha_conflicting_groups": 0,
+    "cross_domain_subjects": 0,
+    "confirmed_without_evidence": [],
+    "blocked_new_confirmations": [],
+    "different_named_groups_merged": 0,
+    "issue41_groups": {
+      "岩のドーム": {
+        "expected_assets": 3,
+        "present": 3,
+        "confirmed": 3,
+        "candidate": 0,
+        "unknown": 0,
+        "confirmed_subjects": 1
+      },
+      "聖ヴィクトル教会（デュルメン）": {
+        "expected_assets": 2,
+        "present": 2,
+        "confirmed": 2,
+        "candidate": 0,
+        "unknown": 0,
+        "confirmed_subjects": 1
+      },
+      "掛川城天守": {
+        "expected_assets": 2,
+        "present": 2,
+        "confirmed": 2,
+        "candidate": 0,
+        "unknown": 0,
+        "confirmed_subjects": 1
+      },
+      "聖パウルス大聖堂（ミュンスター）": {
+        "expected_assets": 2,
+        "present": 2,
+        "confirmed": 2,
+        "candidate": 0,
+        "unknown": 0,
+        "confirmed_subjects": 1
+      },
+      "ストラスブール大聖堂": {
+        "expected_assets": 2,
+        "present": 2,
+        "confirmed": 2,
+        "candidate": 0,
+        "unknown": 0,
+        "confirmed_subjects": 1
+      },
+      "レオン大聖堂": {
+        "expected_assets": 2,
+        "present": 2,
+        "confirmed": 2,
+        "candidate": 0,
+        "unknown": 0,
+        "confirmed_subjects": 1
+      }
+    }
+  },
+  "attributes": {
+    "style": {
+      "unknown": 7563,
+      "inferred": 44
+    },
+    "building_type": {
+      "inferred": 461,
+      "unknown": 7142,
+      "conflict": 4
+    },
+    "biome_like": {
+      "unknown": 7232,
+      "inferred": 373,
+      "conflict": 2
+    },
+    "season": {
+      "unknown": 7363,
+      "inferred": 244
+    },
+    "time_of_day": {
+      "unknown": 7572,
+      "inferred": 35
+    },
+    "weather": {
+      "unknown": 7575,
+      "inferred": 32
+    }
+  },
+  "snapshots": {
+    "dry-02": {
+      "run_id": "3ac5d10c-736b-4b19-888f-9bd0d319e22d",
+      "code_version": "6e31246+i72-e8f2a52d189f6892",
+      "path": "/mnt/data/work/issue-72/production-results/dry-02.json",
+      "sha256": "f40e8e20ea687dba5a062b08283f9aebd24bfaaf113cc4c10bba6a31dd57c046",
+      "bytes": 16713203
+    },
+    "applied-01": {
+      "run_id": "28d633d3-3aca-4ad7-8329-eec4976b9ab4",
+      "code_version": "6e31246+i72-e8f2a52d189f6892",
+      "path": "/mnt/data/work/issue-72/production-results/applied-01.json",
+      "sha256": "b8f7393f2f262378bc498e02df9b813487037588988408bdda7bce4a0e8897c5",
+      "bytes": 16713204
+    },
+    "dry-after": {
+      "run_id": "b96b96c6-fae8-4e04-8c9c-04c8b650a78c",
+      "code_version": "6e31246+i72-e8f2a52d189f6892",
+      "path": "/mnt/data/work/issue-72/production-results/dry-after.json",
+      "sha256": "2379354a7a4d39a5b0e9ec55e3c619cfdbd2d679bbbe314dfaf6677933684f27",
+      "bytes": 16712708
+    },
+    "dry-03": {
+      "run_id": "8aa685f7-bc5f-422d-9214-7408cda11be4",
+      "code_version": "6e31246+i72-b4a0deaff5f0d728",
+      "path": "/mnt/data/work/issue-72/production-results/dry-03.json",
+      "sha256": "3aa1119a9c13d286544f7702204dd39f8724bc5a57b64a3cb2bd78e33782e4c2",
+      "bytes": 16712708
+    },
+    "applied-02": {
+      "run_id": "376fcdcc-4f47-43d0-ac33-c6e30c55f5ed",
+      "code_version": "6e31246+i72-b4a0deaff5f0d728",
+      "path": "/mnt/data/work/issue-72/production-results/applied-02.json",
+      "sha256": "5be068741ca019a106e5a122962ea376c951b084dfdfa9545578042048ad196f",
+      "bytes": 16712709
+    },
+    "review-dry-01": {
+      "run_id": "8eff60c8-13bf-4abf-a842-be4a0b07b135",
+      "code_version": "6e31246+i72-review-2a1ac071b5483000",
+      "path": "/mnt/data/work/issue-72/production-results/review-dry-01.json",
+      "sha256": "18212a3cc2bff200bfb81e74dcfe2c4fc0bb43fafe5ad6ed3fd63dc21b666f74",
+      "bytes": 17252063
+    },
+    "review-applied-01": {
+      "run_id": "4dae0857-19f6-454c-9b98-5977877b3fef",
+      "code_version": "6e31246+i72-review-2a1ac071b5483000",
+      "path": "/mnt/data/work/issue-72/production-results/review-applied-01.json",
+      "sha256": "63da1da7630de2a6e9a1d9f51bd87e263ccae7b4f1b0c9eff2095664dbc7adc5",
+      "bytes": 17252064
+    },
+    "review-dry-02": {
+      "run_id": "0639cc8f-0c21-4db5-82c5-48782eaae6f4",
+      "code_version": "6e31246+i72-review-ab889e537543e9d3",
+      "path": "/mnt/data/work/issue-72/production-results/review-dry-02.json",
+      "sha256": "4e3b601a02b4828136b881742f66735750963e954b2272e441bd1afc5efb1f3c",
+      "bytes": 17254274
+    },
+    "review-applied-02": {
+      "run_id": "b5ad2583-fcb2-4ffe-a43f-ab9028729852",
+      "code_version": "6e31246+i72-review-ab889e537543e9d3",
+      "path": "/mnt/data/work/issue-72/production-results/review-applied-02.json",
+      "sha256": "e30b995aa3707ad3e8160bfadeec6e2fdd025e435a5421e3349589c44a7e0ca1",
+      "bytes": 17254275
+    }
+  },
+  "seconds": {
+    "dry-02": 25.143,
+    "applied-01": 30.475,
+    "dry-after": 27.512,
+    "dry-03": 27.33,
+    "applied-02": 30.569,
+    "review-dry-01": 27.631,
+    "review-applied-01": 30.382,
+    "review-dry-02": 28.759,
+    "review-applied-02": 30.966
+  },
+  "idempotence": {
+    "compared_assets": 7607,
+    "state_subject_attributes_candidate_ids_unchanged": true
+  },
+  "validation": {
+    "postgresql_pytest_passed": 471,
+    "postgresql_pytest_skipped": 1,
+    "subject_tests_passed": 30,
+    "skip_reason": "公式重み・CUDA・一時テストDBの明示指定が必要",
+    "ruff": "passed",
+    "uv_build": "passed"
+  },
+  "before_review": {
+    "recorded_at": "2026-11-03",
+    "base_commit": "6e312464fb77137d242b1a916531aa5c73d8c19b",
+    "branch": "feature/issue-72",
+    "code_version": "6e31246+i72-b4a0deaff5f0d728",
+    "config_hash": "5176c229fe8d33a42e344ec0a9c141e5eeb126b7dbd27b7709c3bc04aca174b4",
+    "postgresql": "16.15",
+    "host": "ubuntu-2",
+    "audit": {
+      "counts": {
+        "confirmed": 54,
+        "candidate": 1784,
+        "unknown": 5769
+      },
+      "asset_count": 7607,
+      "sha_count": 3575,
+      "confirmed_sha_count": 28,
+      "confirmed_subject_count": 8,
+      "confirmed_subjects_by_domain": {
+        "real_building": 7,
+        "real_terrain": 1
+      },
+      "sha_conflicting_groups": 0,
+      "cross_domain_subjects": 0,
+      "confirmed_without_evidence": [],
+      "blocked_new_confirmations": [],
+      "different_named_groups_merged": 0,
+      "issue41_groups": {
+        "岩のドーム": {
+          "expected_assets": 3,
+          "present": 3,
+          "confirmed": 3,
+          "candidate": 0,
+          "unknown": 0,
+          "confirmed_subjects": 1
+        },
+        "聖ヴィクトル教会（デュルメン）": {
+          "expected_assets": 2,
+          "present": 2,
+          "confirmed": 2,
+          "candidate": 0,
+          "unknown": 0,
+          "confirmed_subjects": 1
+        },
+        "掛川城天守": {
+          "expected_assets": 2,
+          "present": 2,
+          "confirmed": 2,
+          "candidate": 0,
+          "unknown": 0,
+          "confirmed_subjects": 1
+        },
+        "聖パウルス大聖堂（ミュンスター）": {
+          "expected_assets": 2,
+          "present": 2,
+          "confirmed": 0,
+          "candidate": 2,
+          "unknown": 0,
+          "confirmed_subjects": 0
+        },
+        "ストラスブール大聖堂": {
+          "expected_assets": 2,
+          "present": 2,
+          "confirmed": 2,
+          "candidate": 0,
+          "unknown": 0,
+          "confirmed_subjects": 1
+        },
+        "レオン大聖堂": {
+          "expected_assets": 2,
+          "present": 2,
+          "confirmed": 2,
+          "candidate": 0,
+          "unknown": 0,
+          "confirmed_subjects": 1
+        }
+      }
+    },
+    "attributes": {
+      "style": {
+        "unknown": 7563,
+        "inferred": 44
+      },
+      "building_type": {
+        "inferred": 379,
+        "unknown": 7224,
+        "conflict": 4
+      },
+      "biome_like": {
+        "unknown": 7232,
+        "inferred": 373,
+        "conflict": 2
+      },
+      "season": {
+        "unknown": 7363,
+        "inferred": 244
+      },
+      "time_of_day": {
+        "unknown": 7572,
+        "inferred": 35
+      },
+      "weather": {
+        "unknown": 7575,
+        "inferred": 32
+      }
+    },
+    "idempotence": {
+      "compared_assets": 7607,
+      "state_subject_attributes_candidate_ids_unchanged": true
+    },
+    "validation": {
+      "postgresql_pytest_passed": 458,
+      "postgresql_pytest_skipped": 1,
+      "skip_reason": "GPU重み・CUDAの明示指定なし",
+      "ruff": "passed",
+      "uv_build": "passed"
+    }
+  },
+  "revocations": {
+    "source_run": "376fcdcc-4f47-43d0-ac33-c6e30c55f5ed",
+    "eligible_new_assignments": 0,
+    "preserved_assignments_from_before_source_run": 54,
+    "revoked_assignments": 0,
+    "prior_54_assignments_unchanged": true
+  },
+  "review_fixes": [
+    "成功runの確認済み対象キーでのみ既存subjectを再利用",
+    "SHA群の弱い別対象名を競合として記録し新規確定を抑止",
+    "年代・窓間説明と対象間のbetweenを区別"
+  ]
+}
