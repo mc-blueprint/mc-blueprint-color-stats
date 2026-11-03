@@ -1,0 +1,4 @@
+version: subject-stats-v1
+direct_min: 30
+mixed_min: 10
+smoothing_strength: 20

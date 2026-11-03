@@ -1,0 +1,50 @@
+{
+  "input": "synthetic_fixture_only",
+  "base_commit": "2ea1ea59008664b3ecf8906bb0b14f3963791539",
+  "python": "3.12.15",
+  "platform": "win32",
+  "snapshot_id": "d4936e8959eea65731d97faaa64082e3fb85e01f9e482681509cce44c86f4835",
+  "subjects": 40,
+  "representative_images": 40,
+  "asset_rows_including_duplicates": 80,
+  "aggregate_seconds": 2.316024,
+  "snapshot_bytes": 10733,
+  "result_bytes": 85074,
+  "rule_stat_rows": 24,
+  "statuses": {
+    "unsupported": 9,
+    "direct": 9,
+    "smoothed": 6
+  },
+  "root": {
+    "sample_count": 40,
+    "subject_count": 40,
+    "effective_sample_size": 30.0,
+    "weight": 40.0
+  },
+  "root_L_masses": [
+    [
+      0.2,
+      0.5
+    ],
+    [
+      0.8,
+      0.5
+    ]
+  ],
+  "child": {
+    "subject_count": 10,
+    "n_eff": 10.0,
+    "lambda": 0.3333333333333333,
+    "L_masses": [
+      [
+        0.2,
+        0.7777777777777777
+      ],
+      [
+        0.8,
+        0.2222222222222222
+      ]
+    ]
+  }
+}
