@@ -1,4 +1,4 @@
-version: issue73-v1
+version: issue81-v1
 segment:
   method: sam2-dino
   threshold: 0.35
@@ -35,13 +35,19 @@ shade:
 settings_sha256: 6d80e4f312f0373f20230940a1e1a96ce5d1963899a4dffb9ab404c11c409f21
 quality:
   precision_threshold: 0.5
-  supported_labels: []
-  label_support: bench/issue73/decision.json
+  supported_labels: [door]
+  supported_groups: [real_building/wall, real_terrain/tree]
+  group_aggregation: mask_union_per_asset
+  label_support: bench/issue81/decision.json
   unvalidated_usage: diagnostic_only
 evaluation:
   plan: bench/issue73/plan.json
   plan_sha256: e9082b43e44ad0b4c46e4bc0d3446c706c913f389ef51d0ae188a6a67bd4ca75
-  decision: bench/issue73/decision.json
-  decision_sha256: ce6cfb3bfe3e5c91416af62b5ac52718ca3f4d029a7e9157f45806163b7a7b5a
+  decision: bench/issue81/decision.json
+  decision_sha256: dbc855e443ed351d7083de6781600fb356bf6cd917dd08ac4052c717930fde88
   source: evaluation_only
   candidate_accepted: false
+  mapping: bench/issue81/label-map.yaml
+  mapping_sha256: 857d74db426de1c7d7005a5ef98bfb69d80dd12ffec130816132445b010c2d0e
+  definition: bench/issue81/definition.md
+  definition_sha256: f080343da324e8b3cc80a36fcee14ab79178fc96196f1be0c2c808de139f3d80
