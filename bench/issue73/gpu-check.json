@@ -1,0 +1,70 @@
+{
+  "plan_sha256": "e9082b43e44ad0b4c46e4bc0d3446c706c913f389ef51d0ae188a6a67bd4ca75",
+  "tuning_sha256": "f433968ef41e215f6da68118555a114a561f327da783cb4e886cfe5ab0e8e4e3",
+  "checks": [
+    {
+      "image": "cmp/base/cmp_b0003.jpg",
+      "threshold": 0.35,
+      "regions": 60,
+      "exact_masks": true,
+      "metrics": {
+        "load_seconds": 3.172016191005241,
+        "inference_seconds": 4.212006192014087,
+        "peak_allocated_bytes": 1958657024,
+        "peak_reserved_bytes": 2319450112,
+        "gpu": "NVIDIA GeForce RTX 4070",
+        "torch_version": "2.11.0+cu128",
+        "cuda_version": "12.8",
+        "batch_size": 1
+      }
+    },
+    {
+      "image": "cmp/base/cmp_b0003.jpg",
+      "threshold": 0.45,
+      "regions": 18,
+      "exact_masks": true,
+      "metrics": {
+        "load_seconds": 0.526156653999351,
+        "inference_seconds": 2.165905510977609,
+        "peak_allocated_bytes": 1959665664,
+        "peak_reserved_bytes": 2319450112,
+        "gpu": "NVIDIA GeForce RTX 4070",
+        "torch_version": "2.11.0+cu128",
+        "cuda_version": "12.8",
+        "batch_size": 1
+      }
+    },
+    {
+      "image": "ade/ADEChallengeData2016/images/validation/ADE_val_00000001.jpg",
+      "threshold": 0.35,
+      "regions": 39,
+      "exact_masks": true,
+      "metrics": {
+        "load_seconds": 0.42238172501674853,
+        "inference_seconds": 4.190931026998442,
+        "peak_allocated_bytes": 2044290560,
+        "peak_reserved_bytes": 2906652672,
+        "gpu": "NVIDIA GeForce RTX 4070",
+        "torch_version": "2.11.0+cu128",
+        "cuda_version": "12.8",
+        "batch_size": 1
+      }
+    },
+    {
+      "image": "ade/ADEChallengeData2016/images/validation/ADE_val_00000001.jpg",
+      "threshold": 0.45,
+      "regions": 14,
+      "exact_masks": true,
+      "metrics": {
+        "load_seconds": 0.421750139008509,
+        "inference_seconds": 3.313387382979272,
+        "peak_allocated_bytes": 2045235200,
+        "peak_reserved_bytes": 2906652672,
+        "gpu": "NVIDIA GeForce RTX 4070",
+        "torch_version": "2.11.0+cu128",
+        "cuda_version": "12.8",
+        "batch_size": 1
+      }
+    }
+  ]
+}
