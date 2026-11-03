@@ -1,0 +1,208 @@
+{
+  "base_commit": "69ebe7cdb81bcf5c5d6d6efed377be4c63b19359",
+  "code_version": "69ebe7c+i79-review-4e3387e85b4a7a81",
+  "config_hash": "a1320336eb21a6b458dd3b90eaff67dc8a974f0533a8f639a32deb55be7e5423",
+  "run_id": "7edc8dde-03b5-4b0a-8892-c497c1ba1fda",
+  "snapshot": {
+    "path": "/mnt/data/work/issue-79/results/production/review-corrected-applied-01.json",
+    "sha256": "dd1023240edf3a37a23257966433d6e8498f801d116f158e6c2a708713aa723f",
+    "bytes": 19916128
+  },
+  "rules": {
+    "path": "/mnt/data/work/issue-79/i79-review-corrected-rules.json",
+    "sha256": "f6d2bd397805144fbed1eeee4058d7e9b39abfc69143ee4b8286b2f36f1172cc"
+  },
+  "input": {
+    "assets": 7607,
+    "sha256_distinct": 3575,
+    "saved_categories": 9112
+  },
+  "catalog": {
+    "manual": 12,
+    "automatic": 343,
+    "requests_used": 301,
+    "responses_preserved": 387
+  },
+  "counts": {
+    "confirmed": 784,
+    "candidate": 2166,
+    "unknown": 4657
+  },
+  "confirmed_subjects": {
+    "real_building": 136,
+    "real_terrain": 18
+  },
+  "origins": {
+    "manual": 144,
+    "automatic": 640
+  },
+  "subjects_by_origin": {
+    "real_building": {
+      "automatic": 127,
+      "manual": 9
+    },
+    "real_terrain": {
+      "automatic": 17,
+      "manual": 1
+    }
+  },
+  "confirmed_sha": 385,
+  "candidate_edges": 3595,
+  "seconds": {
+    "offline_catalog": 2.985,
+    "dry_run": 106.949,
+    "apply": 111.834,
+    "offline_replay": 107.77
+  },
+  "revocations": {
+    "source_run": "ac88d4ae-ec77-40a3-8988-8ff31cacbbc4",
+    "net_assignments": 93,
+    "subjects": 48,
+    "by_domain": {
+      "real_building": 93
+    },
+    "by_granularity": {
+      "寺社全体クラス": 76,
+      "建物を部分に持つ施設": 12,
+      "複合施設クラス": 2,
+      "道路・街路": 3
+    },
+    "targets_by_granularity": {
+      "寺社全体クラス": 39,
+      "建物を部分に持つ施設": 5,
+      "複合施設クラス": 1,
+      "道路・街路": 3
+    },
+    "details": "audit.json"
+  },
+  "verification": {
+    "asset_count": 7607,
+    "database_mismatches": 0,
+    "same_input_full_decisions_equal": true,
+    "replay_decision_differences": 0,
+    "prior_runs_unchanged": true,
+    "protected_assignments_changed": 0,
+    "reconsidered_assignments": 733,
+    "final_execution_reconsidered_assignments": 0,
+    "preserved_prior_assignments": 144,
+    "revoked_assignments": 93,
+    "revoked_only_selected_run": true,
+    "intermediate_revocations": 106,
+    "restored_same_subject": 13,
+    "production_problem_examples_unconfirmed": true,
+    "run_id": "7edc8dde-03b5-4b0a-8892-c497c1ba1fda",
+    "config_hash": "a1320336eb21a6b458dd3b90eaff67dc8a974f0533a8f639a32deb55be7e5423"
+  },
+  "protected_coarse": {
+    "assets": 2,
+    "subjects": 1,
+    "keys": [
+      "sahimeyama-jinja"
+    ]
+  },
+  "tests": {
+    "postgresql_16_passed": 506,
+    "skipped_existing_gpu": 1,
+    "windows_subject_passed": 54,
+    "seconds": 76.98
+  },
+  "preferred_coordinate_concern": {
+    "excluded_items": 5,
+    "changed": false,
+    "reason": "通常rankの併存座標を除外しても対象の一意性を保つ一次根拠が不足"
+  },
+  "review_history": [
+    {
+      "run_id": "70f97262-9160-4974-b064-467b2f3beabd",
+      "reconsidered_assignments": 733,
+      "preserved_prior_assignments": 144,
+      "revoked_assignments": 106,
+      "snapshot": "/mnt/data/work/issue-79/results/production/review-applied-01.json",
+      "counts": {
+        "confirmed": 771,
+        "candidate": 2179,
+        "unknown": 4657
+      },
+      "note": "建物と一般構造物の部分型を区別する前の取消"
+    },
+    {
+      "run_id": "7edc8dde-03b5-4b0a-8892-c497c1ba1fda",
+      "revoked_assignments": 0,
+      "restored_same_subject": 13,
+      "net_revoked_from_source": 93,
+      "note": "建築要素の過剰抑止を除き13件を同一subjectへ復元"
+    }
+  ],
+  "before_review": {
+    "base_commit": "69ebe7cdb81bcf5c5d6d6efed377be4c63b19359",
+    "code_version": "69ebe7c+i79-0992e362f5761494",
+    "config_hash": "bcb9a964ef55315813006f798015704099a951c4141cba8309ba487de469ef76",
+    "run_id": "ac88d4ae-ec77-40a3-8988-8ff31cacbbc4",
+    "snapshot": {
+      "path": "/mnt/data/work/issue-79/results/production/applied-01.json",
+      "sha256": "5760d4a18fa8aaa34f1a41eeb4249436770e52e6ac4b3d2bfd06192ac79ba74a",
+      "bytes": 19459972
+    },
+    "rules": {
+      "path": "/mnt/data/work/issue-79/i79-rules-strict.json",
+      "sha256": "825f0fff88e99749d6365f630fcbe4101017a35d17b03d06e072cb60ae28ff32"
+    },
+    "input": {
+      "assets": 7607,
+      "sha256_distinct": 3575,
+      "saved_categories": 9112
+    },
+    "catalog": {
+      "manual": 12,
+      "automatic": 343,
+      "requests_used": 293,
+      "responses_preserved": 379
+    },
+    "counts": {
+      "confirmed": 877,
+      "candidate": 2073,
+      "unknown": 4657
+    },
+    "confirmed_subjects": {
+      "real_building": 184,
+      "real_terrain": 18
+    },
+    "origins": {
+      "manual": 144,
+      "automatic": 733
+    },
+    "subjects_by_origin": {
+      "real_building": {
+        "automatic": 175,
+        "manual": 9
+      },
+      "real_terrain": {
+        "automatic": 17,
+        "manual": 1
+      }
+    },
+    "confirmed_sha": 441,
+    "candidate_edges": 3595,
+    "seconds": {
+      "offline_catalog": 2.657,
+      "dry_run": 86.105,
+      "apply": 86.911,
+      "offline_replay": 96.786
+    },
+    "verification": {
+      "asset_count": 7607,
+      "database_mismatches": 0,
+      "same_input_full_decisions_equal": true,
+      "replay_decision_differences": 0,
+      "prior_run_unchanged": true,
+      "run_id": "ac88d4ae-ec77-40a3-8988-8ff31cacbbc4",
+      "config_hash": "bcb9a964ef55315813006f798015704099a951c4141cba8309ba487de469ef76"
+    },
+    "excluded_class_confirmations": 0,
+    "tests": {
+      "postgresql_16_passed": 485,
+      "skipped_existing_gpu": 1,
+      "windows_subject_passed": 36
+    }
+  }
+}
