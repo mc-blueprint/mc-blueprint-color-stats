@@ -2,6 +2,28 @@
 
 import math
 from collections import Counter, defaultdict
+from types import SimpleNamespace
+
+from colorstats.collect.coverage import subject_attributes
+
+
+def asset_attributes(asset):
+    """snapshotの確定subject・asset属性を統合し、矛盾の有無とともに返す。
+
+    subjectの地域・年代は既存の収集網羅率と同じ規則で読む。
+    assetの実属性を優先し、検索意図は使わない。
+    """
+    data = asset["data"]
+    attrs = {}
+    if subject := data.get("subject"):
+        record = SimpleNamespace(**({
+            "domain": asset["domain"], "location": None, "era": None,
+        } | subject))
+        attrs = {key: value for key, value in subject_attributes(record).items()
+                 if value is not None}
+    scene = data["scene_attributes"]
+    conflicts = any(key in attrs and attrs[key] != value for key, value in scene.items())
+    return attrs | scene | {"domain": asset["domain"]}, conflicts
 
 
 def assign_strata(assets, strata):
@@ -12,12 +34,7 @@ def assign_strata(assets, strata):
         sid = asset["subject_id"]
         if sid is None or not asset["eligible"]:
             continue
-        data = asset["data"]
-        attrs = dict((data.get("subject") or {}).get("scene_attributes", {}))
-        conflicts = any(k in attrs and attrs[k] != v
-                        for k, v in data["scene_attributes"].items())
-        attrs.update(data["scene_attributes"])
-        attrs["domain"] = asset["domain"]
+        attrs, conflicts = asset_attributes(asset)
         found = [s["id"] for s in strata
                  if all(attrs.get(k) == v for k, v in s["attributes"].items())]
         assignments[sid].add(found[0] if len(found) == 1 and not conflicts else None)
