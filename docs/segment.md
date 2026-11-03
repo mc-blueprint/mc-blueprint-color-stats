@@ -193,3 +193,19 @@ RLEとマスクの往復は単体テストで確認済み。#41の統合作業�
 既存segment出力の形式・runは変更しない。操作は[CVAT手順](../ops/cvat/README.md)を参照。
 現在の#41は人手修正を行わず、公開正解データによる画素評価と自前100枚のモデル判定を使う。
 方針・ラベル対応・実行条件・限界は[評価手順](evaluation.md)を参照。#47は結果の集計を扱う。
+
+## M3の統計採用設定（Issue #73）
+
+[固定設定](../configs/segment_stats.yaml)はsam2-dino／threshold=0.35／
+text_threshold=0.25／shade noneを維持する。局所調整0.45は事前の内部採用閾値に
+達しなかった。[同一holdoutの結果と支持表](../bench/issue73/results.md)を参照。
+
+`segment`を既存payloadへ渡し、実機のmodel_paths、入力・出力・taxonomy等を補う。
+`settings_sha256`はsegment/shadeの静的設定だけのSHAで、入力画像・モデルも含める
+既存の`config_hash(payload)`を置き換えない。設定ファイルの自動読込みは行わず、
+#66の投入側が明示的に採用する。
+
+`quality.supported_labels`は空であり、既定の全量解析は診断として保持する。
+検出confidenceが高くてもvalidatedとは扱わず、未支持ラベルをM4向け主統計へ入れない。
+建築・地形それぞれの支持役割が必要なM3有用性条件は未達。公開正解画像を統計入力に
+しない。既存のRegion・run・マスク保存形式は変更しない。
