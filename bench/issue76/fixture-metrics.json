@@ -1,0 +1,56 @@
+{
+  "synthetic_only": true,
+  "python": "3.12.15",
+  "platform": "Windows",
+  "duckdb": "1.4.3",
+  "snapshot_id": "d4936e8959eea65731d97faaa64082e3fb85e01f9e482681509cce44c86f4835",
+  "asset_rows": 80,
+  "sha_distinct": 40,
+  "duplicate_rows": 40,
+  "subjects": 40,
+  "subject_n_eff": 30.0,
+  "max_weight": 2.0,
+  "rule_stat_rows": 24,
+  "support_statuses": {
+    "unsupported": 9,
+    "direct": 9,
+    "smoothed": 6
+  },
+  "aggregate_seconds": 1.907,
+  "report_seconds": 0.39,
+  "snapshot_parquet_bytes": 9601,
+  "json_bytes": 87534,
+  "markdown_bytes": 5719,
+  "m3_checks": [
+    {
+      "condition": 1,
+      "status": "unverified",
+      "reason": "固定7,607件の#66全件監査・品質評価・速度・容量の実測照合が別途必要"
+    },
+    {
+      "condition": 2,
+      "status": "unverified",
+      "reason": "候補・確定・未知と属性stateは報告済み。#72再実行・誤結合監査は別途必要"
+    },
+    {
+      "condition": 3,
+      "status": "passed",
+      "reason": "D15 snapshotの全hash検証と同じ設定でのrule_stat再計算が完全一致"
+    },
+    {
+      "condition": 4,
+      "status": "failed",
+      "reason": "建築・地形それぞれのモデル品質と直接観測subject数・n_effで判定"
+    },
+    {
+      "condition": 5,
+      "status": "passed",
+      "reason": "全対象層・未知・除外・平滑化・支持を出力"
+    },
+    {
+      "condition": 6,
+      "status": "unverified",
+      "reason": "単位・支持・権利の引継ぎ内容は出力済み。Gへの実際の引継ぎ確認が必要"
+    }
+  ]
+}
