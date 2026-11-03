@@ -28,7 +28,8 @@ DBの最新runを自動選択しない。失敗・欠測もコホートへ残す
 }
 ```
 
-- 1つのREPEATABLE READ / READ ONLY取引で必要列を256件ずつ読む。
+- 1つのREPEATABLE READ / READ ONLY取引で関連行をまとめて読む。
+  観測・関係は4096件単位で一時JSONLへ退避し、取引を閉じてから集合結合と色抽出を行う。
   選択asset欠損・重複、未成功run、別asset・異taxonomy・異stage、
   選択prep/segmentとcolorの直接入力不一致、入力循環、採用分割設定不一致は全体失敗。
 - processing_run_inputを再帰的に辿り、全解析入力runの制約を確認する。
@@ -49,29 +50,35 @@ DBの最新runを自動選択しない。失敗・欠測もコホートへ残す
   個別ラベルの支持も評価資料のdomain別に適用し、建築のdoorを地形へ転用しない。
   個別ラベルの観測を足した結果や親からの平滑化を直接支持にしない。
   画像・マスクは生成時だけ必要で、値を固定した後の再集計では不要。
+  D15除外された入力の和集合も残すため、必要解析が揃う全入力の画像を読める実行権限が必要。
   入力ファイルの欠損・改変・抽出失敗も全体失敗。
 
 Parquet一覧:
 
 | ファイル | 主な列と意味 |
 | --- | --- |
-| assets | id、sha256、domain、subject_id、representative_id、eligible、reasons、data（選択run・属性・subject・候補・根拠・収集意図） |
+| assets | id、sha256、domain、subject_id、representative_id、eligible、reasons、data（選択run・属性・subject・候補・根拠・収集意図）、rights_eligible、analysis_available |
 | provenance | asset_id、source_id、data（元URL・サイト・作者・選択ライセンス・帰属・収集時点） |
 | runs | id、stage、data（設定・コード・重みhash・制約・成功時点・input_run_ids） |
 | regions | id、asset_id、run_id、label、data（領域面積比・信頼度・位置等） |
-| observations | id、asset_id、region_id、run_id、eligible、reasons、data（主色・クラスタ分位点・面積比） |
-| relations | id、asset_id、run_id、eligible、reasons、data（順序付き領域参照・B−Aの差・B/A面積比） |
-| groups | id、asset_id、run_id、role、eligible、data（構成領域・画素和集合面積比・主色・由来hash） |
+| observations | id、asset_id、region_id、run_id、eligible、reasons、data（主色・クラスタ分位点・面積比）、quality_eligible |
+| relations | id、asset_id、run_id、eligible、reasons、data（順序付き領域参照・B−Aの差・B/A面積比）、quality_eligible |
+| groups | id、asset_id、run_id、role、eligible、data（構成領域・画素和集合面積比・主色・由来hash）、quality_eligible、reasons |
 
 data/reasons列はParquetのJSON文字列。ID・参照・ゲートは独立した型付き列。
 assets.eligibleは権利・必要解析・SHA代表の入口ゲートであり、
 subject・属性・有効標本数の支持条件を満たしたという意味ではない。
 観測と関係のeligibleはさらに個別ラベル品質を要求する。
-groupsは明示的な粗い役割だけの支持。後続#75で確定subject・根拠ある属性を
+quality_eligibleはD15・SHA選択前の品質支持を示す。groupsは明示的な粗い役割だけの支持。
+観測・関係・groupsのreasonsには、個別の品質除外とassetのD15・欠測・SHA除外を併記する。
+groupsはD15除外前にも抽出する。asset_idでassetsのsha256・subject_id・属性へ結び、
+quality_eligibleで品質を固定したうえでrights_eligibleの前後を比較できる。
+rights_eligibleは権利だけの通過、analysis_availableは権利と独立した必要解析・domainの確認。
+SHA重複前後はsha256とrepresentative_id、最終採用はeligibleを使う。後続#75で確定subject・根拠ある属性を
 選び、未知subjectの診断分布と主統計を分離する。
 
 manifestは選択集合とhash、taxonomy/コード版、固定品質設定とhash、
-DB取引snapshot・分離レベル、段階別件数、複数該当を許す除外理由の件数、
+DB分離レベル・READ ONLY状態、段階別件数、複数該当を許す除外理由の件数、
 全ParquetのSHA-256と行数、DuckDB版、snapshot_idを持つ。
 rights_eligibleは権利ゲート後、analysis_eligibleは必要解析・domainの確認後、
 representativesはさらにSHA代表選択後のasset件数。
@@ -86,8 +93,11 @@ snapshot_idはsnapshot_id自体を除くmanifestの正規JSONのSHA-256。
 正規JSONはUTF-8、キー順・区切りを固定しNaNを禁止する。
 `verify(path, expected_hash)`へ信頼済み呼出し元が保持したsnapshot_idを渡し、
 manifest・ファイル集合・全ファイルhash・行数を照合してから読む。
-同じDB状態・入力集合ではParquet内容と代表が同じになる。
-DB取引識別子が異なる再生成はsnapshot_idまで同一とは約束しない。
+同じ固定データ・入力集合・設定・コード版・DuckDB版では全Parquetとsnapshot_idが一致する。
+入力の列挙順はasset_id順に正規化する。OpenCV・DuckDBはCPU一スレッドで処理する。
+DB取引識別子と読取り時間・全体時間はexecution.jsonへ分離し、内容hashに含めない。
+execution.jsonは監査・計測用であり、集計入力や信頼済みhash検証の対象ではない。
+新列とD15除外前の和集合を使うレポートには新snapshotの生成が必要。旧artifactは上書きしない。
 
 後続aggregateは成功snapshotのhashと固定設定をQueueのキーへ含め、
 runs.parquetの入力runをprocessing_run_inputへ結ぶ。
