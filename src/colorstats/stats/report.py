@@ -1,17 +1,20 @@
 """固定snapshotと集計済みrule_statの偏り・支持範囲を報告する。"""
 
 import math
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
+from types import SimpleNamespace
 
 import duckdb
 
-from colorstats.collect.coverage import matches
+from colorstats.collect.coverage import matches, subject_attributes
 from colorstats.stats.aggregate import CODE_VERSION as AGGREGATE_VERSION
-from colorstats.stats.aggregate import _read, aggregate
+from colorstats.stats.aggregate import _points, _read, aggregate
 from colorstats.stats.snapshot import canonical, digest, verify
+from colorstats.stats.weights import assign_strata
 
-CODE_VERSION = "report-v1"
+CODE_VERSION = "report-v2"
+NON_RIGHTS_REASONS = {"missing_analysis", "unsupported_domain", "sha_duplicate"}
 
 
 def _rate(numerator, denominator):
@@ -34,31 +37,38 @@ def _concentration(values):
     }
 
 
+def _subject_attributes(asset):
+    subject = asset["data"].get("subject")
+    if not subject:
+        return {}
+    values = subject_attributes(SimpleNamespace(
+        scene_attributes=subject["scene_attributes"], domain=asset["domain"],
+        location=subject.get("location"), era=subject.get("era"),
+    ))
+    return {key: value for key, value in values.items() if value is not None}
+
+
 def _attributes(asset):
     data = asset["data"]
     return (
-        (data.get("subject") or {}).get("scene_attributes", {})
+        _subject_attributes(asset)
         | data["scene_attributes"]
         | {"domain": asset["domain"]}
     )
 
 
-def _summary(rows, provenance, target=None):
+def _rights_eligible(asset):
+    return not set(asset["reasons"]) - NON_RIGHTS_REASONS
+
+
+def _summary(rows, provenance, assignments, target=None, stratum=None):
     count = len(rows)
     eligible = [r for r in rows if r["eligible"]]
     reasons = Counter(reason for r in rows for reason in r["reasons"])
-    # 権利以外のsnapshot除外は解析不足・対象外domain・SHA重複の3種。
-    rights = [
-        r
-        for r in rows
-        if not set(r["reasons"])
-        - {
-            "missing_analysis",
-            "unsupported_domain",
-            "sha_duplicate",
-        }
-    ]
-    subjects = {r["subject_id"] for r in eligible if r["subject_id"]}
+    rights = [r for r in rows if _rights_eligible(r)]
+    available = {r["subject_id"] for r in eligible if r["subject_id"]}
+    subjects = {sid for sid in available if assignments.get(sid) is not None
+                and (stratum is None or assignments[sid] == stratum)}
     candidate = sum(not r["subject_id"] and bool(r["data"].get("candidates")) for r in rows)
     unknown = sum(not r["subject_id"] and not r["data"].get("candidates") for r in rows)
     authors, providers, sites, regions, locations, licenses, subject_ids = ([] for _ in range(7))
@@ -89,6 +99,8 @@ def _summary(rows, provenance, target=None):
         "rights_eligible_sha": len({r["sha256"] for r in rights}),
         "confirmed_subjects_before": len({r["subject_id"] for r in rows if r["subject_id"]}),
         "confirmed_subjects_after": len(subjects),
+        "confirmed_subjects_after_snapshot": len(available),
+        "unassigned_subjects": len(available - subjects),
         "subject_deficit": max(0, target - len(subjects)) if target is not None else None,
         "confirmed_images": _rate(sum(bool(r["subject_id"]) for r in rows), count),
         "candidate_only_images": _rate(candidate, count),
@@ -109,6 +121,76 @@ def _summary(rows, provenance, target=None):
     }
 
 
+def _role_support(
+    assets, regions, observations, groups, settings, quality, statistics, assignments, valid_roles,
+):
+    by_id = {row["id"]: row for row in assets}
+    attributes = {row["id"]: _attributes(row) for row in assets}
+    by_region = {row["id"]: row for row in regions}
+    recorded = defaultdict(set)
+    roles = defaultdict(set)
+    for domain, labels in quality["supported_by_domain"].items():
+        roles[domain].update(labels)
+    for row in regions:
+        roles[by_id[row["asset_id"]]["domain"]].add(row["label"])
+    for row in observations:
+        if row["region_id"] is not None:
+            region = by_region[row["region_id"]]
+            domain = by_id[row["asset_id"]]["domain"]
+            recorded[domain, region["label"]].add(row["asset_id"])
+    unions = {}
+    for key, members in quality.get("group_members", {}).items():
+        domain, role = key.split("/", 1)
+        roles[domain].add(role)
+        recorded[domain, role] = {row["asset_id"] for row in groups if row["role"] == key}
+        unions[domain, role] = {
+            row["asset_id"] for row in regions
+            if by_id[row["asset_id"]]["domain"] == domain and row["label"] in members
+        }
+    conditions = {canonical(row["conditions"]): row["conditions"] for row in statistics["rows"]}
+    scopes = [("condition", None, conditions[key]) for key in sorted(conditions)]
+    scopes += [("stratum", layer["id"], layer["attributes"]) for layer in settings["strata"]]
+    result = []
+    for scope, stratum, condition in scopes:
+        domain = condition["domain"]
+        selected = {row["id"] for row in assets if matches(attributes[row["id"]], {
+            "attributes": condition,
+        })}
+        for role in sorted(roles[domain]):
+            key = domain, role
+            ids = selected & recorded[key]
+            unknown = (selected & unions.get(key, set())) - recorded[key]
+            before = {by_id[aid]["subject_id"] for aid in ids if by_id[aid]["subject_id"]}
+            after = {by_id[aid]["subject_id"] for aid in ids
+                     if by_id[aid]["subject_id"] and _rights_eligible(by_id[aid])}
+            unknown_after = {aid for aid in unknown if _rights_eligible(by_id[aid])}
+            model_validated = (role in quality["supported_by_domain"].get(domain, [])
+                               or key in unions)
+            adopted = {by_id[aid]["subject_id"] for aid in selected & valid_roles[key]
+                       if by_id[aid]["eligible"]
+                       and assignments.get(by_id[aid]["subject_id"]) is not None
+                       and (stratum is None or assignments[by_id[aid]["subject_id"]] == stratum)}
+            entry = {
+                "scope": scope, "stratum": stratum, "conditions": condition, "role": role,
+                "kind": "union" if key in unions else "region",
+                "recorded_subjects_before_d15": None if unknown else len(before),
+                "recorded_subjects_after_d15": None if unknown_after else len(after),
+                "lost_subjects_d15": None if unknown else len(before - after),
+                "subjects_after_analysis": len({by_id[aid]["subject_id"] for aid in ids
+                                                if by_id[aid]["eligible"]
+                                                and by_id[aid]["subject_id"]}),
+                "adopted_subjects": len(adopted), "model_validated": model_validated,
+                "exclusion_reasons": dict(sorted(Counter(
+                    reason for aid in ids | unknown for reason in by_id[aid]["reasons"]
+                ).items())),
+                "unverified_union_assets": len(unknown), "complete": not unknown,
+            }
+            if unknown:
+                entry["reason"] = "和集合色が未保存。構成部位の存在を和集合色の支持に代用しない"
+            result.append(entry)
+    return result
+
+
 def report(snapshot, expected_hash, statistics, settings):
     """snapshotを検証・再集計し、同じrule_stat行だけから決定的な報告を返す。
 
@@ -122,11 +204,21 @@ def report(snapshot, expected_hash, statistics, settings):
     if canonical(statistics) != canonical(recomputed):
         raise ValueError("snapshot・設定とrule_statの再計算結果が一致しません")
     with duckdb.connect() as db:
-        for table in ("assets", "provenance", "runs", "observations", "relations", "groups"):
+        for table in (
+            "assets", "provenance", "runs", "regions", "observations", "relations", "groups",
+        ):
             db.read_parquet(str(Path(snapshot) / (table + ".parquet"))).create_view(table)
         assets = list(_read(db, "assets"))
         provenance = {r["asset_id"]: r["data"] for r in _read(db, "provenance")}
         runs = list(_read(db, "runs"))
+        regions = list(_read(db, "regions"))
+        color_observations = list(_read(db, "observations"))
+        groups = list(_read(db, "groups"))
+        by_id = {row["id"]: row for row in assets}
+        valid_roles = defaultdict(set)
+        for aid, kind, parts, _, _ in _points(db, by_id, manifest["quality"]):
+            if kind == "palette":
+                valid_roles[by_id[aid]["domain"], parts[0]].add(aid)
         observations = {}
         for table in ("observations", "relations", "groups"):
             rows = list(_read(db, table))
@@ -137,6 +229,13 @@ def report(snapshot, expected_hash, statistics, settings):
                     sorted(Counter(reason for r in rows for reason in r.get("reasons", [])).items())
                 ),
             }
+    normalized = {
+        row["id"]: row | {"data": row["data"] | {"subject": (row["data"].get("subject") or {}) | {
+            "scene_attributes": _subject_attributes(row), "domain": row["domain"],
+        }}} for row in assets
+    }
+    assignments, assignment_reasons = assign_strata(normalized, settings["strata"])
+    eligible = [row for row in assets if row["eligible"]]
     intended, inferred = {}, {}
     conflicts, missing, mismatch, multiple, outside = [], [], [], [], []
     states = {}
@@ -156,7 +255,7 @@ def report(snapshot, expected_hash, statistics, settings):
         )
         intended[row["id"]] = [s["id"] for s in settings["strata"] if matches(intent, s)]
         inferred[row["id"]] = [s["id"] for s in settings["strata"] if matches(attrs, s)]
-        subject_attrs = (data.get("subject") or {}).get("scene_attributes", {})
+        subject_attrs = _subject_attributes(row)
         if any(
             k in subject_attrs and subject_attrs[k] != v
             for k, v in data["scene_attributes"].items()
@@ -186,8 +285,10 @@ def report(snapshot, expected_hash, statistics, settings):
                 "id": layer["id"],
                 "attributes": layer["attributes"],
                 "target_subjects": layer["subjects"],
-                "inferred": _summary(selected, provenance, layer["subjects"]),
-                "intended": _summary(intent_rows, provenance, layer["subjects"]),
+                "inferred": _summary(selected, provenance, assignments,
+                                     layer["subjects"], layer["id"]),
+                "intended": _summary(intent_rows, provenance, assignments,
+                                     layer["subjects"], layer["id"]),
                 "intent_comparison": {
                     key: _rate(
                         len({r["id"] for r in intent_rows} & {r["id"] for r in cohort}),
@@ -242,7 +343,18 @@ def report(snapshot, expected_hash, statistics, settings):
             "basis": "親からの借用ではなく当該役割の直接観測支持",
         }
     all_count = len(assets)
-    overall = _summary(assets, provenance)
+    overall = _summary(assets, provenance, assignments)
+    rights_support = _role_support(
+        assets, regions, color_observations, groups, settings, manifest["quality"],
+        statistics, assignments, valid_roles,
+    )
+    observed_assets = {
+        observation["asset_id"] for observation in color_observations
+        if observation["region_id"] is not None
+    }
+    unobserved = sum(not _rights_eligible(row) and row["id"] not in observed_assets
+                     for row in assets)
+    rights_complete = not unobserved and all(row["complete"] for row in rights_support)
     checks = [
         {
             "condition": 1,
@@ -264,7 +376,9 @@ def report(snapshot, expected_hash, statistics, settings):
             "status": "passed" if all(g["passed"] for g in gates.values()) else "failed",
             "reason": "建築・地形それぞれのモデル品質と直接観測subject数・n_effで判定",
         },
-        {"condition": 5, "status": "passed", "reason": "全対象層・未知・除外・平滑化・支持を出力"},
+        {"condition": 5, "status": "passed" if rights_complete else "unverified",
+         "reason": ("全対象層と条件・役割別のD15前後支持を出力" if rights_complete else
+                    "D15除外前の和集合色・部位観測が不足。#74の追加診断根拠が必要")},
         {
             "condition": 6,
             "status": "unverified",
@@ -295,13 +409,26 @@ def report(snapshot, expected_hash, statistics, settings):
         }
         | {
             "attribute_states": {k: dict(sorted(v.items())) for k, v in states.items()},
-            "unassigned": _rate(sum(not found for found in inferred.values()), all_count),
+            "image_unassigned": _rate(sum(not found for found in inferred.values()), all_count),
+            "unassigned": _rate(sum(assignments.get(row["subject_id"]) is None
+                                    for row in eligible), len(eligible)),
+            "assignment_scope": "適格SHA代表画像。同一subjectの層矛盾はsubject全体を棄却",
+            "subject_stratum_conflict": _rate(sum(
+                "subject_stratum_conflict" in assignment_reasons.get(row["subject_id"], [])
+                for row in eligible
+            ), len(eligible)),
+            "unassigned_subject_reasons": dict(sorted(Counter(
+                reason for reasons in assignment_reasons.values() for reason in reasons
+            ).items())),
             "stratum_counts_are_not_additive": True,
         },
         "observation_exclusions": observations,
         "snapshot_exclusions": manifest["exclusions"],
         "model_quality": manifest["quality"],
         "support": support,
+        "rights_support": rights_support,
+        "rights_support_scope": "保存済み部位色の確定subject数。重み・品質・属性採用後の支持と区別",
+        "unobserved_rights_excluded_assets": unobserved,
         "usefulness_gates": gates,
         "processing": {
             "runs": runs,
@@ -348,7 +475,7 @@ def markdown(data):
         "- 層は重複し得るため合計しない。空分母の率はnull。詳細・感度分布はJSONを参照。",
         "",
         ("| 層 | 意図行数 | 属性一致行数 | SHA異なり | 重複行 | 適格/分母 | "
-         "subject前→後 | 不足 | 除外理由（件数/分母） |"),
+         "subject前/適格/採用 | 不足 | 除外理由（件数/分母） |"),
         "|---|---:|---:|---:|---:|---|---|---:|---|",
     ]
     for layer in [
@@ -367,7 +494,8 @@ def markdown(data):
             f"| {layer['id']} | {layer['intended']['asset_rows']} | {row['asset_rows']} | "
             f"{row['sha_distinct']} | {row['duplicate_rows']} | "
             f"{rate['numerator']}/{rate['denominator']} | "
-            f"{row['confirmed_subjects_before']}→{row['confirmed_subjects_after']} | "
+            f"{row['confirmed_subjects_before']}/{row['confirmed_subjects_after_snapshot']}/"
+            f"{row['confirmed_subjects_after']} | "
             f"{row['subject_deficit']} | {excluded} |"
         )
     lines += [
@@ -408,6 +536,17 @@ def markdown(data):
             f"{row['effective_sample_size']:.6g} | {quality['max_weight']:.6g} | "
             f"{quality['missing_target_mass']:.6g} |"
         )
+    lines += ["", "## 層・条件と役割別のD15前後支持", "",
+              "保存済み部位色を持つ確定subject数。未保存の和集合色はnullとし、採用支持へ足さない。",
+              "| 範囲 | 役割 | D15前 | D15後 | D15で失ったsubject | 採用subject | 根拠不足画像 |",
+              "|---|---|---:|---:|---:|---:|---:|"]
+    for row in data["rights_support"]:
+        scope = row["stratum"] or canonical(row["conditions"])
+        cells = [str(row[key]) if row[key] is not None else "未確認" for key in (
+            "recorded_subjects_before_d15", "recorded_subjects_after_d15", "lost_subjects_d15",
+            "adopted_subjects", "unverified_union_assets",
+        )]
+        lines.append(f"| {scope} | {row['role']} | " + " | ".join(cells) + " |")
     lines += ["", "## M3完成条件", ""]
     lines += [f"- 条件{c['condition']}: {c['status']} — {c['reason']}" for c in data["m3_checks"]]
     lines += ["", "## Gへの引継ぎ", ""]

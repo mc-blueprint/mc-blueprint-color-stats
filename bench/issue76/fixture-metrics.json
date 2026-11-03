@@ -16,11 +16,11 @@
     "direct": 9,
     "smoothed": 6
   },
-  "aggregate_seconds": 1.907,
-  "report_seconds": 0.39,
+  "aggregate_seconds": 1.406,
+  "report_seconds": 0.282,
   "snapshot_parquet_bytes": 9601,
-  "json_bytes": 87534,
-  "markdown_bytes": 5719,
+  "json_bytes": 97112,
+  "markdown_bytes": 7992,
   "m3_checks": [
     {
       "condition": 1,
@@ -45,7 +45,7 @@
     {
       "condition": 5,
       "status": "passed",
-      "reason": "全対象層・未知・除外・平滑化・支持を出力"
+      "reason": "全対象層と条件・役割別のD15前後支持を出力"
     },
     {
       "condition": 6,

@@ -130,7 +130,8 @@ def test_unclassified_candidates_intent_conflicts_and_overlap(tmp_path, settings
     assert data["classification"]["attributes_conflict"]["numerator"] == 1
     assert data["classification"]["intent_mismatch"]["numerator"] == 4
     assert data["classification"]["multiple_strata"]["numerator"] == 4
-    assert data["classification"]["unassigned"]["numerator"] == 1
+    assert data["classification"]["image_unassigned"]["numerator"] == 1
+    assert data["classification"]["unassigned"]["numerator"] == 5
     assert data["overall"]["candidate_only_images"]["numerator"] == 1
     assert data["overall"]["unknown_subject_images"]["numerator"] == 1
     assert data["strata"][1]["intended"]["asset_rows"] == 5
@@ -297,3 +298,148 @@ def test_shared_sha_is_counted_once_globally_not_per_stratum_sum(tmp_path, setti
     assert data["overall"]["duplicate_rows"] == 2
     assert data["strata"][0]["inferred"]["duplicate_rows"] == 1
     assert data["strata"][1]["inferred"]["duplicate_rows"] == 0
+
+
+def test_subject_location_and_era_use_collection_attribute_reader(tmp_path):
+    settings = load_settings(ROOT / "configs/stats.yaml",
+                             ROOT / "configs/collection_targets.yaml", ROOT / "taxonomy")
+    root = tmp_path / "snapshot"
+    snapshot(root, 1)
+
+    def change(db, manifest):
+        data = json.loads(db.execute("SELECT data FROM assets").fetchone()[0])
+        data["subject"] = {"scene_attributes": {}, "location": "europe", "era": "medieval"}
+        db.execute("UPDATE assets SET data=?", [canonical(data)])
+
+    identifier = revise(root, change)
+    data = report(root, identifier, aggregate(root, identifier, settings), settings)
+    layer = next(row for row in data["strata"] if row["id"] == "gothic-temple")["inferred"]
+    assert layer["asset_rows"] == layer["confirmed_subjects_after"] == 1
+    assert layer["subject_deficit"] == 99
+    assert data["classification"]["attributes_missing"]["numerator"] == 0
+    assert data["classification"]["attribute_states"]["region"] == {"recorded": 1}
+    assert data["classification"]["attribute_states"]["era"] == {"recorded": 1}
+
+
+@pytest.mark.parametrize("exclude_conflicting_image", [False, True])
+def test_subject_stratum_conflict_changes_adopted_support_and_deficits(
+    tmp_path, settings, exclude_conflicting_image,
+):
+    root = tmp_path / "snapshot"
+    snapshot(root, 2, split=1)
+
+    def change(db, manifest):
+        db.execute("UPDATE assets SET subject_id='same-subject'")
+        if exclude_conflicting_image:
+            db.execute("UPDATE assets SET eligible=false, reasons=? WHERE id='asset-0001'",
+                       ['["license_conditions"]'])
+            for table in ("observations", "groups"):
+                db.execute(f"UPDATE {table} SET eligible=false WHERE asset_id='asset-0001'")
+
+    identifier = revise(root, change)
+    stats = aggregate(root, identifier, settings)
+    data = report(root, identifier, stats, settings)
+    a, b = (row["inferred"] for row in data["strata"][:2])
+    assert a["asset_rows"] == b["asset_rows"] == 1
+    assert b["confirmed_subjects_after"] == 0
+    assert b["subject_deficit"] == 100
+    if exclude_conflicting_image:
+        assert a["confirmed_subjects_after"] == cell(stats)["subject_count"] == 1
+        assert a["subject_deficit"] == 99
+        assert data["classification"]["subject_stratum_conflict"]["numerator"] == 0
+    else:
+        assert a["confirmed_subjects_after_snapshot"] == b["confirmed_subjects_after_snapshot"] == 1
+        assert a["confirmed_subjects_after"] == cell(stats)["subject_count"] == 0
+        assert a["subject_deficit"] == 100
+        assert data["classification"]["image_unassigned"]["numerator"] == 0
+        assert data["classification"]["unassigned"] == {
+            "numerator": 2, "denominator": 2, "value": 1,
+        }
+        assert data["classification"]["subject_stratum_conflict"]["numerator"] == 2
+        assert data["classification"]["unassigned_subject_reasons"] == {
+            "subject_stratum_conflict": 1,
+        }
+
+
+@pytest.mark.parametrize(("terrain", "role", "union", "stratum"), [
+    (False, "wall_main", "wall", "a"), (True, "tree_trunk", "tree", "t"),
+])
+@pytest.mark.parametrize("missing_union", [False, True])
+def test_role_specific_d15_losses_and_incomplete_union_evidence(
+    tmp_path, settings, terrain, role, union, stratum, missing_union,
+):
+    root = tmp_path / "snapshot"
+    snapshot(root, 2, terrain=terrain)
+    domain = "real_terrain" if terrain else DOMAIN
+
+    def change(db, manifest):
+        manifest["quality"]["supported_by_domain"][domain].append(role)
+        db.execute("UPDATE assets SET eligible=false, reasons=? WHERE id='asset-0000'",
+                   ['["license_conditions","license_not_allowed"]'])
+        db.execute("DELETE FROM observations WHERE asset_id='asset-0000'")
+        if terrain:
+            db.execute("DELETE FROM observations WHERE asset_id='asset-0001'")
+        db.execute("INSERT INTO observations VALUES (?,?,?,?,?,?,?)", [
+            "rights-excluded", "asset-0000", "unsupported-asset-0000", "color", False, "[]",
+            canonical({"observed_oklab": {"dominant": [.5, 0, 0]}, "area_ratio": 1}),
+        ])
+        db.execute("UPDATE groups SET eligible=false WHERE asset_id='asset-0000'")
+        if missing_union:
+            db.execute("DELETE FROM groups WHERE asset_id='asset-0000'")
+
+    identifier = revise(root, change)
+    data = report(root, identifier, aggregate(root, identifier, settings), settings)
+    for scope in ("condition", "stratum"):
+        rows = [r for r in data["rights_support"] if r["scope"] == scope
+                and r["conditions"] == ({"domain": domain} if scope == "condition" else
+                                         next(s["attributes"] for s in settings["strata"]
+                                              if s["id"] == stratum))]
+        individual = next(r for r in rows if r["role"] == role)
+        assert individual["recorded_subjects_before_d15"] == 1
+        assert individual["recorded_subjects_after_d15"] == 0
+        assert individual["lost_subjects_d15"] == 1
+        assert individual["adopted_subjects"] == 0
+        assert individual["exclusion_reasons"]["license_conditions"] == 1
+        combined = next(r for r in rows if r["role"] == union)
+        assert combined["recorded_subjects_after_d15"] == 1
+        if missing_union:
+            assert combined["recorded_subjects_before_d15"] is None
+            assert combined["lost_subjects_d15"] is None
+            assert combined["unverified_union_assets"] == 1
+        else:
+            assert combined["recorded_subjects_before_d15"] == 2
+            assert combined["lost_subjects_d15"] == 1
+    assert data["m3_checks"][4]["status"] == ("unverified" if missing_union else "passed")
+    rendered = markdown(data)
+    assert "D15で失ったsubject" in rendered and role in rendered
+
+
+def test_role_d15_loss_does_not_count_a_subject_retained_by_another_image(tmp_path, settings):
+    root = tmp_path / "snapshot"
+    snapshot(root, 2)
+
+    def change(db, manifest):
+        db.execute("UPDATE assets SET subject_id='same-subject'")
+        db.execute("UPDATE assets SET eligible=false, reasons=? WHERE id='asset-0000'",
+                   ['["license_conditions"]'])
+        for table in ("observations", "groups"):
+            db.execute(f"UPDATE {table} SET eligible=false WHERE asset_id='asset-0000'")
+
+    identifier = revise(root, change)
+    data = report(root, identifier, aggregate(root, identifier, settings), settings)
+    door = next(row for row in data["rights_support"] if row["role"] == "door"
+                and row["scope"] == "condition" and row["conditions"] == {"domain": DOMAIN})
+    assert door["recorded_subjects_before_d15"] == door["recorded_subjects_after_d15"] == 1
+    assert door["lost_subjects_d15"] == 0
+    assert door["adopted_subjects"] == 1
+
+
+def test_recorded_zero_area_color_is_not_adopted_role_support(tmp_path, settings):
+    root = tmp_path / "snapshot"
+    identifier = snapshot(root, 1, zero=True)
+    stats = aggregate(root, identifier, settings)
+    data = report(root, identifier, stats, settings)
+    door = next(row for row in data["rights_support"] if row["role"] == "door"
+                and row["scope"] == "condition" and row["conditions"] == {"domain": DOMAIN})
+    assert door["recorded_subjects_before_d15"] == 1
+    assert door["adopted_subjects"] == cell(stats, ("door",))["subject_count"] == 0

@@ -31,6 +31,9 @@ def test_snapshot_db_contract_and_d15_denominators(queue, asset, tmp_path, setti
     assert overall["exclusions"]["missing_analysis"]["numerator"] == 1
     assert overall["concentration"]["site"]["counts"] == {"fixture": 9}
     assert overall["concentration"]["author"]["counts"] == {"作者": 9}
-    assert data["classification"]["unassigned"]["numerator"] == 9
+    assert data["classification"]["image_unassigned"]["numerator"] == 9
+    assert data["classification"]["unassigned"] == {
+        "numerator": 2, "denominator": 2, "value": 1,
+    }
     assert data["observation_exclusions"]["observations"]["eligible"]["numerator"] == 2
     assert not any(g["passed"] for g in data["usefulness_gates"].values())
