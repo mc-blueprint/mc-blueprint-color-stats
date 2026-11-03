@@ -112,3 +112,36 @@ revision `0002` で `job` を追加し、成功した `processing_run` と1対1�
 テストは空でないDBを拒否する。本番DBでは実行しない。ローカルで実DBテストがskipになることは適用成功を意味しない。
 
 初版は既存保存データの移行なし。`downgrade base` は全対象テーブルとそのデータを削除するため、本番の運用巻戻し前にはバックアップと影響確認が必要。
+
+### Issue #72: 対象推定の根拠
+
+スキーマ・Enumは変更しない。`asset.subject_id`は確定のみで、未確定はNULLを保つ。
+`asset.quality.subject_inference`にmethod、state（confirmed/candidate/unknown）、
+reasons、config_hash、run_idを全件保存する。候補・未知をsubject件数へ加算しない。
+`subject_candidate.evidence`は対象キー、元asset、ルールの根拠、設定hash、run_idを持つ。
+confidenceは未校正のルールスコアであり確率ではない。
+自分の前回生成候補は再推定し、外部で作られた候補根拠はexternal_evidenceとして保持する。
+SHA群の弱い対象名も競合根拠に含め、スナップショットのidentity_targets・sha_conflictsに
+対象IDと元assetを保存する。ファイル名だけの旧subjectを別対象の根拠にはしない。
+
+`asset.scene_attributes`にはtaxonomy内の一意に推定できた値だけを追加し、
+`quality.scene_inference.attributes`に属性ごとのinferred/preserved/conflict/unknownと根拠を保存する。
+既存値を保持し、自分の前回推定値は再計算する。検索意図は推定根拠に含めない。
+未知・矛盾の属性を検索意図で埋めて主統計へ渡してはならない。
+既存値のpreservedはこの処理で根拠を検証した意味ではないため、後続のsnapshotでは区別する。
+
+`processing_run.stage=subject`はJobを使わない独立処理。
+全件更新とrun成功を1取引で確定し、JSONスナップショットの新規パスをoutput_pathsに記録する。
+失敗時は部分更新を残さない。ファイルとDBは分散取引ではないため、成功runに参照されない
+スナップショットを成功結果として採用しない。旧runの外部スナップショットは上書きしない。
+
+`processing_run.parameters.subject_keys`にdomain・対象キー・subject IDの確認済み対応を保存する。
+名称の一致を既存subjectの再利用根拠にせず、候補の再計算で根拠行が消えた場合も成功runの
+対応を参照する。旧形式の候補根拠から対応を確認する場合は、対象キーの決定的UUID、
+成功runと設定hash、名称・固有カテゴリの独立根拠がすべて一致するものに限定する。
+
+明示的な再評価では、スナップショットのprevious_subject_idがNULLだった関連付けだけを
+当該runが新規に付けたものとして扱う。旧スナップショットはexisting_confirmed理由を照合する。
+現在のrun参照と対象も一致する場合だけ再評価し、同じ対象へ確定できなければNULLへ戻す。
+reconsider_run・reconsidered_assignments・preserved_prior_assignments・revoked_assignmentsを
+runとスナップショットへ保存する。取消と再推定、属性再計算も同じ取引内で確定する。
