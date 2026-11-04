@@ -17,4 +17,12 @@ source/asset/runの詳細、座標・自由文・検索履歴・署名URLは配�
 原画像の期限清掃だけでは完成済みの非表現的統計を一律失効させない。
 
 M4の必須回帰は同じD15ゲート、NC重み・根拠欠落の拒否、画像・マスク・個別追跡情報の混入拒否、
-必要最小帰属、失効後の再ビルド。#88が保持・削除・CVAT/公開境界を実装し、窓口を確定する。
+必要最小帰属、失効後の再ビルド。
+
+#88の受け口は`colorstats.pack_boundary.validate_public(payload, session=..., selection=...)`。
+固定キーの数値統計・provider別件数・policy/build版・MIT識別子だけを許可し、未知キーや
+自由文・画像・個別追跡情報を拒否する。`tests/test_retention.py`のPUBLICと混入fixtureを
+M4の回帰に引き継ぐ。selectionは非公開の依存索引とし、受付と同じDBロック内で
+現行停止台帳を確認して公開を確定する。実ビルダーの接続と必要帰属の公開schemaはM4で行う。
+必要帰属がある候補はschema確定まで保留する。
+目的・保持期間・GitHub Issue窓口と管理手順は[保持・削除](retention.md)を参照する。

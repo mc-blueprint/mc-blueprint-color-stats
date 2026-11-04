@@ -12,6 +12,7 @@ from sqlalchemy import null, select
 
 from colorstats.queue.core import RunInfo
 from colorstats.queue.worker import Prepared
+from colorstats.retention import check_selection, lock
 from colorstats.rights import combine_license
 from colorstats.schema.models import ProcessingRun, ProcessingRunInput, RuleStat
 from colorstats.stats import distributions, weights
@@ -364,6 +365,9 @@ def register(session, run, data):
 
     不一致はValueErrorとし、所有権とrollbackはQueueに委ねる。
     """
+    lock(session)
+    manifest = verify(Path(run.parameters["payload"]["snapshot"]), data["snapshot_id"])
+    check_selection(session, manifest["selection"])
     if (run.stage != "aggregate" or run.config_hash != config_hash(run.parameters["payload"])
             or data["snapshot_id"] != run.parameters["payload"]["snapshot_id"]
             or run.taxonomy_version != data["taxonomy_version"]):

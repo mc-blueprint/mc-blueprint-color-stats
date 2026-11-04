@@ -14,6 +14,10 @@ def exclusion_reasons(asset, source, runs):
     """選択済み権利と全入力runの制約から除外理由を返す。カテゴリで再選択しない。"""
     reasons = set()
     quality = asset["quality"]
+    if any(p.get("use_stopped") or p.get("deletion_requested") for p in (
+        quality.get("rights", {}), source.get("policy", {}),
+    )):
+        reasons.add("rights_use_stopped")
     chosen = selected_license(quality.get("license") or "")
     origin = selected_license(source["license"])
     if not chosen or chosen != origin:

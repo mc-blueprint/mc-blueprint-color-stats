@@ -7,6 +7,7 @@ import json
 import math
 import os
 import random
+import socket
 import uuid
 import zipfile
 from collections import defaultdict
@@ -17,6 +18,7 @@ from xml.etree import ElementTree
 from sqlalchemy import create_engine, select, text
 from sqlalchemy.orm import Session
 
+from colorstats import retention
 from colorstats.schema.models import Asset, ProcessingRun, Region
 from colorstats.schema.taxonomy import load_taxonomy
 
@@ -109,7 +111,8 @@ def prepare_draft(manifest: Path, output: Path, taxonomy_dir: Path):
     try:
         for path, data in [(output, xml), (output.with_suffix(".json"),
                            json.dumps(baseline, ensure_ascii=False, indent=2).encode())]:
-            with path.open("xb") as file:
+            descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(descriptor, "wb") as file:
                 paths.append(path)
                 file.write(data)
     except BaseException:
@@ -334,6 +337,7 @@ def annotation_diff(baseline: dict, polygons: dict) -> dict:
 def import_cvat(
     archive: Path, manifest: Path, mask_dir: Path, taxonomy_dir: Path, database_url: str,
     draft: Path,
+    *, host=None,
 ):
     """選定manifestとDBのID・SHA・寸法を照合し、人手注釈を新しいrunへ登録する。
 
@@ -350,12 +354,14 @@ def import_cvat(
     taxonomy = load_taxonomy(taxonomy_dir)
     engine = create_engine(database_url)
     files = []
+    host = host or socket.gethostname()
     try:
         with Session(engine) as session, session.begin():
             session.execute(
                 text("SELECT pg_advisory_xact_lock(41, :key)"),
                 {"key": int.from_bytes(bytes.fromhex(digest[:8]), signed=True)},
             )
+            retention.lock(session)
             if session.execute(
                 select(ProcessingRun.id).where(
                     ProcessingRun.stage == "human_annotation", ProcessingRun.config_hash == digest
@@ -366,6 +372,7 @@ def import_cvat(
             for row in assets.values():
                 asset_id = uuid.UUID(row["asset_id"])
                 asset = session.get(Asset, asset_id)
+                retention.assert_usable(session, asset_id, images=True)
                 if asset is None or asset.sha256.lower() != row["sha256"].lower():
                     raise ValueError(f"asset IDまたはSHA-256が一致しません: {row['filename']}")
                 if (int(row["export_width"]), int(row["export_height"])) != (
@@ -376,9 +383,10 @@ def import_cvat(
                 db_assets[row["filename"]] = asset
             output_paths = {"masks": str(mask_dir.resolve())}
             path = mask_dir / f"{uuid.uuid4()}-draft.json"
-            path.parent.mkdir(parents=True, exist_ok=True)
+            path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
             files.append(path)
             path.write_text(json.dumps(baseline, ensure_ascii=False), encoding="utf-8")
+            path.chmod(0o600)
             output_paths["draft"] = str(path.resolve())
             license_classes = {asset.license_class for asset in db_assets.values()}
             run_ids = {}
@@ -413,12 +421,13 @@ def import_cvat(
                     region_id = uuid.uuid4()
                     relative = Path(str(row["asset_id"])) / f"{region_id}.json"
                     path = mask_dir / relative
-                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
                     files.append(path)
                     path.write_text(
                         json.dumps({"format": "polygon-pixels-v1", "points": shape["points"]}),
                         encoding="utf-8",
                     )
+                    path.chmod(0o600)
                     bbox = [
                         min(p[0] for p in shape["points"]),
                         min(p[1] for p in shape["points"]),
@@ -440,6 +449,12 @@ def import_cvat(
                             area_ratio=min(shape["area"] / (width * height), 1.0),
                         )
                     )
+            for asset in db_assets.values():
+                if session.scalar(select(retention.Retention.id).where(
+                    retention.Retention.asset_id == asset.id,
+                )) is not None:
+                    for path in [archive, manifest, draft, *files]:
+                        retention.register_file(session, asset.id, host, path, "cvat")
     except BaseException:
         for path in files:
             path.unlink(missing_ok=True)

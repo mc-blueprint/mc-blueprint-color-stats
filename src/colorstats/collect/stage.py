@@ -3,16 +3,19 @@
 import hashlib
 import json
 import logging
+import os
 import shutil
 from collections.abc import Callable
 from dataclasses import asdict
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 from urllib.error import HTTPError
 
-from sqlalchemy import select
+from sqlalchemy import create_engine, select
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.orm import Session
 
+from colorstats import retention
 from colorstats.collect import Candidate, SearchRequest
 from colorstats.collect.commons import CommonsAdapter, check_commons_policy
 from colorstats.collect.http import MeasurementLimit
@@ -86,6 +89,7 @@ def prepare(
     decide: Callable[[SearchRequest, Candidate], str | None] | None = None,
     discard: Callable[[SearchRequest, Candidate], None] | None = None,
     observer=None,
+    database_url=None,
 ):
     """原本準備を行う。decideは取得直前に順次呼び、除外理由または採用のNoneを返す。
 
@@ -125,6 +129,8 @@ def prepare(
     if observer is not None:
         adapter.observer = observe
     temporary = None
+    database_url = database_url or os.environ.get("DATABASE_URL")
+    engine = create_engine(database_url) if database_url else None
     try:
         observe("search", parameters.copy())
         try:
@@ -141,6 +147,11 @@ def prepare(
             candidates = result.candidates
         observe("search", parameters.copy())
         for candidate in candidates:
+            if engine is not None:
+                with Session(engine) as session:
+                    retention.check_acquisition(
+                        session, request.provider, candidate.source_url, candidate.original_url,
+                    )
             category = license_class(payload["policy"], candidate.license)
             extension = MIME_EXTENSIONS.get(candidate.mime)
             reason = (
@@ -260,14 +271,21 @@ def prepare(
         raise
     finally:
         adapter.finish()
+        if engine is not None:
+            engine.dispose()
 
 
 def register(session, run, data):
     """キューの所有権付き完了取引内で登録する。ファイルI/Oとcommitは行わない。"""
     payload = data["payload"]
+    retention.lock(session)
     asset_ids = []
     for record in data["records"]:
         candidate = record["candidate"]
+        retention.check_acquisition(
+            session, payload["request"]["provider"], candidate["source_url"],
+            candidate["original_url"],
+        )
         attribution = candidate["attribution"]
         source_id = session.scalar(
             insert(Source)
@@ -327,13 +345,11 @@ def register(session, run, data):
                     "rights_basis", "rights_review", "attribution_required", "access_scope",
                     "image_redistribution", "retention",
                 )},
-                retention_until=(record["retrieved_at"] + timedelta(
-                    days=payload["policy"]["retention"]["raw_days"]
-                )).isoformat(),
                 provider=payload["request"]["provider"], original_id=candidate["source_url"],
                 retrieved_at=record["retrieved_at"].isoformat(),
             )
         session.add(asset)
         session.flush()
+        retention.register_asset(session, asset, payload["policy"], payload["host"])
         asset_ids.append(str(asset.id))
     run.parameters = {**run.parameters, "asset_ids": asset_ids}
