@@ -171,6 +171,11 @@ def infer(
     positions = defaultdict(list)
     for asset in sorted(assets, key=lambda a: str(a.id)):
         raw = metadata(asset)
+        collection_assignment = (
+            asset.subject_id
+            and (asset.search_parameters or {}).get("collection_bias")
+            and (asset.quality or {}).get("subject_inference", {}).get("method") != METHOD
+        )
         words = [normalize(raw["title"]), normalize(raw["description"])]
         candidates = {}
         for sid, target in catalog.items():
@@ -244,7 +249,9 @@ def infer(
         decisions[str(asset.id)] = {
             "asset_id": str(asset.id),
             "subject_id": (
-                str(asset.subject_id) if asset.subject_id and str(asset.id) not in reconsidered
+                str(asset.subject_id)
+                if asset.subject_id and not collection_assignment
+                and str(asset.id) not in reconsidered
                 else None
             ),
             "previous_subject_id": str(asset.subject_id) if asset.subject_id else None,

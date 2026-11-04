@@ -1,7 +1,5 @@
 # 全体1万枚のうちCommonsは80%の8,000枚まで。既存画像を含む。
 taxonomy_version: 0.1.0
-# subject.nameをキーに、検索タイトルで使われる別名の配列を指定する。
-subject_aliases: {}
 image_budget: 10000
 limits:
   subject_images: 3

@@ -54,6 +54,30 @@ def test_name_category_or_location_alone_never_confirms(rules, title, categories
     assert row["scene_attributes"].get("style") != "japanese"
 
 
+def test_name_only_collection_assignment_becomes_candidate(rules):
+    a = image("Dome of the Rock")
+    subject = Subject(id=uuid.uuid4(), name="Dome of the Rock", domain=a.domain,
+                      scene_attributes={"building_type": "shrine"})
+    a.subject_id = subject.id
+    a.search_parameters = {"collection_bias": {"intended_attributes": {"domain": a.domain}}}
+    row = run([a], rules, [subject])[str(a.id)]
+    assert row["subject_id"] is None
+    assert row["state"] == "candidate"
+    assert "existing_confirmed" not in row["reasons"]
+
+
+def test_confirmed_subject_with_inference_is_preserved(rules):
+    a = image("Dome of the Rock")
+    subject = Subject(id=uuid.uuid4(), name="Dome of the Rock", domain=a.domain,
+                      scene_attributes={"building_type": "shrine"})
+    a.subject_id = subject.id
+    a.search_parameters = {"collection_bias": {"intended_attributes": {"domain": a.domain}}}
+    a.quality["subject_inference"] = {"method": METHOD, "state": "confirmed"}
+    row = run([a], rules, [subject])[str(a.id)]
+    assert row["subject_id"] == str(subject.id)
+    assert "existing_confirmed" in row["reasons"]
+
+
 def test_multi_target_and_nearby_separate_buildings(rules):
     a = image("Strasbourg Cathedral and Dome of the Rock",
               ["West facade of Cathédrale Notre-Dame de Strasbourg"])
