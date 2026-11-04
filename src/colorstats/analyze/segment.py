@@ -20,7 +20,7 @@ from colorstats.schema.models import Asset, Job, ProcessingRun, ProcessingRunInp
 from colorstats.schema.taxonomy import load_taxonomy
 from colorstats.store import temporary_path
 
-CODE_VERSION = "issue-45-v2"
+CODE_VERSION = "issue-66-v1"
 LICENSES = {"open", "noncommercial", "academic_only", "restricted"}
 
 
@@ -76,11 +76,14 @@ def _configuration(payload):
             "license_class": "open",
             "files": {item.name: _hash(item) for item in files},
         }
+    input_hash = _hash(payload["input_path"])
+    if payload.get("input_sha256", input_hash) != input_hash:
+        raise ValueError("入力画像のSHA-256が固定入力と一致しません")
     parameters = {
         "payload": payload, "models": models, "threshold": threshold,
         "text_threshold": text_threshold, "seed": 0, "precision": "bfloat16",
         "batch_size": 1, "box_batch_size": 1, "code_version": CODE_VERSION,
-        "input_sha256": _hash(payload["input_path"]),
+        "input_sha256": input_hash,
         "taxonomy_hash": _digest(taxonomy),
     }
     return parameters
@@ -114,7 +117,7 @@ def _rle(mask):
 def prepare(claim: Claim) -> Prepared:
     """縮小画像からPNG・CVAT XML・計測JSONを試行専用パスへ生成する。
 
-    CUDA推論は子プロセス内のみ。設定ハッシュ不一致、形状・信頼度の不正は
+    CUDA推論は子プロセス内でモデルを再利用する。設定ハッシュ不一致、形状・信頼度の不正は
     ValueError。出力名は識別子で、確定パスはrun.output_pathsから解決する。
     未検出は空の成功結果とし、推論・I/O失敗はキューの再試行へ渡す。
     """
@@ -128,8 +131,8 @@ def prepare(claim: Claim) -> Prepared:
     with Image.open(payload["input_path"]) as source:
         image = source.convert("RGB")
     rows, metrics = predict(
-        image, payload["method"], payload["model_paths"], payload["prompts"],
-        parameters["threshold"], parameters["text_threshold"],
+        image, payload["method"], payload["model_paths"], parameters["models"],
+        payload["prompts"], parameters["threshold"], parameters["text_threshold"],
     )
     target = Path(payload["output_path"])
     files = []
