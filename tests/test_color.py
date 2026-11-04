@@ -1,4 +1,6 @@
 import json
+import subprocess
+import sys
 from datetime import UTC, datetime
 from uuid import uuid4
 
@@ -9,6 +11,21 @@ from PIL import Image
 from colorstats.analyze.color import extract_colors, prepare
 from colorstats.colors import rgb_to_oklab
 from colorstats.queue.core import Claim
+
+
+def test_optional_colour_plotting_stub_does_not_break_later_imports():
+    subprocess.run(
+        [sys.executable, "-c", (
+            "import importlib.util,sys; "
+            "from colorstats.colors import rgb_to_oklab; "
+            "module=sys.modules.get('matplotlib'); "
+            "assert module is None or module.__spec__ is not None; "
+            "spec=importlib.util.find_spec('matplotlib'); "
+            "assert spec is None or spec.name == 'matplotlib'; "
+            "assert rgb_to_oklab(__import__('numpy').array([[1.0,0.0,0.0]])).shape == (1,3)"
+        )],
+        capture_output=True, text=True, check=True,
+    )
 
 
 def scene():

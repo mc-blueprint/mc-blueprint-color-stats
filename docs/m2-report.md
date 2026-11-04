@@ -286,55 +286,34 @@ DBなし・当時の入力754枚・計算子更新前の値であり、本表と
 #40合成1枚のprepare 6.686秒・推論1.352秒も、実画像26句の値へ混ぜない。
 出典：[issue39-report](../bench/issue39-report.md)、[segment](segment.md)、[storage-sharing](storage-sharing.md)。
 
+### 5.4 Issue #66 全量実行（2026-11-04）
+
+ubuntu-2の `colorstats-issue66-full.service` は7,603件を処理し、経過91,593.747秒（25.443時間）で正常終了した。ただし全量成功ではなく、segment成功3,890件・失敗3,713件、prep失敗4件である。segmentの失敗はすべて `matplotlib.__spec__ is not set`。したがってこの経過時間を完成assetの全量処理速度として外挿しない。
+
+| 項目 | 実測 |
+| --- | ---: |
+| prep成功 / 失敗 | 7,603 / 4 |
+| segment成功 / 失敗 | 3,890 / 3,713 |
+| shade成功 / color成功 | 3,890 / 3,890 |
+| segment / shade / color 成功run時間 | 29,773.106 / 4,864.254 / 11,511.873秒 |
+| 成功artifact byte（segment / shade / color） | 593,523,845 / 324,277,308 / 1,421,858,002 |
+| GPU平均 / 最大VRAM | 13.09% / 6,539 MiB |
+| DB全体差分 / WAL差分 | +1,437,843,456 / +11,380,229,680 byte |
+
+表・索引ごとの差分とrun単位の照合結果は[Issue #66 results](../bench/issue66/results.md)およびそのJSON reportにある。DB/WAL差分には同時書込みが含まれるため、Issue #66単独の増分とはみなさない。process I/Oは同じrootに保存した20件sampleと全量runを含む集計であり、read/write byteはcache、model/mask hash処理を含む。失敗3,713件の原因を解消するまでは、成功率・処理量・容量を10万/100万件へ外挿できない。
+
 ## 6. 10万枚・100万枚への試算
 
-§5の実画像の実測値による、同じ入力分布・同じ1計算プロセス・再試行なしの線形外挿。
-枚数N、実測件数n、実測秒S、出力byte Bに対し、時間h=N×S/n/3600、容量GB=N×B/n/10^9。
-表示時だけ丸める。ubuntu-1は成功run記録時間、ubuntu-2は初期化を除いた計算・出力時間である。
-処理出力のNは成功件数、rawのNは収集asset数を想定する。
-ubuntu-2は失敗試行の時間も含む経過秒を成功枚数で割り、成功出力のスループットを外挿する。
-固定した入力N枚の全件成功や、失敗原本を再試行で回復できることは仮定しない。
+2026-11-04のUbuntu-1/2 full runを並行処理した実測から、処理時間と成功artifact容量を線形外挿する。2 unitの共通実行窓は19,088秒、color成功は2,351件（color失敗2件を含むmanifest総数は2,356件）。したがって成功処理速度は0.12317 asset/秒、成功1件あたり8.119秒である。
 
-| 時間の対象（根拠は§5の各JSON） | 秒/枚 | 10万枚（時間） | 100万枚（時間） |
-| --- | ---: | ---: | ---: |
-| ubuntu-1 prep（全体） | 1.598911 | 44.41 | 444.14 |
-| ubuntu-1 color（全体） | 0.463162 | 12.87 | 128.66 |
-| ubuntu-2 prep | 0.499776 | 13.88 | 138.83 |
-| ubuntu-2 segment（26句・常駐） | 8.752478 | 243.12 | 2,431.24 |
-| ubuntu-2 shade none | 1.179156 | 32.75 | 327.54 |
-| ubuntu-2 shade gray-world | 1.213098 | 33.70 | 336.97 |
-| ubuntu-2 color（全体＋部位＋共起） | 2.922937 | 81.19 | 811.93 |
+| 件数 | 推定時間 | segment | shade | color | artifact合計 |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 100,000 | 225.53時間 | 15.07 GB | 8.32 GB | 36.38 GB | 59.78 GB |
+| 1,000,000 | 2,255.31時間 | 150.74 GB | 83.21 GB | 363.84 GB | 597.78 GB |
 
-ubuntu-2で採用する補正なしの処理順はprep→segment→shade none→部位color。
-各stageを直列に実行する場合に限り該当4行を加え、プロセス起動ごとに共通importとモデル初期化を1回加える。
-Gray-Worldは比較用の追加処理で、採用経路の所要時間へ重ねて加えない。
-CPU/GPU並列化、サービス待機、再試行、転送、実機の熱・他負荷の変化は外挿でモデル化しない。
-DB関連処理はubuntu-1のrun記録範囲内だけを含み、ubuntu-2の計算ベンチには含まれない。
-本番の全経過時間やSLAとは扱わず、句数・検出数・解像度・入力分布が変われば再計測が必要。
-特に[prep.register](../src/colorstats/analyze/prep.py)は全assetを取得・比較するため、
-DB増量に伴って1件の登録コストも増える。ubuntu-1の行は観測期間の平均を固定した参考値であり、
-この走査コストの増加や複数worker間のロック競合を含む10万枚・100万枚の実時間は未確定。
+artifact容量は最終成功prep cohort 7,603件で除した実測（segment 150,736.73 byte/件、shade 83,208.38 byte/件、color 363,838.42 byte/件、計597,783.53 byte/件）による。2件のcolor失敗を成功扱いせず、分母にはprep成功7,603件を用いた。これはubuntu-1/2のGPU worker各1個、同じ入力分布・処理設定・共有ストレージで中断なしに処理する仮定の線形推計であり、保証値ではない。100万件では約94日相当となる。
 
-| 容量の対象（成功出力の論理byte） | byte/枚 | 10万枚（GB） | 100万枚（GB） |
-| --- | ---: | ---: | ---: |
-| raw（500 assetの重複込み論理量） | 5,995,326.9 | 599.533 | 5,995.327 |
-| ubuntu-1 prep（全体） | 60,297.8 | 6.030 | 60.298 |
-| ubuntu-1 color（全体） | 6,185.6 | 0.619 | 6.186 |
-| ubuntu-2 prep | 60,462.0 | 6.046 | 60.462 |
-| ubuntu-2 segment（26句・常駐） | 155,650.9 | 15.565 | 155.651 |
-| ubuntu-2 shade none | 84,307.0 | 8.431 | 84.307 |
-| ubuntu-2 shade gray-world | 84,344.0 | 8.434 | 84.344 |
-| ubuntu-2 color（全体＋部位＋共起） | 370,471.7 | 37.047 | 370.472 |
-
-rawは選定した500 assetごとの原本byteを重複込みで加算し500で割った値。
-SHA重複排除後の全量容量を、サンプルの445/500という比率だけで推定しない。
-cacheの実測保持量は§5に示し、150GB cacheを全rawのミラーに使う試算ではない。
-ubuntu-1/ubuntu-2のprepは配置を選ぶ代替値で、同じ出力の全量複製を前提に両方加算しない。
-補正2方式の両出力を保持する場合だけ両行を加える。部位color JSONは全体観測と共起関係も含む。
-
-DB増分・Parquet・重み・バックアップ世代・一時出力・レプリカ・filesystem overheadは未計測。
-旧M1のDB増分26,222,592 byte/755 assetはM2のregion/relationを含まないため今回の外挿へ使わない。
-未計測分があるため全体の必要容量・ディスク台数は確定しない。
+対象外はDB/WAL（同時書込みを含むため単独増分として外挿不可）、raw原本、model weights、snapshot/backup、一時領域および複製である。raw容量は従来の500件sample由来のままで全量実測ではない。詳細なrun・表/index差・WAL・I/Oは[Issue #66 results](../bench/issue66/results.md)を参照。
 
 ## 7. 完成条件の照合と残る範囲
 
@@ -364,3 +343,26 @@ prep/colorは実運用の約7,000枚、segment以降は固定500 assetのサン�
 #47の文書集計・採用判断とM2全体の規模検証の達成は別である。未計測を推測で補わず、
 全量接続・一般化・残るノード/DB性能の追加検証の範囲と時期はメインで判断する。
 本番のAPI・DBスキーマ・保存形式・実行設定は変更していない。既存データの移行・再生成は不要。
+
+
+## 8. M3での全量接続（Issue #66、未完了）
+
+#81の採用設定を使い、成功prep7,603件にDB登録付きの部位解析を実行した。
+segment以降が3,890件成功、3,713件失敗し、prep失敗4件は理由を保持して除外した。
+失敗理由・少数件の実接続検証・全量runの状態と計測値は
+[Issue #66 実行記録](../bench/issue66/results.md)に記録する。
+未完了3,713件の原因を解消した全量成功の確認までは、M3完成および§5・§6の
+全量速度・容量の確定として扱わない。
+
+
+## Issue #66: 収集全量のsegment以降・最終実測（2026-11-05）
+
+全7,607 assetのうちprep成功7,603件、prep失敗4件（DecompressionBombError 2、UnidentifiedImageError 1、math domain error 1）。成功prep出力だけを不変入力として使用し、最終論理結果はsegment 7,603成功、shade 7,603成功、部位color・共起7,601成功・2失敗。3stageすべて成功は7,601件。reportのrun由来、license、artifact hash、部位観測・関係登録件数と符号の違反は0。prep失敗4件とcolor失敗2件は明示理由を保持する。
+
+最初のproduction-v2全量batchは3,890件完了、3,713件がsegment失敗。後者は旧retry rootの1,357件と、分担再処理のsmoke 3件・Ubuntu-1 941件・Ubuntu-2 1,412件へ分割され、合計が3,713件に一致した。前回の未説明差3件はsmoke専用rootに分けたassetで、欠落ではない。旧root側に残るpending 2,356件は旧batch識別子内の履歴であり、別batch manifestによる再処理対象2,356件（3+941+1,412）と対応する。
+
+Ubuntu-1 unitは941件を17,561.481秒（平均GPU 33.698%、最大VRAM 5,358 MiB）、Ubuntu-2はmanifest 1,412件中1,410件を18,913.036秒（平均GPU 23.263%、最大VRAM 6,567 MiB）で完了。2台のfull unit実行期間は約5h15mで、color成功2,351件の並列完了速度は約0.123 asset/秒。成功runの累積時間はsegment 62,349.181秒、shade 9,582.486秒、color 22,546.377秒。
+
+成功artifact容量はsegment 1,146,051,363 byte、shade 632,633,337 byte、color 2,766,263,507 byte、計4,544,948,207 byte。処理unitごとのprocess I/O、GPU、DB表/index差、WALは `bench/issue66/results.md` と各report JSONに記録。DB snapshotは同時書込みを含むため単純合算していない。
+
+color失敗2件は同一prep画像hashの別asset。画像全体には有効色画素があるが、各61部位中1つの4,410画素maskが黒・白・透明除外後に有効色画素0となり、color抽出がValueErrorで3回attempt後にfailedとなった。これは現行の有効画素要件に該当する入力由来の失敗として記録し、成功扱いにしない。Issue #66の失敗理由・全量速度・容量・登録整合の完成条件は記録済み。sample単独の外挿値と今回の実測は区別する。
