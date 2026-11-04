@@ -6,7 +6,7 @@ import logging
 import shutil
 from collections.abc import Callable
 from dataclasses import asdict
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.error import HTTPError
 
@@ -20,6 +20,7 @@ from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import license_class, load_policy
 from colorstats.queue import RunInfo
 from colorstats.queue.worker import Prepared
+from colorstats.rights import combine_license
 from colorstats.schema.models import Asset, Source
 from colorstats.store import Storage, temporary_path
 
@@ -240,10 +241,7 @@ def prepare(
                 }
             )
         observe("search", parameters.copy())
-        classes = {r["license_class"] for r in records} - {"open"}
-        run_class = (
-            next(iter(classes)) if len(classes) == 1 else "restricted" if classes else "open"
-        )
+        run_class = combine_license(*(r["license_class"] for r in records))
         info = RunInfo(
             run_class,
             payload["code_version"],
@@ -323,6 +321,18 @@ def register(session, run, data):
                 "logical_path": record["logical_path"],
             },
         )
+        if record["license_class"] == "analysis_only":
+            asset.quality.update(
+                rights={key: payload["policy"][key] for key in (
+                    "rights_basis", "rights_review", "attribution_required", "access_scope",
+                    "image_redistribution", "retention",
+                )},
+                retention_until=(record["retrieved_at"] + timedelta(
+                    days=payload["policy"]["retention"]["raw_days"]
+                )).isoformat(),
+                provider=payload["request"]["provider"], original_id=candidate["source_url"],
+                retrieved_at=record["retrieved_at"].isoformat(),
+            )
         session.add(asset)
         session.flush()
         asset_ids.append(str(asset.id))

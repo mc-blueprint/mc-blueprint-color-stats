@@ -16,12 +16,13 @@ from sqlalchemy.orm import Session
 from colorstats.analyze.segment_models import REPOSITORIES, predict
 from colorstats.queue.core import Claim, RunInfo
 from colorstats.queue.worker import Prepared
+from colorstats.rights import LICENSES
+from colorstats.rights import combine_license as _license
 from colorstats.schema.models import Asset, Job, ProcessingRun, ProcessingRunInput, Region
 from colorstats.schema.taxonomy import load_taxonomy
 from colorstats.store import temporary_path
 
 CODE_VERSION = "issue-66-v1"
-LICENSES = {"open", "noncommercial", "academic_only", "restricted"}
 
 
 def _hash(path):
@@ -96,13 +97,6 @@ def config_hash(payload: dict) -> str:
     不正な手法・ラベル・版は例外にする。重みの取得やDB操作は行わない。
     """
     return _digest(_configuration(payload))
-
-
-def _license(*values):
-    restrictions = set(values) - {"open"}
-    return next(iter(restrictions)) if len(restrictions) == 1 else (
-        "restricted" if restrictions else "open"
-    )
 
 
 def _rle(mask):

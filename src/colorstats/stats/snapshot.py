@@ -45,6 +45,7 @@ ASSET_COLUMNS = (
     "id", "source_id", "subject_id", "sha256", "domain", "license_class",
     "taxonomy_version", "scene_attributes", "quality", "collected_title", "collected_location",
     "search_provider", "search_query", "search_parameters", "result_rank", "result_page",
+    "url", "retrieved_at",
 )
 RUN_COLUMNS = (
     "id", "stage", "model_name", "weights_hash", "license_class", "config_hash",
@@ -536,7 +537,8 @@ def execute(engine, selection, output, *, quality, code_version, dry_run=False):
             counts, reasons = _collect(db, selection, quality, records, directory)
             db.execute("COMMIT")
             manifest = {
-                "format_version": 1, "gate_version": "D15-v1", "code_version": code_version,
+                "format_version": 2, "gate_version": "D15-v2", "access_scope": "internal",
+                "code_version": code_version,
                 "taxonomy_version": selection["taxonomy_version"], "selection": selection,
                 "selection_hash": digest(selection), "quality": quality,
                 "config_hash": digest(quality), "transaction": {
@@ -575,7 +577,7 @@ def verify(path, expected_hash):
     manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
     value = {k: v for k, v in manifest.items() if k != "snapshot_id"}
     if (manifest["snapshot_id"] != expected_hash or digest(value) != expected_hash
-            or manifest["format_version"] != 1):
+            or manifest["format_version"] not in (1, 2)):
         raise ValueError("manifestのhashまたは形式が一致しません")
     if set(manifest["files"]) != {table + ".parquet" for table in TABLES}:
         raise ValueError("Parquet一覧が一致しません")
