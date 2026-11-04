@@ -1,3 +1,5 @@
+> 2026-11-05: 第2段階でdocs本体へ統合済み。以下は第1段階の設計記録。現状はfull-results.md参照。
+
 # collection-bias.md 追記案（第1段階・未統合）
 
 固定snapshotと、そのsnapshotから生成したaggregate CLIのJSONを入力にする。

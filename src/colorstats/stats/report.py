@@ -143,7 +143,8 @@ def _role_support(
         for role in sorted(roles[domain]):
             key = domain, role
             ids = selected & recorded[key]
-            unknown = (selected & unions.get(key, set())) - recorded[key]
+            unknown = {aid for aid in (selected & unions.get(key, set())) - recorded[key]
+                       if by_id[aid].get("analysis_available") is not False}
             before = {by_id[aid]["subject_id"] for aid in ids if by_id[aid]["subject_id"]}
             after = {by_id[aid]["subject_id"] for aid in ids
                      if by_id[aid]["subject_id"] and _rights_eligible(by_id[aid])}
@@ -198,8 +199,10 @@ def report(snapshot, expected_hash, statistics, settings):
         assets = list(_read(db, "assets"))
         provenance = {r["asset_id"]: r["data"] for r in _read(db, "provenance")}
         runs = list(_read(db, "runs"))
-        regions = list(_read(db, "regions"))
-        color_observations = list(_read(db, "observations"))
+        regions = [dict(zip(("id", "asset_id", "label"), row, strict=True)) for row in
+                   db.execute("SELECT id, asset_id, label FROM regions").fetchall()]
+        color_observations = [dict(zip(("asset_id", "region_id"), row, strict=True)) for row in
+                              db.execute("SELECT asset_id, region_id FROM observations").fetchall()]
         groups = list(_read(db, "groups"))
         by_id = {row["id"]: row for row in assets}
         valid_roles = defaultdict(set)
@@ -208,13 +211,16 @@ def report(snapshot, expected_hash, statistics, settings):
                 valid_roles[by_id[aid]["domain"], parts[0]].add(aid)
         observations = {}
         for table in ("observations", "relations", "groups"):
-            rows = list(_read(db, table))
+            count, accepted = db.execute(
+                f"SELECT count(*), count(*) FILTER (WHERE eligible) FROM {table}"
+            ).fetchone()
             observations[table] = {
-                "rows": len(rows),
-                "eligible": _rate(sum(r["eligible"] for r in rows), len(rows)),
-                "reasons": dict(
-                    sorted(Counter(reason for r in rows for reason in r.get("reasons", [])).items())
-                ),
+                "rows": count,
+                "eligible": _rate(accepted, count),
+                "reasons": dict(db.execute(
+                    f"SELECT reason, count(*) FROM (SELECT unnest(reasons::VARCHAR[]) AS reason "
+                    f"FROM {table}) GROUP BY reason ORDER BY reason"
+                ).fetchall()),
             }
     assignments, assignment_reasons = assign_strata(by_id, settings["strata"])
     eligible = [row for row in assets if row["eligible"]]
@@ -264,10 +270,13 @@ def report(snapshot, expected_hash, statistics, settings):
         }]):
             mismatch.append(row)
         evidence = data["quality"].get("scene_inference", {}).get("attributes", {})
+        subject_evidence = (data.get("subject") or {}).get("attribute_evidence", {})
         for key in attribute_keys:
-            state = evidence.get(key, {}).get("state")
+            state = subject_evidence.get("attributes", {}).get(key, {}).get("state")
+            state = state or evidence.get(key, {}).get("state")
             # 根拠stateがない既存値を新規推定成功に数えない。
-            state = (state or "recorded") if key in attrs else "unknown"
+            if state != "conflict":
+                state = (state or "recorded") if key in attrs else "unknown"
             states.setdefault(key, Counter())[state] += 1
     strata = []
     for layer in settings["strata"]:
@@ -360,6 +369,7 @@ def report(snapshot, expected_hash, statistics, settings):
         if observation["region_id"] is not None
     }
     unobserved = sum(not _rights_eligible(row) and row["id"] not in observed_assets
+                     and row.get("analysis_available") is not False
                      for row in assets)
     rights_complete = not unobserved and all(row["complete"] for row in rights_support)
     checks = [
@@ -441,6 +451,9 @@ def report(snapshot, expected_hash, statistics, settings):
         "rights_support": rights_support,
         "rights_support_scope": "保存済み色の両立subject数。層間で重複し、採用所属質量と区別",
         "unobserved_rights_excluded_assets": unobserved,
+        "rights_excluded_without_analysis": sum(
+            not _rights_eligible(row) and row.get("analysis_available") is False for row in assets
+        ),
         "usefulness_gates": gates,
         "processing": {
             "runs": runs,

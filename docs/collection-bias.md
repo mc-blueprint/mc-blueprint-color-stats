@@ -148,3 +148,137 @@ schemaテストは0003込みの適用・巻戻し・再適用とAlembic差分な
 6. 1,000件の実画像を用いた最終report、除外理由、作者・サイト別配分を保存して初期値を見直す。
 
 実画面への影響・ユーザー介入がある確認は事前確認し、ホスト再起動や媒体初期化は行わない。
+
+## 固定snapshotの統計偏り（Issue #76）
+
+固定snapshotと、そのsnapshotから生成したaggregate CLIのJSONを入力にする。
+JSONのrowsはrule_statへの登録対象と同じ内容であり、本レポート自体はDB登録を証明しない。
+全Parquetのhash検証後に#75と同じ設定で再計算し、入力JSON全体との一致を要求する。
+weights.asset_attributes・compatible_strata・assign_strata・calculateを再利用する。
+
+収集意図の層とsubject・assetの保存属性に一致する層を分ける。
+推定stateがない既存属性はrecordedとし、根拠付き推定成功に含めない。
+競合・不足・対象外・複数層一致を分離する。件数はasset行／SHA異なり／
+確定subject／候補のみ／未知／適格なSHA代表画像を区別する。
+全体のSHA異なりは全体で直接数え、層別件数を足さない。
+同じSHAが別層にも現れ得る。
+
+率はnumerator・denominator・valueを持つ。分母0はnull。
+層の意図比較は当該層の収集意図行数を分母とし、属性不足・不一致・競合を示す。
+適格率・除外理由・未知率・集中率は各集計対象のasset行数が分母。
+除外理由は重複し得るので合計を除外画像数として扱わない。
+D15適格→解析適格→SHA代表の段階と前後のsubject数を出す。
+author等は既知値の上位占有率、未知率、既知の個別値と未知1カテゴリの
+Shannon entropy（bit）を表示する。regionはsubject.location、
+撮影位置はasset.collected_locationを使い、検索意図から補完しない。
+
+条件・役割／pairごとにdirect／smoothed／unsupported、subject基準n_eff、
+最大重み、欠損目標質量、感度分布、品質フラグ、親とλを#75から引き継ぐ。
+10万枚の達否はD15・解析・重複除外後の画像数で別表示する。
+これは現実母集団への無偏推定や材質色の証明ではない。
+
+### 層分類とD15診断
+
+地域・年代は既存coverageと同じsubject.location・subject.eraから取り込む。
+同一subjectの適格画像間で既知の層属性が競合すれば、各画像の両立は表示するが、
+そのsubjectをどちらの層の採用数にも足さず、不足数と未割当理由へ反映する。
+D15除外・解析不足の画像は主統計のsubject割当へ戻さない。
+
+rights_supportは層・条件と役割ごとにD15前後の保存済み色観測subjectと失ったsubjectを表示する。
+画像件数差ではなくsubjectの集合差であり、同じsubjectの適格観測が残れば失った数に含めない。
+個別部位の保存観測と、和集合マスクから生成した色を区別する。
+#74でD15除外画像の和集合色が保存されない場合、前後差は不明のまま明示し、
+条件5をpassedにしない。構成部位の存在だけから和集合色の支持を作らない。
+
+
+2026-11-04の部分層補正で、unknown属性は周辺化し、複数層との両立を許す。
+既知値の矛盾と対象外だけをsubject単位で棄却する。層の採用数は両立数で重複し得るため、
+目標への被覆・不足はm_shの和で計算する。条件・役割の補正率・未知率・情報なし割合は
+分母subject_countとともに#75主結果から表示する。分類の全体率とは分母を混同しない。
+全層両立でも主結果で条件4を判定し、補正率0・情報なし割合1を併記する。D15は変更しない。
+
+解析失敗で色がない画像はmissing_analysisとして明示し、支持へ足さない。
+根拠stateはsubject.attribute_evidence（地域・年代）とscene_inferenceから読む。
+条件4は「passed は層補正の有効性を意味しない」を併記し、情報なし過半にweak_correctionを付ける。
+
+実測は[全量結果](../bench/issue76/full-results.md)、[実レポート](../bench/issue76/full-report.md)、
+[完成条件判定](../bench/issue76/m3-assessment.json)、[G引継ぎ](../bench/issue76/g-handoff.md)を参照。
+
+## 追加収集の歩留まり（Issue #77、2026-11-05実測）
+
+測定計画・枠・停止条件は `bench/issue77/plan.md`、設定は同ディレクトリのtargets.yaml。
+本番測定は2026-11-05 JSTに完了した。詳細は `stage2-results.md`、機械可読値は
+`stage2-summary.json`、完全な試行台帳の保全先とhashは `stage2-artifacts.json` を参照する。
+
+API145要求／HTTP344要求・応答344、timeout 0、候補243・照合134、取得19・適格新規SHA8。
+原本186,623,050 byte、アプリが読み取ったbodyは254,215,317 byte。
+新規19 SHAのうち11件はSA条件でD15除外。複数の除外フラグは同じ画像へ重複して付く。
+Openverseは36 API要求・216 HTTP要求で全12層を測定したが、原本取得は0件。
+元ページの照合不一致108件と原本HTTP403が28件あり、照合やUser-Agentを緩めていない。
+Commonsは109 API要求・128 HTTP要求で取得19件。集中枠が満了した4層は未測定とした。
+取得分の根拠付き確定subjectは全層0件。追加の解析・同定は未実施で、未知を確定へ昇格しない。
+
+層ごとに全試行のAPI/HTTP要求、HTTP応答、timeout、候補、照合、取得、受信body byte、
+取得成功byte、DB登録数、新規SHA、D15適格新規SHA、SHA重複、確定subjectと新規subject、
+除外理由を報告する。適格新規SHA/API要求はtimeout・429再試行も分母に含める。
+応答なしを「候補0件の正常応答」としない。source_policy違反・照合不一致を緩和しない。
+URL再発見とSHA重複は区別する。確定subjectは検索意図や名前一致だけでは数えない。
+台帳のrunning/preparedが残る場合は未完了として扱い、成功試行だけに分母を絞らない。
+Openverse by/by-saは照合済みの選択値と版から測定時に正規化する。SA等の除外は維持する。
+供給元枠はCommons API14/HTTP22、Openverse API6/HTTP18を層ごとに固定する。
+通信0回の供給元は未測定と明記する。1万Asset行枠と適格SHA1万枚は区別し、
+層・供給元ごとの要求当たり適格SHAと取得byteを用いた参考外挿の仮定を併記する。
+
+既存保存データの削除・移行、新規依存、権利条件や集中上限の変更はない。
+実測表と試行証跡は[測定結果](../bench/issue77/stage2-results.md)と[機械可読値](../bench/issue77/stage2-summary.json)を参照する。
+
+### 12層・供給元別の実測
+
+要求は失敗・リダイレクト・再試行を含む。照合はCommonsの帰属充足とOpenverseの作者・ライセンス完全照合で強度が異なる。
+API0の行は未測定。適格SHA0の応答済み標本を、未来の歩留まり0%や到達不能とは解釈しない。
+
+| 層 | 供給元 | API/HTTP | 応答 | timeout | 候補/照合 | 取得/適格新規SHA | 取得byte | body byte |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| japanese-castle | Commons | 11/12 | 12 | 0 | 10/9 | 1/0 | 225250 | 256229 |
+| japanese-castle | Openverse | 5/18 | 18 | 0 | 11/2 | 0/0 | 0 | 5477320 |
+| gothic-temple | Commons | 14/15 | 15 | 0 | 11/11 | 1/0 | 10204473 | 10274832 |
+| gothic-temple | Openverse | 3/18 | 18 | 0 | 10/5 | 0/0 | 0 | 5554082 |
+| forest-autumn-day | Commons | 14/18 | 18 | 0 | 11/11 | 4/1 | 38698795 | 38777375 |
+| forest-autumn-day | Openverse | 1/18 | 18 | 0 | 10/8 | 0/0 | 0 | 4813289 |
+| modern-house | Commons | 14/15 | 15 | 0 | 12/12 | 1/1 | 746426 | 815441 |
+| modern-house | Openverse | 3/18 | 18 | 0 | 11/10 | 0/0 | 0 | 5317641 |
+| medieval-house | Commons | 0/0 | 0 | 0 | 0/0 | 0/0 | 0 | 0 |
+| medieval-house | Openverse | 2/18 | 18 | 0 | 16/2 | 0/0 | 0 | 6569071 |
+| japanese-temple | Commons | 0/0 | 0 | 0 | 0/0 | 0/0 | 0 | 0 |
+| japanese-temple | Openverse | 4/18 | 18 | 0 | 14/4 | 0/0 | 0 | 3198744 |
+| islamic-temple | Commons | 14/15 | 15 | 0 | 11/11 | 1/0 | 3086033 | 3131434 |
+| islamic-temple | Openverse | 5/18 | 18 | 0 | 13/0 | 0/0 | 0 | 1533067 |
+| chinese-house | Commons | 14/15 | 15 | 0 | 12/12 | 1/0 | 459983 | 508613 |
+| chinese-house | Openverse | 3/18 | 18 | 0 | 15/0 | 0/0 | 0 | 7714242 |
+| mountains-summer-day | Commons | 0/0 | 0 | 0 | 0/0 | 0/0 | 0 | 0 |
+| mountains-summer-day | Openverse | 3/18 | 18 | 0 | 11/4 | 0/0 | 0 | 5360253 |
+| plains-summer-day | Commons | 14/17 | 17 | 0 | 12/12 | 3/3 | 37797056 | 37854561 |
+| plains-summer-day | Openverse | 2/18 | 18 | 0 | 11/5 | 0/0 | 0 | 5799479 |
+| desert-summer-day | Commons | 0/0 | 0 | 0 | 0/0 | 0/0 | 0 | 0 |
+| desert-summer-day | Openverse | 3/18 | 18 | 0 | 14/1 | 0/0 | 0 | 7437601 |
+| snowy-winter-day | Commons | 14/21 | 21 | 0 | 12/12 | 7/3 | 95405034 | 95593318 |
+| snowy-winter-day | Openverse | 2/18 | 18 | 0 | 16/3 | 0/0 | 0 | 8228725 |
+
+
+### 段階目標への参考外挿
+
+開始時N0=7607、固定snapshotの代表SHA E0=1618。1万行枠の残りは2393行であり、全て適格でも楽観上限は4011枚。
+この1万Asset行枠から適格SHA1万枚への到達を主張しない。raw/解析/subject・供給元構成・集中枠は別途見積りが必要。
+今回配分の観測r=0.05517241適格SHA/API要求。下表は同じ歩留まりが維持するとの感度試算であり、検索深度・供給元・層の枯渇を無視した到達保証ではない。
+
+| 適格SHA目標T | 参考API要求 | 参考取得byte |
+|---:|---:|---:|
+| 10000 | 151924 | 195534300638 |
+| 30000 | 514424 | 662091925638 |
+| 100000 | 1783174 | 2295043613138 |
+
+### 固定全量の属性矛盾
+
+保存済みconflictは値がなくても保持する。分母7607 asset行で、building_typeは
+inferred461・conflict4・unknown7142、biome_likeはinferred373・conflict2・unknown7232。
+これはasset単位のstate集約であり、役割別の補正率・未知率や採用subject数とは分母が異なる。

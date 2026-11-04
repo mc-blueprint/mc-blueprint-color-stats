@@ -167,3 +167,9 @@ G引継ぎ・設計・出力契約下書きにも同じ注意を反映した。
   指定scratchpad/i76-fixture-condition4に保全した。
 - 指定scratchpad/i76-commit4.txtへUTF-8で中間commit文を保存。
   commit・pushは行っていない。第2段階の実snapshot等の残作業は従来どおり。
+
+
+## 第2段階の完了記録
+
+2026-11-05の実データ照合・docs統合・検証は[全量結果](full-results.md)参照。
+本書の第2段階未着手という記述は第1段階時点の履歴である。

@@ -343,7 +343,7 @@ M3完成条件：
 1. 固定7,607 assetの解析成功・失敗・除外・品質・速度・容量を追跡できる。
 2. subjectとシーン属性の確定・候補・未知を分けて再実行でき、誤結合・分類矛盾を検出する。
 3. D15適格入力から統計を生成し、同じ固定snapshotから再現可能に再集計できる。
-4. 実建築・地形で各1役割以上が、確定subject 10以上かつsubject基準n_eff 10以上の直接観測を持ち、ラベル品質ゲートを通る。平滑化だけでは達成扱いにしない。
+4. 実建築・地形の各1役割以上で、既知属性による部分層補正の主結果の確定subject数10以上かつsubject基準n_eff 10以上を満たし、ラベル品質ゲートを通る。親借用で実測支持を増やさない。判定役割ごとの補正率・属性別未知率・情報なし割合と分母subject数を併記する。passed は層補正の有効性を意味しない。情報なし割合>0.5はweak_correctionとするが、passedの追加閾値にはしない。
 5. すべての対象層について不足・未知・D15除外・平滑化・未支持を含む偏りレポートを出力する。
 6. 分布の単位・品質・支持範囲・権利制約をGへ引き継ぐ。配色パック生成・同梱と10万枚目標の達成は別状態として扱う。
 
@@ -404,6 +404,108 @@ NULLへ戻し、取消件数を保存する。指定run以前の確定、その�
 CLIは接続情報を含み得る例外本文を表示しない。失敗した出力パスは再利用せず、
 成功runと照合したスナップショットだけを後続の正本にする。
 カタログ外・欠損・過度な撮影範囲は未確定として残るため、件数を精度保証と解釈しない。
+
+### M3-D: 部分層補正（Issue #75、2026-11-04ユーザー決定A）
+
+完全一致・一意層割当を既知属性による部分補正へ置き換える。D15・SHA代表・ラベル品質ゲートは維持する。
+全層両立でも主結果で条件4を判定し、補正率0・情報なし割合1を隠さない。
+補正率は偏りの改善率ではなく、両立層を絞り込めたsubjectの割合である。
+
+#### 共通の判定契約
+
+- `asset_attributes(asset) -> (attributes, conflicts)`：
+  snapshotのsubject確認済み属性とasset実属性を、既存coverageの地域・年代読取りで統合する。
+  収集意図や候補値は使わない。scene_attributesに保持された確認済み・根拠付き推定値という
+  従来のstate基準を維持する。欠損・None・空文字・unknownは既知値を上書きしない。
+- `compatible_strata(attributes, strata) -> list[str]`：
+  domainを必須とし、そのdomainの目標層の属性だけで既知値の一致を調べる。
+  unknownの属性は周辺化する。両立層IDを設定順で返し、対象外は空配列。
+  #76もこの関数を使用し、別の完全一致・両立判定を実装しない。
+  層にないweather等は照合対象にしない。
+- `assign_strata(assets, strata) -> (assigned, reasons)`：
+  assignedはsubject ID→既知層属性の辞書、矛盾・対象外の場合はNone。
+  reasonsはsubject ID→理由配列。適格画像間の既知値を統合し、
+  unknownと既知値の混在は矛盾にしない。層属性の既知値が競合する場合は
+  subject_stratum_conflict、subject/asset内の競合はattributes_conflict、
+  両立層なしはoutside_target。
+  従来の「subject ID→一意な層ID」という戻り値は使用しない。
+
+条件生成は引き続き実際に分かる条件属性だけから行う。
+unknownを特定style等の直接観測に補完しない。条件が不足した子には既存の親CDF借用を使う。
+同じsubjectの別画像から季節・時刻を画像の条件属性へ補完する処理も追加しない。
+
+#### 推定量
+
+各domain・条件・役割/pairごとに、条件と両立する目標層へsubjects目標を限定し、
+q_hを合計1へ再正規化する。属性が目標層にない条件成分はqを狭めない。
+両立する確定subjectが当該セルのNを構成する。未知subjectは主結果へ入れない。
+
+```
+m_sh = q_h * 1[両立] / Σ_{両立 h'} q_h'
+p_h  = Σ_s m_sh / N
+r_h  = q_h / p_h                    （p_h > 0のみ）
+W_s  = Σ_h m_sh * r_h
+n_eff = (Σ_s W_s)^2 / Σ_s W_s^2
+```
+
+subject内は有効SHA画像へ等配分し、画像内は役割領域の面積比、
+pairは領域面積積で正規化した重みにW_sを乗じる。
+同じ画像・subjectの観測行数を、Nやp_hの独立標本として数えない。
+p_h=0の層はmissing_strataに残し、r_h=0等で埋めない。
+支持された目標質量だけでCDFを正規化し、欠損目標質量を明示する。
+
+qualityの追加出力：
+
+| 項目 | 意味 |
+| --- | --- |
+| target_probabilities | 当該セルの再正規化済みq_h |
+| memberships | subject ID→層ID→m_sh（非両立層は省略） |
+| stratum_probabilities | 層ID→p_h（0の層も含む） |
+| stratum_weights | 支持された層ID→r_h |
+| subject_weights | subject ID→W_s |
+| max_stratum_weight / max_weight | 最大r_h / 最大W_s |
+| correction_rate | 両立層を1つ以上かつ全適用層未満へ絞り込めたsubject数 / N |
+| attribute_unknown_rates | 層属性ごとの未知subject数 / N。domainは含めない |
+| no_information_rate | 全適用層と両立するsubject数 / N |
+
+割合の分母は当該条件・役割で採用した確定subject N。
+矛盾・対象外はunassigned_subjects/reasons、未知subjectはunknown_imagesに別記する。
+N=0では割合を0、空の支持・欠損質量1を保存する。
+情報なし割合は条件で限定した後の適用層に対する値であり、
+適用層が1つなら絞込みの余地がなく全採用subjectが情報なしに該当する。
+
+全層両立のsubjectだけならm_sh=q_h、p_h=q_h、r_h=1、W_s=1となる。
+これは情報が増えたことではなく、no_information_rate=1・未知率で明示する。
+M3条件4はユーザー決定に従ってこの主結果の実測支持とn_effで判定する。
+
+high_weight（従来どおり最大r_h>5）、層比r_hの上限5、補正なし、未知SHAを別subjectとする無補正感度、
+円周Δh・経験CDF混合・30/10の支持閾値は維持する。
+補正なし感度は対象外・矛盾の確定subjectも含む従来の診断として区別する。
+
+
+### M3-E: 固定snapshotの偏り・完成条件レポート（Issue #76）
+
+report CLIはDBや元画像へ接続せず、全Parquet hashと同じ設定によるaggregate-v2の再計算を検証する。
+入力JSON全体が一致しなければ拒否する。全量の完全一致再計算は本番と同じLinux環境で行う。
+Windowsでは診断delta_cの浮動小数点末尾差が出るため、OSを跨ぐバイト一致は保証しない。
+
+12層の意図／実属性、全体／層別のasset行・SHA・重複、確定／候補／未知、
+作者・provider・地域等の集中、除外理由と分母を分ける。
+層の両立件数は重複し得る。被覆は所属質量m_shの和／目標subject数、
+不足はmax(0,目標-所属質量)であり、未知を各層へ1 subjectずつ足さない。
+条件・役割/pairのn_eff・補正率・未知率は#75主結果をそのまま渡す。
+条件4のJSON・Markdownに判定役割別の率と注意文を必ず添える。
+
+D15前後の役割支持は保存済み色を持つsubjectの集合差で報告し、採用所属質量とは区別する。
+必要解析の失敗が明示される画像はmissing_analysisとして数え、色の支持へ足さない。
+解析のある画像で和集合色が未保存なら前後差をnullとし、条件5をunverifiedとする。
+#85の属性state・根拠runはsnapshotから追跡する。
+
+自動レポートの条件1・2は外部監査待ち、条件6はGへの実際の引継ぎ確認待ちとする。
+外部証跡を照合した判定はbench/issue76/m3-assessment.jsonへ別記し、自動判定と混同しない。
+実結果・再現手順は[全量結果](../bench/issue76/full-results.md)、
+単位・支持範囲・権利制約は[G引継ぎ](../bench/issue76/g-handoff.md)を参照する。
+2026-11-05の固定snapshotは条件4未達であり、M3完成扱いにしない。
 
 ### M4 mc-blueprint接続
 
