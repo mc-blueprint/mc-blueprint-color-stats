@@ -152,6 +152,7 @@ class Worker:
             if not self._available(claim.stage):
                 self.queue.defer(claim, "保存先の復旧待ち")
                 return
+            self.queue.check_input(claim)
             self._start_prepare()
             process = self._process
             preparing = True

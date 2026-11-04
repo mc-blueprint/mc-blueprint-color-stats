@@ -116,6 +116,40 @@ class Asset(Identity, Base):
     quality: Mapped[dict] = mapped_column(JSONB)
 
 
+class RetentionStop(Identity, Base):
+    __tablename__ = "retention_stop"
+    __table_args__ = (UniqueConstraint("provider", "source_url", "target_url"),)
+
+    provider: Mapped[str] = mapped_column(Text)
+    source_url: Mapped[str] = mapped_column(Text)
+    target_url: Mapped[str] = mapped_column(Text, default="", server_default="")
+    details: Mapped[dict] = mapped_column(JSONB)
+
+
+class Retention(Identity, Base):
+    __tablename__ = "retention"
+
+    asset_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("asset.id"), unique=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    stopped_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reason: Mapped[str | None] = mapped_column(Text)
+    request_url: Mapped[str | None] = mapped_column(Text)
+    backup_until: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class RetentionFile(Identity, Base):
+    __tablename__ = "retention_file"
+    __table_args__ = (UniqueConstraint("asset_id", "host", "path"),)
+
+    asset_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("retention.asset_id"), index=True)
+    host: Mapped[str] = mapped_column(Text)
+    path: Mapped[str] = mapped_column(Text, index=True)
+    kind: Mapped[str] = mapped_column(Text)
+    released_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error: Mapped[str | None] = mapped_column(Text)
+
+
 class AssetDuplicate(Base):
     __tablename__ = "asset_duplicate"
     __table_args__ = (
