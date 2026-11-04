@@ -35,7 +35,7 @@ def settings():
 
 def snapshot(root, subjects=40, *, unknown=0, split=None, duplicates=False,
              reverse=False, input_runs=(), zero=False, invalid=False, multi=False, terrain=False,
-             subject=None, subject_only=False, scene=None):
+             subject=None, subject_only=False, scene=None, shade_reference=False):
     root.mkdir()
     quality = {
         "supported_by_domain": {DOMAIN: ["door"], "real_terrain": []},
@@ -62,7 +62,11 @@ def snapshot(root, subjects=40, *, unknown=0, split=None, duplicates=False,
                 "subject": {"scene_attributes": attrs if subject_only else {}} | (subject or {}),
                 "selection": {r["stage"] + "_run_id": r["id"] for r in input_runs},
             }
-            db.execute("INSERT INTO assets VALUES (?,?,?,?,?,?,?,?)", [
+            if shade_reference:
+                data["selection"]["shade_run_id"] = "independent-shade"
+            db.execute(
+                "INSERT INTO assets (id,sha256,domain,subject_id,representative_id,"
+                "eligible,reasons,data) VALUES (?,?,?,?,?,?,?,?)", [
                 aid, f"sha-{i:04d}", domain, sid, aid, True, "[]", canonical(data),
             ])
             color = [.8 if second else .2, -.1, .001 if i % 2 else -.001]
@@ -76,11 +80,15 @@ def snapshot(root, subjects=40, *, unknown=0, split=None, duplicates=False,
             ])
             # 同一役割の複数クラスタは最大クラスタだけを点観測にする。
             for j, (value, fraction) in enumerate(((door, .7), ([.99, 0, 0], .3))):
-                db.execute("INSERT INTO observations VALUES (?,?,?,?,?,?,?)", [
+                db.execute(
+                    "INSERT INTO observations (id,asset_id,region_id,run_id,eligible,reasons,data) "
+                    "VALUES (?,?,?,?,?,?,?)", [
                     f"obs{j}-{aid}", aid, rid, "color", not terrain, "[]",
                     canonical({"observed_oklab": {"dominant": value}, "area_ratio": fraction}),
                 ])
-            db.execute("INSERT INTO groups VALUES (?,?,?,?,?,?)", [
+            db.execute(
+                "INSERT INTO groups (id,asset_id,run_id,role,eligible,data,reasons) "
+                "VALUES (?,?,?,?,?,?,'[]')", [
                 gid, aid, "color", domain + ("/tree" if terrain else "/wall"), True,
                 canonical({"observations": [{"observed_oklab": {"dominant": color}}],
                            "area_ratio": .6}),
@@ -93,17 +101,23 @@ def snapshot(root, subjects=40, *, unknown=0, split=None, duplicates=False,
                 db.execute("INSERT INTO regions VALUES (?,?,?,?,?)", [
                     "extra-" + aid, aid, "color", "door", canonical({"area_ratio": .1}),
                 ])
-                db.execute("INSERT INTO observations VALUES (?,?,?,?,?,?,?)", [
+                db.execute(
+                    "INSERT INTO observations (id,asset_id,region_id,run_id,eligible,reasons,data) "
+                    "VALUES (?,?,?,?,?,?,?)", [
                     "extra-obs-" + aid, aid, "extra-" + aid, "color", True, "[]",
                     canonical({"observed_oklab": {"dominant": [.9, .1, 0]}, "area_ratio": 1}),
                 ])
             if duplicates:
-                db.execute("INSERT INTO assets VALUES (?,?,?,?,?,?,?,?)", [
+                db.execute(
+                "INSERT INTO assets (id,sha256,domain,subject_id,representative_id,"
+                "eligible,reasons,data) VALUES (?,?,?,?,?,?,?,?)", [
                     "dup-" + aid, f"sha-{i:04d}", domain, sid, aid, False,
                     '["sha_duplicate"]', canonical(data),
                 ])
             if invalid:
-                db.execute("INSERT INTO relations VALUES (?,?,?,?,?,?)", [
+                db.execute(
+                    "INSERT INTO relations (id,asset_id,run_id,eligible,reasons,data) "
+                    "VALUES (?,?,?,?,?,?)", [
                     "bad-" + aid, aid, "color", True, "[]",
                     canonical({"region_a": rid, "region_b": gid, "type": "co_occurs",
                                "delta_l": 1, "delta_c": 1, "delta_h": None,
@@ -463,3 +477,18 @@ def test_high_stratum_weight_and_capped_sensitivity_with_partial_membership(sett
     assert support["max_weight"] == pytest.approx(560 / 199)
     assert support["max_weight"] < 5
     assert capped[-1] == pytest.approx(523 / 398)
+
+
+@pytest.mark.parametrize("used_by_color", [False, True])
+def test_only_actual_color_inputs_include_shade(tmp_path, settings, used_by_color):
+    color = {"id": "color", "stage": "color",
+             "data": {"input_run_ids": ["independent-shade"] if used_by_color else []}}
+    inputs = [color]
+    if used_by_color:
+        inputs.append({"id": "independent-shade", "stage": "shade", "data": {"input_run_ids": []}})
+    root = tmp_path / "shade-reference"
+    result = aggregate(root, snapshot(root, 30, input_runs=inputs, shade_reference=True), settings)
+    assert {r["id"] for r in result["input_runs"]} == (
+        {"color", "independent-shade"} if used_by_color else {"color"}
+    )
+    assert cell(result)["subject_count"] == 30

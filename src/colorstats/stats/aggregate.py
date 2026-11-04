@@ -15,6 +15,7 @@ from colorstats.queue.worker import Prepared
 from colorstats.schema.models import ProcessingRun, ProcessingRunInput, RuleStat
 from colorstats.stats import distributions, weights
 from colorstats.stats.snapshot import canonical, digest, verify
+from colorstats.stats.subject_attributes import METHOD as ATTRIBUTE_METHOD
 
 CODE_VERSION = "aggregate-v2"
 
@@ -139,7 +140,7 @@ def aggregate(snapshot, expected_hash, settings):
     }
     rank = {role: index for index, role in enumerate(settings["role_order"])}
     cells = defaultdict(list)
-    with duckdb.connect() as db:
+    with duckdb.connect(config={"threads": 1}) as db:
         for table in ("assets", "regions", "observations", "relations", "groups", "runs"):
             db.read_parquet(str(Path(snapshot) / (table + ".parquet"))).create_view(table)
         assets = {r["id"]: r for r in _read(db, "assets")}
@@ -174,12 +175,15 @@ def aggregate(snapshot, expected_hash, settings):
                 }
             data = asset["data"]
             inferred = data["quality"].get("scene_inference", {}).get("attributes", {})
+            evidence = (data.get("subject") or {}).get("attribute_evidence", {})
             intended = (data.get("search_parameters") or {}).get("collection_bias", {}).get(
                 "intended_attributes", {},
             )
             row = {
                 "unassigned_reasons": unassigned.get(asset["subject_id"], []),
-                "attributes_inferred": any(v["state"] == "inferred" for v in inferred.values()),
+                "attributes_inferred": any(v["state"] == "inferred"
+                                           for v in [*inferred.values(),
+                                                     *evidence.get("attributes", {}).values()]),
                 "intended_only": bool(set(intended) - {"domain"} - attributes[aid].keys()),
                 "sha256": asset["sha256"], "subject": asset["subject_id"],
                 "attributes": assignments.get(asset["subject_id"]),
@@ -189,15 +193,21 @@ def aggregate(snapshot, expected_hash, settings):
             for condition in _conditions(attrs):
                 cells[kind, canonical(condition), parts].append(row)
         all_runs = {r["id"]: r for r in _read(db, "runs")}
-        inputs = set()
+        inputs, attribute_runs = set(), set()
         for asset in assets.values():
             if not asset["eligible"]:
                 continue
             data = asset["data"]
-            inputs.update(v for k, v in data["selection"].items() if k.endswith("_run_id"))
+            inputs.update(data["selection"][stage + "_run_id"]
+                          for stage in ("prep", "segment", "color")
+                          if data["selection"].get(stage + "_run_id"))
             for field in ("subject_inference", "scene_inference"):
                 if reference := data["quality"].get(field, {}).get("run_id"):
                     inputs.add(reference)
+            evidence = (data.get("subject") or {}).get("attribute_evidence", {})
+            if reference := evidence.get("run_id"):
+                inputs.add(reference)
+                attribute_runs.add(reference)
         pending = list(inputs)
         while pending:
             rid = pending.pop()
@@ -314,7 +324,13 @@ def aggregate(snapshot, expected_hash, settings):
         resolve(key)
     return {
         "snapshot_id": expected_hash, "rows": [resolved[key] for key in sorted(resolved)],
-        "input_runs": input_runs, "taxonomy_version": manifest["taxonomy_version"],
+        "input_runs": input_runs, "subject_attribute_run_ids": sorted(attribute_runs),
+        "taxonomy_version": manifest["taxonomy_version"],
+        "support_interpretation": {
+            "n_eff": "subject重みの集中度。未知の層所属による不確実性は含まない",
+            "coverage": "所属質量による目標被覆。層属性の直接観測数ではない",
+            "rates": "補正率・情報なし割合と併読し、支持や条件4は補正の有効性を保証しない",
+        },
     }
 
 
@@ -331,7 +347,10 @@ def prepare(claim):
     temporary = target.with_name(f".{target.name}.{claim.token}.tmp")
     temporary.write_text(canonical(data) + "\n", encoding="utf-8")
     return Prepared(
-        RunInfo("open", CODE_VERSION, data["taxonomy_version"], "aggregate", {"payload": payload}),
+        RunInfo("open", CODE_VERSION, data["taxonomy_version"], "aggregate", {
+            "payload": payload, "subject_attribute_run_ids": data["subject_attribute_run_ids"],
+            "support_interpretation": data["support_interpretation"],
+        }),
         data=data, files=[(temporary, target)],
     )
 
@@ -345,21 +364,42 @@ def register(session, run, data):
             or data["snapshot_id"] != run.parameters["payload"]["snapshot_id"]
             or run.taxonomy_version != data["taxonomy_version"]):
         raise ValueError("集計runと固定入力が一致しません")
-    for record in data["input_runs"]:
-        source = session.get(ProcessingRun, uuid.UUID(record["id"]))
-        expected = record["data"]
-        if (source is None or source.finished_at is None or source.failure_reason is not None
-                or source.taxonomy_version != run.taxonomy_version
-                or source.config_hash != expected["config_hash"]
-                or source.code_version != expected["code_version"]
-                or source.stage != record["stage"] or source.license_class != "open"
-                or any(canonical(getattr(source, field)) != canonical(expected[field])
-                       for field in ("parameters", "weights_hash", "model_name", "license_class"))
-                or sorted(str(rid) for rid in session.scalars(select(
-                    ProcessingRunInput.input_run_id,
-                ).where(ProcessingRunInput.run_id == source.id))) != expected["input_run_ids"]):
-            raise ValueError("snapshotの成功入力runとDBの由来が一致しません")
-        session.add(ProcessingRunInput(run_id=run.id, input_run_id=source.id))
+    attribute_ids = set(data["subject_attribute_run_ids"])
+    if not attribute_ids <= {record["id"] for record in data["input_runs"]}:
+        raise ValueError("属性根拠runが入力集合にありません")
+    records = data["input_runs"]
+    for offset in range(0, len(records), 256):
+        batch = records[offset:offset + 256]
+        ids = [uuid.UUID(record["id"]) for record in batch]
+        with session.no_autoflush:
+            sources = {str(source.id): source for source in session.scalars(
+                select(ProcessingRun).where(ProcessingRun.id.in_(ids)),
+            )}
+            parents = defaultdict(list)
+            for rid, parent in session.execute(select(
+                ProcessingRunInput.run_id, ProcessingRunInput.input_run_id,
+            ).where(ProcessingRunInput.run_id.in_(ids))):
+                parents[str(rid)].append(str(parent))
+        for record in batch:
+            source = sources.get(record["id"])
+            expected = record["data"]
+            attribute = (record["id"] in attribute_ids and source is not None
+                         and source.stage == "subject"
+                         and source.parameters.get("method") == ATTRIBUTE_METHOD)
+            if (source is None or source.finished_at is None or source.failure_reason is not None
+                    or source.taxonomy_version != run.taxonomy_version
+                    or source.config_hash != expected["config_hash"]
+                    or source.code_version != expected["code_version"]
+                    or source.stage != record["stage"]
+                    or (record["id"] in attribute_ids and not attribute)
+                    or (source.license_class != "open" and not attribute)
+                    or any(canonical(getattr(source, field)) != canonical(expected[field])
+                           for field in (
+                               "parameters", "weights_hash", "model_name", "license_class",
+                           ))
+                    or sorted(parents[record["id"]]) != expected["input_run_ids"]):
+                raise ValueError("snapshotの成功入力runとDBの由来が一致しません")
+            session.add(ProcessingRunInput(run_id=run.id, input_run_id=source.id))
     session.add_all(RuleStat(
         processing_run_id=run.id, taxonomy_version=run.taxonomy_version,
         **(row | {"confidence_interval": null()}),

@@ -14,10 +14,19 @@ from sqlalchemy import create_engine, delete, func, or_, select, text
 
 from colorstats.collect import SearchRequest, stage
 from colorstats.collect.coverage import images, matches
+from colorstats.collect.http import MeasurementLimit
 from colorstats.collect.policy import load_policy
 from colorstats.collect.targets import requests
-from colorstats.queue import LeaseLost, Queue
-from colorstats.schema.models import Asset, CollectionReservation, Job, ProcessingRun, Subject
+from colorstats.queue import LeaseLost, Queue, RunInfo
+from colorstats.queue.worker import Prepared
+from colorstats.schema.models import (
+    Asset,
+    CollectionReservation,
+    Job,
+    ProcessingRun,
+    Source,
+    Subject,
+)
 
 # 実際に参照する予約テーブルを識別し、search_pathの違いでも排他を共有する。
 LOCK_SQL = text("SELECT pg_advisory_xact_lock('collection_reservation'::regclass::oid::bigint)")
@@ -118,6 +127,19 @@ def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None
         reap(session)
         # ロック待ち中の期限切れも拒否する。
         queue._owned(session, claim)
+        if "measurement" in config:
+            if session.scalar(
+                select(Asset.id).join(Source, Source.id == Asset.source_id).where(
+                    or_(Source.url == candidate.source_url, Asset.url == candidate.original_url)
+                ).limit(1)
+            ):
+                return "rediscovered_url"
+            if session.scalar(select(CollectionReservation.id).where(
+                or_(CollectionReservation.source_url == candidate.source_url,
+                    CollectionReservation.attributes["_original_url"].astext
+                    == candidate.original_url)
+            ).limit(1)):
+                return "reserved_url"
         subject = resolve_subject(session, candidate, layer, config["subject_aliases"])
         author = (candidate.author or "").strip().casefold()
         subject_id = subject.id if subject else None
@@ -161,7 +183,8 @@ def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None
                 source=request.provider,
                 region=region,
                 region_basis=region_basis,
-                attributes=layer["attributes"],
+                attributes={**layer["attributes"], "_original_url": candidate.original_url}
+                if "measurement" in config else layer["attributes"],
                 source_url=candidate.source_url,
             )
         )
@@ -216,6 +239,11 @@ def plan(
     """
     with queue._transaction() as session:
         session.execute(LOCK_SQL)
+        if "measurement" in config and session.scalar(select(Job.id).where(
+            Job.stage == "collect", Job.status.in_(["pending", "running"]),
+            Job.payload.has_key("bias"), Job.payload["bias"] != config,
+        ).limit(1)):
+            raise ValueError("異なる偏り設定のジョブが稼働中です")
         reap(session)
         rows = images(session) + pending(session)
         completed = session.execute(
@@ -245,6 +273,8 @@ def plan(
     job_ids = []
     for _, layer in sorted(layers, key=lambda pair: -pair[0]):
         searches = list(requests(config, layer, rng))
+        if "measurement" in config:
+            searches = [request for request in searches if request.page == 0]
         for previous, parameters in completed:
             offset = parameters.get("next_offset")
             previous_request = SearchRequest(**previous["request"])
@@ -303,18 +333,48 @@ def prepare(claim):
     """専用の採否関数を共有prepareに渡す。例外時はこの試行の未確定枠を解放する。"""
     engine = create_engine(os.environ["DATABASE_URL"])
     queue = Queue(engine)
+    meter = None
     try:
+        if "measurement" in claim.payload["bias"]:
+            from colorstats.collect.measurement import Meter
+
+            meter = Meter(queue, claim)
+            with queue._transaction() as session:
+                session.execute(LOCK_SQL)
+                reap(session)
+                config = claim.payload["bias"]
+                layer = next(s for s in config["strata"] if s["id"] == meter.stratum)
+                rows = images(session) + pending(session)
+                subjects = {
+                    row["subject_id"] for row in rows
+                    if row["subject_id"] and matches(row["attributes"], layer)
+                }
+                if len(subjects) >= layer["subjects"]:
+                    raise MeasurementLimit("target_reached")
+                if "images" in layer and sum(
+                    matches(row["attributes"], layer) for row in rows
+                ) >= layer["images"]:
+                    raise MeasurementLimit("image_target_reached")
+                reason = quota_reason(
+                    rows, config, None, "", claim.payload["request"]["provider"], None, layer
+                )
+                if reason:
+                    raise MeasurementLimit(reason)
         prepared = stage.prepare(
             claim,
             decide=lambda request, candidate: reserve(
                 queue, claim, claim.payload["bias"], request, candidate
             ),
             discard=lambda request, candidate: release(queue, claim, candidate),
+            observer=meter.observe if meter else None,
         )
         prepared.data["claim_id"] = str(claim.id)
         prepared.data["claim_token"] = str(claim.token)
+        if meter:
+            meter.finish("prepared", parameters={"search": prepared.info.parameters})
+            prepared.data["measurement_run_id"] = str(meter.id)
         return prepared
-    except BaseException:
+    except BaseException as error:
         with queue._transaction() as session:
             session.execute(
                 delete(CollectionReservation).where(
@@ -323,6 +383,22 @@ def prepare(claim):
                     CollectionReservation.asset_id.is_(None),
                 )
             )
+        if meter:
+            meter.finish(
+                "stopped" if isinstance(error, MeasurementLimit) else "failed", error=error
+            )
+            if isinstance(error, MeasurementLimit):
+                payload = claim.payload
+                parameters = {
+                    "request": payload["request"], "effective": {}, "next_offset": None,
+                    "skipped": [], "stop_reason": str(error),
+                }
+                return Prepared(
+                    RunInfo("open", payload["code_version"], payload["taxonomy_version"],
+                            payload["host"], parameters),
+                    {"records": [], "payload": payload, "claim_id": str(claim.id),
+                     "claim_token": str(claim.token), "measurement_run_id": str(meter.id)}, [],
+                )
         raise
     finally:
         engine.dispose()
@@ -331,6 +407,8 @@ def prepare(claim):
 def register(session, run, data):
     """共有登録後、予約と画像・subjectを同じ完了取引で確定する。"""
     session.execute(LOCK_SQL)
+    measured = "measurement_run_id" in data
+    known = set(session.scalars(select(Asset.sha256))) if measured else set()
     reservations = session.scalars(
         select(CollectionReservation).where(
             CollectionReservation.job_id == uuid.UUID(data["claim_id"]),
@@ -350,9 +428,15 @@ def register(session, run, data):
             **asset.search_parameters,
             "collection_bias": {
                 "stratum": reservation.stratum,
-                "intended_attributes": reservation.attributes,
+                "intended_attributes": {
+                    k: v for k, v in reservation.attributes.items() if k != "_original_url"
+                },
                 "region": reservation.region,
                 "region_basis": reservation.region_basis,
             },
         }
         reservation.asset_id = asset.id
+    if measured:
+        from colorstats.collect.measurement import record
+
+        record(session, run, data, known)

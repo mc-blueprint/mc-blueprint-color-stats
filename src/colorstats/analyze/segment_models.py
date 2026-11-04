@@ -1,6 +1,8 @@
 """ローカルに配置済みの公式重みを使うGPU推論。重みの自動取得は行わない。"""
 
 import time
+from functools import lru_cache
+from pathlib import Path
 
 import numpy as np
 
@@ -10,10 +12,10 @@ REPOSITORIES = {
 }
 
 
-def predict(image, method, paths, prompts, threshold, text_threshold):
+def predict(image, method, paths, model_hashes, prompts, threshold, text_threshold):
     """(label, boolマスク, confidence)の列とGPU計測を返す。CUDA必須。
 
-    モデルはこの呼出しだけ保持する。初期化と推論を個別に計測し、VRAMは
+    同じパス・実ファイルhashのモデルをプロセス内で保持する。初期化と推論を個別に計測し、VRAMは
     初期化も含むPyTorch allocatorの最大値。OOM・依存不足はそのまま送出する。
     """
     import torch
@@ -25,7 +27,12 @@ def predict(image, method, paths, prompts, threshold, text_threshold):
     start = time.perf_counter()
     if method != "sam2-dino":
         raise ValueError("methodはsam2-dinoです")
-    runner = _sam2(paths)
+    files = tuple(
+        (str(Path(paths[name]) / filename), digest)
+        for name in sorted(paths)
+        for filename, digest in sorted(model_hashes[name]["files"].items())
+    )
+    runner = _resident(tuple(sorted(paths.items())), files)
     torch.cuda.synchronize()
     loaded = time.perf_counter()
     with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
@@ -42,6 +49,11 @@ def predict(image, method, paths, prompts, threshold, text_threshold):
         "cuda_version": torch.version.cuda,
         "batch_size": 1,
     }
+
+
+@lru_cache(maxsize=1)
+def _resident(paths, files):
+    return _sam2(dict(paths))
 
 
 def _sam2(paths):

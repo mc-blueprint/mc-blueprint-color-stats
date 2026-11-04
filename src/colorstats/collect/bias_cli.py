@@ -27,6 +27,7 @@ def main():
     planner.add_argument("--seed", type=int, default=0)
     reporter = commands.add_parser("report")
     reporter.add_argument("--output", type=Path)
+    reporter.add_argument("--measurement-id")
     args = parser.parse_args()
     config = load_targets(args.targets, args.taxonomy)
     engine = create_engine(os.environ["DATABASE_URL"])
@@ -48,7 +49,12 @@ def main():
             }
         else:
             with Session(engine) as session:
-                result = coverage(session, config)
+                if args.measurement_id:
+                    from colorstats.collect.measurement import report
+
+                    result = report(session, args.measurement_id)
+                else:
+                    result = coverage(session, config)
         output = json.dumps(result, ensure_ascii=False, indent=2)
         if args.command == "report" and args.output:
             args.output.write_text(output + "\n", encoding="utf-8")

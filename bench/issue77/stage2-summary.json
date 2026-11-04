@@ -1,0 +1,1566 @@
+{
+  "totals": {
+    "bytes": 254215317,
+    "new_sha": 19,
+    "requests": 344,
+    "timeouts": 0,
+    "verified": 134,
+    "downloads": 19,
+    "responses": 344,
+    "candidates": 243,
+    "registered": 19,
+    "api_requests": 145,
+    "duplicate_sha": 0,
+    "download_bytes": 186623050,
+    "eligible_new_sha": 8,
+    "search_responses": 28,
+    "excluded:stratum_source_limit": 8,
+    "excluded:missing_attribution:author_or_attribution": 1,
+    "excluded:download_http_403": 28,
+    "excluded:source_license_or_author_unverified": 108,
+    "excluded:verification_stopped:provider_http_limit": 10,
+    "excluded:restricted": 1,
+    "excluded:rediscovered_url": 52,
+    "excluded:stratum_author_limit": 3
+  },
+  "strata_providers": [
+    {
+      "stratum": "japanese-castle",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 11,
+        "requests": 12,
+        "responses": 12,
+        "timeouts": 0,
+        "candidates": 10,
+        "verified": 9,
+        "downloads": 1,
+        "download_bytes": 225250,
+        "bytes": 256229,
+        "registered": 1,
+        "new_sha": 1,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:stratum_source_limit": 8,
+        "excluded:missing_attribution:author_or_attribution": 1
+      },
+      "measured": true,
+      "states": {
+        "committed": 4
+      },
+      "stops": {
+        "stratum_source_limit": 3
+      },
+      "d15_exclusions": {
+        "license_conditions": 1,
+        "license_not_allowed": 1
+      },
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "japanese-castle",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 5,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 11,
+        "verified": 2,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 5477320,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:download_http_403": 2,
+        "excluded:source_license_or_author_unverified": 9,
+        "excluded:verification_stopped:provider_http_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "failed": 3,
+        "committed": 2
+      },
+      "stops": {
+        "provider_http_limit": 1
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "gothic-temple",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 14,
+        "requests": 15,
+        "responses": 15,
+        "timeouts": 0,
+        "candidates": 11,
+        "verified": 11,
+        "downloads": 1,
+        "download_bytes": 10204473,
+        "bytes": 10274832,
+        "registered": 1,
+        "new_sha": 1,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:restricted": 1,
+        "excluded:rediscovered_url": 8,
+        "excluded:stratum_author_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "committed": 4
+      },
+      "stops": {
+        "provider_api_limit": 2
+      },
+      "d15_exclusions": {
+        "license_conditions": 1,
+        "license_not_allowed": 1
+      },
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "gothic-temple",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 3,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 10,
+        "verified": 5,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 5554082,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:download_http_403": 5,
+        "excluded:source_license_or_author_unverified": 5,
+        "excluded:verification_stopped:provider_http_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "committed": 4,
+        "failed": 1
+      },
+      "stops": {
+        "provider_http_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "forest-autumn-day",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 14,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 11,
+        "verified": 11,
+        "downloads": 4,
+        "download_bytes": 38698795,
+        "bytes": 38777375,
+        "registered": 4,
+        "new_sha": 4,
+        "eligible_new_sha": 1,
+        "duplicate_sha": 0,
+        "excluded:rediscovered_url": 5,
+        "excluded:stratum_author_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "committed": 4
+      },
+      "stops": {
+        "provider_api_limit": 2
+      },
+      "d15_exclusions": {
+        "license_conditions": 3,
+        "license_not_allowed": 3
+      },
+      "eligible_new_sha_per_api_request": 0.07142857142857142
+    },
+    {
+      "stratum": "forest-autumn-day",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 1,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 10,
+        "verified": 8,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 4813289,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:download_http_403": 7,
+        "excluded:source_license_or_author_unverified": 2
+      },
+      "measured": true,
+      "states": {
+        "committed": 3
+      },
+      "stops": {
+        "provider_http_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "modern-house",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 14,
+        "requests": 15,
+        "responses": 15,
+        "timeouts": 0,
+        "candidates": 12,
+        "verified": 12,
+        "downloads": 1,
+        "download_bytes": 746426,
+        "bytes": 815441,
+        "registered": 1,
+        "new_sha": 1,
+        "eligible_new_sha": 1,
+        "duplicate_sha": 0,
+        "excluded:rediscovered_url": 9
+      },
+      "measured": true,
+      "states": {
+        "committed": 5
+      },
+      "stops": {
+        "provider_api_limit": 4
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.07142857142857142
+    },
+    {
+      "stratum": "modern-house",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 3,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 11,
+        "verified": 10,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 5317641,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:source_license_or_author_unverified": 1,
+        "excluded:download_http_403": 4
+      },
+      "measured": true,
+      "states": {
+        "committed": 4
+      },
+      "stops": {
+        "provider_http_limit": 2
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "medieval-house",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 0,
+        "requests": 0,
+        "responses": 0,
+        "timeouts": 0,
+        "candidates": 0,
+        "verified": 0,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 0,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0
+      },
+      "measured": false,
+      "states": {
+        "committed": 3
+      },
+      "stops": {
+        "stratum_source_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": null
+    },
+    {
+      "stratum": "medieval-house",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 2,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 16,
+        "verified": 2,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 6569071,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:source_license_or_author_unverified": 14,
+        "excluded:verification_stopped:provider_http_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "committed": 4
+      },
+      "stops": {
+        "provider_http_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "japanese-temple",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 0,
+        "requests": 0,
+        "responses": 0,
+        "timeouts": 0,
+        "candidates": 0,
+        "verified": 0,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 0,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0
+      },
+      "measured": false,
+      "states": {
+        "committed": 3
+      },
+      "stops": {
+        "stratum_source_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": null
+    },
+    {
+      "stratum": "japanese-temple",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 4,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 14,
+        "verified": 4,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 3198744,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:source_license_or_author_unverified": 10,
+        "excluded:verification_stopped:provider_http_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "failed": 2,
+        "committed": 4
+      },
+      "stops": {
+        "provider_http_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "islamic-temple",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 14,
+        "requests": 15,
+        "responses": 15,
+        "timeouts": 0,
+        "candidates": 11,
+        "verified": 11,
+        "downloads": 1,
+        "download_bytes": 3086033,
+        "bytes": 3131434,
+        "registered": 1,
+        "new_sha": 1,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:rediscovered_url": 9,
+        "excluded:stratum_author_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "committed": 4
+      },
+      "stops": {
+        "provider_api_limit": 2
+      },
+      "d15_exclusions": {
+        "license_conditions": 1,
+        "license_not_allowed": 1
+      },
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "islamic-temple",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 5,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 13,
+        "verified": 0,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 1533067,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:source_license_or_author_unverified": 13,
+        "excluded:verification_stopped:provider_http_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "failed": 3,
+        "committed": 2
+      },
+      "stops": {
+        "provider_http_limit": 1
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "chinese-house",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 14,
+        "requests": 15,
+        "responses": 15,
+        "timeouts": 0,
+        "candidates": 12,
+        "verified": 12,
+        "downloads": 1,
+        "download_bytes": 459983,
+        "bytes": 508613,
+        "registered": 1,
+        "new_sha": 1,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:rediscovered_url": 9
+      },
+      "measured": true,
+      "states": {
+        "committed": 6
+      },
+      "stops": {
+        "provider_api_limit": 5
+      },
+      "d15_exclusions": {
+        "license_conditions": 1,
+        "license_not_allowed": 1
+      },
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "chinese-house",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 3,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 15,
+        "verified": 0,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 7714242,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:source_license_or_author_unverified": 15,
+        "excluded:verification_stopped:provider_http_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "committed": 5
+      },
+      "stops": {
+        "provider_http_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "mountains-summer-day",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 0,
+        "requests": 0,
+        "responses": 0,
+        "timeouts": 0,
+        "candidates": 0,
+        "verified": 0,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 0,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0
+      },
+      "measured": false,
+      "states": {
+        "committed": 3
+      },
+      "stops": {
+        "stratum_source_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": null
+    },
+    {
+      "stratum": "mountains-summer-day",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 3,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 11,
+        "verified": 4,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 5360253,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:source_license_or_author_unverified": 7,
+        "excluded:verification_stopped:provider_http_limit": 1,
+        "excluded:download_http_403": 4
+      },
+      "measured": true,
+      "states": {
+        "committed": 4,
+        "failed": 1
+      },
+      "stops": {
+        "provider_http_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "plains-summer-day",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 14,
+        "requests": 17,
+        "responses": 17,
+        "timeouts": 0,
+        "candidates": 12,
+        "verified": 12,
+        "downloads": 3,
+        "download_bytes": 37797056,
+        "bytes": 37854561,
+        "registered": 3,
+        "new_sha": 3,
+        "eligible_new_sha": 3,
+        "duplicate_sha": 0,
+        "excluded:rediscovered_url": 7
+      },
+      "measured": true,
+      "states": {
+        "committed": 7
+      },
+      "stops": {
+        "provider_api_limit": 6
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.21428571428571427
+    },
+    {
+      "stratum": "plains-summer-day",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 2,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 11,
+        "verified": 5,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 5799479,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:download_http_403": 5,
+        "excluded:source_license_or_author_unverified": 6,
+        "excluded:verification_stopped:provider_http_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "committed": 5
+      },
+      "stops": {
+        "provider_http_limit": 4
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "desert-summer-day",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 0,
+        "requests": 0,
+        "responses": 0,
+        "timeouts": 0,
+        "candidates": 0,
+        "verified": 0,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 0,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0
+      },
+      "measured": false,
+      "states": {
+        "committed": 3
+      },
+      "stops": {
+        "stratum_source_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": null
+    },
+    {
+      "stratum": "desert-summer-day",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 3,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 14,
+        "verified": 1,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 7437601,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:download_http_403": 1,
+        "excluded:source_license_or_author_unverified": 13,
+        "excluded:verification_stopped:provider_http_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "committed": 4
+      },
+      "stops": {
+        "provider_http_limit": 2
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    },
+    {
+      "stratum": "snowy-winter-day",
+      "provider": "wikimedia_commons",
+      "counts": {
+        "api_requests": 14,
+        "requests": 21,
+        "responses": 21,
+        "timeouts": 0,
+        "candidates": 12,
+        "verified": 12,
+        "downloads": 7,
+        "download_bytes": 95405034,
+        "bytes": 95593318,
+        "registered": 7,
+        "new_sha": 7,
+        "eligible_new_sha": 3,
+        "duplicate_sha": 0,
+        "excluded:rediscovered_url": 5
+      },
+      "measured": true,
+      "states": {
+        "committed": 4
+      },
+      "stops": {
+        "provider_api_limit": 2
+      },
+      "d15_exclusions": {
+        "license_conditions": 4,
+        "license_not_allowed": 4
+      },
+      "eligible_new_sha_per_api_request": 0.21428571428571427
+    },
+    {
+      "stratum": "snowy-winter-day",
+      "provider": "openverse",
+      "counts": {
+        "api_requests": 2,
+        "requests": 18,
+        "responses": 18,
+        "timeouts": 0,
+        "candidates": 16,
+        "verified": 3,
+        "downloads": 0,
+        "download_bytes": 0,
+        "bytes": 8228725,
+        "registered": 0,
+        "new_sha": 0,
+        "eligible_new_sha": 0,
+        "duplicate_sha": 0,
+        "excluded:source_license_or_author_unverified": 13,
+        "excluded:verification_stopped:provider_http_limit": 1
+      },
+      "measured": true,
+      "states": {
+        "committed": 4
+      },
+      "stops": {
+        "provider_http_limit": 3
+      },
+      "d15_exclusions": {},
+      "eligible_new_sha_per_api_request": 0.0
+    }
+  ],
+  "confirmed_subjects_by_stratum": {
+    "islamic-temple": 0,
+    "forest-autumn-day": 0,
+    "snowy-winter-day": 0,
+    "plains-summer-day": 0,
+    "chinese-house": 0,
+    "modern-house": 0,
+    "gothic-temple": 0,
+    "japanese-castle": 0,
+    "medieval-house": 0,
+    "japanese-temple": 0,
+    "desert-summer-day": 0,
+    "mountains-summer-day": 0
+  },
+  "measurement_id": "issue77-v1",
+  "seconds": 1539.2807606529677,
+  "jobs": {
+    "statuses": {
+      "succeeded": 95,
+      "failed": 2
+    },
+    "attempts": 105,
+    "jobs": [
+      {
+        "id": "c49d7343-4a82-401e-ad9f-f678c01f34c3",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "4953b929-4fbd-4037-a099-10e65eda367e",
+        "stratum": "islamic-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "068507d2-bdb3-422a-b15d-7e31132826e2",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "bdf17b7c-09b3-4248-a287-169e0a0338ab",
+        "stratum": "islamic-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "cd8f8051-a41c-40d1-b7b8-76602b28f3cd",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "a105010c-82aa-4ccb-baa0-2f0e01986d91",
+        "stratum": "islamic-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "55d81f2d-64b6-4b87-b01a-ec2344294eea",
+        "status": "failed",
+        "attempts": 3,
+        "run_id": null,
+        "stratum": "islamic-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "ff65fd5a-8c73-48ba-a884-629e583d399b",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "15a59dd7-295a-4eb8-97fb-d981fba15269",
+        "stratum": "islamic-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "bd83723e-c5c4-47c6-a224-1b7f1cecbfb1",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "75ff9d07-40d8-433a-9c7c-05b97a9a7021",
+        "stratum": "islamic-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "b425982a-27a5-456c-ad26-228cf2dc8b11",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "bc480971-abb1-4c4f-9d07-7686ad83fb4e",
+        "stratum": "forest-autumn-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "af88e714-2444-4b68-b0f8-9d24bba41165",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "f3c0b835-5a22-407f-891b-626bddfa5180",
+        "stratum": "forest-autumn-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "50f42b3f-9d1b-448e-9741-079de8c6fda2",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "bfa32391-8638-44fb-a437-516bd5f06f1a",
+        "stratum": "forest-autumn-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "e99a3193-e313-448c-8e75-f3c7705a79b2",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "b3d17ee2-027c-4964-9431-e41940962289",
+        "stratum": "forest-autumn-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "dd0fb9bc-9429-4604-9975-50fbfd8a0096",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "2adb2629-f9a9-43b3-b018-c246125de59d",
+        "stratum": "forest-autumn-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "0236bac4-5550-4f74-bfaf-33b00701dd60",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "a4728939-a384-44f7-a73b-fe3e097b4ba8",
+        "stratum": "forest-autumn-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "5f51956d-2cf5-4d4b-bf8a-60f4d32dbc97",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "1160b9c7-6b4d-4667-bb1a-ca04d92c7201",
+        "stratum": "snowy-winter-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "9c37b3ef-c865-4536-be6f-816b8b58aa17",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "49af85fe-7f3e-4efb-8632-9a92cadc639d",
+        "stratum": "snowy-winter-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "2dd11db6-1ec8-41a4-b68e-ba57dfa90d56",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "5191c82d-1638-4259-bc30-e0a46f6bb163",
+        "stratum": "snowy-winter-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "86da9ddd-84e6-4f60-be0f-3487b5ecab64",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "d9ac9e2d-3a83-46f7-8584-389258404bf6",
+        "stratum": "snowy-winter-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "0f55121b-ca70-4e13-a269-bfc6c215d9de",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "7b58aa0f-501c-4ea6-999c-04e859a6e26d",
+        "stratum": "snowy-winter-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "4c7ba930-2abb-43a8-9623-34c65bfe83bd",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "6a73e2b7-4ad9-41e2-93e9-54617ed291f2",
+        "stratum": "snowy-winter-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "8a2cd4d7-95e4-4568-8136-be43318e33f0",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "4fbea32b-85e2-416e-b3cf-f7c24df0bb71",
+        "stratum": "plains-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "55d3e604-57e0-4622-ac85-55d29078151b",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "9c9f828c-d0e9-476a-9d5a-5369397bb4bf",
+        "stratum": "plains-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "4d98ce4d-af87-4f68-9c9a-64222de01d80",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "eb74bac5-7bc7-4035-b605-0915f22d0617",
+        "stratum": "plains-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "d241862b-73ed-45bf-b7c5-a87acff2b511",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "03c0dc33-f227-445c-88ca-9ff85b7ef3aa",
+        "stratum": "plains-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "1cb6959c-61c2-4684-84b9-12e41fd26c93",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "1716d098-3080-4bb3-b9f2-9b5bf3076da3",
+        "stratum": "plains-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "30c730f3-9eed-4876-a57e-510c9eff630a",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "d01c690e-7cc1-42a3-8996-65e1aaf64a7e",
+        "stratum": "plains-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "b007c759-f5d4-48b7-ae3d-ed634b890b14",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "5ed5b130-f3e7-4908-b8d0-a89ed06c1c7c",
+        "stratum": "chinese-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "0abe6e81-0af8-49c1-85b5-ffe32bca3637",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "0a4c6ed8-e36b-4d31-856e-7e70a411cb6a",
+        "stratum": "chinese-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "0e777000-6281-411d-aade-e6067ec08124",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "98e9b88b-af0e-4934-8a12-52bb51c7c95d",
+        "stratum": "chinese-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "3d133f65-35a5-4e06-b999-d2bc6273d9bd",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "6b038a12-15e9-4b92-8120-43bd6958bcdb",
+        "stratum": "chinese-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "241a02a6-de6d-46af-9c20-6dc94605d2e6",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "4779d693-5f6e-4705-be34-785637a31eaa",
+        "stratum": "chinese-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "4a269ac0-0b66-4df8-80a6-2681b2dc9ccf",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "ea55c8b2-5380-4833-a77c-ae09c6d2c146",
+        "stratum": "chinese-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "c43f762c-d3d2-4eed-9f81-bb86b076ea21",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "7319a221-5488-495a-9998-e96c570c77d9",
+        "stratum": "modern-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "a3d85e66-5df9-478c-838f-11d14ffcf0e4",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "52313174-3f19-4c9f-83dc-a9685a410893",
+        "stratum": "modern-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "a9dfad7b-3ce5-46c0-ab7b-e784bacd9efb",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "a1df1f85-04fc-4ef9-b6ff-fef8ba275bbe",
+        "stratum": "modern-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "a55b0490-ff94-47e8-a8c1-89e47087a51a",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "00e43bd7-7a88-4ad8-9fac-d3d6982302ac",
+        "stratum": "modern-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "8d4ee529-782b-480b-b475-e27836fbe3dc",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "600a2c9e-87c6-44dd-bb71-a82e36a2bade",
+        "stratum": "modern-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "2e99fc07-88c2-4431-aea4-8f0b0dc67193",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "0f0582fc-4a6c-41ae-a270-214471603cbd",
+        "stratum": "modern-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "9ddf7ac1-fa77-41ff-8c0b-c7406d7f0d20",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "d47eb13a-18cf-48d9-a6c9-e15dbbabbb73",
+        "stratum": "modern-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "1684e8a3-af40-46b1-8b06-03cda27cb617",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "70c0e927-1019-4572-bef1-218012e3a37a",
+        "stratum": "modern-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "46ab397c-cc39-4002-b5f2-64faf879d9ca",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "0cc15f35-0224-4cbe-b350-477ae2ac7f62",
+        "stratum": "gothic-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "af84ec2c-606a-4004-8337-58eb94057a25",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "e40795c7-543c-4d42-bac4-26d2e21998ba",
+        "stratum": "gothic-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "92f40c98-8413-43e8-8193-bc02ce423884",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "1bd12a62-18b7-4fd0-8b96-93cecd1afc20",
+        "stratum": "gothic-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "90cb8a02-909e-420a-a100-92ddb9ff1bf2",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "399f7c24-4276-4c2b-9465-fd3724d45677",
+        "stratum": "gothic-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "fb792879-bc62-4d77-a711-1a32574181b0",
+        "status": "succeeded",
+        "attempts": 2,
+        "run_id": "539c57e3-b2e8-4ffb-a744-254fa41d0dea",
+        "stratum": "gothic-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "b29c9b55-2d5a-4606-bfb0-52d008920972",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "3d77416b-7800-4f5a-8adb-9b24f5a899bd",
+        "stratum": "gothic-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "5f23871a-1085-4054-a798-cba04d5512bf",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "9d864cb8-d821-4fa2-9de8-cb96e5b917a3",
+        "stratum": "japanese-castle",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "988f98e3-62b3-42fb-8f23-84c4bfa7a5e2",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "55b93f30-7c78-42ff-bd70-c69dbf4e0a66",
+        "stratum": "japanese-castle",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "8f740f93-de6e-469c-a3c0-425cdeb2b369",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "8e2e3b60-e401-446b-8d9a-163e25646409",
+        "stratum": "japanese-castle",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "a6b82cf3-46cf-471e-879b-b032ac040353",
+        "status": "failed",
+        "attempts": 3,
+        "run_id": null,
+        "stratum": "japanese-castle",
+        "provider": "openverse"
+      },
+      {
+        "id": "e523cc81-751d-4b7e-8b64-d0e720a81ca2",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "c0a11538-d915-4e86-b39d-4ffc171bf03b",
+        "stratum": "japanese-castle",
+        "provider": "openverse"
+      },
+      {
+        "id": "97361081-dc8c-42c9-8b37-22393367c7aa",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "9a973f88-f205-49d3-bc8f-2aab0ba66780",
+        "stratum": "medieval-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "1c43093b-ac7f-47ee-a133-24aed58a2f64",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "39e5920d-d7ee-4534-90e6-a3cb6d4f7021",
+        "stratum": "medieval-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "22d3c2bd-80d2-411c-9898-3bd1a5ad6ffa",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "56225192-8ab9-4587-8851-7783bba9e251",
+        "stratum": "medieval-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "050f76c6-7f13-468e-9f33-5c6c747fe13f",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "6b948264-0c79-46bd-b604-4381347eed5e",
+        "stratum": "medieval-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "bf783458-f76f-440c-974d-bbf0729dde4d",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "61b70500-bab8-4317-a822-0257c2200758",
+        "stratum": "medieval-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "6c63e6a3-f8c2-4f22-a4fb-23b8a0cc2d7c",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "9a7b5650-67b6-41b1-9a16-d6429c315842",
+        "stratum": "medieval-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "56b23a9a-ca7e-4b02-8996-03041b597f84",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "fc75fb8b-51ed-436e-8da3-b11abc2be3c3",
+        "stratum": "japanese-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "53c12821-9727-41d7-af27-489771a2a3a9",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "5cb7b4bb-198a-48fc-9e59-468098146504",
+        "stratum": "japanese-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "e66a6856-5c49-454d-9a60-97be492aeaae",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "c2552697-18c1-40b4-b741-970b6fc17785",
+        "stratum": "japanese-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "6b91ed9c-61db-4ad8-9e1b-b93b2d00aa81",
+        "status": "succeeded",
+        "attempts": 2,
+        "run_id": "7f7f8c4d-5d18-46b2-b252-7b124593876d",
+        "stratum": "japanese-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "fe05ef05-b789-4319-9a23-aa3fbd5722ff",
+        "status": "succeeded",
+        "attempts": 2,
+        "run_id": "e77d9eaa-51e7-4985-8d45-ca96ec9dceb8",
+        "stratum": "japanese-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "59ee90f9-b6e9-4287-876b-d2683f314e8a",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "a27e6bb6-a8a2-4116-8e7c-3db54b34ed35",
+        "stratum": "japanese-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "f14f5133-6dff-4d86-92bb-9775564def16",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "a12a07da-566b-4862-a49d-7696519e004c",
+        "stratum": "desert-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "2efb9ad8-a6b2-4418-b624-30a750cc3a60",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "1410170c-7885-428a-b4c6-73899bf27bdb",
+        "stratum": "desert-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "ba233ea0-6ca8-4fae-8075-bcc585205577",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "534c6616-73fe-437a-8971-9aef8c079a06",
+        "stratum": "desert-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "3b1664ce-6cc2-4623-b8bd-c3e35ec90b33",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "324859b4-545d-4769-a672-ae0135254da9",
+        "stratum": "desert-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "b9f77042-d3f6-4daf-8085-6a3c60ba36e1",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "7fb27a63-1dbf-46ea-a0aa-fd8e2010a9c3",
+        "stratum": "desert-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "d79702e0-7f34-4044-b18e-e368769177b2",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "b7054205-61ab-45ea-956f-1d9278ebe6a4",
+        "stratum": "desert-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "2bfc85fe-15a2-4361-97c8-53de0f1aa402",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "129f4177-60d3-4f60-970d-d4c4965fd674",
+        "stratum": "mountains-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "381a628c-7d67-422c-b263-606e48801980",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "82d4d0e6-5ec4-42fe-82a5-d8b33d57aac0",
+        "stratum": "mountains-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "5f7a86f9-9eba-4883-8a8a-123a7bea5516",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "2f5165e5-4e39-4c28-9ca2-57e6276e916c",
+        "stratum": "mountains-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "35d35a51-9a34-419e-8537-8038a25d9e5d",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "e79b9f11-3447-447d-92b9-e71c4a3b5016",
+        "stratum": "mountains-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "472d8161-93c5-4712-a1ca-b5547c79de25",
+        "status": "succeeded",
+        "attempts": 2,
+        "run_id": "2f7d1073-3580-4664-89be-6b551b9ea3fe",
+        "stratum": "mountains-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "baa432fd-2de6-4632-b372-ecd9292a784c",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "f06a924d-c768-4899-a63c-082fa75d5f67",
+        "stratum": "mountains-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "85f37ea4-aa91-4635-954d-afa2d2912180",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "7a5f25f5-17a7-4b33-9123-d71e3c2e2cb3",
+        "stratum": "islamic-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "d6c0a776-ce57-42c0-919b-11c5d4802183",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "4cf8d5bb-4ae0-4300-8582-cef987d000e6",
+        "stratum": "forest-autumn-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "36dff288-aa9a-4969-ad94-45eccad339e3",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "a91dd801-9185-4e7d-bf94-7e56758fc2a8",
+        "stratum": "snowy-winter-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "31e025f0-8a5a-42e1-a114-6768acbcedda",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "9afe6c8d-0caa-4bc3-86c5-256403d18e23",
+        "stratum": "snowy-winter-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "f8367426-6fda-4f28-a757-ea1e1e9b0839",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "7844e82c-77db-41c6-8161-ab82c4074fb8",
+        "stratum": "chinese-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "a4960126-6619-4d93-8851-29685ca91361",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "29e34983-9e68-4ab8-9506-970340296fff",
+        "stratum": "chinese-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "9f590f87-f5f1-498b-bfb4-b1c63ff17a34",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "9a1e5158-e0cd-48ee-86a6-b59eb5600e7f",
+        "stratum": "chinese-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "6c2b84fc-eab8-4c9b-b667-4afe173d8ac6",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "811099e2-255f-4069-a680-304affb7a468",
+        "stratum": "chinese-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "3e32babd-4338-46f2-947c-1eba97782b2a",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "8d76a298-562f-4d27-85fb-7d0519edcf76",
+        "stratum": "chinese-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "2bf106b4-8a6b-4164-86c7-ca7bb218f1e3",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "61dd9e00-b3d9-4132-b287-f68b6a2cc38f",
+        "stratum": "plains-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "7888effa-c26d-40cc-bacf-a6d4821d7cd1",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "b940b534-750c-47e6-9844-26f6c3bec67a",
+        "stratum": "plains-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "2f5bd62c-1883-4c5b-9854-2bb43bbd910a",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "3d8c02bc-f108-464d-b15f-be7c74900dc5",
+        "stratum": "plains-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "e2beafff-2992-44f9-9348-cae4bc201a85",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "a438a2fa-189c-41f5-9684-3d851ac93f89",
+        "stratum": "plains-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "951d26ab-93ad-4f6e-99be-5a36f10c1caf",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "ccc688f7-1a05-41fb-b232-b87d101bc2f0",
+        "stratum": "plains-summer-day",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "5d7c5d11-287d-427a-a792-2affcf8099ba",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "920cf1b5-8a6c-4584-aa7e-2d5b1b474dbd",
+        "stratum": "plains-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "0c6151a0-5075-439b-b188-8d3581e5b593",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "701a62e6-4b68-4008-bd64-4ddcf9f05e73",
+        "stratum": "modern-house",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "30aec12e-e596-4cb1-9509-65ff4fadd920",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "0dadb4e5-cf94-45a1-b2dc-ef1d02a68834",
+        "stratum": "gothic-temple",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "7fdb20a9-0898-4183-8375-f64ac74ab666",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "5140858c-5662-4126-a91f-1e31f6dafd04",
+        "stratum": "gothic-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "c06b5dc2-51ee-4af2-b011-cfcadcc181c2",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "4f5f6db1-e34a-4760-840b-20675d7fc817",
+        "stratum": "japanese-castle",
+        "provider": "openverse"
+      },
+      {
+        "id": "7014cb9e-4e88-4ad6-ab3e-0dbeca3bffc6",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "406925b2-0cf1-4d44-b45c-3833ea606858",
+        "stratum": "japanese-castle",
+        "provider": "wikimedia_commons"
+      },
+      {
+        "id": "1e5cb575-63a1-4111-a230-3096718ea342",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "41cc0cef-3ed1-4647-8ff3-143cea9fb6f8",
+        "stratum": "medieval-house",
+        "provider": "openverse"
+      },
+      {
+        "id": "3446b689-236f-47f5-9dd3-ebc748853b1b",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "6a1a2068-fa3d-4661-a3ec-9088c98404d4",
+        "stratum": "japanese-temple",
+        "provider": "openverse"
+      },
+      {
+        "id": "9fa3bf15-3cd6-4202-8169-9c6943199802",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "1504a681-6c48-46aa-ad62-a619a9bcb486",
+        "stratum": "desert-summer-day",
+        "provider": "openverse"
+      },
+      {
+        "id": "f0ac9f3f-6c0f-47d0-937e-038693779f09",
+        "status": "succeeded",
+        "attempts": 1,
+        "run_id": "5a1a681e-ca46-40e5-95c3-db5192db3b66",
+        "stratum": "mountains-summer-day",
+        "provider": "openverse"
+      }
+    ]
+  }
+}
