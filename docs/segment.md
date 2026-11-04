@@ -52,7 +52,8 @@ Transformersの`local_files_only=True`で動く。
 ## 投入とpayload
 
 1 asset／job、1画像／batch、1 box／SAM 2推論。現在のspawn方式を維持する。
-VRAM実測からまず1件を採用し、16画像バッチやモデル常駐ワーカーは追加しない。
+Issue #66では既存Workerの計算子内で、同じ実ファイルhashのモデルを再利用する。
+1画像・1 boxの単位は維持し、子の交代・異常終了時は再ロードする。
 12GB GPUの空きVRAMを確認し、同一GPUにsegmentワーカーを同時起動しない。
 
 ```python
@@ -84,6 +85,8 @@ queue.enqueue("segment", uuid.UUID("00000000-0000-0000-0000-000000000002"),
 
 UUIDとパスは実在するasset・成功prep run・出力先へ置き換える。
 prep入力には成功runの`output_paths`の値と`input_run_id`を指定する。
+固定コホートでは`input_sha256`も指定し、投入・prepare時に実画像と照合する。
+同じ値をshade・部位colorにも渡し、segmentの入力hashと登録時に照合する。
 registerは成功Jobが同じassetのprepを指し、runが完了済み・失敗理由なしで、
 input_pathがその不変出力の値に一致することを検証する。不一致は完了取引を
 ロールバックし、通常のジョブ失敗・再試行として扱う。

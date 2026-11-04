@@ -1,0 +1,252 @@
+{
+  "manifest_sha256": "85ce77ea471236ad882ea77403f206302e794733f0c59dc2fad16fb9f647a047",
+  "assets": 7607,
+  "sha256_unique": 3575,
+  "prep_failed": [
+    {
+      "asset_id": "04426845-833a-4515-b7ad-279b9ef8e8b8",
+      "sha256": "e93aa90d8310096036623dcd1cdd102c6b7af5d0cedb2a967c86789509ad95b1",
+      "license_class": "open",
+      "taxonomy_version": "0.1.0",
+      "prep_status": "failed",
+      "prep_reason": "RuntimeError: UnidentifiedImageError: cannot identify image file '/srv/colorstats/raw-suneast/e9/.output-c71be866-40b1-4c1e-85a7-009bbec84f09-9fd903a0-0898-4eb1-bad1-4db1e5c26268/e93aa90d8310096036623dcd1cdd102c6b7af5d0cedb2a967c86789509ad95b1.svg'"
+    },
+    {
+      "asset_id": "27102368-3fca-47bc-bfd8-27c5293bafa8",
+      "sha256": "0153c13d2825c488f4f4d55d29624f7c14b25a83a929483774a96c844ecf83dc",
+      "license_class": "open",
+      "taxonomy_version": "0.1.0",
+      "prep_status": "failed",
+      "prep_reason": "RuntimeError: ValueError: math domain error"
+    },
+    {
+      "asset_id": "9686b5e6-6c5a-4fe2-8409-e1845b81b399",
+      "sha256": "2e6dd38aeaf4247ffbadac907635102331f23b0c5195c8542258931c2c3f617b",
+      "license_class": "open",
+      "taxonomy_version": "0.1.0",
+      "prep_status": "failed",
+      "prep_reason": "RuntimeError: DecompressionBombError: Image size (231528608 pixels) exceeds limit of 178956970 pixels, could be decompression bomb DOS attack."
+    },
+    {
+      "asset_id": "e10a5d52-60e8-45a3-9f9c-8cc721306fad",
+      "sha256": "d0aceb3b79709a9d0b4685dc38e438ed001c1bfda45ab5c25e4d2a4edb7e52ea",
+      "license_class": "open",
+      "taxonomy_version": "0.1.0",
+      "prep_status": "failed",
+      "prep_reason": "RuntimeError: DecompressionBombError: Image size (237114540 pixels) exceeds limit of 178956970 pixels, could be decompression bomb DOS attack."
+    }
+  ],
+  "stages": {
+    "segment": {
+      "jobs": 20,
+      "status": {
+        "succeeded": 20
+      },
+      "attempts": 20,
+      "retries": 0,
+      "failures": [],
+      "successful_run_seconds": 160.01097099999996,
+      "input_bytes": 1403174,
+      "output_bytes": 2638181,
+      "regions": 588,
+      "part_observations": 0,
+      "relations": 0
+    },
+    "shade": {
+      "jobs": 20,
+      "status": {
+        "succeeded": 20
+      },
+      "attempts": 20,
+      "retries": 0,
+      "failures": [],
+      "successful_run_seconds": 16.774053,
+      "input_bytes": 1403174,
+      "output_bytes": 1711129,
+      "regions": 0,
+      "part_observations": 588,
+      "relations": 0
+    },
+    "color": {
+      "jobs": 20,
+      "status": {
+        "succeeded": 20
+      },
+      "attempts": 20,
+      "retries": 0,
+      "failures": [],
+      "successful_run_seconds": 44.089470999999996,
+      "input_bytes": 1403174,
+      "output_bytes": 7745369,
+      "regions": 0,
+      "part_observations": 2940,
+      "relations": 9792
+    }
+  },
+  "completed_assets": 20,
+  "pending_assets": 7583,
+  "violations": [],
+  "db_deltas": [
+    {
+      "session": {
+        "before": "ed8d53a35e5941f688aa7ceca557febb-before.json",
+        "after": "ed8d53a35e5941f688aa7ceca557febb-after.json",
+        "elapsed_seconds": 254.47053233301267,
+        "stopped": false,
+        "processed": 20
+      },
+      "database_bytes": 8200192,
+      "wal_bytes": 16649832,
+      "includes_concurrent_writes": true,
+      "tables": {
+        "alembic_version": {
+          "table_bytes": 0,
+          "index_bytes": 0
+        },
+        "asset": {
+          "table_bytes": 0,
+          "index_bytes": 0
+        },
+        "asset_duplicate": {
+          "table_bytes": 0,
+          "index_bytes": 0
+        },
+        "block_color": {
+          "table_bytes": 0,
+          "index_bytes": 0
+        },
+        "collection_reservation": {
+          "table_bytes": 0,
+          "index_bytes": 0
+        },
+        "color_observation": {
+          "table_bytes": 3080192,
+          "index_bytes": 401408
+        },
+        "job": {
+          "table_bytes": 237568,
+          "index_bytes": 24576
+        },
+        "processing_run": {
+          "table_bytes": 311296,
+          "index_bytes": 8192
+        },
+        "processing_run_input": {
+          "table_bytes": 8192,
+          "index_bytes": 24576
+        },
+        "region": {
+          "table_bytes": 245760,
+          "index_bytes": 106496
+        },
+        "relation": {
+          "table_bytes": 1671168,
+          "index_bytes": 2080768
+        },
+        "rule_stat": {
+          "table_bytes": 0,
+          "index_bytes": 0
+        },
+        "source": {
+          "table_bytes": 0,
+          "index_bytes": 0
+        },
+        "subject": {
+          "table_bytes": 0,
+          "index_bytes": 0
+        },
+        "subject_candidate": {
+          "table_bytes": 0,
+          "index_bytes": 0
+        }
+      },
+      "indexes": {
+        "alembic_version_pkc": 0,
+        "ix_asset_sha256": 0,
+        "ix_asset_source_id": 0,
+        "ix_asset_subject_id": 0,
+        "ix_block_color_processing_run_id": 0,
+        "ix_collection_reservation_job_id": 0,
+        "ix_collection_reservation_stratum": 0,
+        "ix_color_observation_asset_id": 24576,
+        "ix_color_observation_processing_run_id": 40960,
+        "ix_color_observation_region_id": 65536,
+        "ix_job_poll": 0,
+        "ix_region_asset_id": 8192,
+        "ix_region_label": 8192,
+        "ix_region_processing_run_id": 8192,
+        "ix_relation_asset_id": 90112,
+        "ix_relation_processing_run_id": 114688,
+        "ix_relation_region_a": 122880,
+        "ix_relation_region_b": 139264,
+        "ix_rule_stat_processing_run_id": 0,
+        "ix_source_site": 0,
+        "pk_asset": 0,
+        "pk_asset_duplicate": 0,
+        "pk_block_color": 0,
+        "pk_collection_reservation": 0,
+        "pk_color_observation": 270336,
+        "pk_job": 0,
+        "pk_processing_run": 8192,
+        "pk_processing_run_input": 24576,
+        "pk_region": 32768,
+        "pk_relation": 385024,
+        "pk_rule_stat": 0,
+        "pk_source": 0,
+        "pk_subject": 0,
+        "pk_subject_candidate": 0,
+        "uq_block_color_minecraft_version": 0,
+        "uq_collection_reservation_asset_id": 0,
+        "uq_collection_reservation_job_id": 0,
+        "uq_job_key": 8192,
+        "uq_job_run_id": 16384,
+        "uq_region_id": 49152,
+        "uq_relation_region_a": 1228800,
+        "uq_source_url": 0
+      }
+    }
+  ],
+  "elapsed_seconds": 254.47053233301267,
+  "completed_per_elapsed_second": 0.07859456187967184,
+  "attempt_events": {
+    "started": 60,
+    "finished": 60
+  },
+  "failed_attempt_seconds": 0,
+  "successful_attempt_seconds": 222.76846016704803,
+  "input_rejections": [],
+  "unclosed_attempts": 0,
+  "telemetry": {
+    "samples": 254,
+    "gpu_utilization_mean_percent": 23.893700787401574,
+    "gpu_memory_max_mib": 3435
+  },
+  "process_io_bytes": {
+    "rchar": 50150612971,
+    "wchar": 15548364,
+    "read_bytes": 917504,
+    "write_bytes": 14757888
+  },
+  "io_note": "親と計算子の/proc累積値。強制終了した子の最終未採取区間は含まない。",
+  "quality": {
+    "precision_threshold": 0.5,
+    "supported_labels": [
+      "door"
+    ],
+    "supported_groups": [
+      "real_building/wall",
+      "real_terrain/tree"
+    ],
+    "group_aggregation": "mask_union_per_asset",
+    "label_support": "bench/issue81/decision.json",
+    "unvalidated_usage": "diagnostic_only"
+  },
+  "report": "/mnt/data/work/issue-66/production-v2/sample-report.json",
+  "report_sha256": "02220a62b9874bcf8c1fc0abc1ea8c49d9252cc9095fca20a1e3f9b8653427c4",
+  "artifact_files": 668,
+  "reports_equal": true,
+  "asset_sha_mismatches": 0,
+  "sample_run_ids_unchanged": true,
+  "audit_at": "2026-11-03T03:42:58Z",
+  "sample_extrapolation_hours": 26.871381351776325
+}
