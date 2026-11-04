@@ -12,6 +12,7 @@ from sqlalchemy import null, select
 
 from colorstats.queue.core import RunInfo
 from colorstats.queue.worker import Prepared
+from colorstats.rights import combine_license
 from colorstats.schema.models import ProcessingRun, ProcessingRunInput, RuleStat
 from colorstats.stats import distributions, weights
 from colorstats.stats.snapshot import canonical, digest, verify
@@ -347,7 +348,10 @@ def prepare(claim):
     temporary = target.with_name(f".{target.name}.{claim.token}.tmp")
     temporary.write_text(canonical(data) + "\n", encoding="utf-8")
     return Prepared(
-        RunInfo("open", CODE_VERSION, data["taxonomy_version"], "aggregate", {
+        RunInfo(combine_license(*(
+            record["data"]["license_class"] for record in data["input_runs"]
+            if record["id"] not in data["subject_attribute_run_ids"]
+        )), CODE_VERSION, data["taxonomy_version"], "aggregate", {
             "payload": payload, "subject_attribute_run_ids": data["subject_attribute_run_ids"],
             "support_interpretation": data["support_interpretation"],
         }),
@@ -392,7 +396,7 @@ def register(session, run, data):
                     or source.code_version != expected["code_version"]
                     or source.stage != record["stage"]
                     or (record["id"] in attribute_ids and not attribute)
-                    or (source.license_class != "open" and not attribute)
+                    or (source.license_class not in {"open", "analysis_only"} and not attribute)
                     or any(canonical(getattr(source, field)) != canonical(expected[field])
                            for field in (
                                "parameters", "weights_hash", "model_name", "license_class",

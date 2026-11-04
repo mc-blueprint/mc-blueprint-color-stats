@@ -15,6 +15,7 @@ from pathlib import Path
 from sqlalchemy import delete, select, text
 from sqlalchemy.orm import Session
 
+from colorstats.rights import combine_license
 from colorstats.schema.models import Asset, AssetDuplicate, ProcessingRun, Subject, SubjectCandidate
 
 METHOD = "subject-rules-v1"
@@ -534,9 +535,8 @@ def execute(
                     ))
             session.add(ProcessingRun(
                 id=run_id, stage="subject",
-                license_class=(
-                    "open" if all(a.license_class == "open" for a in assets) else "restricted"
-                ), config_hash=config_hash,
+                license_class=combine_license(*(a.license_class for a in assets)),
+                config_hash=config_hash,
                 parameters={k: v for k, v in result.items() if k != "assets"},
                 output_paths={"snapshot": str(snapshot.resolve())}, code_version=code_version,
                 taxonomy_version=rules["taxonomy_version"], node="subject",

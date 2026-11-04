@@ -260,7 +260,8 @@ P17/P131/P625/P571の完全claim、asset GPS、設定、要求・応答hashはsn
 
 ### Issue #74: 固定統計スナップショット
 
-形式版は1、権利ゲート版はD15-v1。画像を含まないParquetとmanifest.jsonを、
+現行形式版は2、権利ゲート版はD15-v2（旧M3固定版は1 / D15-v1のまま保持）。
+内部用のParquetとmanifest.jsonを、
 未使用の出力ディレクトリへ作る。既存出力へ上書きしない。
 
 実行入口は `python -m colorstats.stats.snapshot_cli`。
@@ -296,10 +297,12 @@ DBの最新runを自動選択しない。失敗・欠測もコホートへ残す
   subject/scene_inferenceと明示指定した#85属性の成功subject runも取り込む。
   subjectと属性・候補・推定根拠は現在値をコピーし、再読取り時にDBへ参照しない。
 - asset.quality.licenseとsource.licenseの選択値を照合する。
-  PD/PDM・CC0・版付きCC BYだけを許容し、SA/NC/ND・制限付きrun・
+  open経路はPD/PDM・CC0・版付きCC BYだけを許容し、SA/NC/ND・制限付きrun・
   評価専用重み・権利不明・由来/帰属不足を理由別に除外する。
   カテゴリ上の複数ライセンスから選び直さず、別出典による再許諾を推測しない。
   原本や除外された出典を削除しない。
+  解析専用経路は本書末尾のIssue #87契約に従い、元権利・根拠・出典が整合する
+  analysis_onlyを許可する。両経路ともモデル重みはopen必須。
 - 権利と必要解析が適格なassetの中で、SHAごとにUUID文字列最小の代表を採る。
   全別出典とその個別の除外理由を残す。D15除外・解析欠測・SHA重複を区別する。
 - 画像全体観測はwhole_image、未支持の個別ラベルはunvalidated_labelとして保持する。
@@ -579,3 +582,17 @@ rights_excluded_without_analysisは必要解析がない権利除外画像数で
 
 属性state集約では、値の有無にかかわらず保存済みconflictを保持する。
 値なしのinferredや根拠なし値なしはunknownとし、矛盾を未知へ統合しない。
+
+## 解析専用区分と内部snapshot（Issue #87）
+
+revision `0006`はsource・asset・processing_runのVARCHAR(13)と全license_class CHECKへ
+`analysis_only`を追加する。native PostgreSQL enumではない。既存行を更新しない。
+downgradeは全対象表をロックしてanalysis_only行の存在を検査し、残っていれば例外で拒否する。
+削除・自動変換は行わない。通常のupgrade/downgradeはAlembicの取引内で行う。
+
+確認根拠は既存source.policyとasset.quality JSONBへ追加する（[収集契約](collect.md#解析専用入力issue-87)）。
+全runはopenを中立として合成し、analysis_onlyとNC/academic等の混在はrestricted。
+内部snapshotはformat_version=2、gate_version=D15-v2、access_scope=internal。
+assetの元URL・取得日時・確認根拠を保持し、原画像保存期限と統計利用失効を分離する。
+verifyは固定済みformat_version=1も引き続き照合するが、旧M3 snapshotを再生成・上書きしない。
+snapshotは配布パックではなく、[M4配布契約](pack-contract.md)に従って別の出力を作る。

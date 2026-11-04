@@ -24,6 +24,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 LICENSE_CLASS = Enum(
     "open",
+    "analysis_only",
     "noncommercial",
     "academic_only",
     "restricted",
