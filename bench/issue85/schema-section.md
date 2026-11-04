@@ -1,4 +1,4 @@
-## Issue #85: 建築subjectの地域・年代
+### Issue #85: 建築subjectの地域・年代
 
 `subject.location` は収集層のregion文字列、`subject.era` はera文字列のまま維持する。
 unknownはNULLで、既存の非NULL値を上書きしない。地形subject・assetは変更しない。
@@ -28,6 +28,7 @@ P17/P131/P625/P571の完全claim、asset GPS、設定、要求・応答hashはsn
 成功runはstage=subject、method=subject-attributes-v1で識別し、parametersに設定・集計・
 変更箇所、output_paths.snapshotに根拠JSONを保存する。APIは#79と同じ要求を使い、
 返却結果から4属性だけを今回の根拠へ記録する。既存の列・層照合APIは変更しない。
+#85の現行runのlicense_class=restrictedは実装の固定値であり、画像やWikidata claimの権利を判定した値ではない。
 
 #72の取引・排他・snapshot作成を共有し、属性反映はsubject表だけをロックする。
 取消は指定成功runの変更前値・更新後値・現在値と後続の属性変更runを照合し、
@@ -37,4 +38,4 @@ P17/P131/P625/P571の完全claim、asset GPS、設定、要求・応答hashはsn
 同じ値を別経路で書き戻した操作は既存スキーマに履歴がなく識別できないため、
 対象列を外部操作した場合は元snapshotと現在の編集履歴を確認してから取消する。
 
-docs/schema.mdへの反映は#74第2段階で行う。
+本節はdocs/schema.mdへ統合済み。正本は[スキーマ](../../docs/schema.md)。
