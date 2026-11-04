@@ -8,6 +8,7 @@ import re
 import unicodedata
 import uuid
 from collections import Counter, defaultdict
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -18,6 +19,27 @@ from colorstats.schema.models import Asset, AssetDuplicate, ProcessingRun, Subje
 
 METHOD = "subject-rules-v1"
 NAMESPACE = uuid.UUID("e87d5f5d-09eb-53e5-82aa-e7d465bd385c")
+
+
+@contextmanager
+def subject_transaction(engine, dry_run, *, attributes_only=False):
+    """対象同定と属性反映の排他・読取り専用取引を共有する。"""
+    with Session(engine) as session, session.begin():
+        if dry_run:
+            session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
+        else:
+            session.execute(text("SELECT pg_advisory_xact_lock(29, 1)"))
+            tables = "subject" if attributes_only else "subject, subject_candidate, asset"
+            session.execute(text(f"LOCK TABLE {tables} IN SHARE ROW EXCLUSIVE MODE"))
+        yield session
+
+
+def write_snapshot(snapshot, result):
+    """既存ファイルを上書きせず、成功runの根拠を書き出す。"""
+    snapshot.parent.mkdir(parents=True, exist_ok=True)
+    with snapshot.open("x", encoding="utf-8") as stream:
+        json.dump(result, stream, ensure_ascii=False, indent=2)
+        stream.write("\n")
 
 
 def digest(value):
@@ -372,15 +394,7 @@ def execute(
     再評価する。対象run以前の確定や、その後に他の処理が変更した関連付けは保持する。
     """
     run_id = uuid.uuid4()
-    with Session(engine) as session, session.begin():
-        if dry_run:
-            session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
-        else:
-            # prepと同じ排他を取り、確定subjectの継承と競合させない。
-            session.execute(text("SELECT pg_advisory_xact_lock(29, 1)"))
-            session.execute(text(
-                "LOCK TABLE subject, subject_candidate, asset IN SHARE ROW EXCLUSIVE MODE"
-            ))
+    with subject_transaction(engine, dry_run) as session:
         assets = session.scalars(select(Asset).order_by(Asset.id)).all()
         if wikidata is not None:
             categories = {
@@ -522,8 +536,5 @@ def execute(
                 finished_at=datetime.now(UTC),
             ))
             session.flush()
-        snapshot.parent.mkdir(parents=True, exist_ok=True)
-        with snapshot.open("x", encoding="utf-8") as stream:
-            json.dump(result, stream, ensure_ascii=False, indent=2)
-            stream.write("\n")
+        write_snapshot(snapshot, result)
     return result
