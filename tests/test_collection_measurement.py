@@ -506,6 +506,11 @@ def test_照合途中の枠停止でも除外URLと受信済み継続位置を�
     with Session(queue.engine) as session:
         history = report(session, "fixture-77")["strata"][request().stratum]["history"][0]
         search = history["search"]
+        assert "network_api_seconds" in history["counts"]
+        assert history["database_timing"]["lock_wait_seconds"] >= 0
+        assert history["database_timing"]["processing_seconds"] is None
+        assert history["database_timing"]["commit_seconds"] is None
+        assert history["elapsed_seconds"] >= 0
         assert search["effective"]["api"] == "Openverse API v1"
         assert search["api_next_offset"] == 2 and not search["search_complete"]
         assert search["skipped"][0]["source_url"] == data["results"][0]["foreign_landing_url"]

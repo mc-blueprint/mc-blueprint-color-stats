@@ -3,6 +3,7 @@
 import uuid
 from collections import Counter
 from datetime import UTC, datetime
+from time import monotonic
 
 from sqlalchemy import func, select
 
@@ -22,6 +23,7 @@ class Meter:
         from colorstats.collect.bias import LOCK_SQL
 
         self.queue, self.claim = queue, claim
+        self.started = monotonic()
         payload = claim.payload
         self.settings = payload["bias"]["measurement"]
         self.stratum = payload["request"]["stratum"]
@@ -85,9 +87,20 @@ class Meter:
                             "new_sha",
                             "eligible_new_sha",
                             "duplicate_sha",
+                            "network_api_seconds",
+                            "network_page_seconds",
+                            "network_media_seconds",
+                            "normal_wait_seconds",
+                            "backoff_seconds",
+                            "bandwidth_wait_seconds",
                         ),
                         0,
                     ),
+                    "database_timing": {
+                        "lock_wait_seconds": 0.0,
+                        "processing_seconds": None,
+                        "commit_seconds": None,
+                    },
                     "baseline_subject_ids": (
                         previous[0].parameters["baseline_subject_ids"]
                         if previous
@@ -115,9 +128,13 @@ class Meter:
 
         with self.queue._transaction() as session:
             self.queue._owned(session, self.claim)
+            lock_started = monotonic()
             session.execute(LOCK_SQL)
+            lock_wait = monotonic() - lock_started
             run = session.get(ProcessingRun, self.id)
             counts = Counter(run.parameters["counts"])
+            database_timing = dict(run.parameters["database_timing"])
+            database_timing["lock_wait_seconds"] += lock_wait
             if event in ("search", "candidate", "exclusion"):
                 search = dict(run.parameters.get("search", {}))
                 if event == "search":
@@ -134,7 +151,10 @@ class Meter:
                         if skipped not in search.get("skipped", []):
                             search["skipped"] = [*search.get("skipped", []), skipped]
                             counts["excluded:" + value["reason"]] += 1
-                run.parameters = {**run.parameters, "search": search, "counts": dict(counts)}
+                run.parameters = {
+                    **run.parameters, "search": search, "counts": dict(counts),
+                    "database_timing": database_timing,
+                }
                 return
             if event in ("api_request", "request"):
                 rows = session.scalars(
@@ -166,13 +186,19 @@ class Meter:
                         raise MeasurementLimit("provider_api_limit")
             else:
                 counts[event] += value
-            run.parameters = {**run.parameters, "counts": dict(counts)}
+            run.parameters = {
+                **run.parameters, "counts": dict(counts), "database_timing": database_timing,
+            }
 
     def finish(self, state, *, parameters=None, error=None):
         with self.queue._transaction() as session:
             self.queue._owned(session, self.claim)
             run = session.get(ProcessingRun, self.id)
             run.parameters = {**run.parameters, **(parameters or {}), "state": state}
+            run.parameters = {
+                **run.parameters,
+                "elapsed_seconds": max(0.0, monotonic() - self.started),
+            }
             run.failure_reason = type(error).__name__ if error else None
             run.finished_at = session.scalar(select(func.clock_timestamp()))
 
