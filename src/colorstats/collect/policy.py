@@ -25,6 +25,15 @@ def check_policy(policy: dict | None) -> None:
     for key in ("attribution", "redistribution", "license_rules"):
         if not policy.get(key):
             raise ValueError(f"source_policyに{key}が必要です")
+    for host, config in policy.get("hosts", {}).items():
+        if not host or config.get("kind") not in ("api", "page", "media"):
+            raise ValueError("source_policyの接続先区分が不正です")
+    for window in policy.get("api_windows", []):
+        if window["seconds"] <= 0 or window["limit"] <= 0:
+            raise ValueError("API rolling枠には正の秒数と要求数が必要です")
+    media_limit = policy.get("media_bytes_per_10_seconds")
+    if media_limit is not None and (type(media_limit) is not int or media_limit < 0):
+        raise ValueError("10秒間の画像転送上限は0以上の整数である必要があります")
 
     if policy["license_rules"].get("analysis_only") and analysis_review_reasons(policy):
         raise ValueError("解析専用入力の取得根拠が未確認または失効しています")

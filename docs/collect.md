@@ -57,6 +57,9 @@ restricted・帰属不足・非対応MIMEの候補はdecideへ渡さず除外す
 `configs/source_policy.yaml` の`sources`からprovider名で読み、有効な設定がないソースは拒否する。
 共通の`check_policy`は`enabled`、連絡先付き`user_agent`、`min_interval`、`retries`、`backoff`、
 帰属表示`attribution`、再配布条件`redistribution`、`license_rules`を検証する。
+`hosts`は接続先ドメイン suffix と区分（`api`/`page`/`media`）の許可表であり、未登録先と
+未登録先へのredirectは通信前に拒否する。秘密query parameterは測定observerへ渡す前に除去する。
+APIのrolling枠、API/mediaの待機間隔、mediaの10秒転送量はprovider policyに固定する。
 Commons固有の正の`maxlag`は`check_commons_policy`が共通検証に加えて検証する。
 投入時とアダプターの構築・通信時に適用し、#8等の別ソースにmaxlagは要求しない。
 ライセンス名を小文字化して許可リストへ完全一致させる。解析専用の明示確認がない
@@ -89,9 +92,13 @@ CC BY系はフラグ欠落・falseでも必須情報を確認する。PD・CC0�
 HTMLを含む作者・説明はテキスト化し、元のimageinfoもasset.quality.metadataへ保存する。
 撮影地点はGPS座標を優先し、なければLocation、双方なければNone。
 
-取得間隔は前の通信終了から1秒以上、同時接続は1。**同一運用者のCommons収集は全ホストを通して
-単一collectワーカーに割り当てる**。複数ワーカーによるレートの共有・分散制御は実装しない。
-ジョブ末尾にも残りの間隔を待ち、次のspawnプロセスへ切り替わっても間隔を保つ。
+Commons Action APIは同時接続1、1秒未満の応答後は0.5秒以上、1秒を超える応答後は5秒待つ。
+policyのAPI rolling枠は1分199要求未満、`maxlag`・429/503・Retry-Afterと指数待機を適用する。
+Wikimedia mediaは同時接続1、要求間0.5秒以上、10秒窓25,000,000 byteまでに制限する。
+Openverse匿名APIはrolling 5/hour・100/day枠を適用する。APIとmediaの待機時計は分離し、
+各接続hostのinterval/backoffはredirect後の実接続先で再評価する。ジョブ末尾にも残りの待機を
+完了してから次のspawnへ進む。これらの枠は単一HttpClient内で管理し、複数プロセス間の
+共有予約にはならないため、運用時は同一providerを並行稼働させない。
 GET・JSON、非対話用`maxlag=5`、連絡先付きBot User-Agentを使用する。
 HTTP 429/503とAPI maxlag/ratelimited/cirrussearch-too-busy-errorは
 Retry-After（秒数・HTTP日時）と5秒からの指数待機の
@@ -188,7 +195,7 @@ DBテストはTEST_DATABASE_URLの専用schemaを使用し、実通信なしで�
 
 ## Openverse
 
-`OpenverseAdapter` は匿名の Openverse Images API v1 を使用し、認証キーは導入しない。Openverseは認証時に標準・拡張など異なるスロットリング階層を設けている。Commons・Openverseは`collect/http.py`の共通処理で検索・元ページ・原本の取得を直列化する。source_policyの`min_interval`、`retries`（初回を除く回数）、`backoff * 2**attempt`とRetry-After（秒数またはHTTP日時）の長い方を守る。不正なRetry-Afterではbackoffを使用し、最終試行でも待機してから失敗する。Commons固有のmaxlag・ratelimited・cirrussearch-too-busy-errorも同じ待機処理へ渡す。
+`OpenverseAdapter` は匿名の Openverse Images API v1 を使用し、認証キーは導入しない。Openverseは認証時に標準・拡張など異なるスロットリング階層を設けている。Commons・Openverseは`collect/http.py`で検索・元ページ・原本を直列取得する。各測定runはAPI/page/mediaの応答時間、通常待機、backoff、media帯域待機、受信byteを記録する。DB advisory lock取得時間は実測するが、DB処理・commit時間は記録せず`null`で示す。`elapsed_seconds`はrun開始からMeterの最終DB更新直前までのmonotonic時間で、最終commitは含まない。未測定のDB時間を推定で加算しない。
 
 検索結果の `foreign_landing_url` を `source_url` として保存する。Openverse は第三者サイト上のライセンス情報を保証しないため、元ページのJSON-LDにあるSchema.orgのImageObjectで対象原本URLと一致する`contentUrl`（未指定時は`url`）を探し、その画像の`creator`（未指定時は`author`）と`license`を照合する。作者名は前後空白・大文字小文字を除いて完全一致、ライセンスはAPIの識別子・版から決まるCreative Commons URLとAPI・元ページの両URLの完全一致を必要とする。HTTP/HTTPSと末尾スラッシュだけを同一視し、CC0はpublicdomain/zero、PDMはpublicdomain/markを使う。
 
