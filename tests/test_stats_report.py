@@ -342,6 +342,55 @@ def test_subject_location_and_era_use_collection_attribute_reader(tmp_path):
     assert data["classification"]["attribute_states"]["era"] == {"recorded": 1}
 
 
+def test_subject_attribute_evidence_states_are_retained(tmp_path):
+    settings = load_settings(ROOT / "configs/stats.yaml",
+                             ROOT / "configs/collection_targets.yaml", ROOT / "taxonomy")
+    root = tmp_path / "snapshot"
+    snapshot(root, 1)
+
+    def change(db, manifest):
+        raw = json.loads(db.execute("SELECT data FROM assets").fetchone()[0])
+        raw["subject"].update({
+            "location": "europe", "era": "medieval",
+            "attribute_evidence": {"attributes": {
+                "region": {"state": "inferred", "value": "europe"},
+                "era": {"state": "preserved", "value": "medieval"},
+            }},
+        })
+        db.execute("UPDATE assets SET data=?", [canonical(raw)])
+
+    identifier = revise(root, change)
+    data = report(root, identifier, aggregate(root, identifier, settings), settings)
+    assert data["classification"]["attribute_states"]["region"] == {"inferred": 1}
+    assert data["classification"]["attribute_states"]["era"] == {"preserved": 1}
+
+
+@pytest.mark.parametrize(("state", "value", "expected"), [
+    ("conflict", None, "conflict"),
+    ("conflict", "", "conflict"),
+    ("conflict", "unknown", "conflict"),
+    ("conflict", "gothic", "conflict"),
+    ("inferred", None, "unknown"),
+    ("unknown", None, "unknown"),
+    (None, None, "unknown"),
+    (None, "gothic", "recorded"),
+])
+def test_saved_conflict_is_not_replaced_by_unknown(tmp_path, settings, state, value, expected):
+    root = tmp_path / "snapshot"
+    snapshot(root, 1)
+
+    def change(db, manifest):
+        raw = json.loads(db.execute("SELECT data FROM assets").fetchone()[0])
+        raw["scene_attributes"] = {"style": value}
+        raw["quality"] = {"scene_inference": {"attributes": {"style": {"state": state}}}}
+        db.execute("UPDATE assets SET data=?", [canonical(raw)])
+
+    identifier = revise(root, change)
+    data = report(root, identifier, aggregate(root, identifier, settings), settings)
+    assert data["classification"]["attribute_states"]["style"] == {expected: 1}
+    assert f'"style":{{"{expected}":1}}' in markdown(data)
+
+
 @pytest.mark.parametrize("exclude_conflicting_image", [False, True])
 def test_subject_stratum_conflict_changes_adopted_support_and_deficits(
     tmp_path, settings, exclude_conflicting_image,
@@ -400,7 +449,8 @@ def test_role_specific_d15_losses_and_incomplete_union_evidence(
         db.execute("DELETE FROM observations WHERE asset_id='asset-0000'")
         if terrain:
             db.execute("DELETE FROM observations WHERE asset_id='asset-0001'")
-        db.execute("INSERT INTO observations VALUES (?,?,?,?,?,?,?)", [
+        db.execute("INSERT INTO observations "
+                   "(id,asset_id,region_id,run_id,eligible,reasons,data) VALUES (?,?,?,?,?,?,?)", [
             "rights-excluded", "asset-0000", "unsupported-asset-0000", "color", False, "[]",
             canonical({"observed_oklab": {"dominant": [.5, 0, 0]}, "area_ratio": 1}),
         ])
@@ -453,6 +503,29 @@ def test_role_d15_loss_does_not_count_a_subject_retained_by_another_image(tmp_pa
     assert door["recorded_subjects_before_d15"] == door["recorded_subjects_after_d15"] == 1
     assert door["lost_subjects_d15"] == 0
     assert door["adopted_subjects"] == 1
+
+
+def test_known_analysis_failure_is_not_missing_union_evidence(tmp_path, settings):
+    root = tmp_path / "snapshot"
+    snapshot(root, 2)
+
+    def change(db, manifest):
+        db.execute("UPDATE assets SET eligible=false, analysis_available=false, "
+                   "reasons='[\"missing_analysis\",\"license_conditions\"]' "
+                   "WHERE id='asset-0000'")
+        for table in ("observations", "groups"):
+            db.execute(f"DELETE FROM {table} WHERE asset_id='asset-0000'")
+
+    identifier = revise(root, change)
+    data = report(root, identifier, aggregate(root, identifier, settings), settings)
+    assert data["rights_excluded_without_analysis"] == 1
+    assert data["unobserved_rights_excluded_assets"] == 0
+    assert all(row["complete"] for row in data["rights_support"])
+    wall = next(row for row in data["rights_support"] if row["role"] == "wall"
+                and row["conditions"] == {"domain": DOMAIN})
+    assert wall["recorded_subjects_before_d15"] == 1
+    assert data["overall"]["exclusions"]["missing_analysis"]["numerator"] == 1
+    assert data["m3_checks"][4]["status"] == "passed"
 
 
 def test_recorded_zero_area_color_is_not_adopted_role_support(tmp_path, settings):

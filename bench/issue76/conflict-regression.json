@@ -1,0 +1,28 @@
+{
+  "snapshot_id": "3e785e67c42f02a174c85a6f54e2c081447c8c784c912ee3b4c5e7a94cb45702",
+  "only_changed_section": "classification.attribute_states",
+  "before": {
+    "building_type": {
+      "inferred": 461,
+      "unknown": 7146
+    },
+    "biome_like": {
+      "inferred": 373,
+      "unknown": 7234
+    }
+  },
+  "after": {
+    "building_type": {
+      "conflict": 4,
+      "inferred": 461,
+      "unknown": 7142
+    },
+    "biome_like": {
+      "conflict": 2,
+      "inferred": 373,
+      "unknown": 7232
+    }
+  },
+  "denominator_asset_rows": 7607,
+  "statistics_and_other_report_sections_equal": true
+}

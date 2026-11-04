@@ -1,0 +1,12 @@
+{
+  "labels": [
+    "priority: medium",
+    "type: feature"
+  ],
+  "base": "develop",
+  "head": "feature/issue-76",
+  "commit": false,
+  "push": false,
+  "pull_request_created": false,
+  "note": "ローカルdevelop mergeのみ。公開文面は指定scratchpadへ保存。"
+}
