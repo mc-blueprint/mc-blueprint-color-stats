@@ -19,15 +19,13 @@ asset.search_parameters.collection_biasに層ID・intended_attributesを記録�
 scene_attributesへ未確認の分類を入れない。M2で分類・補正したscene_attributesがあれば、
 レポートではその属性を優先する。
 
-subjectカタログは任意の補助。subject.nameまたは
-設定のsubject_aliases（subject.name→別名の文字列配列）が収集タイトルに一意に含まれる
-候補にだけsubjectを関連付ける。照合は同じdomain内で行い、英数字の語の途中は一致としない。
-例えば日本語名のsubjectに
-`subject_aliases: {姫路城: ["Himeji Castle"]}` と指定すれば英語検索も同じsubjectに集約する。
-複数subjectに一致または一致しない候補も、subject_id=NULLのまま取得できる。
+収集候補のタイトルとsubject名の一致だけでは、subjectを確定しない。
+名称一致は後続のsubject推定で弱い候補として残し、座標やWikidata照合など独立した根拠を
+確認するまでasset.subject_idはNULLにする。検索タイトルが複数subjectに一致する場合や
+一致しない場合も候補を取得する。
 一般住宅・地形など未同定の対象を除外せず、候補ごとのsubject新設もしない。
-カタログの名称・別名は一意な建築・地点を示すよう人が確認しておく。
-subjectの画像上限と割合枠は一意に一致した候補だけに適用する。
+名称は同定の補助であり、一意なsubjectの確定根拠にはしない。
+subjectの画像上限と割合枠は確定subjectにだけ適用する。
 subject不明は重複を除いたsubject数や目標達成数に算入せず、レポートで件数・割合を出す。
 未同定候補が多ければsubject目標が未達でも画像予算で停止する。収集後のsubject推定は後続工程で扱う。
 
@@ -36,13 +34,13 @@ SHA-256完全一致群に確定subjectが一意に存在する場合だけ、未
 確定値が競合する完全一致群では未同定を保つ。重複クラスタ数はsubject数・網羅率に算入しない。
 詳細は[スキーマのprep契約](schema.md#prepの重複同定契約revision-0004)を参照する。
 
-地域の集中枠はsubject.location、候補の撮影地点candidate.location、意図した層のregionの順で決める。
+地域の集中枠は候補の撮影地点candidate.location、意図した層のregionの順で決める。
 空の値は使わず、どれもなければ不明とする。regionとregion_basisを予約と
-asset.search_parameters.collection_biasへ記録する（subject.location / candidate.location /
-stratum.region / unknown）。撮影地点は提供された文字列のまま照合し、座標の逆ジオコーディングや
+asset.search_parameters.collection_biasへ記録する（candidate.location / stratum.region /
+unknown）。名称一致だけでsubject.locationを取得候補へ結び付けない。撮影地点は提供された文字列のまま照合し、座標の逆ジオコーディングや
 表記の名寄せは行わない。層の地域区分とは粒度が異なる場合があり、実パイロットで確認する。
 作者不明・地域不明も採用し、それぞれ不明群として数える。割合上限は既知の値だけにかける。
-成功時は任意のasset.subject_idと層・地域の根拠を登録し、元のタイトル・撮影地点・
+成功時は確定済みsubject_idがある場合だけ登録し、層・地域の根拠と元のタイトル・撮影地点・
 検索語・実効条件・順位・ページ・取得日時・帰属情報は共有collectのまま保持する。
 カタログ・分類を実行中に書き換えない。
 

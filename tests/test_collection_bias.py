@@ -45,7 +45,6 @@ def config():
     result["strata"][0]["subjects"] = 10
     result["strata"][0].pop("images")
     result["image_budget"] = 10
-    result["subject_aliases"] = {f"城{i}": [f"Castle {i}"] for i in range(2)}
     result["limits"] = dict(
         subject_images=3, subject_share=1, author_share=1, source_share=1, region_share=1
     )
@@ -230,7 +229,7 @@ def test_層内枠も並行予約で超えない(queue, config, dimension):
 def test_2ワーカーが同時に同じ層を判断しても上限を超えない(queue, config, bound):
     subjects(queue)
     if bound == "target":
-        config["strata"][0]["subjects"] = 1
+        config["strata"][0]["images"] = 1
     else:
         config["limits"][f"{bound}_share"] = 0.1
     workers = claims(queue, config)
@@ -243,8 +242,16 @@ def test_2ワーカーが同時に同じ層を判断しても上限を超えな�
 
     with ThreadPoolExecutor(max_workers=2) as pool:
         result = list(pool.map(decide, range(2)))
+    if bound == "subject":
+        assert result == [None, None]
+        with Session(queue.engine) as session:
+            assert all(r.subject_id is None for r in session.scalars(
+                select(CollectionReservation)
+            ))
+        return
     assert result.count(None) == 1
-    assert ("target_reached" if bound == "target" else f"{bound}_limit") in result
+    expected = "image_target_reached" if bound == "target" else f"{bound}_limit"
+    assert expected in result
     with Session(queue.engine) as session:
         assert session.scalar(select(func.count()).select_from(CollectionReservation)) == 1
 
@@ -309,7 +316,7 @@ def test_未同定と曖昧なsubjectと作者不明も意図した層に採用�
 
 
 @DB
-@pytest.mark.parametrize("basis", ["subject.location", "candidate.location", "stratum.region"])
+@pytest.mark.parametrize("basis", ["candidate.location", "stratum.region"])
 def test_地域の優先順と判定根拠を記録する(queue, config, basis):
     subjects(queue)
     item = candidate()
@@ -327,16 +334,16 @@ def test_地域の優先順と判定根拠を記録する(queue, config, basis):
 
 
 @DB
-def test_一意に同定したsubjectだけに画像上限を課す(queue, config):
+def test_名称一致だけではsubjectに画像上限を課さない(queue, config):
     subjects(queue)
     config["limits"]["subject_images"] = 1
     claim = claims(queue, config, 1)[0]
     assert bias.reserve(queue, claim, config, request(), candidate()) is None
-    assert bias.reserve(
-        queue, claim, config, request(), replace(candidate(1), title="Castle 0 exterior")
-    ) == "subject_limit"
-    for index in (2, 3):
-        assert bias.reserve(queue, claim, config, request(), candidate(index)) is None
+    assert bias.reserve(queue, claim, config, request(), candidate(1)) is None
+    with Session(queue.engine) as session:
+        assert all(r.subject_id is None for r in session.scalars(
+            select(CollectionReservation)
+        ))
 
 
 @DB
@@ -445,12 +452,12 @@ def test_取得前に同一バッチの枠と目標を適用し成功取引で�
     queue, config, tmp_path, monkeypatch
 ):
     subjects(queue)
-    config["strata"][0]["subjects"] = 1
+    config["strata"][0]["images"] = 1
     adapter = Adapter([candidate(), candidate(1)])
     claim = prepared_job(queue, config, tmp_path, monkeypatch, adapter)
     prepared = bias.prepare(claim)
     assert len(adapter.downloaded) == 1
-    assert prepared.info.parameters["skipped"][0]["reason"] == "target_reached"
+    assert prepared.info.parameters["skipped"][0]["reason"] == "image_target_reached"
     run_id = queue.complete(
         claim,
         prepared.info,
@@ -461,10 +468,12 @@ def test_取得前に同一バッチの枠と目標を適用し成功取引で�
     with Session(queue.engine) as session:
         reservation = session.scalars(select(CollectionReservation)).one()
         asset = session.get(Asset, reservation.asset_id)
-        assert asset.subject_id == reservation.subject_id
+        assert reservation.subject_id is None
+        assert asset.subject_id is None
         assert Path(asset.storage_path).exists()
         report = coverage(session, config)
-        assert report["strata"][0]["subjects"] == 1
+        assert report["strata"][0]["subjects"] == 0
+        assert report["strata"][0]["unknown_subject_images"] == 1
     ids = bias.plan(
         queue,
         config,
