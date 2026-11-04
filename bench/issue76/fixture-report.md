@@ -30,10 +30,21 @@
 {"assignment_scope":"適格SHA代表画像。既知値の矛盾・対象外のみsubject全体を棄却","attribute_states":{"biome_like":{"unknown":80},"building_type":{"recorded":80},"style":{"recorded":80}},"attributes_conflict":{"denominator":80,"numerator":0,"value":0.0},"attributes_missing":{"denominator":80,"numerator":0,"value":0.0},"image_unassigned":{"denominator":80,"numerator":0,"value":0.0},"intent_mismatch":{"denominator":80,"numerator":0,"value":0.0},"multiple_strata":{"denominator":80,"numerator":0,"value":0.0},"outside_target":{"denominator":80,"numerator":0,"value":0.0},"partial_correction":{"real_building":{"attribute_unknown_rates":{"building_type":0.0,"style":0.0},"correction_rate":1.0,"missing_target_mass":0.0,"no_information_rate":0.0,"subject_count":40,"target_mass_coverage":1.0,"unassigned_subjects":0},"real_terrain":{"attribute_unknown_rates":{"biome_like":0.0},"correction_rate":0.0,"missing_target_mass":1.0,"no_information_rate":0.0,"subject_count":0,"target_mass_coverage":0.0,"unassigned_subjects":0}},"stratum_counts_are_not_additive":true,"subject_stratum_conflict":{"denominator":40,"numerator":0,"value":0.0},"unassigned":{"denominator":40,"numerator":0,"value":0.0},"unassigned_subject_reasons":{}}
 ```
 
-## 内部有用性ゲート
+## 内部有用性ゲート（条件4）
 
 - real_building: True（役割: door, wall）
 - real_terrain: False（役割: なし）
+
+建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定。passed は層補正の有効性を意味しない
+
+weak_correction は情報なし割合が過半の品質フラグで、passed の判定を変更しない。
+| domain | 判定役割 | passed | subject（率の分母） | n_eff | 補正率 | 情報なし割合 | 品質フラグ |
+|---|---|---|---:|---:|---:|---:|---|
+| real_building | door | True | 40 | 30 | 1 | 0 | なし |
+| real_building | opening | False | 0 | 0 | 0 | 0 | なし |
+| real_building | wall | True | 40 | 30 | 1 | 0 | なし |
+| real_building | wall_main | False | 0 | 0 | 0 | 0 | なし |
+| real_terrain | tree | False | 0 | 0 | 0 | 0 | なし |
 
 ## 条件・役割別支持
 
@@ -99,7 +110,7 @@
 - 条件1: unverified — 固定7,607件の#66全件監査・品質評価・速度・容量の実測照合が別途必要
 - 条件2: unverified — 候補・確定・未知と属性stateは報告済み。#72再実行・誤結合監査は別途必要
 - 条件3: passed — D15 snapshotの全hash検証と同じ設定でのrule_stat再計算が完全一致
-- 条件4: failed — 建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定
+- 条件4: failed — 建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定。passed は層補正の有効性を意味しない
 - 条件5: passed — 全対象層と条件・役割別のD15前後支持を出力
 - 条件6: unverified — 単位・支持・権利の引継ぎ内容は出力済み。Gへの実際の引継ぎ確認が必要
 

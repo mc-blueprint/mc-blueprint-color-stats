@@ -332,15 +332,22 @@ def report(snapshot, expected_hash, statistics, settings):
             and r["effective_sample_size"] >= 10
             and "model_unvalidated" not in r["quality"]["flags"]
         ]
+        role_results = [
+            {key: r[key] for key in (
+                "target_parts", "subject_count", "effective_sample_size", "correction_rate",
+                "no_information_rate", "attribute_unknown_rates",
+            )} | {
+                "passed": r["target_parts"][0] in qualifying,
+                "quality_flags": ["weak_correction"] if r["no_information_rate"] > .5 else [],
+            } for r in candidates
+        ]
         gates[domain] = {
             "passed": bool(qualifying),
             "roles": qualifying,
             "threshold": {"confirmed_subjects": 10, "subject_n_eff": 10},
             "basis": "既知属性による部分層補正の主結果。親借用で観測支持を増やさない",
-            "correction": [{key: r[key] for key in (
-                "target_parts", "subject_count", "effective_sample_size", "correction_rate",
-                "no_information_rate", "attribute_unknown_rates",
-            )} for r in candidates],
+            "correction": role_results,
+            "quality_flags": sorted({flag for r in role_results for flag in r["quality_flags"]}),
         }
     all_count = len(assets)
     overall = _summary(assets, provenance, memberships)
@@ -374,7 +381,11 @@ def report(snapshot, expected_hash, statistics, settings):
         {
             "condition": 4,
             "status": "passed" if all(g["passed"] for g in gates.values()) else "failed",
-            "reason": "建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定",
+            "reason": ("建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定。"
+                       "passed は層補正の有効性を意味しない"),
+            "role_results": {domain: gate["correction"] for domain, gate in gates.items()},
+            "quality_flags": sorted({flag for gate in gates.values()
+                                     for flag in gate["quality_flags"]}),
         },
         {"condition": 5, "status": "passed" if rights_complete else "unverified",
          "reason": ("全対象層と条件・役割別のD15前後支持を出力" if rights_complete else
@@ -522,11 +533,24 @@ def markdown(data):
         canonical(data["classification"]),
         "```",
         "",
-        "## 内部有用性ゲート",
+        "## 内部有用性ゲート（条件4）",
         "",
     ]
     for domain, gate in data["usefulness_gates"].items():
         lines.append(f"- {domain}: {gate['passed']}（役割: {', '.join(gate['roles']) or 'なし'}）")
+    lines += ["", data["m3_checks"][3]["reason"], "",
+              "weak_correction は情報なし割合が過半の品質フラグで、passed の判定を変更しない。",
+              ("| domain | 判定役割 | passed | subject（率の分母） | n_eff | 補正率 | "
+               "情報なし割合 | 品質フラグ |"),
+              "|---|---|---|---:|---:|---:|---:|---|"]
+    for domain, gate in data["usefulness_gates"].items():
+        for row in gate["correction"]:
+            lines.append(
+                f"| {domain} | {'/'.join(row['target_parts'])} | {row['passed']} | "
+                f"{row['subject_count']} | {row['effective_sample_size']:.6g} | "
+                f"{row['correction_rate']:.6g} | {row['no_information_rate']:.6g} | "
+                f"{', '.join(row['quality_flags']) or 'なし'} |"
+            )
     lines += [
         "",
         "## 条件・役割別支持",
