@@ -69,6 +69,10 @@ Subject.location/eraは従来どおり文字列またはNULLで、state付き辞
 対応runと全入力をruns.parquetおよびmanifest.input_run_idsへ含める。
 属性根拠として選択したrunは画像のD15判定集合に加えず、画像・解析モデル由来の権利判定は維持する。
 
+Openverseの照合済み短縮表記by/by-saは、source_verified、元ライセンスの一致、照合済みmetadataの版に基づき、
+D15判定時だけcc-by/cc-by-saの版付き表記へ正規化する。未照合・版欠損は許可しない。
+assets.data.d15_licenseに判定用のasset/source表記を残し、元qualityとprovenanceは変更しない。
+
 Parquet一覧:
 
 | ファイル | 主な列と意味 |
@@ -123,3 +127,5 @@ snapshot作成自体はDB無更新で、aggregate登録やrule_stat生成は#75�
 
 既存データの移行・削除は不要。実7,607件からの生成は全量解析と対象推定の成果を
 確認した第2段階とし、第1段階のfixture成功を実データの支持数の達成とは扱わない。
+
+全量7,607件のsnapshotと監査の記録は[Issue #74全量検証](full-results.md)を参照。

@@ -568,3 +568,49 @@ def test_reject_unmatched_subject_attribute_evidence(
     with pytest.raises(FileNotFoundError if failure == "file" else ValueError):
         build(queue, selection, tmp_path / "failed")
     assert not (tmp_path / "failed/manifest.json").exists()
+
+
+@pytest.mark.parametrize(
+    ("name", "version", "verified", "origin", "eligible"),
+    [
+        ("by", "4.0", True, "by", True),
+        ("by-sa", "4.0", True, "by-sa", False),
+        ("by", "4.0", False, "by", False),
+        ("by", None, True, "by", False),
+        ("by", "4.0", True, "cc0", False),
+    ],
+)
+def test_verified_openverse_license_is_normalized_without_changing_provenance(
+    queue, asset, tmp_path, name, version, verified, origin, eligible,
+):
+    selection = prepare(queue, asset)
+    selection["assets"] = selection["assets"][:1]
+    with Session(queue.engine) as session, session.begin():
+        row = session.get(Asset, UUID(selection["assets"][0]["asset_id"]))
+        source = session.get(Source, row.source_id)
+        row.search_provider = "openverse"
+        row.quality = dict(row.quality) | {
+            "license": name, "metadata": {
+                "source_verified": verified,
+                "openverse": {"license": name, "license_version": version},
+            },
+        }
+        source.license = origin
+    result = build(queue, selection, tmp_path / "fixed")
+    assert result["counts"]["rights_eligible"] == int(eligible)
+    assert result["counts"]["representatives"] == int(eligible)
+    with duckdb.connect() as db:
+        data = json.loads(db.execute(
+            "SELECT data FROM read_parquet(?)", [str(tmp_path / "fixed/assets.parquet")],
+        ).fetchone()[0])
+        provenance = json.loads(db.execute(
+            "SELECT data FROM read_parquet(?)", [str(tmp_path / "fixed/provenance.parquet")],
+        ).fetchone()[0])
+    assert data["quality"]["license"] == name
+    assert provenance["license"] == origin
+    if verified and origin == name:
+        assert data["d15_license"] == {
+            "asset": f"cc-{name}-{version}", "source": f"cc-{name}-{version}",
+        }
+    if name == "by-sa":
+        assert result["exclusions"]["license_conditions"] == 1
