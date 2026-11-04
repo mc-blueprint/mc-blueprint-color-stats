@@ -23,18 +23,18 @@ docs/schema.md・docs/design.mdへはまだ統合しない。
   クラスタのquantilesは生画素の代用にしない。
 - 画像内は役割の領域面積比、pairでは面積積で正規化する。
   subject内では当該条件・役割/pairの有効SHA画像へ等配分する。
-- subjectの属性と画像の実属性を照合し、対象層へ一意一致する場合だけ事後層化する。
-  同じsubjectの画像間の層矛盾も除外する。収集意図で属性を埋めない。
-  地域・年代・季節等が欠ける場合も未割当となる。
+- subjectの属性と画像の実属性を照合し、既知属性と両立する層へqに比例した所属を配分し、部分層補正する。
+  同じsubjectの画像間の既知層属性の矛盾も除外する。収集意図で属性を埋めない。
+  地域・年代・季節等のunknownは周辺化する。詳細は[部分補正設計](design-section.md)。
 - 条件に適用可能な目標subjectsを正規化したq_hと、
-  適格な確定subjectの層比率p_hからq_h/p_hを求める。
+  適格な確定subjectの所属質量からp_hとq_h/p_hを求め、所属で平均したW_sを使う。
   層0件の目標質量は欠損として残し、観測層だけで被覆率を報告する。
 - weightはsubjectへ合計した重みの総和。effective_sample_sizeは
   (ΣW_s)^2/ΣW_s^2。sample_countは実際に主統計へ入れたSHA異なり画像数、
   subject_countはその確定subject数。平滑化で増やさない。
 - 未知subjectは主分母へ入れず、SHA単位の無補正診断と、
   各未知SHAを別subjectとした無補正感度分布を保存する。
-  未割当理由はattributes_missing、outside_target、multiple_strata、
+  未割当理由はoutside_target、
   attributes_conflict、subject_stratum_conflictとして独立に数える。
 
 #### distribution JSON
@@ -42,7 +42,7 @@ docs/schema.md・docs/design.mdへはまだ統合しない。
 | 項目 | 意味 |
 | --- | --- |
 | kind | palette / relation |
-| estimator | subject_poststratified_appearance（観測subjectの外観主色） |
+| estimator | subject_partial_poststratified_appearance（観測subjectの外観主色） |
 | cdf | 軸→値順の[value, probability_mass]。同値は合算し、累積和が経験CDF |
 | quantiles | 軸→[{q,value}]。q=.05/.25/.50/.75/.95、累積質量がq以上となる最小値 |
 | hue | relationのみ。range=[-180,180]、左端を含む10度幅36bin、右端180は-180へ折返し |
@@ -77,6 +77,8 @@ qualityにはstatus、flags、raw_subjects、raw_n_eff、parent、lambda、sourc
 target_mass_coverage、missing_target_mass、missing_strata、max_weight、
 unknown_images、unassigned_subjects、unassigned_reasons、snapshot_id、
 gate_version、snapshot全体のexclusionsを保存する。
+部分補正ではq_h・m_sh・p_h・r_h・W_s、correction_rate、attribute_unknown_rates、
+no_information_rateを追加する（詳細はdesign-section.md）。
 exclusionsはセルの除外件数ではなく、元snapshotのコホート全体の件数。
 low_support・smoothed・unsupported・subject_unresolved・attributes_inferred・
 intended_only・high_weight・missing_target_mass・model_unvalidated・license_excludedを併記する。
