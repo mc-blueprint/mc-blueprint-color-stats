@@ -34,7 +34,8 @@ def settings():
 
 
 def snapshot(root, subjects=40, *, unknown=0, split=None, duplicates=False,
-             reverse=False, input_runs=(), zero=False, invalid=False, multi=False, terrain=False):
+             reverse=False, input_runs=(), zero=False, invalid=False, multi=False, terrain=False,
+             subject=None, subject_only=False, scene=None):
     root.mkdir()
     quality = {
         "supported_by_domain": {DOMAIN: ["door"], "real_terrain": []},
@@ -54,8 +55,11 @@ def snapshot(root, subjects=40, *, unknown=0, split=None, duplicates=False,
             })
             if terrain:
                 attrs = {"biome_like": "forest"}
+            if scene is not None:
+                attrs = scene
             data = {
-                "scene_attributes": attrs, "quality": {}, "subject": {"scene_attributes": {}},
+                "scene_attributes": {} if subject_only else attrs, "quality": {},
+                "subject": {"scene_attributes": attrs if subject_only else {}} | (subject or {}),
                 "selection": {r["stage"] + "_run_id": r["id"] for r in input_runs},
             }
             db.execute("INSERT INTO assets VALUES (?,?,?,?,?,?,?,?)", [
@@ -133,7 +137,12 @@ def cell(result, parts=("wall",), condition=None, kind="palette"):
 
 
 def point(subject, image, layer, value=0., area=1.):
-    return {"subject": subject, "sha256": image, "stratum": layer,
+    attrs = {"domain": DOMAIN} | {
+        "a": {"style": "gothic", "building_type": "temple"},
+        "b": {"style": "modern", "building_type": "house"},
+        None: {"style": "outside"},
+    }[layer]
+    return {"subject": subject, "sha256": image, "attributes": attrs,
             "area": area, "metrics": {"L": value, "a": 0., "b": 0.}}
 
 
@@ -176,7 +185,7 @@ def test_subject_stratum_conflicts_and_search_intent(settings):
     assert weights.assign_strata(assets, settings["strata"])[0] == {"s": None}
     assets["0"]["data"]["scene_attributes"] = {}
     del assets["1"]
-    assert weights.assign_strata(assets, settings["strata"])[0] == {"s": None}
+    assert weights.assign_strata(assets, settings["strata"])[0] == {"s": {"domain": DOMAIN}}
 
 
 def test_inverse_cdf_and_mixture_and_circular_boundary():
@@ -298,3 +307,159 @@ def test_effective_support_below_count_boundary(tmp_path, settings):
     assert row["subject_count"] == 40
     assert row["effective_sample_size"] == pytest.approx(27.9)
     assert row["quality"]["status"] == "unsupported"
+
+
+def test_subject_only_conditions_keep_direct_support(tmp_path, settings):
+    root = tmp_path / "subject-only"
+    result = aggregate(root, snapshot(root, 30, subject_only=True), settings)
+    for condition in (
+        {"domain": DOMAIN, "style": "gothic"},
+        {"domain": DOMAIN, "style": "gothic", "building_type": "temple"},
+    ):
+        for parts, kind in ((("wall",), "palette"), (("wall", "door"), "relation")):
+            row = cell(result, parts, condition, kind)
+            assert row["subject_count"] == row["effective_sample_size"] == 30
+            assert row["quality"]["status"] == "direct"
+            assert row["quality"]["lambda"] == 1
+            parent = cell(result, parts, kind=kind)
+            assert row["distribution"]["cdf"] == parent["distribution"]["cdf"]
+
+
+def test_subject_location_era_use_actual_collection_strata(tmp_path):
+    settings = load_settings(ROOT / "configs/stats.yaml",
+                             ROOT / "configs/collection_targets.yaml", ROOT / "taxonomy")
+    root = tmp_path / "subject-columns"
+    result = aggregate(root, snapshot(root, 30, subject={
+        "location": "europe", "era": "medieval",
+    }), settings)
+    condition = {"domain": DOMAIN, "style": "gothic", "building_type": "temple"}
+    row = cell(result, condition=condition)
+    assert row["quality"]["status"] == "direct"
+    assert row["subject_count"] == row["effective_sample_size"] == 30
+    assert row["quality"]["unassigned_subjects"] == 0
+    assert row["quality"]["missing_target_mass"] == 0
+
+
+@pytest.mark.parametrize(("key", "value"), [("region", "asia"), ("era", "modern")])
+def test_asset_conflicting_subject_columns_remain_unassigned(settings, key, value):
+    asset = {"eligible": True, "subject_id": "s", "domain": DOMAIN, "data": {
+        "scene_attributes": {"style": "gothic", "building_type": "temple", key: value},
+        "subject": {"scene_attributes": {}, "location": "europe", "era": "medieval"},
+    }}
+    assigned, reasons = weights.assign_strata({"a": asset}, settings["strata"])
+    assert assigned == {"s": None}
+    assert reasons == {"s": ["attributes_conflict"]}
+
+
+def test_partial_memberships_weights_and_effective_size(settings):
+    strata = settings["strata"]
+    strata[0]["subjects"], strata[1]["subjects"] = 300, 100
+    rows = [
+        point("known", "a1", "a", area=.25), point("known", "a1", "a", area=.75),
+        point("known", "a2", "a"),
+        point("partial", "b1", "b") | {"attributes": {"domain": DOMAIN}},
+        point(None, "unknown", None),
+    ]
+    values, support = weights.calculate(rows, strata, {"domain": DOMAIN})
+    assert support["memberships"] == {
+        "known": {"a": 1.}, "partial": {"a": .75, "b": .25},
+    }
+    assert support["stratum_probabilities"] == {"a": .875, "b": .125}
+    assert support["stratum_weights"] == pytest.approx({"a": 6 / 7, "b": 2})
+    assert support["subject_weights"] == pytest.approx({"known": 6 / 7, "partial": 8 / 7})
+    assert values == pytest.approx([3 / 28, 9 / 28, 3 / 7, 8 / 7, 0])
+    assert support["weight"] == pytest.approx(2)
+    assert support["effective_sample_size"] == pytest.approx(49 / 25)
+    assert support["correction_rate"] == support["no_information_rate"] == .5
+    assert support["attribute_unknown_rates"] == {"style": .5, "building_type": .5}
+    assert support["unknown_images"] == 1
+    plain, plain_support = weights.calculate(rows, strata, {"domain": DOMAIN}, corrected=False)
+    assert plain == pytest.approx([.125, .375, .5, 1, 0])
+    assert plain_support["subject_weights"] == {"known": 1, "partial": 1}
+
+
+def test_all_strata_compatible_no_information(settings):
+    rows = [point(str(i), str(i), "a") | {"attributes": {
+        "domain": DOMAIN, "style": "unknown", "building_type": None,
+    }} for i in range(30)]
+    values, support = weights.calculate(rows, settings["strata"], {"domain": DOMAIN})
+    assert values == pytest.approx([1] * 30)
+    assert support["subject_count"] == support["effective_sample_size"] == 30
+    assert support["no_information_rate"] == 1
+    assert support["correction_rate"] == 0
+    assert support["attribute_unknown_rates"] == {"style": 1, "building_type": 1}
+    assert support["stratum_probabilities"] == {"a": .5, "b": .5}
+
+
+def test_compatible_strata_unknown_and_contradictory_subjects(settings):
+    layers = settings["strata"]
+    assert weights.compatible_strata({"domain": DOMAIN}, layers) == ["a", "b"]
+    assert weights.compatible_strata({"domain": DOMAIN, "style": None}, layers) == ["a", "b"]
+    assert weights.compatible_strata({"domain": DOMAIN, "style": "gothic"}, layers) == ["a"]
+    assert weights.compatible_strata({"domain": DOMAIN, "style": "other"}, layers) == []
+    assert weights.compatible_strata({"domain": "real_terrain"}, layers) == ["t"]
+    assets = {str(i): {"subject_id": "s", "domain": DOMAIN, "eligible": True, "data": {
+        "scene_attributes": attrs, "subject": None,
+    }} for i, attrs in enumerate(({"style": "gothic"}, {}))}
+    assigned, reasons = weights.assign_strata(assets, layers)
+    assert assigned == {"s": {"domain": DOMAIN, "style": "gothic"}} and reasons == {}
+    assets["1"]["data"]["scene_attributes"] = {"style": "modern"}
+    assigned, reasons = weights.assign_strata(assets, layers)
+    assert assigned == {"s": None}
+    assert reasons == {"s": ["subject_stratum_conflict"]}
+
+
+def test_conditional_q_renormalization_and_zero_probability(settings):
+    settings["strata"][0]["subjects"] = 300
+    rows = [point("partial", "p", "a") | {"attributes": {"domain": DOMAIN}}]
+    _, conditional = weights.calculate(
+        rows, settings["strata"], {"domain": DOMAIN, "style": "gothic"},
+    )
+    assert conditional["target_probabilities"] == {"a": 1}
+    assert conditional["memberships"] == {"partial": {"a": 1}}
+    assert conditional["subject_weights"] == {"partial": 1}
+    _, missing = weights.calculate(
+        [point("known", "k", "a")], settings["strata"], {"domain": DOMAIN},
+    )
+    assert missing["stratum_probabilities"] == {"a": 1, "b": 0}
+    assert missing["stratum_weights"] == {"a": .75}
+    assert missing["subject_weights"] == {"known": .75}
+    assert missing["missing_strata"] == ["b"] and missing["missing_target_mass"] == .25
+
+
+def test_aggregate_unknown_attributes_are_primary_but_not_imputed_conditions(tmp_path):
+    settings = load_settings(ROOT / "configs/stats.yaml",
+                             ROOT / "configs/collection_targets.yaml", ROOT / "taxonomy")
+    root = tmp_path / "no-attributes"
+    result = aggregate(root, snapshot(root, 30, scene={}), settings)
+    row = cell(result)
+    assert row["quality"]["status"] == "direct"
+    assert row["subject_count"] == row["effective_sample_size"] == 30
+    assert row["quality"]["no_information_rate"] == 1
+    assert row["quality"]["correction_rate"] == 0
+    assert row["quality"]["attribute_unknown_rates"] == {
+        "style": 1, "building_type": 1, "region": 1, "era": 1,
+    }
+    child = cell(result, condition={"domain": DOMAIN, "style": "gothic"})
+    assert child["subject_count"] == 0 and child["quality"]["status"] == "smoothed"
+
+
+def test_non_stratum_attributes_do_not_create_subject_conflict(settings):
+    assets = {str(i): {"subject_id": "s", "domain": DOMAIN, "eligible": True, "data": {
+        "scene_attributes": {"style": "gothic", "season": season}, "subject": None,
+    }} for i, season in enumerate(("autumn", "summer"))}
+    assigned, reasons = weights.assign_strata(assets, settings["strata"])
+    assert assigned == {"s": {"domain": DOMAIN, "style": "gothic"}}
+    assert reasons == {}
+
+
+def test_high_stratum_weight_and_capped_sensitivity_with_partial_membership(settings):
+    settings["strata"][0]["subjects"] = 900
+    rows = [point(str(i), str(i), "a") for i in range(19)]
+    rows.append(point("partial", "partial", "a") | {"attributes": {"domain": DOMAIN}})
+    _, support = weights.calculate(rows, settings["strata"], {"domain": DOMAIN})
+    capped, _ = weights.calculate(rows, settings["strata"], {"domain": DOMAIN}, cap=5)
+    assert support["max_stratum_weight"] == pytest.approx(20)
+    assert support["max_weight"] == pytest.approx(560 / 199)
+    assert support["max_weight"] < 5
+    assert capped[-1] == pytest.approx(523 / 398)

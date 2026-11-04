@@ -16,7 +16,7 @@ from colorstats.schema.models import ProcessingRun, ProcessingRunInput, RuleStat
 from colorstats.stats import distributions, weights
 from colorstats.stats.snapshot import canonical, digest, verify
 
-CODE_VERSION = "aggregate-v1"
+CODE_VERSION = "aggregate-v2"
 
 
 def config_hash(payload):
@@ -144,13 +144,14 @@ def aggregate(snapshot, expected_hash, settings):
             db.read_parquet(str(Path(snapshot) / (table + ".parquet"))).create_view(table)
         assets = {r["id"]: r for r in _read(db, "assets")}
         assignments, unassigned = weights.assign_strata(assets, settings["strata"])
+        attributes = {aid: weights.asset_attributes(asset)[0] for aid, asset in assets.items()}
         condition_sets = defaultdict(dict)
         roles = {domain: set(labels) for domain, labels in supported.items()}
         for asset in assets.values():
             domain = asset["domain"]
             if domain not in supported:
                 continue
-            attrs = asset["data"]["scene_attributes"] | {"domain": domain}
+            attrs = attributes[asset["id"]]
             for condition in _conditions(attrs):
                 condition_sets[domain][canonical(condition)] = condition
         for layer in settings["strata"]:
@@ -179,11 +180,12 @@ def aggregate(snapshot, expected_hash, settings):
             row = {
                 "unassigned_reasons": unassigned.get(asset["subject_id"], []),
                 "attributes_inferred": any(v["state"] == "inferred" for v in inferred.values()),
-                "intended_only": bool(set(intended) - {"domain"} - data["scene_attributes"].keys()),
+                "intended_only": bool(set(intended) - {"domain"} - attributes[aid].keys()),
                 "sha256": asset["sha256"], "subject": asset["subject_id"],
-                "stratum": assignments.get(asset["subject_id"]), "area": area, "metrics": metrics,
+                "attributes": assignments.get(asset["subject_id"]),
+                "area": area, "metrics": metrics,
             }
-            attrs = asset["data"]["scene_attributes"] | {"domain": domain}
+            attrs = attributes[asset["id"]]
             for condition in _conditions(attrs):
                 cells[kind, canonical(condition), parts].append(row)
         all_runs = {r["id"]: r for r in _read(db, "runs")}
@@ -260,7 +262,7 @@ def aggregate(snapshot, expected_hash, settings):
             flags.append("subject_unresolved")
         if support["missing_target_mass"] > 1e-12:
             flags.append("missing_target_mass")
-        if support["max_weight"] > 5:
+        if support["max_stratum_weight"] > 5:
             flags.append("high_weight")
         for flag in ("attributes_inferred", "intended_only"):
             if any(r[flag] for r in rows):
@@ -288,7 +290,7 @@ def aggregate(snapshot, expected_hash, settings):
         result = {
             "conditions": condition, "target_parts": list(parts),
             "distribution": distribution | {
-                "kind": kind, "estimator": "subject_poststratified_appearance",
+                "kind": kind, "estimator": "subject_partial_poststratified_appearance",
                 "units": {"color": "OKLab", "delta_h": "degree", "area_ratio": "B/A"},
                 "direction": "B-A" if kind == "relation" else None,
                 "parent": parent_reference, "lambda": coefficient, "diagnostics": diagnostics,
