@@ -1,0 +1,70 @@
+{
+  "counts": {
+    "confirmed": 784,
+    "candidate": 2166,
+    "unknown": 4657
+  },
+  "asset_count": 7607,
+  "sha_count": 3575,
+  "confirmed_sha_count": 385,
+  "confirmed_subject_count": 154,
+  "confirmed_subjects_by_domain": {
+    "real_building": 136,
+    "real_terrain": 18
+  },
+  "sha_conflicting_groups": 0,
+  "cross_domain_subjects": 0,
+  "confirmed_without_evidence": [],
+  "blocked_new_confirmations": [],
+  "different_named_groups_merged": 0,
+  "issue41_groups": {
+    "岩のドーム": {
+      "expected_assets": 3,
+      "present": 3,
+      "confirmed": 3,
+      "candidate": 0,
+      "unknown": 0,
+      "confirmed_subjects": 1
+    },
+    "聖ヴィクトル教会（デュルメン）": {
+      "expected_assets": 2,
+      "present": 2,
+      "confirmed": 2,
+      "candidate": 0,
+      "unknown": 0,
+      "confirmed_subjects": 1
+    },
+    "掛川城天守": {
+      "expected_assets": 2,
+      "present": 2,
+      "confirmed": 2,
+      "candidate": 0,
+      "unknown": 0,
+      "confirmed_subjects": 1
+    },
+    "聖パウルス大聖堂（ミュンスター）": {
+      "expected_assets": 2,
+      "present": 2,
+      "confirmed": 2,
+      "candidate": 0,
+      "unknown": 0,
+      "confirmed_subjects": 1
+    },
+    "ストラスブール大聖堂": {
+      "expected_assets": 2,
+      "present": 2,
+      "confirmed": 2,
+      "candidate": 0,
+      "unknown": 0,
+      "confirmed_subjects": 1
+    },
+    "レオン大聖堂": {
+      "expected_assets": 2,
+      "present": 2,
+      "confirmed": 2,
+      "candidate": 0,
+      "unknown": 0,
+      "confirmed_subjects": 1
+    }
+  }
+}

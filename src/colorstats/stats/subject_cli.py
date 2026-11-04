@@ -13,6 +13,7 @@ from sqlalchemy import create_engine
 
 from colorstats.schema.taxonomy import load_taxonomy
 from colorstats.stats.subjects import execute
+from colorstats.stats.wikidata import WikidataCatalog
 
 
 def load_rules(path, taxonomy):
@@ -41,18 +42,29 @@ def main():
     parser.add_argument("--code-version", required=True)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--reconsider-run", type=uuid.UUID, help="新規関連付けを再評価する成功run")
+    parser.add_argument("--wikidata-cache", type=Path, help="自動対象キーの取得結果保存先")
+    parser.add_argument("--source-policy", type=Path, default=Path("configs/source_policy.yaml"))
+    parser.add_argument("--offline", action="store_true", help="保存取得結果だけで再実行する")
     args = parser.parse_args()
+    if args.offline and args.wikidata_cache is None:
+        parser.error("--offlineには--wikidata-cacheが必要です")
     started = monotonic()
     engine = None
     try:
         rules = load_rules(args.rules, args.taxonomy)
+        catalog = None
+        if args.wikidata_cache:
+            policy = yaml.safe_load(args.source_policy.read_text(encoding="utf-8"))
+            catalog = WikidataCatalog(
+                policy["sources"]["wikimedia_commons"], args.wikidata_cache, offline=args.offline,
+            )
         engine = create_engine(os.environ["DATABASE_URL"])
         result = execute(
             engine, rules, args.snapshot, code_version=args.code_version, dry_run=args.dry_run,
-            reconsider_run=args.reconsider_run,
+            reconsider_run=args.reconsider_run, wikidata=catalog,
         )
         print(json.dumps({
-            k: v for k, v in result.items() if k != "assets"
+            k: v for k, v in result.items() if k not in ("assets", "wikidata", "subject_keys")
         } | {"seconds": round(monotonic() - started, 3)}, ensure_ascii=False))
     except Exception as error:
         print(f"対象推定に失敗しました: {type(error).__name__}", file=sys.stderr)
