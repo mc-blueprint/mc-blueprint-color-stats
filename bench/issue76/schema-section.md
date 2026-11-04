@@ -53,3 +53,11 @@ rights_support.adopted_subject_massも層の所属質量とし、両立subject�
 入力JSONはaggregate-v2。旧方式の統計・report-v2は再生成し、互換処理は追加しない。
 
 補正率等は#75定義に従い、N=0では0。件数比率の空分母nullとは区別する。
+
+
+条件4のm3_checks項目にrole_results（domain別の判定候補役割）を添える。
+各役割はsubject_count・n_eff・補正率・情報なし割合・passed・quality_flagsを保持する。
+情報なし割合>0.5でweak_correction。ちょうど0.5には付けない。
+domainのusefulness_gatesと条件4のquality_flagsは役割フラグの和集合。
+判定の閾値は従来どおりで、#75の統計quality・支持・補正率は変更しない。
+reasonに「passed は層補正の有効性を意味しない」と明記する。

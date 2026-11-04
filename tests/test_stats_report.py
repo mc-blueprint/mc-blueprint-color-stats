@@ -206,14 +206,21 @@ def test_both_domains_pass_without_claiming_full_m3(tmp_path, settings, unknown_
     data = report(root, identifier, aggregate(root, identifier, settings), settings)
     assert all(g["passed"] for g in data["usefulness_gates"].values())
     assert data["m3_checks"][3]["status"] == "passed"
+    assert "passed は層補正の有効性を意味しない" in data["m3_checks"][3]["reason"]
+    assert data["m3_checks"][3]["role_results"] == {
+        domain: gate["correction"] for domain, gate in data["usefulness_gates"].items()
+    }
     if unknown_attributes:
         for gate in data["usefulness_gates"].values():
             for diagnostic in gate["correction"]:
                 if diagnostic["subject_count"]:
                     assert diagnostic["no_information_rate"] == 1
                     assert diagnostic["correction_rate"] == 0
+                    assert "weak_correction" in diagnostic["quality_flags"]
                     assert all(rate == 1 for rate in diagnostic["attribute_unknown_rates"].values())
         assert "補正率" in markdown(data) and "情報なし割合" in markdown(data)
+        assert "weak_correction" in markdown(data)
+        assert "passed は層補正の有効性を意味しない" in markdown(data)
     assert [c["status"] for c in data["m3_checks"]] == [
         "unverified",
         "unverified",
@@ -510,3 +517,37 @@ def test_known_values_outside_all_strata_remain_unassigned(tmp_path, settings):
     assert data["overall"]["subject_mass"] == 0
     assert all(row["effective_sample_size"] == 0 for row in data["support"])
     assert not data["usefulness_gates"][DOMAIN]["passed"]
+
+
+@pytest.mark.parametrize(("known", "weak"), [(0, True), (9, True), (10, False), (11, False)])
+def test_condition_four_weak_correction_is_advisory_and_requires_a_majority(
+    tmp_path, settings, known, weak,
+):
+    root = tmp_path / "snapshot"
+    snapshot(root, 20)
+
+    def change(db, manifest):
+        for index, (aid, raw) in enumerate(
+            db.execute("SELECT id, data FROM assets ORDER BY id").fetchall()
+        ):
+            if index < known:
+                continue
+            data = json.loads(raw)
+            data["scene_attributes"] = {}
+            db.execute("UPDATE assets SET data=? WHERE id=?", [canonical(data), aid])
+
+    identifier = revise(root, change)
+    stats = aggregate(root, identifier, settings)
+    data = report(root, identifier, stats, settings)
+    gate = data["usefulness_gates"][DOMAIN]
+    wall = next(r for r in gate["correction"] if r["target_parts"] == ["wall"])
+    assert wall["no_information_rate"] == (20 - known) / 20
+    assert wall["correction_rate"] == known / 20
+    assert ("weak_correction" in wall["quality_flags"]) is weak
+    assert gate["passed"] and wall["passed"]
+    assert "weak_correction" not in cell(stats)["quality"]["flags"]
+    assert data["support"][0]["quality"] == stats["rows"][0]["quality"]
+    rendered = markdown(data).split("## 条件・役割別支持")[0]
+    expected_flag = "weak_correction" if weak else "なし"
+    assert (f"| real_building | wall | True | 20 | {wall['effective_sample_size']:.6g} | "
+            f"{known / 20:.6g} | {(20 - known) / 20:.6g} | {expected_flag} |") in rendered

@@ -51,8 +51,8 @@ socket: `/mnt/data/work/issue-76/socket`、port 5576、TCP待受なし。
 [fixture-metrics.json](fixture-metrics.json)と[fixture-report.md](fixture-report.md)を参照。
 80 asset行→40 SHA、40確定subject、subject n_eff=30、最大重み2。
 統計24行: direct 9 / smoothed 6 / unsupported 9。
-aggregate 1.813秒、report 0.406秒（2026-11-04、部分層補正主結果の計測）。
-Parquet 9,601 byte、JSON 125,858 byte、Markdown 10,183 byte。
+aggregate 1.781秒、report 0.297秒（2026-11-04、条件4表示更新後の計測）。
+Parquet 9,601 byte、JSON 127,252 byte、Markdown 10,971 byte。
 Windowsの合成入力1回分であり、本番7,607件の支持や性能へ外挿しない。
 
 再現（dev依存を導入した環境で、出力先は新規ディレクトリ）:
@@ -145,3 +145,25 @@ unknownは周辺化し、既知値の競合・対象外だけを主結果の未�
   merge以外のcommit・push・PR操作は行っていない。
 
 部分層補正の検証終了後、Issue76専用PostgreSQLクラスタだけを正常停止し、データ・ログを保全した。
+
+
+## 条件4の解釈と品質フラグの表示
+
+ユーザー決定Aに従い、条件4のsubject数・n_eff・モデル品質の閾値は維持する。
+条件4のJSONに役割別の率・分母・passed・品質フラグを添え、Markdownにも
+条件4の直下へ同じ表を出す。reasonに「passed は層補正の有効性を意味しない」と明記。
+情報なし割合が過半（>0.5）の役割にweak_correctionを付け、domain・条件4にも集約する。
+このフラグでpassedを落とさず、#75由来の統計qualityや支持を変更しない。
+G引継ぎ・設計・出力契約下書きにも同じ注意を反映した。
+
+- 回帰: 情報なし割合1・0.55でフラグあり、0.5・0.45でなし。各役割のpassedを維持。
+  両domainが情報なしの状態で条件4がpassedでも、率・フラグ・注意を表示する。
+- ruff check .、sdist／wheel build成功。
+- Windows全体pytest: 417 passed / 153 skipped（112.58秒）。
+  DB・OS・実GPU等の条件付きテストはスキップ。今回は表示と純粋な品質フラグの変更で、
+  PostgreSQL・GPUは起動しておらず、前節のPG16結果は過去の検証結果として区別する。
+- 追加fixtureのDuckDB行取得の失敗はfetchallで修正し、全体を再検証済み。
+- fixture-report.md・fixture-metrics.jsonを更新。生成元JSONは
+  指定scratchpad/i76-fixture-condition4に保全した。
+- 指定scratchpad/i76-commit4.txtへUTF-8で中間commit文を保存。
+  commit・pushは行っていない。第2段階の実snapshot等の残作業は従来どおり。
