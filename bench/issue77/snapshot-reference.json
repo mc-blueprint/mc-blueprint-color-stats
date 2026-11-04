@@ -1,0 +1,40 @@
+{
+  "snapshot_id": "3e785e67c42f02a174c85a6f54e2c081447c8c784c912ee3b4c5e7a94cb45702",
+  "counts": {
+    "rights_eligible": 3076,
+    "assets": 7607,
+    "analysis_eligible": 3074,
+    "sha_distinct": 3575,
+    "representatives": 1618,
+    "confirmed_subjects": 37,
+    "assets_rows": 7607,
+    "provenance_rows": 7607,
+    "runs_rows": 22809,
+    "groups_rows": 7404,
+    "regions_rows": 217465,
+    "observations_rows": 1124717,
+    "relations_rows": 3348707,
+    "observations_eligible": 3655,
+    "relations_eligible": 167,
+    "groups_eligible": 1573
+  },
+  "exclusions": {
+    "license_conditions": 4531,
+    "license_not_allowed": 4531,
+    "missing_analysis": 6,
+    "missing_attribution": 23,
+    "sha_duplicate": 1456
+  },
+  "queries": 12,
+  "execution": {
+    "read_seconds": 151.9546586840297,
+    "snapshot_id": "3e785e67c42f02a174c85a6f54e2c081447c8c784c912ee3b4c5e7a94cb45702",
+    "total_seconds": 1499.76679847599,
+    "transaction": {
+      "isolation": "repeatable read",
+      "read_only": "on",
+      "snapshot": "168489:168489:"
+    }
+  },
+  "verified": true
+}
