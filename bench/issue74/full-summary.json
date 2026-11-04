@@ -1,0 +1,151 @@
+{
+  "snapshot_id": "3e785e67c42f02a174c85a6f54e2c081447c8c784c912ee3b4c5e7a94cb45702",
+  "verified_files": 7,
+  "counts": {
+    "analysis_eligible": 3074,
+    "assets": 7607,
+    "assets_rows": 7607,
+    "confirmed_subjects": 37,
+    "groups_eligible": 1573,
+    "groups_rows": 7404,
+    "observations_eligible": 3655,
+    "observations_rows": 1124717,
+    "provenance_rows": 7607,
+    "regions_rows": 217465,
+    "relations_eligible": 167,
+    "relations_rows": 3348707,
+    "representatives": 1618,
+    "rights_eligible": 3076,
+    "runs_rows": 22809,
+    "sha_distinct": 3575
+  },
+  "exclusions": {
+    "license_conditions": 4531,
+    "license_not_allowed": 4531,
+    "missing_analysis": 6,
+    "missing_attribution": 23,
+    "sha_duplicate": 1456
+  },
+  "successful_stages": {
+    "shade": 7603,
+    "color": 7601,
+    "segment": 7603,
+    "prep": 7603
+  },
+  "failed_assets": 6,
+  "failed_contributions": 0,
+  "attribute_assets": 719,
+  "attribute_subjects": 136,
+  "attribute_rights_eligible": 147,
+  "report_row_counts": {
+    "regions": 217465,
+    "part_observations": 1086712,
+    "relations": 3348707
+  },
+  "attribute_states_by_asset": {
+    "region:unknown": 60,
+    "era:unknown": 288,
+    "region:inferred": 659,
+    "era:inferred": 431
+  },
+  "attribute_states_by_subject": {
+    "region:unknown": 7,
+    "era:unknown": 92,
+    "region:inferred": 129,
+    "era:inferred": 44
+  },
+  "attribute_known_subjects": {
+    "region": 129,
+    "era": 44
+  },
+  "run_stages": {
+    "segment": 7603,
+    "prep": 7603,
+    "color": 7601,
+    "subject": 2
+  },
+  "roles": [
+    {
+      "role": "real_building/wall",
+      "before_d15": 4357,
+      "after_d15": 1555,
+      "after_sha": 869,
+      "subjects": 30
+    },
+    {
+      "role": "real_terrain/tree",
+      "before_d15": 3047,
+      "after_d15": 1435,
+      "after_sha": 704,
+      "subjects": 7
+    }
+  ],
+  "violations": {
+    "rights": 0,
+    "rights_reasons": 0,
+    "missing_url": 0,
+    "missing_attribution": 0,
+    "restricted_source": 0,
+    "sha_representative": 0,
+    "observations_eligibility": 0,
+    "relations_eligibility": 0,
+    "groups_eligibility": 0
+  },
+  "artifact": "/mnt/data/derived/stats/issue74-full-20261104T180829Z",
+  "windows_copy": "H:\\mc-blueprint\\artifacts\\issue74-full-20261104T180829Z",
+  "execution": {
+    "read_seconds": 151.9546586840297,
+    "snapshot_id": "3e785e67c42f02a174c85a6f54e2c081447c8c784c912ee3b4c5e7a94cb45702",
+    "total_seconds": 1499.76679847599,
+    "transaction": {
+      "isolation": "repeatable read",
+      "read_only": "on",
+      "snapshot": "168489:168489:"
+    }
+  },
+  "code_version": "0b2a5af+i74-stage2-6974ac5a11728555",
+  "selection_hash": "5a77999556cdace51f29a5fbfdd08bb59c488b72ee94001fec314048b08df913",
+  "files": {
+    "assets.parquet": {
+      "rows": 7607,
+      "sha256": "d62a276912559d3104ac0e038e5949ad689730619a4ee120f4c5f9261bb75e5c"
+    },
+    "groups.parquet": {
+      "rows": 7404,
+      "sha256": "c053f63257361c3b694358e39e4da0d446ece1a87236ef5714eda5b05eccd6a4"
+    },
+    "observations.parquet": {
+      "rows": 1124717,
+      "sha256": "fdf56839bb4cdf2ecb9bdaf9e66152905235539796aa6a3ed191b849dd21e941"
+    },
+    "provenance.parquet": {
+      "rows": 7607,
+      "sha256": "7a9ac322b5da1756a4d43d2328cf84080294f205e4c2a167a92b79eb596f0174"
+    },
+    "regions.parquet": {
+      "rows": 217465,
+      "sha256": "1a834e616e0af240cb4aaa9eb15ab9254a3ec6c2c31b272d9a826086bd70048e"
+    },
+    "relations.parquet": {
+      "rows": 3348707,
+      "sha256": "6831491f7706db1c3f96f05a38263fdb6aab5d2feab01dcb246bf43d1794c586"
+    },
+    "runs.parquet": {
+      "rows": 22809,
+      "sha256": "435c4cac89dbfa56dedf82797ab5eb95198f0d2fd1df83f86ee770dd2d2db464"
+    }
+  },
+  "snapshot_bytes": 1716504436,
+  "windows_linux_audit_equal": true,
+  "queries": 12,
+  "tests": {
+    "windows": {
+      "passed": 445,
+      "skipped": 183
+    },
+    "isolated_pg16": {
+      "passed": 627,
+      "skipped": 1
+    }
+  }
+}

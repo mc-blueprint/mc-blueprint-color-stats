@@ -102,3 +102,17 @@ Queue.completeの所有権確認と同一取引でrun・全rule_stat・job成功
 
 第2段階では#74の実snapshotからdry-run・実登録を行い、実測支持数・不足・
 実データ計測・再計算比較を確認した後、正本節の統合と公開文面を準備する。
+
+
+属性根拠runはassets.data.subject.attribute_evidence.run_idから採用入力へ結ぶ。
+subject_attribute_run_idsとして集計JSONとrun.parametersにも保持する。
+Subjectのregion/eraがinferredの場合もattributes_inferredを付ける。
+#85のmethod=subject-attributes-v1として明示された属性根拠runだけは、
+license_classの固定値restrictedを画像の制約と解釈しない。
+解析runのrestrictedや、未指定・別methodのrunは従来どおり登録を拒否する。
+由来runと入力辺は256件ずつ照合し、画像の観測・属性をライブDBで再集計しない。
+
+n_effはW_sの集中度であり、未知の層所属・欠測の偏りの不確実性を含まない。
+target_mass_coverageは所属質量に基づく被覆で、層属性の直接観測数ではない。
+補正率・情報なし割合を併記し、支持やM3条件4を層補正の有効性の保証としない。
+この解釈は集計JSONとrun.parametersのsupport_interpretationにも保存する。
