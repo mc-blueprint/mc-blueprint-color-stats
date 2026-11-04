@@ -98,14 +98,20 @@ class Queue:
                 raise ValueError("同じジョブキーに異なるpayloadは指定できません")
             return job.id
 
-    def claim(self, stages: Sequence[str]) -> Claim | None:
-        """指定stageから1件取得する。期限切れも1失敗と数え、3試行で打ち切る。"""
+    def claim(
+        self, stages: Sequence[str], *, job_ids: Sequence[uuid.UUID] | None = None
+    ) -> Claim | None:
+        """指定stageから1件取得する。job_ids指定時はその集合に限定する。
+
+        期限切れも1失敗と数え、3試行で打ち切る。空集合では取得しない。
+        """
         with self._transaction() as session:
             while True:
                 job = session.scalars(
                     select(Job)
                     .where(
                         Job.stage.in_(stages),
+                        Job.id.in_(job_ids) if job_ids is not None else True,
                         or_(
                             (Job.status == "pending")
                             & (Job.available_at <= func.clock_timestamp()),

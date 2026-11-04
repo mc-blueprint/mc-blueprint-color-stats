@@ -8,6 +8,7 @@ import re
 import unicodedata
 import uuid
 from collections import Counter, defaultdict
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -18,6 +19,27 @@ from colorstats.schema.models import Asset, AssetDuplicate, ProcessingRun, Subje
 
 METHOD = "subject-rules-v1"
 NAMESPACE = uuid.UUID("e87d5f5d-09eb-53e5-82aa-e7d465bd385c")
+
+
+@contextmanager
+def subject_transaction(engine, dry_run, *, attributes_only=False):
+    """対象同定と属性反映の排他・読取り専用取引を共有する。"""
+    with Session(engine) as session, session.begin():
+        if dry_run:
+            session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
+        else:
+            session.execute(text("SELECT pg_advisory_xact_lock(29, 1)"))
+            tables = "subject" if attributes_only else "subject, subject_candidate, asset"
+            session.execute(text(f"LOCK TABLE {tables} IN SHARE ROW EXCLUSIVE MODE"))
+        yield session
+
+
+def write_snapshot(snapshot, result):
+    """既存ファイルを上書きせず、成功runの根拠を書き出す。"""
+    snapshot.parent.mkdir(parents=True, exist_ok=True)
+    with snapshot.open("x", encoding="utf-8") as stream:
+        json.dump(result, stream, ensure_ascii=False, indent=2)
+        stream.write("\n")
 
 
 def digest(value):
@@ -91,7 +113,7 @@ def infer(
 ):
     """入力を変更せず、全assetの状態・候補・根拠と必要なsubjectを返す。
 
-    confidenceはルールのスコアであり確率ではない。GPSは矛盾検出専用で、
+    confidenceはルールのスコアであり確率ではない。自動キーのGPSはP625と照合し、
     SHA群に異なる対象の根拠がある場合は既存確定値だけを保持する。
     """
     by_id = {a.id: a for a in assets}
@@ -161,12 +183,34 @@ def infer(
                 c for c in raw["categories"]
                 if sid in category_index.get((asset.domain, c), [])
             ]
+            automatic = set(matched_categories) & set(target.get("automatic_categories", []))
+            point = coordinates(raw["location"])
+            target_point = target.get("coordinates")
+            location_match = bool(
+                automatic and point and target_point
+                and distance(point, target_point) <= rules["max_camera_span_km"][asset.domain] / 2
+            )
+            location_conflict = bool(automatic and point and target_point and not location_match)
+            strong = bool(
+                matched_categories and (matched_names or location_match) and not location_conflict
+                and not target.get("candidate_only")
+            )
+            if point and matched_categories and (matched_names or location_match):
+                positions[str(sid)].append((asset.id, point))
             if matched_names or matched_categories:
                 candidates[str(sid)] = {
                     "key": target["key"], "names": matched_names,
                     "categories": matched_categories,
-                    "strong": bool(matched_names and matched_categories),
-                    "score": 0.95 if matched_names and matched_categories else 0.5,
+                    "strong": strong, "score": 0.95 if strong else 0.5,
+                    **({
+                        "wikidata_id": target["wikidata_id"],
+                        "coordinates": target_point, "location_match": location_match,
+                        "location_conflict": location_conflict,
+                        "granularity": target.get("granularity"),
+                        "origin": (
+                            "automatic" if target["key"].startswith("wikidata:") else "manual"
+                        ),
+                    } if target.get("wikidata_id") else {"origin": "manual"}),
                 }
         identity_hits = set(candidates)
         for subject, pattern in subject_patterns[asset.domain]:
@@ -178,11 +222,25 @@ def infer(
                     "strong": False, "score": 0.4,
                 })
         strong = [sid for sid, e in candidates.items() if e["strong"]]
-        multiple = multiple_targets(words, identity_hits, rules)
+        ambiguous = {
+            c: rules["ambiguous_categories"][c] for c in raw["categories"]
+            if c in rules.get("ambiguous_categories", {})
+        }
+        multiple = bool(ambiguous) or multiple_targets(words, identity_hits, rules) or any(
+            target["domain"] != asset.domain
+            and set(raw["categories"]) & set(target.get("automatic_categories", []))
+            for target in catalog.values()
+        )
         proposed = strong[0] if len(strong) == 1 and not multiple else None
         reasons = ["multiple_targets"] if multiple else []
-        if proposed and (point := coordinates(raw["location"])):
-            positions[proposed].append((asset.id, point))
+        if any(
+            e.get("granularity", {}).get("state") == "coarse"
+            for e in candidates.values() if e.get("granularity")
+        ):
+            reasons.append("target_granularity")
+        if any(e.get("location_conflict") for e in candidates.values()):
+            proposed = None
+            reasons.append("location_conflict")
         decisions[str(asset.id)] = {
             "asset_id": str(asset.id),
             "subject_id": (
@@ -193,6 +251,7 @@ def infer(
             "identity_targets": sorted(identity_hits),
             "proposed": proposed, "candidates": candidates, "reasons": reasons,
             "input": raw, "sha256": asset.sha256, "domain": asset.domain,
+            **({"ambiguous_categories": ambiguous} if ambiguous else {}),
         }
         sha_groups[(asset.domain, asset.sha256)].append(str(asset.id))
     # 基準点からの直径を保守的に制限し、近接点の連鎖で対象を拡大しない。
@@ -227,7 +286,7 @@ def infer(
         identities = {sid for aid in group for sid in decisions[aid]["identity_targets"]}
         conflicts = sorted(ids | identities) if len(ids | identities) > 1 else []
         blocked = any(
-            r in ("multiple_targets", "location_conflict")
+            r in ("multiple_targets", "location_conflict", "target_granularity")
             for aid in group for r in decisions[aid]["reasons"]
         )
         for aid in group:
@@ -321,27 +380,30 @@ def scene(asset, decision, rules, catalog):
     return result, evidence
 
 
-def execute(engine, rules, snapshot, *, code_version, dry_run=False, reconsider_run=None):
+def execute(
+    engine, rules, snapshot, *, code_version, dry_run=False, reconsider_run=None, wikidata=None,
+):
     """1取引で全件の根拠と成功runを確定する。snapshotは新規パスを指定する。
 
     dry_runはDBへ一切書き込まない。スナップショットの書込み失敗もDBをrollbackする。
+    wikidata指定時は保存済みカテゴリからカタログを追加し、取得失敗でも反映しない。
+    初回取得はdry-runで済ませ、本実行では同じキャッシュをofflineで使用する。
     失敗後に残ったファイルは成功runから参照されないため、成功結果として扱わない。
     接続先の例外詳細（認証情報を含み得る）は呼出し側で表示しないこと。
     reconsider_run指定時は、その成功runが新規に付け、現在も保持されている関連付けだけを
     再評価する。対象run以前の確定や、その後に他の処理が変更した関連付けは保持する。
     """
     run_id = uuid.uuid4()
-    config_hash = digest(rules)
-    with Session(engine) as session, session.begin():
-        if dry_run:
-            session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY"))
-        else:
-            # prepと同じ排他を取り、確定subjectの継承と競合させない。
-            session.execute(text("SELECT pg_advisory_xact_lock(29, 1)"))
-            session.execute(text(
-                "LOCK TABLE subject, subject_candidate, asset IN SHARE ROW EXCLUSIVE MODE"
-            ))
+    with subject_transaction(engine, dry_run) as session:
         assets = session.scalars(select(Asset).order_by(Asset.id)).all()
+        if wikidata is not None:
+            categories = {
+                c["title"].removeprefix("Category:")
+                for asset in assets
+                for c in (asset.quality or {}).get("metadata", {}).get("categories", [])
+            }
+            rules = wikidata.build(categories, rules)
+        config_hash = digest(rules)
         subjects = session.scalars(select(Subject).order_by(Subject.id)).all()
         duplicates = session.scalars(select(AssetDuplicate)).all()
         previous = session.scalars(select(SubjectCandidate)).all()
@@ -395,7 +457,10 @@ def execute(engine, rules, snapshot, *, code_version, dry_run=False, reconsider_
             "run_id": str(run_id), "dry_run": dry_run, "method": METHOD,
             "config_hash": config_hash, "code_version": code_version,
             "subject_keys": [
-                {"subject_id": str(sid), "domain": target["domain"], "key": target["key"]}
+                {
+                    "subject_id": str(sid), "domain": target["domain"], "key": target["key"],
+                    **({"wikidata_id": target["wikidata_id"]} if target.get("wikidata_id") else {}),
+                }
                 for sid, target in catalog.items()
             ],
             "reconsider_run": str(reconsider_run) if reconsider_run else None,
@@ -409,6 +474,16 @@ def execute(engine, rules, snapshot, *, code_version, dry_run=False, reconsider_
                 key: dict(Counter(r["scene_evidence"][key]["state"] for r in rows))
                 for key in rules["attributes"]
             },
+            "wikidata": rules.get("wikidata"),
+            "confirmed_subjects": {
+                domain: len({r["subject_id"] for r in rows
+                             if r["domain"] == domain and r["subject_id"]})
+                for domain in ("real_building", "real_terrain")
+            },
+            "origins": dict(Counter(
+                row["candidates"].get(row["subject_id"], {}).get("origin", "preserved_or_sha")
+                for row in rows if row["subject_id"]
+            )),
             "assets": rows,
         }
         if not dry_run:
@@ -461,8 +536,5 @@ def execute(engine, rules, snapshot, *, code_version, dry_run=False, reconsider_
                 finished_at=datetime.now(UTC),
             ))
             session.flush()
-        snapshot.parent.mkdir(parents=True, exist_ok=True)
-        with snapshot.open("x", encoding="utf-8") as stream:
-            json.dump(result, stream, ensure_ascii=False, indent=2)
-            stream.write("\n")
+        write_snapshot(snapshot, result)
     return result

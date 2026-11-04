@@ -1,5 +1,28 @@
 # 収集契約
 
+## 追加収集の測定（Issue #77）
+
+`bench/issue77/plan.md` と `targets.yaml` が測定前に固定した条件。
+任意の `measurement` 設定（id、api_requests_per_stratum、http_requests_per_stratum）を
+持つbiasジョブだけが測定対象になる。通信枠は層ごと・両provider合算・再試行込みで予約する。
+`measurement.providers` で供給元別のAPI/HTTP枠を固定でき、合計は層枠を超えない。
+リダイレクト先も要求前に同じ枠・待機・User-Agentを適用する。
+`commons_categories` はCommons限定のカテゴリ内検索を追加し、通常検索と同じ継続を使う。
+既存設定の枠・作者完全照合・source_policyは維持する。
+
+`bias_cli report --measurement-id <ID>` は検索履歴と失敗を含む全試行を層別に出力する。
+試行runのstateはrunning、prepared、stopped、failed、committed。上限停止は取得済み分を
+確定するcollect runとstop_reasonを残す。通信前の停止なら空のcollect runとなる。
+画像登録の完了前に台帳を成功実績へ数えず、通信量は失敗後も残す。
+`stage.prepare(..., observer=...)` は測定イベントを呼び出す。callbackの例外は一時出力を清掃し
+伝播する。observerを省略すれば従来の呼出し契約になる。
+新規SHAは全既存Assetと直列比較し、適格判定には#74の`stats.licenses.exclusion_reasons`を使う。
+Openverse by/by-saは照合済みの選択値と版から測定時だけ正規化し、SA等の除外を維持する。
+測定予約のattributes内の`_original_url`で未確定候補も原本URLを照合する。
+この予約用キーはAssetの検索意図へ転記しない。
+上限停止では取得成功分を保持し、途中失敗でも条件・候補・除外理由と受信済み継続位置を残す。
+確定subjectの報告には後続#72のconfirmed根拠を要求する。測定時点で未同定なら0件として残す。
+
 Issue #7。後続 #8 はアダプターを追加し、#9 は検索リクエストを計画・投入する。
 DBスキーマ、ジョブキュー、論理保存先は変更しない。
 

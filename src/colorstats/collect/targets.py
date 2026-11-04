@@ -24,6 +24,22 @@ def load_targets(path: Path, taxonomy: Path = Path("taxonomy")) -> dict:
         if not 0 < limits[key] <= 1:
             raise ValueError("割合上限は0より大きく1以下です")
     search = config["search"]
+    if "measurement" in config:
+        measurement = config["measurement"]
+        if not isinstance(measurement["id"], str) or not measurement["id"].strip():
+            raise ValueError("測定IDが必要です")
+        for key in ("api_requests_per_stratum", "http_requests_per_stratum"):
+            if type(measurement[key]) is not int or measurement[key] <= 0:
+                raise ValueError("測定の通信枠は正の整数です")
+        if "providers" in measurement:
+            allocations = measurement["providers"]
+            if set(allocations) != set(search["providers"]):
+                raise ValueError("全供給元の測定枠が必要です")
+            for key in ("api_requests", "http_requests"):
+                if any(type(a[key]) is not int or a[key] <= 0 for a in allocations.values()):
+                    raise ValueError("供給元別の通信枠は正の整数です")
+                if sum(a[key] for a in allocations.values()) > measurement[f"{key}_per_stratum"]:
+                    raise ValueError("供給元別の合計が層の通信枠を超えています")
     if search["pages"] <= 0 or search["max_offset"] < 0 or not search["providers"]:
         raise ValueError("検索ページ数・オフセット・ソースが不正です")
     identifiers, combinations = set(), set()
@@ -63,6 +79,12 @@ def requests(config: dict, layer: dict, rng: random.Random):
     """各言語の先頭ページと、無作為に選んだ後続ページを検索する。"""
     search = config["search"]
     for provider in search["providers"]:
+        if provider == "wikimedia_commons":
+            for category in layer.get("commons_categories", []):
+                yield SearchRequest(
+                    provider, f'incategory:"{category}"', limit=search["limit"],
+                    stratum=layer["id"],
+                )
         for language, terms in layer["queries"].items():
             query = rng.choice(terms)
             offsets = range(search["limit"], search["max_offset"] + 1, search["limit"])

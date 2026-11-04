@@ -15,6 +15,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from colorstats.collect import Candidate, SearchRequest
 from colorstats.collect.commons import CommonsAdapter, check_commons_policy
+from colorstats.collect.http import MeasurementLimit
 from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import license_class, load_policy
 from colorstats.queue import RunInfo
@@ -83,12 +84,14 @@ def prepare(
     *,
     decide: Callable[[SearchRequest, Candidate], str | None] | None = None,
     discard: Callable[[SearchRequest, Candidate], None] | None = None,
+    observer=None,
 ):
     """原本準備を行う。decideは取得直前に順次呼び、除外理由または採用のNoneを返す。
 
     省略時は許可候補を全採用する。層・集中上限の判断と同一バッチ内の予約は呼出し側の責務。
     discardは採用後の原本取得4xx除外時に呼び、次候補の判断前に予約を解放できる。
-    例外は伝播し、一時出力を清掃する。確定ファイル・DBの登録は行わない。
+    測定枠による正常停止では取得成功分を返す。通常の例外は伝播し、一時出力を清掃する。
+    observerへ途中経過を渡す。確定ファイル・DBの登録は行わない。
     """
     payload = claim.payload
     config = Path(payload["storage_config"])
@@ -98,10 +101,45 @@ def prepare(
     request = SearchRequest(**payload["request"])
     adapter = adapter_for(request.provider, payload["policy"])
     files, records, skipped = [], [], []
+    parameters = {
+        "request": asdict(request), "effective": {}, "next_offset": None,
+        "api_next_offset": None, "skipped": skipped, "candidates": [],
+        "policy": payload["policy"], "search_complete": False,
+    }
+
+    def observe(event, value=1):
+        if event == "search":
+            parameters.update(value)
+        elif event == "candidate":
+            parameters["candidates"].append(value)
+            if value["reason"]:
+                entry = {k: value[k] for k in ("source_url", "original_url", "rank", "reason")}
+                if entry not in skipped:
+                    skipped.append(entry)
+        elif event == "exclusion" and value not in skipped:
+            skipped.append(value)
+        if observer is not None:
+            observer(event, value)
+
+    if observer is not None:
+        adapter.observer = observe
     temporary = None
     try:
-        result = adapter.search(request)
-        for candidate in result.candidates:
+        observe("search", parameters.copy())
+        try:
+            result = adapter.search(request)
+        except MeasurementLimit as error:
+            if observer is None:
+                raise
+            parameters.update(stop_reason=str(error), next_offset=None)
+            candidates = []
+        else:
+            parameters.update(effective=result.parameters, next_offset=result.next_offset,
+                              api_next_offset=result.next_offset, search_complete=True)
+            observe("search_responses")
+            candidates = result.candidates
+        observe("search", parameters.copy())
+        for candidate in candidates:
             category = license_class(payload["policy"], candidate.license)
             extension = MIME_EXTENSIONS.get(candidate.mime)
             reason = (
@@ -112,13 +150,11 @@ def prepare(
             if reason is None and decide is not None:
                 reason = decide(request, candidate)
             if reason is not None:
-                skipped.append(
-                    {
-                        "source_url": candidate.source_url,
-                        "rank": candidate.rank,
-                        "reason": reason,
-                    }
-                )
+                entry = {"source_url": candidate.source_url, "original_url": candidate.original_url,
+                         "rank": candidate.rank, "reason": reason}
+                if entry not in skipped:
+                    skipped.append(entry)
+                observe("exclusion", entry)
                 logger.info(
                     "候補を除外: %s rank=%s reason=%s", candidate.source_url, candidate.rank, reason
                 )
@@ -129,8 +165,22 @@ def prepare(
                 payload["host"]
             )
             temporary = temporary_path(provisional, str(claim.token))
+            parameters["download_candidate"] = {
+                "source_url": candidate.source_url, "original_url": candidate.original_url,
+                "rank": candidate.rank,
+            }
+            observe("search", parameters.copy())
             try:
                 adapter.download(candidate, temporary)
+            except MeasurementLimit as error:
+                if observer is None:
+                    raise
+                temporary.unlink(missing_ok=True)
+                temporary = None
+                if discard is not None:
+                    discard(request, candidate)
+                parameters.update(stop_reason=str(error), next_offset=None)
+                break
             except HTTPError as error:
                 if not 400 <= error.code < 500 or error.code == 429:
                     raise
@@ -143,10 +193,12 @@ def prepare(
                 skipped.append(
                     {
                         "source_url": candidate.source_url,
+                        "original_url": candidate.original_url,
                         "rank": candidate.rank,
                         "reason": reason,
                     }
                 )
+                observe("exclusion", skipped[-1])
                 logger.info(
                     "原本取得候補を除外: %s rank=%s reason=%s",
                     candidate.source_url,
@@ -156,6 +208,9 @@ def prepare(
                 continue
             with temporary.open("rb") as stream:
                 digest = hashlib.file_digest(stream, "sha256").hexdigest()
+            if observer is not None:
+                observer("downloads", 1)
+                observer("download_bytes", temporary.stat().st_size)
             logical = f"raw/{digest[:2]}/{digest}.{extension}"
             target = storage.resolve(logical).local_path(payload["host"])
             if temporary.parent != target.parent:
@@ -184,13 +239,7 @@ def prepare(
                     "retrieved_at": datetime.now(UTC),
                 }
             )
-        parameters = {
-            "request": asdict(request),
-            "effective": result.parameters,
-            "next_offset": result.next_offset,
-            "skipped": skipped,
-            "policy": payload["policy"],
-        }
+        observe("search", parameters.copy())
         classes = {r["license_class"] for r in records} - {"open"}
         run_class = (
             next(iter(classes)) if len(classes) == 1 else "restricted" if classes else "open"
@@ -203,11 +252,13 @@ def prepare(
             parameters,
         )
         return Prepared(info, {"records": records, "payload": payload}, files)
-    except BaseException:
+    except BaseException as error:
+        parameters.update(failure=type(error).__name__, next_offset=None)
         if temporary is not None:
             temporary.unlink(missing_ok=True)
         for path, _ in files:
             path.unlink(missing_ok=True)
+        observe("search", parameters.copy())
         raise
     finally:
         adapter.finish()
