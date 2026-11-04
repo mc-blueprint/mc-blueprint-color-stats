@@ -20,7 +20,7 @@ from colorstats.collect.http import MeasurementLimit
 from colorstats.collect.measurement import Meter, report
 from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import load_policy
-from colorstats.schema.models import Asset, CollectionReservation, ProcessingRun
+from colorstats.schema.models import Asset, CollectionReservation, ProcessingRun, Subject
 from tests.test_collect import RECORDED, Clock, Response, adapter_for, payload_for
 from tests.test_collect_http import make_client
 from tests.test_collection_bias import (
@@ -267,13 +267,14 @@ def test_確定subjectは後続の根拠付き同定後に異なり数で数え�
     )
     with Session(queue.engine) as session, session.begin():
         asset = session.scalars(select(Asset)).one()
-        assert asset.subject_id is not None
+        assert asset.subject_id is None
         assert (
             report(session, "fixture-77")["strata"][request().stratum]["counts"][
                 "confirmed_subjects"
             ]
             == 0
         )
+        asset.subject_id = session.scalars(select(Subject)).first().id
         asset.quality = {**asset.quality, "subject_inference": {"state": "confirmed"}}
     with Session(queue.engine) as session:
         counts = report(session, "fixture-77")["strata"][request().stratum]["counts"]
