@@ -10,7 +10,8 @@ from sqlalchemy.orm import Session
 
 from colorstats.queue.core import Claim, RunInfo
 from colorstats.queue.worker import Prepared
-from colorstats.schema.models import Asset, AssetDuplicate, SubjectCandidate
+from colorstats.rights import combine_license
+from colorstats.schema.models import Asset, AssetDuplicate, Source, SubjectCandidate
 
 MAX_SIZE = (512, 512)
 PHASH_DISTANCE = 6
@@ -111,6 +112,11 @@ def register(session: Session, run, data: dict) -> None:
         select(Asset).order_by(Asset.id).with_for_update().execution_options(populate_existing=True)
     ).all()
     asset = session.get(Asset, data["asset_id"])
+    if run is not None:
+        source = session.get(Source, asset.source_id)
+        run.license_class = combine_license(
+            run.license_class, asset.license_class, source.license_class
+        )
     asset.sha256 = data["sha256"]
     asset.phash = data["phash"]
     asset.width = data["width"]

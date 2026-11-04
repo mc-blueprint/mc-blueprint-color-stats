@@ -11,7 +11,8 @@ from sqlalchemy import Engine, func, or_, select, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from colorstats.schema.models import Job, ProcessingRun
+from colorstats.rights import combine_license
+from colorstats.schema.models import Asset, Job, ProcessingRun, Source
 
 STAGES = ("collect", "prep", "segment", "shade", "color", "review", "aggregate")
 
@@ -217,10 +218,15 @@ class Queue:
             if job.status == "succeeded":
                 return job.run_id
             self._owned(session, claim)
+            category = info.license_class
+            if job.asset_id is not None:
+                asset = session.get(Asset, job.asset_id)
+                source = session.get(Source, asset.source_id)
+                category = combine_license(category, asset.license_class, source.license_class)
             run = ProcessingRun(
                 stage=job.stage,
                 config_hash=job.stage_config_hash,
-                license_class=info.license_class,
+                license_class=category,
                 code_version=info.code_version,
                 taxonomy_version=info.taxonomy_version,
                 node=info.node,

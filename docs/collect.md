@@ -59,7 +59,8 @@ restricted・帰属不足・非対応MIMEの候補はdecideへ渡さず除外す
 帰属表示`attribution`、再配布条件`redistribution`、`license_rules`を検証する。
 Commons固有の正の`maxlag`は`check_commons_policy`が共通検証に加えて検証する。
 投入時とアダプターの構築・通信時に適用し、#8等の別ソースにmaxlagは要求しない。
-ライセンス名を小文字化して許可リストへ完全一致させる。不明・独自・複合表記・NDはrestricted。
+ライセンス名を小文字化して許可リストへ完全一致させる。解析専用の明示確認がない
+不明・独自・複合表記・NDはrestricted（解析専用の確認契約は本書末尾）。
 Commonsの`extmetadata.License`を使い、作者は`Artist`から取得する（投稿者を作者と見なさない）。
 複数ライセンス画像もCommonsMetadataが選択したライセンスを採用する。
 asset.quality.metadata.license_selectionに選択方法・選択値と、カテゴリから取得できた
@@ -326,3 +327,32 @@ ubuntu-1から3層を各1回、同じ条件で直列に送った。japanese-cast
 - 対処：Openverseは応答が不安定なため、補助ソースにとどめ、Commonsを主にする。Openverseを使う場合は、取得間隔を空けたうえで、タイムアウトした層を後で再試行する。作者表記の揺れ（末尾のピリオドなど）を照合で許容するかは、M3の収集方針で決める。
 
 証跡は`C:/Users/ryuma/.codex/logs/commands/20261102T140104Z-4b7cca7011f04279801936e0012e2053.jsonl`に記録した。
+
+## 解析専用入力（Issue #87）
+
+`license_rules.analysis_only`は元license名の完全一致リスト。既存open/SA/NC/NDを自動変更しない。
+`check_policy`と`license_class`は以下の固定policyを検証し、根拠欠落・禁止・失効なら取得前に拒否する。
+新ソースの有効化は#88と各アダプターIssue完了後とし、このIssueで有効ソースは増やさない。
+
+| キー | 契約 |
+| --- | --- |
+| `rights_basis` | `copyright_act_30_4` |
+| `rights_review` | `reviewed_at`（タイムゾーン付きISO時刻）、`terms_url`、`api_url`、`robots_url`、`summary`、`reviewer`、`policy_version` |
+| `rights_review.purpose / decision` | `non_expressive_color_statistics` / `allowed`。未確認・禁止は許可しない |
+| `rights_review.expires_at / revoked` | 任意の統計利用根拠の期限（タイムゾーン付きISO時刻）・失効フラグ |
+| `attribution_required` | 真偽値。falseでも台帳を省略しない |
+| `access_scope / image_redistribution` | `internal` / false |
+| `retention` | 正の日数：`raw_days`=30、`rejected_days`=7、`deletion_request_days`=7、`backup_days`=30。短いソース期限優先 |
+| `use_stopped / deletion_requested` | 利用停止・削除受付。source.policyまたはasset.quality.rightsでtrueならD15除外 |
+
+collectは元license/URL/作者（未取得はnull）を保持し、asset.quality.rightsに確認情報を固定する。
+同qualityのprovider、original_id（アダプターの一意な出典ページURL）、retrieved_atと、
+asset.url/retrieved_atを台帳とする。原サイトのnative IDは従来どおりcandidate.metadataへ保存する。
+retention_untilは取得日時＋raw_daysのISO時刻。原画像の保存期限であり統計利用の失効期限ではない。
+source.policyは初回の共有情報を保持する。後日のlicense/根拠不一致を無言で書き換えずD15で除外する。
+新ソースは取得経路・用途をレビューし、候補の出典と元licenseをアダプター内でも照合する。
+
+`rights.combine_license(*values)`は副作用なしで区分を合成する。異なる非open制約・未知値はrestricted。
+`rights.analysis_review_reasons(policy, now=None)`は不足・停止・失効の理由文字列リストを返す。
+`stats.licenses.exclusion_reasons(asset, source, runs)`は元権利一致、二経路、全run・全モデルを検査する。
+未確認のrestrictedからanalysis_onlyへ落とすフォールバックはない。

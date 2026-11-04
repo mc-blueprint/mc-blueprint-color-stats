@@ -202,7 +202,8 @@ mc-blueprintはMITで公開・無料配布される。MITは利用者の商用�
 
 | `license_class` | 例 | 同梱パックへの使用 |
 |---|---|---|
-| `open` | CC0、CC BY、CC BY-SA、Public Domain、Apache-2.0／MITの重み | 可（帰属表示を`provenance`に記載） |
+| `open` | CC0、CC BY、Public Domain、Apache-2.0／MITの重み | D15の単一選択権利・帰属・全入力runを満たす非表現的統計のみ。SA/NC/NDは除外 |
+| `analysis_only` | 取得経路と情報解析目的の根拠を確認した画像 | D15の解析専用経路を満たす非表現的統計のみ。画像の利用許諾は変更しない |
 | `noncommercial` | CC BY-NC系画像、Depth Anything V2 Base以上の重み | **不可**。内部の比較・評価にだけ使う |
 | `academic_only` | `compphoto/Intrinsic` | **不可**。評価専用 |
 | `restricted` | ND、規約で自動取得を禁止するソース、独自ライセンスの重み（未確認） | 取得しない、または使用前に個別確認 |
@@ -211,6 +212,34 @@ mc-blueprintはMITで公開・無料配布される。MITは利用者の商用�
 - M2採用のSAM 2.1 hiera tiny・Grounding DINO tinyの重みはApache-2.0で`open`と確定する（2026-11-02確認の[一次情報](segment.md#重みのライセンス)を再利用）。帰属・通知条件を保持し、runには入力asset・由来runの制約も伝播する。SAM 3.1は独自SAM Licenseで`restricted`、ユーザー判断により未評価（ゲート付き）・実行経路なしとして比較から除外する。DINOv3は採用Issueで確認する。
 - 通常採用の補正なしと、不採用のGray-Worldには重みがなく、runの区分は入力から継承する。Intrinsic v2.0の`stage_0.pt`〜`stage_3.pt`は`academic_only`を維持し、通常処理・同梱パックへ採用しない（[利用条件と比較結果](shade.md)）。
 - パックのビルド時に、`noncommercial`／`academic_only`／`restricted`の`processing_run`や`asset`に由来するレコードを除外し、除外件数を`provenance`に記録する。
+
+### 8.1 D15の二経路と配布境界（2026-11-04ユーザー決定）
+
+`open`経路は選択済みの元licenseとsourceの一致、SA/NC/ND除外、帰属、全runの制約を保持する。
+`analysis_only`経路はsource/assetがともに同区分で、元license表示と固定確認記録が一致し、
+出典・原画像識別子・provider・取得日時を追跡できる場合だけ許可する。
+規約未確認・禁止・根拠失効・利用停止・削除要求は理由付き除外とする。
+SA/NC/NDの既存画像を自動昇格せず、モデル重みは両経路ともopen必須とする。
+非享受目的・必要な限度・権利者の利益を不当に害しないことを確認する内部区分であり、
+法的適用を全件保証する判断ではない。海外処理や写真の表現再現へ流用しない。
+
+区分は`rights.combine_license`で合成する。openのみはopen、openとanalysis_onlyはanalysis_only。
+同じ非open制約は保持し、異なる非open制約の混在はrestricted。
+prep、segment、shade、color、queue、CVAT、aggregateへ伝播する。
+sourceはURLで共有する初回情報を保持し、後日の不一致はD15で止める。
+
+| 内容 | 内部保存 | MIT配色パック |
+| --- | --- | --- |
+| 集計済み色分布・比率・共起・必要な品質フラグ | 可 | 非表現的な集計値のみ可 |
+| 原本・取得縮小画像・切抜き・テクスチャ・座標マスク | 必要期間のみ非公開 | 不可 |
+| CVAT画像・注釈・manifest・エクスポートZIP | 承認済み内部作業のみ | 不可 |
+| source/asset詳細・作者・座標・自由文・検索履歴・署名URL | アクセス制限 | 必要最小の法定・契約上の帰属以外は不可 |
+| 内部snapshot（原画像を含まない場合も同じ） | 内部再現用 | そのまま配布不可 |
+
+M4の出力契約は[配布契約](pack-contract.md)。allowlistで新たに配布物を生成し、
+provider別件数・適用方針版・除外件数・ビルド版と必要最小の帰属・通知だけを付ける。
+DATA_LICENSEのMITは生成された配色データに適用し、元写真のlicense・作者・URLは改変しない。
+削除・除外台帳から再ビルドできる内部入力索引を保持する。パックビルダーへの接続はM4で検証する。
 
 ## 9. データソース
 
@@ -224,6 +253,29 @@ mc-blueprintはMITで公開・無料配布される。MITは利用者の商用�
 | 保留 | SNS・画像共有サイトのMinecraft作品 | 規約上の自動取得可否 | 規約確認まで取得しない |
 
 各ソースは`source_policy`（取得可否、レート、帰属表示、再配布可否、`license_class`の判定方法）を設定に持ち、ポリシーのないソースからは取得しない。
+
+### 9.0 取得経路と保持条件
+
+確認基準日は2026-11-04。規約禁止をAPIやrobotsのAllowで上書きせず、未確認を許可にしない。
+SNS一般を一律に許可しない。API・CDNの各hostの条件も有効化前に確認する。
+
+| ソース | 経路・判断 | 開始条件 |
+| --- | --- | --- |
+| Commons / Openverse | 現行API経路、元サイトの権利確認を維持 | 既存設定を使用。登録クライアントは#93 |
+| Library of Congress | JSON API、建築・地形のカラー写真候補 | collection別Rights and Access・各host確認、#88・#92 |
+| Mapillary | API候補。規約全文・用途・大量保存条件は未確認 | ユーザー確認、#88・#94完了まで無効 |
+| Flickr | HTML scraping禁止、認可APIのみ条件付き | 保存・削除要求・用途条件未充足のため保留 |
+| Geograph | HTML/live bulkは禁止、小規模API・公式bulkのみ条件付き | 公式bulkの条件確認まで保留 |
+| Reddit / X / Instagram / Pinterest / 500px | 無承認自動取得禁止、本用途は未承認 | 取得対象外 |
+| Unsplash / Pexels / Pixabay | 本用途の自動取得・大規模保存条件が不適合または未確定 | 取得対象外 |
+
+規約の根拠URL・確認日・要約・用途・判断者・policy版を固定source_policyに記録する。
+既存ライブラリ（dataclass、PyYAML、SQLAlchemy、Alembic）と既存収集器を再利用し、依存は追加しない。
+新規収集分は取得から30日、不採用7日以内、削除受付時に新規利用を停止して7日以内、
+バックアップ残留30日以内。ソース条件が短ければ短い期限を採用する。
+既存7,607件は削除しない。原画像の期限清掃だけでは完成済みの非表現的統計を失効させない。
+統計利用根拠の失効と保存期限は別に扱う。清掃・公開境界と運用窓口は#88で完成させ、
+それまで新ソースを有効化しない。確認キーと取得時JSONは[収集契約](collect.md#解析専用入力issue-87)参照。
 
 ### 9.1 収集の偏り制御
 
