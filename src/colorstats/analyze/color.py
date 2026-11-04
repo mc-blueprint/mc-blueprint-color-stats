@@ -47,6 +47,8 @@ def config_hash(payload: dict) -> str:
     for path in paths:
         with Path(path).open("rb") as stream:
             hashes[path] = hashlib.file_digest(stream, "sha256").hexdigest()
+    if payload.get("input_sha256", hashes[payload["input_path"]]) != hashes[payload["input_path"]]:
+        raise ValueError("入力画像のSHA-256が固定入力と一致しません")
     return hashlib.sha256(json.dumps(
         {"code_version": CODE_VERSION, "payload": payload, "files": hashes},
         sort_keys=True, ensure_ascii=False, allow_nan=False,
@@ -304,6 +306,9 @@ def register(session: Session, run, data: dict) -> None:
             raise ValueError("部位入力がDBの確定参照と一致しません")
         source = session.get(ProcessingRun, data["region_run_id"])
         if source.stage == "segment":
+            if (payload.get("input_sha256") is not None
+                    and source.parameters.get("input_sha256") != payload["input_sha256"]):
+                raise ValueError("segmentとcolorの入力画像hashが一致しません")
             if source.parameters["payload"]["input_path"] != payload["input_path"]:
                 raise ValueError("segmentとcolorの入力画像が一致しません")
             if source.parameters["payload"].get("input_run_id") != data["input_run_id"]:
