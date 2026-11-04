@@ -34,7 +34,7 @@ def claim(payload):
                  segment.config_hash(payload), payload, 1, datetime.now(UTC))
 
 
-def prediction(image, method, paths, prompts, threshold, text_threshold):
+def prediction(image, method, paths, model_hashes, prompts, threshold, text_threshold):
     mask = np.zeros((image.height, image.width), dtype=np.bool_)
     mask[1:5, 2:7] = True
     mask[2, 3] = False
