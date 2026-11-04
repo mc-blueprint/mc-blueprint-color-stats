@@ -78,7 +78,7 @@ def test_all_twelve_strata_duplicates_rates_and_exclusions(tmp_path):
     assert overall["confirmed_subjects_before"] == 2
     assert overall["confirmed_subjects_after"] == 1
     layer = data["strata"][1]["inferred"]
-    assert layer == overall | {"subject_deficit": 99}
+    assert layer == overall | {"subject_deficit": 99, "subject_coverage": .01}
     empty = data["strata"][0]["inferred"]
     assert empty["asset_rows"] == 0 and empty["eligible"]["value"] is None
     assert empty["subject_deficit"] == 100
@@ -129,16 +129,16 @@ def test_unclassified_candidates_intent_conflicts_and_overlap(tmp_path, settings
     assert data["classification"]["attributes_missing"]["numerator"] == 1
     assert data["classification"]["attributes_conflict"]["numerator"] == 1
     assert data["classification"]["intent_mismatch"]["numerator"] == 4
-    assert data["classification"]["multiple_strata"]["numerator"] == 4
-    assert data["classification"]["image_unassigned"]["numerator"] == 1
-    assert data["classification"]["unassigned"]["numerator"] == 5
+    assert data["classification"]["multiple_strata"]["numerator"] == 1
+    assert data["classification"]["image_unassigned"]["numerator"] == 0
+    assert data["classification"]["unassigned"]["numerator"] == 3
     assert data["overall"]["candidate_only_images"]["numerator"] == 1
     assert data["overall"]["unknown_subject_images"]["numerator"] == 1
     assert data["strata"][1]["intended"]["asset_rows"] == 5
     comparison = data["strata"][1]["intent_comparison"]
     assert comparison["attributes_missing"]["numerator"] == 1
     assert comparison["mismatch"] == {"numerator": 4, "denominator": 5, "value": 0.8}
-    assert data["strata"][1]["inferred"]["asset_rows"] == 0
+    assert data["strata"][1]["inferred"]["asset_rows"] == 1
     assert data["classification"]["attribute_states"]["style"] == {"inferred": 4, "unknown": 1}
 
 
@@ -181,7 +181,8 @@ def test_single_subject_does_not_pass_from_many_images(tmp_path, settings):
     assert not data["usefulness_gates"][DOMAIN]["passed"]
 
 
-def test_both_domains_pass_without_claiming_full_m3(tmp_path, settings):
+@pytest.mark.parametrize("unknown_attributes", [False, True])
+def test_both_domains_pass_without_claiming_full_m3(tmp_path, settings, unknown_attributes):
     root = tmp_path / "snapshot"
     snapshot(root, 20)
 
@@ -195,11 +196,24 @@ def test_both_domains_pass_without_claiming_full_m3(tmp_path, settings):
             db.execute("UPDATE groups SET role='real_terrain/tree' WHERE asset_id=?", [aid])
             db.execute("UPDATE observations SET eligible=false WHERE asset_id=?", [aid])
             db.execute("UPDATE regions SET label='tree_trunk' WHERE asset_id=?", [aid])
+        if unknown_attributes:
+            for aid, raw in db.execute("SELECT id, data FROM assets").fetchall():
+                data = json.loads(raw)
+                data["scene_attributes"] = {"style": "unknown", "biome_like": None}
+                db.execute("UPDATE assets SET data=? WHERE id=?", [canonical(data), aid])
 
     identifier = revise(root, change)
     data = report(root, identifier, aggregate(root, identifier, settings), settings)
     assert all(g["passed"] for g in data["usefulness_gates"].values())
     assert data["m3_checks"][3]["status"] == "passed"
+    if unknown_attributes:
+        for gate in data["usefulness_gates"].values():
+            for diagnostic in gate["correction"]:
+                if diagnostic["subject_count"]:
+                    assert diagnostic["no_information_rate"] == 1
+                    assert diagnostic["correction_rate"] == 0
+                    assert all(rate == 1 for rate in diagnostic["attribute_unknown_rates"].values())
+        assert "補正率" in markdown(data) and "情報なし割合" in markdown(data)
     assert [c["status"] for c in data["m3_checks"]] == [
         "unverified",
         "unverified",
@@ -443,3 +457,56 @@ def test_recorded_zero_area_color_is_not_adopted_role_support(tmp_path, settings
                 and row["scope"] == "condition" and row["conditions"] == {"domain": DOMAIN})
     assert door["recorded_subjects_before_d15"] == 1
     assert door["adopted_subjects"] == cell(stats, ("door",))["subject_count"] == 0
+
+
+@pytest.mark.parametrize("same_subject", [False, True])
+def test_partial_memberships_unknown_mix_and_fractional_deficit(tmp_path, settings, same_subject):
+    root = tmp_path / "snapshot"
+    snapshot(root, 2)
+
+    def change(db, manifest):
+        data = json.loads(db.execute("SELECT data FROM assets WHERE id='asset-0001'").fetchone()[0])
+        data["scene_attributes"] = {"style": "unknown", "building_type": ""}
+        db.execute("UPDATE assets SET data=? WHERE id='asset-0001'", [canonical(data)])
+        if same_subject:
+            db.execute("UPDATE assets SET subject_id='same-subject'")
+
+    identifier = revise(root, change)
+    stats = aggregate(root, identifier, settings)
+    data = report(root, identifier, stats, settings)
+    a, b = (row["inferred"] for row in data["strata"][:2])
+    assert data["classification"]["unassigned"]["numerator"] == 0
+    assert data["classification"]["unassigned_subject_reasons"] == {}
+    assert a["subject_mass"] == pytest.approx(1 if same_subject else 1.5)
+    assert b["subject_mass"] == pytest.approx(0 if same_subject else .5)
+    assert b["unassigned_subjects"] == 0
+    assert a["subject_deficit"] == pytest.approx(99 if same_subject else 98.5)
+    assert b["subject_deficit"] == pytest.approx(100 if same_subject else 99.5)
+    assert a["subject_coverage"] == pytest.approx(a["subject_mass"] / 100)
+    summary = data["classification"]["partial_correction"][DOMAIN]
+    assert summary["correction_rate"] == (1 if same_subject else .5)
+    assert summary["no_information_rate"] == (0 if same_subject else .5)
+    assert summary["attribute_unknown_rates"]["style"] == (0 if same_subject else .5)
+    wall = next(row for row in data["support"] if row["conditions"] == {"domain": DOMAIN}
+                and row["target_parts"] == ["wall"])
+    assert wall["quality"] == cell(stats)["quality"]
+    assert wall["effective_sample_size"] == pytest.approx(1 if same_subject else 1.8)
+    assert wall["correction_rate"] == summary["correction_rate"]
+
+
+def test_known_values_outside_all_strata_remain_unassigned(tmp_path, settings):
+    root = tmp_path / "snapshot"
+    snapshot(root, 1)
+
+    def change(db, manifest):
+        data = json.loads(db.execute("SELECT data FROM assets").fetchone()[0])
+        data["scene_attributes"] = {"style": "outside"}
+        db.execute("UPDATE assets SET data=?", [canonical(data)])
+
+    identifier = revise(root, change)
+    data = report(root, identifier, aggregate(root, identifier, settings), settings)
+    assert data["classification"]["unassigned_subject_reasons"] == {"outside_target": 1}
+    assert data["overall"]["confirmed_subjects_after"] == 0
+    assert data["overall"]["subject_mass"] == 0
+    assert all(row["effective_sample_size"] == 0 for row in data["support"])
+    assert not data["usefulness_gates"][DOMAIN]["passed"]

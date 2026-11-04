@@ -1,45 +1,60 @@
-# design.md §12 追記案（第1段階・未統合）
+# design.md §12 追記案（部分層補正・本体未統合）
 
-report(snapshot, snapshot_id, statistics, settings)はDB・元画像へ接続せず、
-snapshotと登録対象統計JSONの同一性を検証して偏り報告を返す。
-snapshot-v1・既存DuckDB／SQLAlchemy・標準ライブラリ・既存属性一致を利用し、
-新しい依存や保存形式、共有APIの変更はない。
-改変・別設定／別snapshotの統計はValueError。CLIは失敗時に終了コード1を返す。
-出力ディレクトリは新規のみ。書込み失敗時の部分出力は再利用しない。
-成功表示がなく、JSONとMarkdownが揃わない出力は完成レポートとして扱わない。
+正本はIssue #75の「設計変更：既知属性による部分層補正」（2026-11-04）と
+Issue #76の追従コメント。詳細な推定量・単位・割合の定義は
+[bench/issue75/design-section.md](../issue75/design-section.md)を参照する。
 
-M3条件1〜6をそれぞれpassed／failed／unverifiedで表示する。
-条件3はhash検証と#75の再計算一致を確認する。条件5は全対象層に加えて
-層・条件と役割別のD15前後支持を確認し、和集合色等の根拠が不足すればunverifiedとする。
-条件4はreal_building・real_terrain各1役割以上でモデル品質が検証済み、
-直接観測の確定subject数>=10かつsubject n_eff>=10を要求する。
-#75のdirect_min=30という配布支持ラベルとは異なる内部有用性ゲートであり、
-10〜29件でも直接観測の閾値を満たせるが、親からの借用のみでは達成しない。
-条件1（#66の固定7,607件の全件・品質・性能監査）、
-条件2（#72の再実行・誤結合監査）、条件6（Gへの引継ぎ確認）は
-snapshot単独からは証明できないためunverifiedとする。
-実データのM3結果報告で対応する監査と引継ぎの根拠を追補し、最終判定する。
-m3_completeはこの自動確認の全条件がpassedの場合だけtrueとなり、
-本番結果報告による外部確認を勝手に代入しない。
+## M3完成条件4の置換案
 
-実行例（DB不要、出力は未使用ディレクトリ）:
+建築・地形の各1役割以上で、モデル品質が検証済みであり、
+**既知属性による部分層補正の主結果の確定subject数>=10かつsubject n_eff>=10**を満たす。
+補正率・属性別未知率・情報なし割合を同じ条件・役割の分母とともに併記する。
+unknownは周辺化し、検索意図や候補値で補完しない。全層と両立するsubjectだけでも
+主結果で判定するが、補正率0・情報なし割合1を隠さず、属性が判明したとは扱わない。
+親からの借用だけでは観測subject数やn_effを増やさない。D15は変更しない。
+
+これは#75のdirect_min=30という支持ラベルとは異なる内部有用性ゲート。
+10〜29 subjectでも主結果の閾値を満たせる。パック生成・同梱や10万画像目標は別状態。
+
+## レポートの責務と層表示
+
+report(snapshot, snapshot_id, statistics, settings)はDB・元画像に接続せず、
+全hash検証と同じ#75設定での再集計により統計JSON全体の一致を要求する。
+入力はaggregate-v2の登録対象JSON。report-v3として旧集計・レポートは再生成する。
+
+属性統合はweights.asset_attributes、両立判定はcompatible_strata、
+subjectの既知値統合・矛盾判定はassign_strataを使用する。
+独自の完全一致・一意層割当は行わない。欠損・None・空文字・unknownは照合せず、
+適格画像間の既知値の競合・対象外subjectを除外理由へ残す。
+複数層との両立や一部属性の不足だけでは未割当としない。
+
+画像の両立件数と採用subjectの両立件数は層間で重複し得る。
+層の所属質量は#75 calculateから得るm_shの和とし、
+被覆=所属質量/目標subject数、不足=max(0, 目標subject数-所属質量)とする。
+全体は一度だけ数えたsubject数。unknownを各層へ1 subjectずつ足さない。
+画像の条件別観測には実際に分かる条件だけを使い、#75の_conditionsを再利用する。
+
+分類の補正率・未知率・情報なし割合の分母は各domainの適格確定subject数
+（役割品質の前）。条件・役割/pairの主結果は、当該セルの#75 qualityをそのまま表示し、
+分母のsubject_countも併記する。適用層が1つなら情報なし割合1となる定義も維持する。
+条件4は役割別の主結果を使い、分類全体のn_eff等を代用しない。
+p_h=0の層・欠損目標質量、high_weightと補正なし感度を維持する。
+
+## D15・完成条件・実行
+
+D15診断は保存済み部位色の両立subject数、失ったsubject集合差、
+品質・部分層補正後の採用数と所属質量を分ける。
+権利除外前の和集合色が未保存なら構成部位から代用せず、前後差をnullとする。
+条件5は根拠不足があればunverified。#74最新6c8534bの取込みはこの変更に含めず、
+追加のrights_eligible等の列やD15前unionがあっても既存の列読取りを維持する。
+#74統合後の実snapshot照合は第2段階へ残す。
+
+条件3はhash検証・再計算一致、条件1・2・6は全量監査・再推定監査・G受領を別途確認する。
+m3_completeは自動確認の全条件がpassedの場合だけtrueとし、外部確認を推測しない。
 
 ~~~sh
 python -m colorstats.stats.report_cli --snapshot /path/snapshot --snapshot-id <hash> --statistics /path/aggregate.json --config configs/stats.yaml --targets configs/collection_targets.yaml --taxonomy taxonomy --output /path/new-report
 ~~~
 
-コード版・taxonomy・設定hash・snapshot hash・統計JSON hashを保存する。
-同一入力からJSON／Markdownのバイト列を再現する。実行時間は再現対象のJSONと分けて計測する。
-
-## 反証2・3・4への修正
-
-subject属性はcollect.coverage.subject_attributesを再利用し、location→region・eraを含める。
-Noneは未知として層照合から外す。同じ正規化属性をweights.assign_strataへ渡し、
-適格SHA代表画像の同一subjectの層矛盾をsubject全体の未割当とする。
-画像の属性一致件数と採用subject数は別表示し、目標への不足は採用数から算出する。
-#75の同時修正も同じ属性読取りへ揃える前提で、同担当ファイルは変更しない。
-
-D15診断は保存済み個別部位色を持つ確定subjectの集合差で計算する。
-D15以外の解析不足・SHA重複、未分類、モデル未検証を混同しない。
-和集合色が未保存の場合、構成領域の存在を色観測支持へ代用せず、前後数と差をnullにする。
-条件5はunverifiedとし、#74にD15除外前の和集合色の診断根拠が必要なことを示す。
+出力は未使用ディレクトリのJSON／Markdown。書込み失敗時の部分出力は再利用しない。
+コード・taxonomy・設定・snapshot・統計hashを保存し、同一入力から同じバイト列を再現する。

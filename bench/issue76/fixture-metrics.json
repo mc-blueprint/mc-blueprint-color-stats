@@ -1,4 +1,12 @@
 {
+  "code_version": "report-v3",
+  "aggregate_code_version": "aggregate-v2",
+  "correction_rate": 1.0,
+  "no_information_rate": 0.0,
+  "attribute_unknown_rates": {
+    "building_type": 0.0,
+    "style": 0.0
+  },
   "synthetic_only": true,
   "python": "3.12.15",
   "platform": "Windows",
@@ -16,11 +24,11 @@
     "direct": 9,
     "smoothed": 6
   },
-  "aggregate_seconds": 1.406,
-  "report_seconds": 0.282,
+  "aggregate_seconds": 1.813,
+  "report_seconds": 0.406,
   "snapshot_parquet_bytes": 9601,
-  "json_bytes": 97112,
-  "markdown_bytes": 7992,
+  "json_bytes": 125858,
+  "markdown_bytes": 10183,
   "m3_checks": [
     {
       "condition": 1,
@@ -40,7 +48,7 @@
     {
       "condition": 4,
       "status": "failed",
-      "reason": "建築・地形それぞれのモデル品質と直接観測subject数・n_effで判定"
+      "reason": "建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定"
     },
     {
       "condition": 5,

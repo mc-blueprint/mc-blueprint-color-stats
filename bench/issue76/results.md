@@ -51,8 +51,8 @@ socket: `/mnt/data/work/issue-76/socket`、port 5576、TCP待受なし。
 [fixture-metrics.json](fixture-metrics.json)と[fixture-report.md](fixture-report.md)を参照。
 80 asset行→40 SHA、40確定subject、subject n_eff=30、最大重み2。
 統計24行: direct 9 / smoothed 6 / unsupported 9。
-aggregate 1.406秒、report 0.282秒（hash検証・再計算・採用観測照合込み）。
-Parquet 9,601 byte、JSON 97,112 byte、Markdown 7,992 byte。
+aggregate 1.813秒、report 0.406秒（2026-11-04、部分層補正主結果の計測）。
+Parquet 9,601 byte、JSON 125,858 byte、Markdown 10,183 byte。
 Windowsの合成入力1回分であり、本番7,607件の支持や性能へ外挿しない。
 
 再現（dev依存を導入した環境で、出力先は新規ディレクトリ）:
@@ -108,3 +108,40 @@ D15除外前の和集合色がなければ前後差をnullとし、条件5をunv
   i76-fixture-fix2-finalへ保全。fixture-metrics.jsonとfixture-report.mdもreport-v2へ更新。
 - 中間commit文は指定scratchpadのi76-commit2.txtへUTF-8で保存した。
   commit・push・PR操作は行っていない。
+
+
+## 2026-11-04 部分層補正への追従
+
+Issue #75/#76の設計変更コメントを正本とし、origin/feature/issue-75の
+c6c36b7・b16dd69をgit merge --no-editで取り込んだ。
+ローカルmerge commit: fef76fecb48f02eb2a7fb21af98b86df5fd48577。
+競合なし。#74最新6c8534bは祖先に含まれず、取り込んでいない。
+以下は上記の過去の一意層割当・report-v2の説明を置き換える。
+
+report-v3はweights.asset_attributes・compatible_strata・assign_strata・calculateを再利用する。
+unknownは周辺化し、既知値の競合・対象外だけを主結果の未割当に残す。
+複数層への両立subject数を重複表示し、所属質量m_shの和で不足・被覆を計算する。
+他層への非所属をsubject全体の未割当とは数えない。
+条件別観測は_conditionsを使い、unknownを特定style等の直接観測へ補完しない。
+条件4は#75の部分層補正主結果のsubject数・n_effで判定し、同じ分母で
+補正率・属性別未知率・情報なし割合を併記する。D15とモデル品質ゲートは維持した。
+
+回帰: 同一subjectの既知/unknown混在、別subjectでの質量1.5/0.5・不足98.5/99.5、
+情報なしでも主結果により条件4を判定する場合、矛盾・対象外subjectの棄却。
+情報なしの場合は補正率0、情報なし割合1、属性別未知率1を表示する。
+既存のD15前後差・ゼロ面積・重複・再現性・CLIも確認する。
+
+- Windows全体: 413 passed / 153 skipped（123.96秒）。
+- Linux/Python3.12・隔離PostgreSQL16全体: 565 passed / 1 skipped（126.74秒）。
+- 最終差分の報告・wheel CLI・PG16統合: 28 passed（21.23秒）。
+- ruff check .・sdist／wheel build成功。実GPU統合は未実行。
+- 専用DBはcolorstats_test76_partial、socketとportは前回同様5576。
+  全体検証には新規空UTF8 DBを使用し、本番DB・GPU・共有venvは変更していない。
+- 合成artifactはaggregate-v2・report-v3で再生成。建築domainの補正率1、
+  情報なし割合0、style/building_type未知率0、40 subject・n_eff30。
+  全量への外挿はせず、出力はscratchpad/i76-fixture-partialに保全。
+- D15前union追加列のある#74最新との実snapshot統合、実データ判定・docs本体反映は第2段階。
+- 変更commit用文面はscratchpad/i76-commit3.txtへUTF-8で保存済み。
+  merge以外のcommit・push・PR操作は行っていない。
+
+部分層補正の検証終了後、Issue76専用PostgreSQLクラスタだけを正常停止し、データ・ログを保全した。
