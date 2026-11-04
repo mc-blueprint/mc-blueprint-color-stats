@@ -89,6 +89,17 @@ class WikidataCatalog:
             result.update(data["entities"])
         return result
 
+    def attribute_claims(self, ids):
+        """#79と同じキャッシュ要求から地域・年代用の4属性とrevisionだけを返す。"""
+        return {
+            qid: {
+                "revision": entity.get("lastrevid"),
+                "claims": {p: entity.get("claims", {}).get(p, [])
+                           for p in ("P17", "P131", "P625", "P571")},
+            }
+            for qid, entity in self.entities(ids).items()
+        }
+
     def build(self, categories, rules):
         """rulesのコピーへ固有対象を追加し、取得根拠を含めて返す。DBは変更しない。"""
         categories = set(categories) | {
