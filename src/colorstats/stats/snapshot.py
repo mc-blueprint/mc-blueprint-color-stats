@@ -24,6 +24,8 @@ from colorstats.schema.models import (
     SubjectCandidate,
 )
 from colorstats.stats.licenses import exclusion_reasons
+from colorstats.stats.subject_attributes import COLUMNS as ATTRIBUTE_COLUMNS
+from colorstats.stats.subject_attributes import METHOD as ATTRIBUTE_METHOD
 
 TABLES = {
     "assets": "id VARCHAR, sha256 VARCHAR, domain VARCHAR, subject_id VARCHAR, "
@@ -100,6 +102,7 @@ def _read(connection, selection, directory):
     roots.update(uuid.UUID(reference) for asset in assets
                  for key in ("subject_inference", "scene_inference")
                  if (reference := asset["quality"].get(key, {}).get("run_id")))
+    roots.update(uuid.UUID(rid) for rid in selection.get("subject_attribute_run_ids", []))
     closure = select(ProcessingRun.id).where(ProcessingRun.id.in_(roots)).cte(
         "input_runs", recursive=True,
     )
@@ -177,6 +180,41 @@ def _inputs(run_id, asset_id, taxonomy, records, jobs, seen, active):
     seen[run_id] = row
 
 
+
+def _subject_attributes(selection, runs, subjects):
+    evidence = {}
+    for reference in selection.get("subject_attribute_run_ids", []):
+        rid = uuid.UUID(reference)
+        run = runs.get(rid)
+        if (run is None or run["stage"] != "subject"
+                or run["parameters"].get("method") != ATTRIBUTE_METHOD):
+            raise ValueError("属性根拠にはsubject属性runを指定してください")
+        raw = Path(run["output_paths"]["snapshot"]).read_bytes()
+        saved = json.loads(raw)
+        if (saved["run_id"] != str(rid) or saved["dry_run"]
+                or saved["config_hash"] != run["config_hash"]
+                or {k: v for k, v in saved.items() if k != "subjects"} != run["parameters"]):
+            raise ValueError("属性根拠snapshotが成功runと一致しません")
+        for row in saved["subjects"]:
+            sid = uuid.UUID(row["subject_id"])
+            if sid not in subjects:
+                continue
+            if sid in evidence:
+                raise ValueError("同じsubjectの属性根拠runが重複しています")
+            for key, column in ATTRIBUTE_COLUMNS.items():
+                value = subjects[sid][column]
+                if (row["after"][key] != value or row["attributes"][key]["value"] != value
+                        or row["attributes"][key]["state"] not in {
+                            "inferred", "unknown", "preserved",
+                        }):
+                    raise ValueError("属性根拠snapshotと固定subject値が一致しません")
+            evidence[sid] = dict(row) | {
+                "run_id": str(rid), "method": ATTRIBUTE_METHOD,
+                "config_hash": run["config_hash"],
+                "snapshot_sha256": hashlib.sha256(raw).hexdigest(),
+            }
+    return evidence
+
 def _collect(db, selection, quality, records, directory):
     counts, reasons = Counter(), Counter()
     by_id = {uuid.UUID(item["asset_id"]): item for item in selection["assets"]}
@@ -189,6 +227,7 @@ def _collect(db, selection, quality, records, directory):
     runs = {row["id"]: dict(row) | {
         "input_run_ids": sorted(parents[row["id"]], key=str),
     } for row in records["runs"]}
+    attributes = _subject_attributes(selection, runs, subjects)
     candidates, regions = defaultdict(list), defaultdict(list)
     for row in records["candidates"]:
         candidates[row["asset_id"]].append(dict(row))
@@ -224,6 +263,10 @@ def _collect(db, selection, quality, records, directory):
                 if runs[rid]["stage"] != "subject":
                     raise ValueError("推定根拠runのstageが一致しません")
         excluded = exclusion_reasons(asset, source, adopted.values())
+        attribute_evidence = attributes.get(asset["subject_id"])
+        if attribute_evidence:
+            rid = uuid.UUID(attribute_evidence["run_id"])
+            _inputs(rid, aid, taxonomy, runs, jobs, adopted, set())
         rights = not excluded
         counts["rights_eligible"] += rights
         if len(chosen) != 3:
@@ -236,6 +279,8 @@ def _collect(db, selection, quality, records, directory):
         subject = dict(subjects[asset["subject_id"]]) if asset["subject_id"] else None
         if subject and subject["domain"] != asset["domain"]:
             raise ValueError("subjectのdomainが一致しません")
+        if attribute_evidence:
+            subject["attribute_evidence"] = attribute_evidence
         data = dict(asset) | {
             "selection": item, "subject": subject, "candidates": candidates[aid],
         }
@@ -440,6 +485,7 @@ def execute(engine, selection, output, *, quality, code_version, dry_run=False):
 
     outputは未使用ディレクトリ。成功manifestを最後に作り、失敗した出力は再利用しない。
     dry_runでは一時領域だけを使い永続artifactを作らない。DBへの書込みは行わない。
+    selectionのsubject_attribute_run_idsで#85の成功属性runを明示選択する。
     qualityはload_qualityで評価artifactを照合した設定、code_versionは固定コード版。
     入力不一致はValueError、DB/I/O例外は呼出し側へ返す。
     戻り値は固定値だけのmanifest。取引識別子と計測値は検証用execution.jsonへ分離し、
@@ -447,6 +493,8 @@ def execute(engine, selection, output, *, quality, code_version, dry_run=False):
     """
     selection = json.loads(canonical(selection))
     selection["assets"].sort(key=lambda item: item["asset_id"])
+    if "subject_attribute_run_ids" in selection:
+        selection["subject_attribute_run_ids"].sort()
     quality = json.loads(canonical(quality))
     if not dry_run and output is None:
         raise ValueError("出力先が必要です")
@@ -482,6 +530,9 @@ def execute(engine, selection, output, *, quality, code_version, dry_run=False):
                 },
                 "counts": counts, "exclusions": reasons, "files": {},
                 "duckdb_version": duckdb.__version__,
+                "input_run_ids": [rid for (rid,) in db.execute(
+                    "SELECT id FROM runs ORDER BY id"
+                ).fetchall()],
             }
             if dry_run:
                 return manifest
