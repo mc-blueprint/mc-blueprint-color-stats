@@ -24,22 +24,32 @@ relationの方向はB-A、面積比はB/A、Δhはdegree、色はOKLab。
 権利除外はsnapshotに保持し、帰属の正本はprovenance.parquet。
 Gの配色パックSchemaやDATA_LICENSEを本レポート形式で先取りしない。
 
-## report-v2の追加・変更
+## report-v3の出力契約
 
-- confirmed_subjects_afterはsubject単位の一意な層への採用数。
+- confirmed_subjects_afterは当該層に両立する採用subject数（層間で重複あり）。
   confirmed_subjects_after_snapshotは権利・解析・SHA重複除外後、層割当前のsubject数。
-  subject_deficitは採用数から算出する。unassigned_subjectsも併記する。
+  subject_massは#75のm_shの和、subject_coverageは質量/目標、subject_deficitは目標-質量。
+  unassigned_subjectsは既知値矛盾・対象外などのsubject数。
 - classification.image_unassignedは全asset行に対する画像属性の未割当率。
   classification.unassignedは適格SHA代表画像を分母とするsubject未割当率。
   subject_stratum_conflictも同じ分母で、unassigned_subject_reasonsはsubject単位の件数。
 - rights_supportはcondition／stratumと役割ごとの保存済み色観測の確定subject数。
   recorded_subjects_before_d15／recorded_subjects_after_d15／lost_subjects_d15は、
   同じ役割でD15通過後にも観測を持つsubjectを残して集合差で求める。
-  subjects_after_analysisはsnapshot適格段階、adopted_subjectsは品質・層割当後。
+  subjects_after_analysisはsnapshot適格段階、adopted_subjectsは品質・部分層補正後の両立subject数。
   n_effを再計算した値ではない。統計支持は従来のsupportに保持する。
 - 和集合色が未保存なら該当前後数・集合差はnull。
   unverified_union_assetsとcomplete、理由を出し、条件5をunverifiedにする。
   unobserved_rights_excluded_assetsは部位色観測自体のない権利除外画像数。
 
-report-v1の合成artifactは同じ入力からreport-v2で再生成する。
+旧合成artifactは同じ入力からreport-v3で再生成する。
 DB・snapshotの移行は不要。レポート旧形式の互換処理は追加しない。
+
+
+部分層補正ではassign_strataの戻り値は既知属性辞書。複数両立・属性不足だけでは棄却しない。
+classification.partial_correctionはdomain別の適格確定subjectを分母とした補正・未知・情報なし率。
+supportおよびusefulness_gates.correctionの割合は当該条件・役割の#75主結果をそのまま使用する。
+rights_support.adopted_subject_massも層の所属質量とし、両立subject数と分ける。
+入力JSONはaggregate-v2。旧方式の統計・report-v2は再生成し、互換処理は追加しない。
+
+補正率等は#75定義に従い、N=0では0。件数比率の空分母nullとは区別する。

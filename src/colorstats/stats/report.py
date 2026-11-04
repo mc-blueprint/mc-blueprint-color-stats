@@ -3,17 +3,15 @@
 import math
 from collections import Counter, defaultdict
 from pathlib import Path
-from types import SimpleNamespace
 
 import duckdb
 
-from colorstats.collect.coverage import matches, subject_attributes
 from colorstats.stats.aggregate import CODE_VERSION as AGGREGATE_VERSION
-from colorstats.stats.aggregate import _points, _read, aggregate
+from colorstats.stats.aggregate import _conditions, _points, _read, aggregate
 from colorstats.stats.snapshot import canonical, digest, verify
-from colorstats.stats.weights import assign_strata
+from colorstats.stats.weights import asset_attributes, assign_strata, calculate, compatible_strata
 
-CODE_VERSION = "report-v2"
+CODE_VERSION = "report-v3"
 NON_RIGHTS_REASONS = {"missing_analysis", "unsupported_domain", "sha_duplicate"}
 
 
@@ -37,38 +35,20 @@ def _concentration(values):
     }
 
 
-def _subject_attributes(asset):
-    subject = asset["data"].get("subject")
-    if not subject:
-        return {}
-    values = subject_attributes(SimpleNamespace(
-        scene_attributes=subject["scene_attributes"], domain=asset["domain"],
-        location=subject.get("location"), era=subject.get("era"),
-    ))
-    return {key: value for key, value in values.items() if value is not None}
-
-
-def _attributes(asset):
-    data = asset["data"]
-    return (
-        _subject_attributes(asset)
-        | data["scene_attributes"]
-        | {"domain": asset["domain"]}
-    )
-
-
 def _rights_eligible(asset):
     return not set(asset["reasons"]) - NON_RIGHTS_REASONS
 
 
-def _summary(rows, provenance, assignments, target=None, stratum=None):
+def _summary(rows, provenance, memberships, target=None, stratum=None):
     count = len(rows)
     eligible = [r for r in rows if r["eligible"]]
     reasons = Counter(reason for r in rows for reason in r["reasons"])
     rights = [r for r in rows if _rights_eligible(r)]
     available = {r["subject_id"] for r in eligible if r["subject_id"]}
-    subjects = {sid for sid in available if assignments.get(sid) is not None
-                and (stratum is None or assignments[sid] == stratum)}
+    subjects = {sid for sid in available if sid in memberships
+                and (stratum is None or stratum in memberships[sid])}
+    mass = (math.fsum(memberships[sid][stratum] for sid in sorted(subjects))
+            if stratum is not None else len(subjects))
     candidate = sum(not r["subject_id"] and bool(r["data"].get("candidates")) for r in rows)
     unknown = sum(not r["subject_id"] and not r["data"].get("candidates") for r in rows)
     authors, providers, sites, regions, locations, licenses, subject_ids = ([] for _ in range(7))
@@ -100,8 +80,10 @@ def _summary(rows, provenance, assignments, target=None, stratum=None):
         "confirmed_subjects_before": len({r["subject_id"] for r in rows if r["subject_id"]}),
         "confirmed_subjects_after": len(subjects),
         "confirmed_subjects_after_snapshot": len(available),
-        "unassigned_subjects": len(available - subjects),
-        "subject_deficit": max(0, target - len(subjects)) if target is not None else None,
+        "unassigned_subjects": len(available - memberships.keys()),
+        "subject_mass": mass,
+        "subject_coverage": mass / target if target is not None else None,
+        "subject_deficit": max(0, target - mass) if target is not None else None,
         "confirmed_images": _rate(sum(bool(r["subject_id"]) for r in rows), count),
         "candidate_only_images": _rate(candidate, count),
         "unknown_subject_images": _rate(unknown, count),
@@ -122,10 +104,12 @@ def _summary(rows, provenance, assignments, target=None, stratum=None):
 
 
 def _role_support(
-    assets, regions, observations, groups, settings, quality, statistics, assignments, valid_roles,
+    assets, regions, observations, groups, settings, quality, statistics, memberships, valid_roles,
 ):
     by_id = {row["id"]: row for row in assets}
-    attributes = {row["id"]: _attributes(row) for row in assets}
+    attributes = {row["id"]: asset_attributes(row)[0] for row in assets}
+    compatible = {aid: compatible_strata(attrs, settings["strata"])
+                  for aid, attrs in attributes.items()}
     by_region = {row["id"]: row for row in regions}
     recorded = defaultdict(set)
     roles = defaultdict(set)
@@ -153,9 +137,9 @@ def _role_support(
     result = []
     for scope, stratum, condition in scopes:
         domain = condition["domain"]
-        selected = {row["id"] for row in assets if matches(attributes[row["id"]], {
-            "attributes": condition,
-        })}
+        selected = {aid for aid, attrs in attributes.items()
+                    if (stratum in compatible[aid] if stratum is not None
+                        else condition in _conditions(attrs))}
         for role in sorted(roles[domain]):
             key = domain, role
             ids = selected & recorded[key]
@@ -168,8 +152,8 @@ def _role_support(
                                or key in unions)
             adopted = {by_id[aid]["subject_id"] for aid in selected & valid_roles[key]
                        if by_id[aid]["eligible"]
-                       and assignments.get(by_id[aid]["subject_id"]) is not None
-                       and (stratum is None or assignments[by_id[aid]["subject_id"]] == stratum)}
+                       and by_id[aid]["subject_id"] in memberships
+                       and (stratum is None or stratum in memberships[by_id[aid]["subject_id"]])}
             entry = {
                 "scope": scope, "stratum": stratum, "conditions": condition, "role": role,
                 "kind": "union" if key in unions else "region",
@@ -180,6 +164,9 @@ def _role_support(
                                                 if by_id[aid]["eligible"]
                                                 and by_id[aid]["subject_id"]}),
                 "adopted_subjects": len(adopted), "model_validated": model_validated,
+                "adopted_subject_mass": (math.fsum(memberships[sid][stratum]
+                                                   for sid in sorted(adopted))
+                                         if stratum is not None else len(adopted)),
                 "exclusion_reasons": dict(sorted(Counter(
                     reason for aid in ids | unknown for reason in by_id[aid]["reasons"]
                 ).items())),
@@ -229,13 +216,20 @@ def report(snapshot, expected_hash, statistics, settings):
                     sorted(Counter(reason for r in rows for reason in r.get("reasons", [])).items())
                 ),
             }
-    normalized = {
-        row["id"]: row | {"data": row["data"] | {"subject": (row["data"].get("subject") or {}) | {
-            "scene_attributes": _subject_attributes(row), "domain": row["domain"],
-        }}} for row in assets
-    }
-    assignments, assignment_reasons = assign_strata(normalized, settings["strata"])
+    assignments, assignment_reasons = assign_strata(by_id, settings["strata"])
     eligible = [row for row in assets if row["eligible"]]
+    memberships, correction = {}, {}
+    for domain in sorted({layer["attributes"]["domain"] for layer in settings["strata"]}):
+        rows = [{"subject": row["subject_id"], "sha256": row["sha256"], "area": 1.,
+                 "attributes": assignments.get(row["subject_id"]),
+                 "unassigned_reasons": assignment_reasons.get(row["subject_id"], [])}
+                for row in eligible if row["domain"] == domain]
+        _, quality = calculate(rows, settings["strata"], {"domain": domain})
+        memberships.update(quality["memberships"])
+        correction[domain] = {key: quality[key] for key in (
+            "subject_count", "correction_rate", "no_information_rate", "attribute_unknown_rates",
+            "target_mass_coverage", "missing_target_mass", "unassigned_subjects",
+        )}
     intended, inferred = {}, {}
     conflicts, missing, mismatch, multiple, outside = [], [], [], [], []
     states = {}
@@ -244,7 +238,7 @@ def report(snapshot, expected_hash, statistics, settings):
     )
     for row in assets:
         data = row["data"]
-        attrs = _attributes(row)
+        attrs, conflict = asset_attributes(row)
         intent = (
             (data.get("search_parameters") or {})
             .get("collection_bias", {})
@@ -253,28 +247,27 @@ def report(snapshot, expected_hash, statistics, settings):
                 {},
             )
         )
-        intended[row["id"]] = [s["id"] for s in settings["strata"] if matches(intent, s)]
-        inferred[row["id"]] = [s["id"] for s in settings["strata"] if matches(attrs, s)]
-        subject_attrs = _subject_attributes(row)
-        if any(
-            k in subject_attrs and subject_attrs[k] != v
-            for k, v in data["scene_attributes"].items()
-        ):
+        intended[row["id"]] = (compatible_strata({"domain": row["domain"]} | intent,
+                                                settings["strata"]) if intent else [])
+        inferred[row["id"]] = compatible_strata(attrs, settings["strata"])
+        if conflict:
             conflicts.append(row)
         applicable = [s for s in settings["strata"] if s["attributes"]["domain"] == row["domain"]]
+        if any(set(s["attributes"]) - attrs.keys() for s in applicable):
+            missing.append(row)
         if not inferred[row["id"]]:
-            (
-                missing if any(set(s["attributes"]) - attrs.keys() for s in applicable) else outside
-            ).append(row)
+            outside.append(row)
         if len(inferred[row["id"]]) > 1:
             multiple.append(row)
-        if any(k in attrs and attrs[k] != v for k, v in intent.items()):
+        if intent and not compatible_strata(attrs, [{
+            "id": "intent", "attributes": {"domain": row["domain"]} | intent,
+        }]):
             mismatch.append(row)
         evidence = data["quality"].get("scene_inference", {}).get("attributes", {})
         for key in attribute_keys:
             state = evidence.get(key, {}).get("state")
             # 根拠stateがない既存値を新規推定成功に数えない。
-            state = state or ("recorded" if key in attrs else "unknown")
+            state = (state or "recorded") if key in attrs else "unknown"
             states.setdefault(key, Counter())[state] += 1
     strata = []
     for layer in settings["strata"]:
@@ -285,9 +278,9 @@ def report(snapshot, expected_hash, statistics, settings):
                 "id": layer["id"],
                 "attributes": layer["attributes"],
                 "target_subjects": layer["subjects"],
-                "inferred": _summary(selected, provenance, assignments,
+                "inferred": _summary(selected, provenance, memberships,
                                      layer["subjects"], layer["id"]),
-                "intended": _summary(intent_rows, provenance, assignments,
+                "intended": _summary(intent_rows, provenance, memberships,
                                      layer["subjects"], layer["id"]),
                 "intent_comparison": {
                     key: _rate(
@@ -322,6 +315,9 @@ def report(snapshot, expected_hash, statistics, settings):
                 "units": distribution["units"],
                 "direction": distribution["direction"],
                 "quality": quality,
+                "correction_rate": quality["correction_rate"],
+                "no_information_rate": quality["no_information_rate"],
+                "attribute_unknown_rates": quality["attribute_unknown_rates"],
                 "sensitivity": distribution["diagnostics"],
             }
         )
@@ -340,13 +336,17 @@ def report(snapshot, expected_hash, statistics, settings):
             "passed": bool(qualifying),
             "roles": qualifying,
             "threshold": {"confirmed_subjects": 10, "subject_n_eff": 10},
-            "basis": "親からの借用ではなく当該役割の直接観測支持",
+            "basis": "既知属性による部分層補正の主結果。親借用で観測支持を増やさない",
+            "correction": [{key: r[key] for key in (
+                "target_parts", "subject_count", "effective_sample_size", "correction_rate",
+                "no_information_rate", "attribute_unknown_rates",
+            )} for r in candidates],
         }
     all_count = len(assets)
-    overall = _summary(assets, provenance, assignments)
+    overall = _summary(assets, provenance, memberships)
     rights_support = _role_support(
         assets, regions, color_observations, groups, settings, manifest["quality"],
-        statistics, assignments, valid_roles,
+        statistics, memberships, valid_roles,
     )
     observed_assets = {
         observation["asset_id"] for observation in color_observations
@@ -374,7 +374,7 @@ def report(snapshot, expected_hash, statistics, settings):
         {
             "condition": 4,
             "status": "passed" if all(g["passed"] for g in gates.values()) else "failed",
-            "reason": "建築・地形それぞれのモデル品質と直接観測subject数・n_effで判定",
+            "reason": "建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定",
         },
         {"condition": 5, "status": "passed" if rights_complete else "unverified",
          "reason": ("全対象層と条件・役割別のD15前後支持を出力" if rights_complete else
@@ -412,7 +412,8 @@ def report(snapshot, expected_hash, statistics, settings):
             "image_unassigned": _rate(sum(not found for found in inferred.values()), all_count),
             "unassigned": _rate(sum(assignments.get(row["subject_id"]) is None
                                     for row in eligible), len(eligible)),
-            "assignment_scope": "適格SHA代表画像。同一subjectの層矛盾はsubject全体を棄却",
+            "assignment_scope": "適格SHA代表画像。既知値の矛盾・対象外のみsubject全体を棄却",
+            "partial_correction": correction,
             "subject_stratum_conflict": _rate(sum(
                 "subject_stratum_conflict" in assignment_reasons.get(row["subject_id"], [])
                 for row in eligible
@@ -427,7 +428,7 @@ def report(snapshot, expected_hash, statistics, settings):
         "model_quality": manifest["quality"],
         "support": support,
         "rights_support": rights_support,
-        "rights_support_scope": "保存済み部位色の確定subject数。重み・品質・属性採用後の支持と区別",
+        "rights_support_scope": "保存済み色の両立subject数。層間で重複し、採用所属質量と区別",
         "unobserved_rights_excluded_assets": unobserved,
         "usefulness_gates": gates,
         "processing": {
@@ -447,7 +448,9 @@ def report(snapshot, expected_hash, statistics, settings):
         "m3_checks": checks,
         "m3_complete": all(c["status"] == "passed" for c in checks),
         "handoff": {
-            "distribution": "subject事後層化による外観色。母集団への無偏推定や材質色ではない",
+            "distribution": "既知属性によるsubject部分層補正の外観色分布",
+            "correction": "補正率・属性別未知率・情報なし割合の分母は各条件・役割の採用subject数",
+            "unknown": "unknownは周辺化する。全層両立でも既知属性が増えたとは扱わない",
             "units": {
                 "color": "OKLab",
                 "delta_h": "degree",
@@ -472,11 +475,13 @@ def markdown(data):
         f"- taxonomy: {data['taxonomy_version']} / 設定hash: `{data['settings_hash']}`",
         f"- 統計hash: `{data['statistics_hash']}`",
         f"- M3完了: {data['m3_complete']} / 10万枚達成: {data['scale_target']['achieved']}",
-        "- 層は重複し得るため合計しない。空分母の率はnull。詳細・感度分布はJSONを参照。",
+        "- 両立件数は層間で重複する。所属質量はm_shの和、不足は目標subject数との差。",
+        "- unknownは周辺化し、属性が判明したとは扱わない。詳細・感度分布はJSON参照。",
+        "- 件数比率の空分母はnull。補正率・未知率等は#75の定義に従いN=0なら0。",
         "",
-        ("| 層 | 意図行数 | 属性一致行数 | SHA異なり | 重複行 | 適格/分母 | "
-         "subject前/適格/採用 | 不足 | 除外理由（件数/分母） |"),
-        "|---|---:|---:|---:|---:|---|---|---:|---|",
+        ("| 層 | 意図両立行数 | 属性両立行数 | SHA異なり | 重複行 | 適格/分母 | "
+         "subject前/適格/両立採用 | 所属質量 | 被覆 | 不足 | 除外理由（件数/分母） |"),
+        "|---|---:|---:|---:|---:|---|---|---:|---|---:|---|",
     ]
     for layer in [
         {"id": "全体", "inferred": data["overall"], "intended": data["overall"]},
@@ -496,11 +501,12 @@ def markdown(data):
             f"{rate['numerator']}/{rate['denominator']} | "
             f"{row['confirmed_subjects_before']}/{row['confirmed_subjects_after_snapshot']}/"
             f"{row['confirmed_subjects_after']} | "
+            f"{row['subject_mass']:.6g} | {row['subject_coverage']} | "
             f"{row['subject_deficit']} | {excluded} |"
         )
     lines += [
         "", "## 収集意図に対する属性確認", "",
-        "| 層 | 一致/意図行 | 属性不足/意図行 | 不一致/意図行 | 属性競合/意図行 |",
+        "| 層 | 両立/意図行 | 属性不足/意図行 | 非両立/意図行 | 属性競合/意図行 |",
         "|---|---|---|---|---|",
     ]
     for layer in data["strata"]:
@@ -525,8 +531,9 @@ def markdown(data):
         "",
         "## 条件・役割別支持",
         "",
-        "| 条件 | 役割/pair | 種別 | 支持 | subject | n_eff | 最大重み | 欠損目標質量 |",
-        "|---|---|---|---|---:|---:|---:|---:|",
+        ("| 条件 | 役割/pair | 種別 | 支持 | subject（率の分母） | n_eff | 最大重み | "
+         "欠損目標質量 | 補正率 | 情報なし割合 | 属性別未知率 |"),
+        "|---|---|---|---|---:|---:|---:|---:|---:|---:|---|",
     ]
     for row in data["support"]:
         quality = row["quality"]
@@ -534,17 +541,19 @@ def markdown(data):
             f"| {canonical(row['conditions'])} | {'/'.join(row['target_parts'])} | "
             f"{row['kind']} | {quality['status']} | {row['subject_count']} | "
             f"{row['effective_sample_size']:.6g} | {quality['max_weight']:.6g} | "
-            f"{quality['missing_target_mass']:.6g} |"
+            f"{quality['missing_target_mass']:.6g} | {row['correction_rate']:.6g} | "
+            f"{row['no_information_rate']:.6g} | {canonical(row['attribute_unknown_rates'])} |"
         )
     lines += ["", "## 層・条件と役割別のD15前後支持", "",
               "保存済み部位色を持つ確定subject数。未保存の和集合色はnullとし、採用支持へ足さない。",
-              "| 範囲 | 役割 | D15前 | D15後 | D15で失ったsubject | 採用subject | 根拠不足画像 |",
-              "|---|---|---:|---:|---:|---:|---:|"]
+              ("| 範囲 | 役割 | D15前 | D15後 | D15で失ったsubject | 採用両立subject | "
+               "採用所属質量 | 根拠不足画像 |"),
+              "|---|---|---:|---:|---:|---:|---:|---:|"]
     for row in data["rights_support"]:
         scope = row["stratum"] or canonical(row["conditions"])
         cells = [str(row[key]) if row[key] is not None else "未確認" for key in (
             "recorded_subjects_before_d15", "recorded_subjects_after_d15", "lost_subjects_d15",
-            "adopted_subjects", "unverified_union_assets",
+            "adopted_subjects", "adopted_subject_mass", "unverified_union_assets",
         )]
         lines.append(f"| {scope} | {row['role']} | " + " | ".join(cells) + " |")
     lines += ["", "## M3完成条件", ""]

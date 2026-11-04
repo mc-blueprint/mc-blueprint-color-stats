@@ -46,6 +46,11 @@ report_seconds = monotonic() - started
 (output / "report.json").write_text(canonical(data) + "\n", encoding="utf-8")
 (output / "report.md").write_text(markdown(data), encoding="utf-8")
 metrics = {
+    "code_version": data["code_version"],
+    "aggregate_code_version": data["aggregate_code_version"],
+    "correction_rate": cell(statistics)["quality"]["correction_rate"],
+    "no_information_rate": cell(statistics)["quality"]["no_information_rate"],
+    "attribute_unknown_rates": cell(statistics)["quality"]["attribute_unknown_rates"],
     "synthetic_only": True, "python": platform.python_version(), "platform": platform.system(),
     "duckdb": duckdb.__version__, "snapshot_id": identifier,
     "asset_rows": data["overall"]["asset_rows"],
