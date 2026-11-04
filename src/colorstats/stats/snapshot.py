@@ -262,7 +262,20 @@ def _collect(db, selection, quality, records, directory):
                 _inputs(rid, aid, taxonomy, runs, jobs, adopted, set())
                 if runs[rid]["stage"] != "subject":
                     raise ValueError("推定根拠runのstageが一致しません")
-        excluded = exclusion_reasons(asset, source, adopted.values())
+        quality_license = dict(asset["quality"])
+        origin = dict(source)
+        metadata = quality_license.get("metadata", {})
+        selected = metadata.get("openverse", {})
+        name = quality_license.get("license")
+        if (asset["search_provider"] == "openverse" and metadata.get("source_verified")
+                and name in ("by", "by-sa") and selected.get("license") == name
+                and source["license"] == name):
+            quality_license["license"] = origin["license"] = (
+                f"cc-{name}-{selected.get('license_version')}"
+            )
+        excluded = exclusion_reasons(
+            dict(asset) | {"quality": quality_license}, origin, adopted.values(),
+        )
         attribute_evidence = attributes.get(asset["subject_id"])
         if attribute_evidence:
             rid = uuid.UUID(attribute_evidence["run_id"])
@@ -283,6 +296,7 @@ def _collect(db, selection, quality, records, directory):
             subject["attribute_evidence"] = attribute_evidence
         data = dict(asset) | {
             "selection": item, "subject": subject, "candidates": candidates[aid],
+            "d15_license": {"asset": quality_license.get("license"), "source": origin["license"]},
         }
         rows["assets"].append({
             "id": aid, "sha256": asset["sha256"], "domain": asset["domain"],
