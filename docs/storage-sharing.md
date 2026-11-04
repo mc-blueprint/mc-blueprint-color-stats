@@ -279,3 +279,12 @@ Windowsの監査ログは`C:/Users/ryuma/.codex/logs/commands/`。
 最初の全追跡ファイルarchiveのSCPは、秘密を含む可能性とpayloadの明示承認不足を理由に
 自動権限審査で拒否され、実行していない。設定・データを含まないPythonソースと
 確認済み試験ファイルだけへ限定して審査を受け直し、許可された転送で検証した。
+
+
+## Issue #66 の部位全量解析
+
+入力は本番DBの成功prep runから解決した既存derivedの不変出力を使う。
+raw-cacheへの複製やパスの置換はせず、registerの元パス照合を維持する。
+固定manifestにprep run・入力SHA-256と、失敗4件の理由を保存する。
+専用出力・DB登録・再開・計測と停止の手順は
+[Issue #66 実行記録](../bench/issue66/results.md)を参照する。
