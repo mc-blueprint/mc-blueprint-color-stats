@@ -3,15 +3,17 @@
 version: 2
 taxonomy_version: 0.1.0
 max_camera_span_km: {real_building: 4, real_terrain: 40}
-multiple_pattern: '(?i)\b(panorama|skyline|view from|between)\b|in the background|を望む'
+multiple_pattern: '(?i)\b(panorama|skyline|view from|between)\b|in the background|in front of|を望む'
 subjects:
   - key: strasbourg-cathedral
+    wikidata_id: Q745460
     name: Strasbourg Cathedral
     domain: real_building
     aliases: [Strasbourg Cathedral, Cathédrale Notre-Dame de Strasbourg, Notre-Dame de Strasbourg, ストラスブール大聖堂]
     categories: [West facade of Cathédrale Notre-Dame de Strasbourg, Central portal of the western facade of Notre-Dame de Strasbourg, Strasbourg Cathedral by night]
     attributes: {building_type: temple}
   - key: leon-cathedral
+    wikidata_id: Q175874
     name: Cathedral of León
     domain: real_building
     aliases: [Cathedral of León, Cathedral leon, Catedral Gótica de León, レオン大聖堂]
@@ -30,12 +32,14 @@ subjects:
     categories: [Kakegawa Castle Keep Tower, Remote views of the Kakegawa Castle Keep Tower]
     attributes: {building_type: castle}
   - key: muenster-cathedral
+    wikidata_id: Q708532
     name: St. Paul's Cathedral (Münster)
     domain: real_building
     aliases: [St.-Paulus-Dom, "St. Paul's Cathedral", St Paul's Cathedral, 聖パウルス大聖堂]
     categories: ["St. Paul's Cathedral (Münster) at night", "Western towers and choir of St. Paul's Cathedral (Münster) exterior", "Exterior view of St. Paul's Cathedral (Münster)"]
     attributes: {building_type: temple}
   - key: duelmen-st-viktor
+    wikidata_id: Q348707
     name: St. Viktor (Dülmen)
     domain: real_building
     aliases: [St.-Viktor-Kirche, St. Viktor, 聖ヴィクトル教会]

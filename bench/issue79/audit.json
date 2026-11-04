@@ -1,0 +1,1247 @@
+{
+  "counts": {
+    "confirmed": 784,
+    "candidate": 2166,
+    "unknown": 4657
+  },
+  "confirmed_subjects": {
+    "real_building": 136,
+    "real_terrain": 18
+  },
+  "origins": {
+    "manual": 144,
+    "automatic": 640
+  },
+  "subjects_by_origin": {
+    "real_building": {
+      "automatic": 127,
+      "manual": 9
+    },
+    "real_terrain": {
+      "automatic": 17,
+      "manual": 1
+    }
+  },
+  "preserved_changed": 0,
+  "new_confirmed": 640,
+  "violations": {
+    "sha_conflicts": 0,
+    "duplicate_wikidata_subjects": 0
+  },
+  "sample": [
+    {
+      "asset_id": "d9c151c6-00d9-48ba-9205-d4d43399c33e",
+      "domain": "real_building",
+      "title": "File:Exterior-Front.jpg",
+      "basis": {
+        "key": "wikidata:Q28125074",
+        "names": [
+          "Dr. Richard and Mrs. Margaret Martin House"
+        ],
+        "categories": [
+          "dr. richard and mrs. margaret martin house"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q28125074",
+        "coordinates": [
+          36.13388889,
+          -86.86472222
+        ],
+        "location_match": false,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "fd11813a-b572-48a9-810f-985286e5619f",
+      "domain": "real_building",
+      "title": "File:Yōfuku-ji (73683).jpg",
+      "basis": {
+        "key": "wikidata:Q11550313",
+        "names": [
+          "Yōfuku-ji"
+        ],
+        "categories": [
+          "yōfuku-ji (kamakura)"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q11550313",
+        "coordinates": [
+          35.32805556,
+          139.56777778
+        ],
+        "location_match": true,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "f91d78bf-5bf3-438c-9765-22aae00b33a6",
+      "domain": "real_building",
+      "title": "File:Fenêtre bifora Maison Rouge de Conflans à Albertville (avril 2024).JPG",
+      "basis": {
+        "key": "wikidata:Q21592055",
+        "names": [
+          "maison Rouge de Conflans"
+        ],
+        "categories": [
+          "maison rouge (conflans)"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q21592055",
+        "coordinates": [
+          45.670622,
+          6.397173
+        ],
+        "location_match": false,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "e084ee8b-c8bd-4307-9abc-6c9495b822e6",
+      "domain": "real_building",
+      "title": "File:Medieval merchant's house - geograph.org.uk - 4113380.jpg",
+      "basis": {
+        "key": "wikidata:Q6806828",
+        "names": [
+          "Medieval Merchant's House"
+        ],
+        "categories": [
+          "medieval merchant's house, southampton"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q6806828",
+        "coordinates": [
+          50.89854,
+          -1.4052
+        ],
+        "location_match": true,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "e390884d-5ffc-45a2-ab9a-96e9e1b9f61e",
+      "domain": "real_building",
+      "title": "File:Seligenstadt Frankfurter Strasse 13-15.jpg",
+      "basis": {
+        "key": "wikidata:Q111768900",
+        "names": [],
+        "categories": [
+          "frankfurter strasse 13/15 (seligenstadt)"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q111768900",
+        "coordinates": [
+          50.044583333333335,
+          8.973694444444444
+        ],
+        "location_match": true,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "fb6f02e1-3bef-4935-856b-1a226ed23035",
+      "domain": "real_building",
+      "title": "File:MX México DF (casa Barragan) 0410 004 (17069838930).jpg",
+      "basis": {
+        "key": "wikidata:Q1046414",
+        "names": [
+          "Casa Barragan"
+        ],
+        "categories": [
+          "luis barragán house and studio"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q1046414",
+        "coordinates": [
+          19.41111111,
+          -99.1925
+        ],
+        "location_match": false,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "f4aaf057-343a-4177-b4f1-877765534428",
+      "domain": "real_terrain",
+      "title": "File:Foliage in autumn colors at Kellostapuli in Kolari, Lapland, Finland, 2021 September.jpg",
+      "basis": {
+        "key": "wikidata:Q24328593",
+        "names": [
+          "Kellostapuli"
+        ],
+        "categories": [
+          "kellostapuli"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q24328593",
+        "coordinates": [
+          67.58333333333333,
+          24.25
+        ],
+        "location_match": true,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "fbeb17eb-aa6d-4900-a432-15f6e369fc72",
+      "domain": "real_terrain",
+      "title": "File:Cima del volcán Osorno, con hielo al comienzo de otoño. Región de los Lagos. Chile.jpg",
+      "basis": {
+        "key": "wikidata:Q858808",
+        "names": [
+          "Osorno",
+          "Volcán Osorno"
+        ],
+        "categories": [
+          "volcan osorno"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q858808",
+        "coordinates": [
+          -41.1,
+          -72.493055555556
+        ],
+        "location_match": false,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "cdb79d88-8cb6-46c7-8927-05780af211e6",
+      "domain": "real_terrain",
+      "title": "File:Romantische Alpenlandschaft.jpg",
+      "basis": {
+        "key": "wikidata:Q393155",
+        "names": [
+          "Aggenstein"
+        ],
+        "categories": [
+          "aggenstein"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q393155",
+        "coordinates": [
+          47.5366961,
+          10.5592353
+        ],
+        "location_match": false,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "f9e03100-c795-46c4-805f-f23bed135cbf",
+      "domain": "real_terrain",
+      "title": "File:Nanga Parbat, Pakistan, Image of the Day DVIDS843821.jpg",
+      "basis": {
+        "key": "wikidata:Q130736",
+        "names": [
+          "Nanga Parbat"
+        ],
+        "categories": [
+          "nanga parbat"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q130736",
+        "coordinates": [
+          35.239166666667,
+          74.59
+        ],
+        "location_match": false,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "fe153c9e-aec4-4e88-a058-e4cc8c98a54d",
+      "domain": "real_terrain",
+      "title": "File:The Signs of Autumn in Beddgelert Forest - geograph.org.uk - 257734.jpg",
+      "basis": {
+        "key": "wikidata:Q3401371",
+        "names": [
+          "Yr Aran"
+        ],
+        "categories": [
+          "yr aran"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q3401371",
+        "coordinates": [
+          53.042488888889,
+          -4.0837194444444
+        ],
+        "location_match": true,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    },
+    {
+      "asset_id": "eced645f-17af-47a1-a6b0-4408670765c7",
+      "domain": "real_terrain",
+      "title": "File:Birch woods in autumn - geograph.org.uk - 313167.jpg",
+      "basis": {
+        "key": "wikidata:Q4903661",
+        "names": [
+          "Bickerton Hill"
+        ],
+        "categories": [
+          "bickerton hill"
+        ],
+        "strong": true,
+        "score": 0.95,
+        "wikidata_id": "Q4903661",
+        "coordinates": [
+          53.07361111111111,
+          -2.7463888888888888
+        ],
+        "location_match": true,
+        "location_conflict": false,
+        "granularity": {
+          "state": "single",
+          "classes": [],
+          "site_types": [],
+          "building_parts": [],
+          "part_types": []
+        },
+        "origin": "automatic"
+      },
+      "reasons": [
+        "existing_confirmed"
+      ]
+    }
+  ],
+  "revocations": {
+    "count": 93,
+    "marked_in_this_execution": 0,
+    "restored_from_intermediate_review": 13,
+    "by_domain": {
+      "real_building": 93
+    },
+    "by_key": {
+      "wikidata:Q11427995": 1,
+      "wikidata:Q11451692": 1,
+      "wikidata:Q11484399": 2,
+      "wikidata:Q11497169": 5,
+      "wikidata:Q11516220": 5,
+      "wikidata:Q11523763": 1,
+      "wikidata:Q11566301": 1,
+      "wikidata:Q11573882": 2,
+      "wikidata:Q11608174": 2,
+      "wikidata:Q11620360": 1,
+      "wikidata:Q11629158": 1,
+      "wikidata:Q11632314": 3,
+      "wikidata:Q11642381": 1,
+      "wikidata:Q11645989": 1,
+      "wikidata:Q11657681": 6,
+      "wikidata:Q11668853": 1,
+      "wikidata:Q11679276": 3,
+      "wikidata:Q11778565": 1,
+      "wikidata:Q118506919": 1,
+      "wikidata:Q123469000": 1,
+      "wikidata:Q124496766": 1,
+      "wikidata:Q126126211": 1,
+      "wikidata:Q127253155": 1,
+      "wikidata:Q132159552": 1,
+      "wikidata:Q134125304": 1,
+      "wikidata:Q136786753": 1,
+      "wikidata:Q1429120": 3,
+      "wikidata:Q1441255": 1,
+      "wikidata:Q1457787": 2,
+      "wikidata:Q16825097": 2,
+      "wikidata:Q20971160": 1,
+      "wikidata:Q2480885": 2,
+      "wikidata:Q28233040": 1,
+      "wikidata:Q28683648": 1,
+      "wikidata:Q28691732": 1,
+      "wikidata:Q29408146": 2,
+      "wikidata:Q2963263": 1,
+      "wikidata:Q3049365": 2,
+      "wikidata:Q3178626": 4,
+      "wikidata:Q3397006": 5,
+      "wikidata:Q3514174": 6,
+      "wikidata:Q4176": 2,
+      "wikidata:Q54152954": 4,
+      "wikidata:Q59282652": 3,
+      "wikidata:Q713072": 1,
+      "wikidata:Q75086116": 1,
+      "wikidata:Q78313203": 1,
+      "wikidata:Q97199065": 1
+    },
+    "by_reason": {
+      "target_granularity": 93
+    },
+    "assets": [
+      {
+        "asset_id": "00fd77ba-c5c4-4680-9955-4442cbf7700a",
+        "title": "File:Tenaga-jinja haiden.JPG",
+        "key": "wikidata:Q11497169",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "026da8bd-a06b-4978-a0b5-fa1abc461fb0",
+        "title": "File:Okazaki Shrine (Tomo, Hiroshima).jpg",
+        "key": "wikidata:Q124496766",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "04a2418f-fe43-4289-91ce-c54814428ef2",
+        "title": "File:Main buildings of the Takao Shrine.jpg",
+        "key": "wikidata:Q713072",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "09cca7e0-0ca0-40cc-b1b9-5d04d561efa4",
+        "title": "File:Wilton House East Front - geograph.org.uk - 831865.jpg",
+        "key": "wikidata:Q1429120",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "0ff57728-df37-43cc-b93c-93f5151f3f85",
+        "title": "File:Eihoji Hondo.JPG",
+        "key": "wikidata:Q3049365",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "1000bf4d-7991-495c-86d6-14514da5ae54",
+        "title": "File:Istanbul Selimiye Mosque Exterior 6593.jpg",
+        "key": "wikidata:Q16825097",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "110b8e27-2f1c-483d-8809-60d9e87efa63",
+        "title": "File:Zuiunzi temple the gate 01.jpg",
+        "key": "wikidata:Q75086116",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "1164e38f-5c89-4ab0-986f-8e6f80b3fd1f",
+        "title": "File:阿豆佐味天神社（瑞穂町）拝殿.jpg",
+        "key": "wikidata:Q11657681",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "1cc8daeb-b1e2-4566-8dc0-9bb3c1fea0d9",
+        "title": "File:高輪神社 夜間照明に照らされた雨後の高輪神社拝殿.jpg",
+        "key": "wikidata:Q3514174",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "1cce17cd-0e35-432b-9281-f3ff5ef0b016",
+        "title": "File:大峯山龍泉寺本堂.JPG",
+        "key": "wikidata:Q11679276",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "1f242d21-fe95-4659-b601-e7c03bad23ab",
+        "title": "File:お寺の本堂.jpg",
+        "key": "wikidata:Q54152954",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "20cdb62d-6344-4866-9645-32829285d3f5",
+        "title": "File:Zuiganji Hondo.JPG",
+        "key": "wikidata:Q11573882",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "27102368-3fca-47bc-bfd8-27c5293bafa8",
+        "title": "File:Kego Shrine the SE side of the honden Tenjin 2-chōme Chūō-ku Fukuoka 20231114.jpg",
+        "key": "wikidata:Q11632314",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "297fd253-79a0-43a6-bffe-f1c0db0954fc",
+        "title": "File:Tsutsumine-jinja, haiden.jpg",
+        "key": "wikidata:Q11427995",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "29e97ac1-ae71-4ce7-88e5-59561a13aac7",
+        "title": "File:小代神社 拝殿.jpg",
+        "key": "wikidata:Q127253155",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "3085c333-bab8-49df-851b-b7235ab54d89",
+        "title": "File:Tukiyama 20240507 7.jpg",
+        "key": "wikidata:Q28683648",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "323f6ae7-8cb9-474b-88e3-6dcbff8c0e53",
+        "title": "File:阿豆佐味天神社（瑞穂町）拝殿.jpg",
+        "key": "wikidata:Q11657681",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "32e86f06-8000-4589-af37-70d8045ae54a",
+        "title": "File:熱那神社（北杜市）の拝殿.jpg",
+        "key": "wikidata:Q118506919",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "352dfbd1-4999-4e01-8cec-e7bbe8cb0ff5",
+        "title": "File:Tsukiyomi-no-miya(Naiku) 03.JPG",
+        "key": "wikidata:Q11516220",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "3b1e801f-0278-430b-b2d1-47bf8e6f3c5a",
+        "title": "File:Nozaki-kannon.jpg",
+        "key": "wikidata:Q3178626",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "3c74d027-c729-4618-ab5f-f41b7c669445",
+        "title": "File:KotaKinabalu Sabah CityMosque-08.jpg",
+        "key": "wikidata:Q3397006",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "3ea6163e-ad6d-4cf9-89f0-5ef4352300ee",
+        "title": "File:Hiromine Shrine Dragon Sculpture on Building Roof Himeji 2.jpg",
+        "key": "wikidata:Q11484399",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "4039ce81-318e-40e2-ad8c-795e330ebba6",
+        "title": "File:KotaKinabalu Sabah CityMosque-08.jpg",
+        "key": "wikidata:Q3397006",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "42089e3c-36a8-4a00-8a75-52a66edac154",
+        "title": "File:お寺の本堂.jpg",
+        "key": "wikidata:Q54152954",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "44c30550-d63a-4ed5-98b3-9de77320344b",
+        "title": "File:Hiromine Shrine Dragon Sculpture on Building Roof Himeji - 2009.jpg",
+        "key": "wikidata:Q11484399",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "45ca4bed-9b45-4fd2-969f-2d66cfc4d272",
+        "title": "File:大野神社拝殿３.jpg",
+        "key": "wikidata:Q59282652",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "4a86951d-afe3-4f30-ac74-08481355f3e2",
+        "title": "File:Chiba-dera Temple Main Gate (30006722296).jpg",
+        "key": "wikidata:Q2963263",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "4aba1f28-5c43-4945-9453-8448a1ca8ead",
+        "title": "File:Hasedera Sakurai Nara pref15n4272.jpg",
+        "key": "wikidata:Q1457787",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "4bd61b8c-8537-47a2-969f-ebe32ba90293",
+        "title": "File:Kego Shrine the honden and haiden Tenjin 2-chōme Chūō-ku Fukuoka 20231114.jpg",
+        "key": "wikidata:Q11632314",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "4c0b30e9-dab6-4572-b116-403105b169d9",
+        "title": "File:Kego Shrine the central part of the haiden Tenjin 2-chōme Chūō-ku Fukuoka 20231114.jpg",
+        "key": "wikidata:Q11632314",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "4cfc6087-d877-462b-9808-c9343cf2a0d6",
+        "title": "File:お寺の本堂.jpg",
+        "key": "wikidata:Q54152954",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "4e84b5f0-bcdc-4021-8895-0ea0441eef85",
+        "title": "File:50番繁多寺前の貯水池P1010149.jpg",
+        "key": "wikidata:Q11608174",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "4ead1067-a61f-4d86-a57a-bd2748ce7e0b",
+        "title": "File:Kissho-in main gate and main hall 2024-12-15.jpg",
+        "key": "wikidata:Q97199065",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "5063df21-cf1e-4cad-8d92-c2112d3f5e69",
+        "title": "File:Zuiganji Hondo.JPG",
+        "key": "wikidata:Q11573882",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "555759de-b88a-4e15-9079-33fabceff56a",
+        "title": "File:Hongokuji Temple Main Gate Minobu, Yamanashi.jpg",
+        "key": "wikidata:Q29408146",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "5ad5d3f4-64fa-4a27-b1eb-79e9c0931c0a",
+        "title": "File:Minoh - Minoh6704.jpg",
+        "key": "wikidata:Q11566301",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "5de80ad6-3a28-4e42-84a6-cd6bbfd4f2f5",
+        "title": "File:Pathway and Gate in the Surroundings of Taiyū-in 130812 1.jpg",
+        "key": "wikidata:Q2480885",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "5fdfcc5d-08cf-4d38-92ca-0b622eacbdee",
+        "title": "File:Hasedera Sakurai Nara pref15n4272.jpg",
+        "key": "wikidata:Q1457787",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "601425af-dec0-434c-a1a4-ef88aff840a6",
+        "title": "File:阿豆佐味天神社（瑞穂町）拝殿.jpg",
+        "key": "wikidata:Q11657681",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "62e0ba3a-1a43-4ad2-85b3-63446d35e6b8",
+        "title": "File:Nisiteru shirine 02.jpg",
+        "key": "wikidata:Q11629158",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "67c8c426-5944-4ed5-90a2-48f213b848b9",
+        "title": "File:Hongokuji Temple Main Gate Minobu, Yamanashi.jpg",
+        "key": "wikidata:Q29408146",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "7107a6ec-9c39-47e0-8bd4-b0b4acf2062b",
+        "title": "File:Tenaga-jinja haiden.JPG",
+        "key": "wikidata:Q11497169",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "7529f520-b120-48cd-b391-5622503c65f5",
+        "title": "File:Gothic-Cologne-Cathedral-6.png",
+        "key": "wikidata:Q4176",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "7ac4d89a-05f4-4c94-8cf4-eb1d0c59aadf",
+        "title": "File:Eihoji Hondo.JPG",
+        "key": "wikidata:Q3049365",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "7f54d2ab-574b-4cb6-91c8-e0517c963b66",
+        "title": "File:NodaEbisu-jinja-haiden.jpg",
+        "key": "wikidata:Q11645989",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "802fe4d5-c87c-4f55-af85-fa213e39d93e",
+        "title": "File:Nozaki-kannon.jpg",
+        "key": "wikidata:Q3178626",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "83b83447-f6e3-4d14-96eb-92ba54f9bbb6",
+        "title": "File:Rinsyozi temple gate.jpg",
+        "key": "wikidata:Q78313203",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "85e2d5ec-6d3f-466f-bbe2-57fc112e6be5",
+        "title": "File:KotaKinabalu Sabah CityMosque-08.jpg",
+        "key": "wikidata:Q3397006",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "8958f9b8-04a7-424c-922a-d42d180acb8e",
+        "title": "File:阿豆佐味天神社（瑞穂町）拝殿 banner (cropped).jpg",
+        "key": "wikidata:Q11657681",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "896297f3-7d37-4f09-9669-bcb234416850",
+        "title": "File:Ginan Dōri and Promenade Bldg from Kita-shinmon of Kushida Shrine Kami-kawabatamachi Hakata-ku Fukuoka 20231120.jpg",
+        "key": "wikidata:Q123469000",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "8a193f87-e790-4733-94e0-9c62937b3e9a",
+        "title": "File:Wilton House East Front - geograph.org.uk - 831865.jpg",
+        "key": "wikidata:Q1429120",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "8b14da00-dc0e-45bf-b345-33ef68e318ae",
+        "title": "File:Pathway and Gate in the Surroundings of Taiyū-in 130812 1.jpg",
+        "key": "wikidata:Q2480885",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "8c5c64ea-640e-4327-a57a-2c82bc23a08d",
+        "title": "File:50番繁多寺前の貯水池P1010149.jpg",
+        "key": "wikidata:Q11608174",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "8db940c3-8642-45b9-8260-38a1fb3debef",
+        "title": "File:Kumata jinja Haiden.jpg",
+        "key": "wikidata:Q11523763",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "91d2de2c-ddbf-44e2-bc32-3a37e480a252",
+        "title": "File:阿豆佐味天神社（瑞穂町）拝殿.jpg",
+        "key": "wikidata:Q11657681",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "96672d87-9952-4b9e-a530-a64a7b9d3852",
+        "title": "File:Tenaga-jinja haiden.JPG",
+        "key": "wikidata:Q11497169",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "9756298a-7396-4998-a8e4-97a3d48e6548",
+        "title": "File:阿豆佐味天神社（瑞穂町）拝殿.jpg",
+        "key": "wikidata:Q11657681",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "9894cae3-06cb-4232-9879-3658c12951a1",
+        "title": "File:Gothic-Cologne-Cathedral-6.png",
+        "key": "wikidata:Q4176",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "989ec6cd-68a2-4375-af39-57173d0358b9",
+        "title": "File:Hagiwara jinja haiden.jpg",
+        "key": "wikidata:Q11620360",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "9a04f2ca-b585-4026-bc70-dc15731fe1a1",
+        "title": "File:お寺の本堂.jpg",
+        "key": "wikidata:Q54152954",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "9c13c37b-b0e6-4372-b127-ddfeef23b035",
+        "title": "File:Tsukiyomi-no-miya(Naiku) 03.JPG",
+        "key": "wikidata:Q11516220",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "a125bdcb-8adf-4846-8008-4d1877e77c39",
+        "title": "File:KotaKinabalu Sabah CityMosque-08.jpg",
+        "key": "wikidata:Q3397006",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "a221583b-15b4-4259-84c3-6e4128bda3d3",
+        "title": "File:Tsukiyomi-no-miya(Naiku) 03.JPG",
+        "key": "wikidata:Q11516220",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "a803f859-6a34-48c1-9c17-cdce0dbeca6f",
+        "title": "File:高輪神社 雨後の高輪神社拝殿.jpg",
+        "key": "wikidata:Q3514174",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "a895d199-82eb-4f0a-aeb8-be7cbd3e2702",
+        "title": "File:Shitateruhime Shrine Honden Haiden 8 Gionmachi Hakata-ku Fukuoka 20240416.jpg",
+        "key": "wikidata:Q126126211",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "aca8aaf7-6e3c-4712-94b5-1c0e1e1f11f6",
+        "title": "File:Nozaki-kannon.jpg",
+        "key": "wikidata:Q3178626",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "ad907f40-3a6f-4c09-949c-7ab9467f14f4",
+        "title": "File:高輪神社 雨後の高輪神社拝殿.jpg",
+        "key": "wikidata:Q3514174",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "ade32f4f-2081-41fa-9a9a-fe4e245d6a73",
+        "title": "File:Istanbul Selimiye Mosque Exterior 6572.jpg",
+        "key": "wikidata:Q16825097",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "aeb37143-fd6f-4284-bbae-2b2644850043",
+        "title": "File:Funairi Shrine pt1.jpg",
+        "key": "wikidata:Q132159552",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "b10f938d-e4cd-4e3c-97ae-c11b95576858",
+        "title": "File:Tenaga-jinja haiden.JPG",
+        "key": "wikidata:Q11497169",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "b54ccac4-7859-4be7-9991-2415e26253c4",
+        "title": "File:Liathmore later church exterior west gable window.jpg",
+        "key": "wikidata:Q28233040",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "b7d8cd5f-9a09-4ff3-a39b-6dbb757eb146",
+        "title": "File:Wilton House East Front - geograph.org.uk - 831865.jpg",
+        "key": "wikidata:Q1429120",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "b9b28898-0c1b-454a-a3ed-e14548681c2d",
+        "title": "File:遠見岬神社の拝殿・社殿.jpg",
+        "key": "wikidata:Q11642381",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "bee79795-3d7a-4c2a-a22f-2879c2b49e9b",
+        "title": "File:Nozaki-kannon.jpg",
+        "key": "wikidata:Q3178626",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "c1ac2781-a411-4e55-ac1a-53788d044e32",
+        "title": "File:大峯山龍泉寺本堂.JPG",
+        "key": "wikidata:Q11679276",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "c1c6e69a-a0cd-4533-b403-ec51bdef0470",
+        "title": "File:大野神社拝殿２.jpg",
+        "key": "wikidata:Q59282652",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "c2eea300-28ba-437f-99ae-6255b3388826",
+        "title": "File:高輪神社 雨後の高輪神社拝殿.jpg",
+        "key": "wikidata:Q3514174",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "c8a27eaa-bbbf-4667-8733-dc157e267ccd",
+        "title": "File:高輪神社 雨後の高輪神社拝殿.jpg",
+        "key": "wikidata:Q3514174",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "c8b5bc19-b9e0-460c-93fe-f9cff6c34b20",
+        "title": "File:高輪神社 雨後の高輪神社拝殿.jpg",
+        "key": "wikidata:Q3514174",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "c8d468a6-ade2-45c2-ad3a-4e8191700f22",
+        "title": "File:Renshoji Approach Steps.jpg",
+        "key": "wikidata:Q136786753",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "caff07b9-9ba9-4c35-8a5a-3bd1d2325601",
+        "title": "File:KotaKinabalu Sabah CityMosque-08.jpg",
+        "key": "wikidata:Q3397006",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "d680e18a-acb6-4976-a1ba-87bab0e0f483",
+        "title": "File:Anyo-in main gate 2025-01-13.jpg",
+        "key": "wikidata:Q11451692",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "df9fa207-e1ea-461d-b830-13ff8778754b",
+        "title": "File:Châlons-en-Champagne (Marne) (42037218782).jpg",
+        "key": "wikidata:Q20971160",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "e0a8de45-c304-4ca3-8948-b82d10b28d93",
+        "title": "File:Tenaga-jinja haiden.JPG",
+        "key": "wikidata:Q11497169",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "e286490f-b9d0-4108-a768-262c72b430ba",
+        "title": "File:Fachada de la Catedral de Oporto (Sé do Porto).jpg",
+        "key": "wikidata:Q1441255",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "e8021cdb-163a-44ef-98d2-5ba144e52a67",
+        "title": "File:Tsukiyomi-no-miya(Naiku) 03.JPG",
+        "key": "wikidata:Q11516220",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "ecc4bdf5-8f23-4b88-9b54-51f849d9b33c",
+        "title": "File:大峯山龍泉寺本堂.JPG",
+        "key": "wikidata:Q11679276",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "f1f3e9e8-8b6f-49ca-a85f-1387739ce3db",
+        "title": "File:Slovakia-03110 - Cannon (32137512162).jpg",
+        "key": "wikidata:Q11778565",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "f2457e16-fc3e-424f-a39d-30377324d8cc",
+        "title": "File:Mitsukaido Suwa-jinja ac (2).jpg",
+        "key": "wikidata:Q134125304",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "f34190c9-c0ff-4883-9952-426c32aec523",
+        "title": "File:Koen-ji west gate 2024-10-27.jpg",
+        "key": "wikidata:Q11668853",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "f7d5293a-a9bc-4ce8-b93c-a7282d1434ae",
+        "title": "File:Tsukiyomi-no-miya(Naiku) 03.JPG",
+        "key": "wikidata:Q11516220",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "fd5aa45d-5a74-469a-b2f4-ece3170ae534",
+        "title": "File:江戸城城石の碑.jpg",
+        "key": "wikidata:Q28691732",
+        "reasons": [
+          "target_granularity"
+        ]
+      },
+      {
+        "asset_id": "fee6f3eb-8822-406c-b30e-6f30547c29fe",
+        "title": "File:大野神社拝殿.jpg",
+        "key": "wikidata:Q59282652",
+        "reasons": [
+          "target_granularity"
+        ]
+      }
+    ]
+  }
+}
