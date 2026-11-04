@@ -103,3 +103,13 @@ R=新規登録行、B=取得byte、t=経過時間として、r=ΔE/A、q=ΔE/R�
 層別値を混ぜる場合は予定配分も示す。別設定・検索深度でも歩留まりが一定と仮定した
 感度試算に限定し、集中上限・候補の枯渇・subject支持・解析品質を満たす到達保証にしない。
 1万→3万→10万SHAの実収集には、新しい行予算・供給元構成・容量を別計画で確定する必要がある。
+
+## 第2段階の実行記録への参照
+
+本番測定は2026-11-05 JSTに本書の枠・seed・source_policyを維持して実行した。
+実行コードはdevelop a6c1bffをmergeした5c6c626を基準とする。配置は
+`/opt/colorstats/work/issue77-20261105/code`、既存Pythonと`ops/deploy/launch.py`を使用した。
+`bench/issue77/production.py`は収集前のREAD ONLY確認を行い、既存Queueのjob_ids制限で
+この測定だけを1ワーカーで実行した。pilotサービスは再開していない。
+結果と残る制約は `stage2-results.md`、設定・コードhashと保全先は `stage2-artifacts.json`。
+`issue77-v1`は使用済みIDとして保持し、同じ測定を新規実行するために既存runを削除しない。
