@@ -1,0 +1,14 @@
+{
+  "scope": "Windows vs 本番Linuxのaggregate-v2全量再集計。完全一致検査は緩めていない。",
+  "differing_rows": [
+    557,
+    566,
+    567
+  ],
+  "differing_numeric_leaves": 405,
+  "max_absolute_difference": 2.7755575615628914e-17,
+  "affected": "distribution.diagnostics.*.delta_cのCDF・quantileのみ",
+  "main_support_equal": true,
+  "windows_report_rejected": true,
+  "production_linux_recalculation_equal": true
+}

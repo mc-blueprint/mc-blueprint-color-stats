@@ -1,0 +1,1198 @@
+{
+  "snapshot_id": "3e785e67c42f02a174c85a6f54e2c081447c8c784c912ee3b4c5e7a94cb45702",
+  "statistics_run_id": "d7297e42-3b35-49e2-a0f8-903809a9af59",
+  "statistics_hash": "5fa67dbc3a31fa8a17a597ddbf269a01514364621c5999d41f47757d5cbc8ae9",
+  "report_sha256": "f8900db316e1515822add6504e28b21c2e6800e30a55b686c87574110bfea6bb",
+  "basis": "自動レポートの条件1・2に既存本番監査の文書照合を追加。再推定や解析を本番で再実行していない。",
+  "evidence_sha256": {
+    "bench/issue66/results.md": "c692c2817f8758b9ab7f64ab48191a791df99d5e7290968169f0c07ebb05307f",
+    "bench/issue74/full-summary.json": "115e55504e438cfac10f69733e103a7f890a247409ab9cf401aadb0dc98a85cc",
+    "bench/issue74/full-results.md": "459b7a02a5182d6f7e5f73f88d8cea02741c33c0267953865a4fc149c020a26a",
+    "bench/issue72/production.json": "d6f3c8f545679f4da51740846ca971e9e6f872c288efaff30db80aae0ab403e7",
+    "bench/issue79/audit.json": "ac2c1a75d721e6df6fb9781d4f725c1526874befda2162e3e1d4eb926721bbc5",
+    "bench/issue79/production.json": "4943e0d5b6be70149d66e0c5c12a46fd7607b4dc8dcd971e1d7ff3c70be38eaa",
+    "bench/issue85/production.json": "510744ee4c738de7899cf8b879b17241f16adb585500c29aa736ead4836f42c6",
+    "bench/issue75/full-summary.json": "bb099b6cb9c61b68b7a0f89a4c236f35a8f73bfedea9a6b5ab2cddaa9560b6ab",
+    "bench/issue77/stage2-summary.json": "e2a51ce27e4ea66313a87d0773eb6e545972172eb7866f29351d2a98a3422eb7",
+    "bench/issue76/g-handoff.md": "5198d206f1d42c4e038cbc3c22fb1b9bf835f656e7613203dbfc8b7c857698b9"
+  },
+  "m3_checks": [
+    {
+      "condition": 1,
+      "reason": "固定7607件を#66/#74全量監査と照合。prep失敗4・color失敗2と品質・速度・容量を追跡。全件成功を意味しない。",
+      "status": "passed",
+      "evidence": [
+        "bench/issue66/results.md",
+        "bench/issue74/full-summary.json"
+      ]
+    },
+    {
+      "condition": 2,
+      "reason": "#72/#79の同一入力・offline再実行差分0、誤結合検査0。#85 state/根拠runを固定snapshotへ接続。",
+      "status": "passed",
+      "evidence": [
+        "bench/issue72/production.json",
+        "bench/issue79/audit.json",
+        "bench/issue79/production.json",
+        "bench/issue85/production.json"
+      ]
+    },
+    {
+      "condition": 3,
+      "reason": "D15 snapshotの全hash検証と同じ設定でのrule_stat再計算が完全一致",
+      "status": "passed"
+    },
+    {
+      "condition": 4,
+      "quality_flags": [
+        "weak_correction"
+      ],
+      "reason": "建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定。passed は層補正の有効性を意味しない",
+      "role_results": {
+        "real_building": [
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "accent_other"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "band_course"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "column"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "context"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "cornice"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 1.0,
+              "era": 0.6,
+              "region": 0.06666666666666667,
+              "style": 1.0
+            },
+            "correction_rate": 1.0,
+            "effective_sample_size": 12.705882352941172,
+            "no_information_rate": 0.0,
+            "passed": true,
+            "quality_flags": [],
+            "subject_count": 15,
+            "target_parts": [
+              "door"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "fence"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "foundation"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "frame"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "gable_wall"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "ground_grass"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "ground_soil"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "opening"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "ornament"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "path"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "path_natural"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "railing"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "relief"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "rock_face"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "rock_scree"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "roof"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "roof_surface"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "sand"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "shutter"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "stairs_entry"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "tree"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "tree_trunk"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "vegetation_tree_canopy"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.95,
+              "era": 0.65,
+              "region": 0.1,
+              "style": 1.0
+            },
+            "correction_rate": 1.0,
+            "effective_sample_size": 17.82433075570122,
+            "no_information_rate": 0.0,
+            "passed": true,
+            "quality_flags": [],
+            "subject_count": 20,
+            "target_parts": [
+              "wall"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "wall_main"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "wall_secondary"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "water"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "window_frame"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "era": 0.0,
+              "region": 0.0,
+              "style": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "window_glass"
+            ]
+          }
+        ],
+        "real_terrain": [
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "accent_other"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "band_course"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "column"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "context"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "cornice"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "door"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "fence"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "foundation"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "frame"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "gable_wall"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "ground_grass"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "ground_soil"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "opening"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "ornament"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "path"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "path_natural"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "railing"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "relief"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "rock_face"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "rock_scree"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "roof"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "roof_surface"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "sand"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "shutter"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "stairs_entry"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 1.0,
+              "season": 1.0,
+              "time_of_day": 1.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 7.0,
+            "no_information_rate": 1.0,
+            "passed": false,
+            "quality_flags": [
+              "weak_correction"
+            ],
+            "subject_count": 7,
+            "target_parts": [
+              "tree"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "tree_trunk"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "vegetation_tree_canopy"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "wall"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "wall_main"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "wall_secondary"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "water"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "window_frame"
+            ]
+          },
+          {
+            "attribute_unknown_rates": {
+              "biome_like": 0.0,
+              "season": 0.0,
+              "time_of_day": 0.0
+            },
+            "correction_rate": 0.0,
+            "effective_sample_size": 0.0,
+            "no_information_rate": 0.0,
+            "passed": false,
+            "quality_flags": [],
+            "subject_count": 0,
+            "target_parts": [
+              "window_glass"
+            ]
+          }
+        ]
+      },
+      "status": "failed"
+    },
+    {
+      "condition": 5,
+      "reason": "全対象層と条件・役割別のD15前後支持を出力",
+      "status": "passed"
+    },
+    {
+      "condition": 6,
+      "reason": "G引継ぎ文書を最終化し成果物として提示。G側の実際の受領・利用確認は未実施。",
+      "status": "unverified",
+      "evidence": [
+        "bench/issue76/g-handoff.md"
+      ]
+    }
+  ],
+  "m3_complete": false
+}

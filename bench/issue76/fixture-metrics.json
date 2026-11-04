@@ -1,0 +1,145 @@
+{
+  "code_version": "report-v3",
+  "aggregate_code_version": "aggregate-v2",
+  "correction_rate": 1.0,
+  "no_information_rate": 0.0,
+  "attribute_unknown_rates": {
+    "building_type": 0.0,
+    "style": 0.0
+  },
+  "synthetic_only": true,
+  "python": "3.12.15",
+  "platform": "Windows",
+  "duckdb": "1.4.3",
+  "snapshot_id": "d4936e8959eea65731d97faaa64082e3fb85e01f9e482681509cce44c86f4835",
+  "asset_rows": 80,
+  "sha_distinct": 40,
+  "duplicate_rows": 40,
+  "subjects": 40,
+  "subject_n_eff": 30.0,
+  "max_weight": 2.0,
+  "rule_stat_rows": 24,
+  "support_statuses": {
+    "unsupported": 9,
+    "direct": 9,
+    "smoothed": 6
+  },
+  "aggregate_seconds": 1.781,
+  "report_seconds": 0.297,
+  "snapshot_parquet_bytes": 9601,
+  "json_bytes": 127252,
+  "markdown_bytes": 10971,
+  "m3_checks": [
+    {
+      "condition": 1,
+      "status": "unverified",
+      "reason": "固定7,607件の#66全件監査・品質評価・速度・容量の実測照合が別途必要"
+    },
+    {
+      "condition": 2,
+      "status": "unverified",
+      "reason": "候補・確定・未知と属性stateは報告済み。#72再実行・誤結合監査は別途必要"
+    },
+    {
+      "condition": 3,
+      "status": "passed",
+      "reason": "D15 snapshotの全hash検証と同じ設定でのrule_stat再計算が完全一致"
+    },
+    {
+      "condition": 4,
+      "status": "failed",
+      "reason": "建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定。passed は層補正の有効性を意味しない",
+      "role_results": {
+        "real_building": [
+          {
+            "target_parts": [
+              "door"
+            ],
+            "subject_count": 40,
+            "effective_sample_size": 30.0,
+            "correction_rate": 1.0,
+            "no_information_rate": 0.0,
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "style": 0.0
+            },
+            "passed": true,
+            "quality_flags": []
+          },
+          {
+            "target_parts": [
+              "opening"
+            ],
+            "subject_count": 0,
+            "effective_sample_size": 0.0,
+            "correction_rate": 0.0,
+            "no_information_rate": 0.0,
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "style": 0.0
+            },
+            "passed": false,
+            "quality_flags": []
+          },
+          {
+            "target_parts": [
+              "wall"
+            ],
+            "subject_count": 40,
+            "effective_sample_size": 30.0,
+            "correction_rate": 1.0,
+            "no_information_rate": 0.0,
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "style": 0.0
+            },
+            "passed": true,
+            "quality_flags": []
+          },
+          {
+            "target_parts": [
+              "wall_main"
+            ],
+            "subject_count": 0,
+            "effective_sample_size": 0.0,
+            "correction_rate": 0.0,
+            "no_information_rate": 0.0,
+            "attribute_unknown_rates": {
+              "building_type": 0.0,
+              "style": 0.0
+            },
+            "passed": false,
+            "quality_flags": []
+          }
+        ],
+        "real_terrain": [
+          {
+            "target_parts": [
+              "tree"
+            ],
+            "subject_count": 0,
+            "effective_sample_size": 0.0,
+            "correction_rate": 0.0,
+            "no_information_rate": 0.0,
+            "attribute_unknown_rates": {
+              "biome_like": 0.0
+            },
+            "passed": false,
+            "quality_flags": []
+          }
+        ]
+      },
+      "quality_flags": []
+    },
+    {
+      "condition": 5,
+      "status": "passed",
+      "reason": "全対象層と条件・役割別のD15前後支持を出力"
+    },
+    {
+      "condition": 6,
+      "status": "unverified",
+      "reason": "単位・支持・権利の引継ぎ内容は出力済み。Gへの実際の引継ぎ確認が必要"
+    }
+  ]
+}
