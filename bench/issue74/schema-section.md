@@ -1,0 +1,131 @@
+### Issue #74: 固定統計スナップショット
+
+形式版は1、権利ゲート版はD15-v1。画像を含まないParquetとmanifest.jsonを、
+未使用の出力ディレクトリへ作る。既存出力へ上書きしない。
+本節はdocs/schema.mdへ統合済み。正本は[スキーマ](../../docs/schema.md)。
+
+実行入口は `python -m colorstats.stats.snapshot_cli`。
+`--selection <JSON>`、`--code-version <固定コード版>` を必須とし、
+通常実行では `--output <未使用ディレクトリ>` も指定する。
+`--quality` は既定で configs/segment_stats.yaml。
+`--dry-run` は永続artifactを作らず、一時領域で同じ件数・除外を検査する。
+DATABASE_URLは環境から渡し、例外本文・接続情報をCLIへ表示しない。
+
+選択JSONは次の形。全件のasset IDと採用する成功runを呼出し側で明示し、
+DBの最新runを自動選択しない。失敗・欠測もコホートへ残す場合はrunを省略する。
+
+```json
+{
+  "taxonomy_version": "0.1.0",
+  "subject_attribute_run_ids": ["<属性反映成功run UUID>"],
+  "assets": [
+    {
+      "asset_id": "<UUID>",
+      "prep_run_id": "<UUID>",
+      "segment_run_id": "<UUID>",
+      "color_run_id": "<UUID>"
+    }
+  ]
+}
+```
+
+- 1つのREPEATABLE READ / READ ONLY取引で関連行をまとめて読む。
+  観測・関係は4096件単位で一時JSONLへ退避し、取引を閉じてから集合結合と色抽出を行う。
+  選択asset欠損・重複、未成功run、別asset・異taxonomy・異stage、
+  選択prep/segmentとcolorの直接入力不一致、入力循環、採用分割設定不一致は全体失敗。
+- processing_run_inputを再帰的に辿り、全解析入力runの制約を確認する。
+  subject/scene_inferenceと明示指定した#85属性の成功subject runも取り込む。
+  subjectと属性・候補・推定根拠は現在値をコピーし、再読取り時にDBへ参照しない。
+- asset.quality.licenseとsource.licenseの選択値を照合する。
+  PD/PDM・CC0・版付きCC BYだけを許容し、SA/NC/ND・制限付きrun・
+  評価専用重み・権利不明・由来/帰属不足を理由別に除外する。
+  カテゴリ上の複数ライセンスから選び直さず、別出典による再許諾を推測しない。
+  原本や除外された出典を削除しない。
+- 権利と必要解析が適格なassetの中で、SHAごとにUUID文字列最小の代表を採る。
+  全別出典とその個別の除外理由を残す。D15除外・解析欠測・SHA重複を区別する。
+- 画像全体観測はwhole_image、未支持の個別ラベルはunvalidated_labelとして保持する。
+  shade平均をcolorの主色に置き換えない。
+- #81の評価artifactはUTF-8/LFでhash照合し、支持済み和集合のメンバーを固定する。
+  real_building/wallとreal_terrain/treeは、選択colorの画像・マスクの設定hashを照合後、
+  既存color処理で画素和集合から主色を再抽出する。重なる画素は一度だけ数える。
+  個別ラベルの支持も評価資料のdomain別に適用し、建築のdoorを地形へ転用しない。
+  個別ラベルの観測を足した結果や親からの平滑化を直接支持にしない。
+  画像・マスクは生成時だけ必要で、値を固定した後の再集計では不要。
+  D15除外された入力の和集合も残すため、必要解析が揃う全入力の画像を読める実行権限が必要。
+  入力ファイルの欠損・改変・抽出失敗も全体失敗。
+
+subject_attribute_run_idsは#85属性根拠を使う場合に明示する成功runのUUID一覧。
+最新runの自動選択や本番run IDの固定実装は行わない。同じsubjectの根拠は一意に選ぶ。
+固定DB値を読み終えてからoutput_paths.snapshotの根拠JSONを読み、
+run・設定・非dry-run状態とregion/location・eraの現在値を照合する。
+値・run・taxonomyの不一致、根拠ファイル欠損、同じsubjectの複数根拠は全体失敗。
+
+assets.data.subject.attribute_evidenceに#85のsubject行をコピーし、
+run_id・method・config_hash・snapshot_sha256を添える。
+attributes.region/eraのvalue・state（inferred/unknown/preserved）・reasonとderived、
+before/after、Wikidata ID・claim・revision・GPSをDBなしで監査できる。
+Subject.location/eraは従来どおり文字列またはNULLで、state付き辞書へ置き換えない。
+根拠未指定の値は保持するが、#85由来やinferredと推測しない。
+対応runと全入力をruns.parquetおよびmanifest.input_run_idsへ含める。
+属性根拠として選択したrunは画像のD15判定集合に加えず、画像・解析モデル由来の権利判定は維持する。
+
+Openverseの照合済み短縮表記by/by-saは、source_verified、元ライセンスの一致、照合済みmetadataの版に基づき、
+D15判定時だけcc-by/cc-by-saの版付き表記へ正規化する。未照合・版欠損は許可しない。
+assets.data.d15_licenseに判定用のasset/source表記を残し、元qualityとprovenanceは変更しない。
+
+Parquet一覧:
+
+| ファイル | 主な列と意味 |
+| --- | --- |
+| assets | id、sha256、domain、subject_id、representative_id、eligible、reasons、data（選択run・属性・subject・候補・根拠・収集意図）、rights_eligible、analysis_available |
+| provenance | asset_id、source_id、data（元URL・サイト・作者・選択ライセンス・帰属・収集時点） |
+| runs | id、stage、data（設定・コード・重みhash・制約・成功時点・input_run_ids） |
+| regions | id、asset_id、run_id、label、data（領域面積比・信頼度・位置等） |
+| observations | id、asset_id、region_id、run_id、eligible、reasons、data（主色・クラスタ分位点・面積比）、quality_eligible |
+| relations | id、asset_id、run_id、eligible、reasons、data（順序付き領域参照・B−Aの差・B/A面積比）、quality_eligible |
+| groups | id、asset_id、run_id、role、eligible、data（構成領域・画素和集合面積比・主色・由来hash）、quality_eligible、reasons |
+
+data/reasons列はParquetのJSON文字列。ID・参照・ゲートは独立した型付き列。
+assets.eligibleは権利・必要解析・SHA代表の入口ゲートであり、
+subject・属性・有効標本数の支持条件を満たしたという意味ではない。
+観測と関係のeligibleはさらに個別ラベル品質を要求する。
+quality_eligibleはD15・SHA選択前の品質支持を示す。groupsは明示的な粗い役割だけの支持。
+観測・関係・groupsのreasonsには、個別の品質除外とassetのD15・欠測・SHA除外を併記する。
+groupsはD15除外前にも抽出する。asset_idでassetsのsha256・subject_id・属性へ結び、
+quality_eligibleで品質を固定したうえでrights_eligibleの前後を比較できる。
+rights_eligibleは権利だけの通過、analysis_availableは権利と独立した必要解析・domainの確認。
+SHA重複前後はsha256とrepresentative_id、最終採用はeligibleを使う。後続#75で確定subject・根拠ある属性を
+選び、未知subjectの診断分布と主統計を分離する。
+
+manifestは選択集合とhash、input_run_ids（採用した全入力run ID）、
+taxonomy/コード版、固定品質設定とhash、
+DB分離レベル・READ ONLY状態、段階別件数、複数該当を許す除外理由の件数、
+全ParquetのSHA-256と行数、DuckDB版、snapshot_idを持つ。
+rights_eligibleは権利ゲート後、analysis_eligibleは必要解析・domainの確認後、
+representativesはさらにSHA代表選択後のasset件数。
+sha_distinctは入力全体、confirmed_subjectsは代表の非NULL subject異なり数。
+*_rowsは保存行数、*_eligibleは入口・品質ゲート後の行数。
+クラスタ行数を画像数・subject数へ読み替えない。
+除外理由の合計は複数該当があるため除外asset数とは限らない。
+
+全Parquetのhashと件数を照合してからmanifestを最後に作る。
+失敗した出力ディレクトリは成功artifactとして採用せず、新しい出力先で再試行する。
+snapshot_idはsnapshot_id自体を除くmanifestの正規JSONのSHA-256。
+正規JSONはUTF-8、キー順・区切りを固定しNaNを禁止する。
+`verify(path, expected_hash)`へ信頼済み呼出し元が保持したsnapshot_idを渡し、
+manifest・ファイル集合・全ファイルhash・行数を照合してから読む。
+同じ固定データ・入力集合・設定・コード版・DuckDB版では全Parquetとsnapshot_idが一致する。
+入力の列挙順はasset_id順に正規化する。OpenCV・DuckDBはCPU一スレッドで処理する。
+DB取引識別子と読取り時間・全体時間はexecution.jsonへ分離し、内容hashに含めない。
+execution.jsonは監査・計測用であり、集計入力や信頼済みhash検証の対象ではない。
+属性根拠・新列・D15除外前の和集合を使うレポートには新snapshotの生成が必要。旧artifactは上書きしない。
+
+後続aggregateは成功snapshotのhashと固定設定をQueueのキーへ含め、
+runs.parquetの入力runをprocessing_run_inputへ結ぶ。
+Queue.completeの所有権確認・取引境界を経て統計を採用する。
+snapshot作成自体はDB無更新で、aggregate登録やrule_stat生成は#75の責務。
+
+既存データの移行・削除は不要。実7,607件からの生成は全量解析と対象推定の成果を
+確認した第2段階とし、第1段階のfixture成功を実データの支持数の達成とは扱わない。
+
+全量7,607件のsnapshotと監査の記録は[Issue #74全量検証](full-results.md)を参照。

@@ -13,6 +13,7 @@ license = "MIT"
 dependencies = [
   "alembic>=1.13,<2",
   "jsonschema>=4.23,<5",
+  "duckdb==1.4.3",
   "mcblueprint @ git+https://github.com/mc-blueprint/mc-blueprint@6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774",
   "ImageHash>=4.3,<5",
   "Pillow>=11,<13",
