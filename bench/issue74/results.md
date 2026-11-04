@@ -76,3 +76,9 @@ Ubuntuは/mnt/data/work/issue-74にコード・依存・fixture・ログを保�
 実データの権利適格数・確定subject支持・全量の速度/容量は未計測で、
 fixtureの結果をM3全体の支持条件達成とは扱わない。
 schema節の統合、公開文面の作成、公開は第2段階に残る。
+
+## 2026-11-05 第2段階の完了
+
+上記の残り作業は当時の状態。全量snapshot生成・schema統合・公開準備は
+[全量検証記録](full-results.md)で完了し、件数・hashは[全量監査JSON](full-summary.json)へ記録した。
+push・PRは今回の指示により未実施。
