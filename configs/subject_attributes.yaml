@@ -1,0 +1,71 @@
+# 年代区分は地域別の歴史時代ではなく、層照合用の共通西暦区分。
+version: 1
+taxonomy_version: 0.1.0
+countries:
+  Q17: japan
+  Q148: east_asia
+  Q865: east_asia
+  Q884: east_asia
+  Q423: east_asia
+  Q183: europe
+  Q142: europe
+  Q145: europe
+  Q27: europe
+  Q38: europe
+  Q29: europe
+  Q45: europe
+  Q55: europe
+  Q31: europe
+  Q39: europe
+  Q40: europe
+  Q36: europe
+  Q213: europe
+  Q214: europe
+  Q28: europe
+  Q218: europe
+  Q219: europe
+  Q41: europe
+  Q35: europe
+  Q34: europe
+  Q20: europe
+  Q33: europe
+  Q37: europe
+  Q211: europe
+  Q191: europe
+  Q224: europe
+  Q215: europe
+  Q403: europe
+  Q225: europe
+  Q221: europe
+  Q222: europe
+  Q236: europe
+  Q32: europe
+  Q233: europe
+  Q238: europe
+  Q237: europe
+  Q235: europe
+  Q228: europe
+  Q347: europe
+  Q43: west_asia
+  Q794: west_asia
+  Q796: west_asia
+  Q858: west_asia
+  Q822: west_asia
+  Q810: west_asia
+  Q801: west_asia
+  Q219060: west_asia
+  Q851: west_asia
+  Q878: west_asia
+  Q842: west_asia
+  Q846: west_asia
+  Q398: west_asia
+  Q805: west_asia
+  Q817: west_asia
+  Q30: north_america
+  Q16: north_america
+  Q96: north_america
+eras:
+  ancient: [-999999999, 499]
+  medieval: [500, 1499]
+  early_modern: [1500, 1799]
+  modern: [1800, 999999999]

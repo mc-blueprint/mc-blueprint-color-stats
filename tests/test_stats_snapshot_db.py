@@ -215,7 +215,7 @@ def test_reject_mixed_runs_without_success_manifest(queue, asset, tmp_path, fail
     assert not (tmp_path / "failed/manifest.json").exists()
 
 
-def test_missing_and_duplicate_asset_and_output_failure(queue, asset, tmp_path):
+def test_missing_and_duplicate_asset_and_output_failure(queue, asset, tmp_path, monkeypatch):
     selection = prepare(queue, asset)
     missing = copy.deepcopy(selection)
     missing["assets"][0]["asset_id"] = str(uuid4())
@@ -230,9 +230,23 @@ def test_missing_and_duplicate_asset_and_output_failure(queue, asset, tmp_path):
     with pytest.raises(OSError):
         build(queue, selection, parent / "child")
     assert parent.read_text(encoding="utf-8") == "保持"
+    original = Path.open
+
+    def fail_execution(path, *args, **kwargs):
+        if path.name == "execution.json":
+            raise OSError("計測出力の失敗")
+        return original(path, *args, **kwargs)
+
+    with monkeypatch.context() as patcher:
+        patcher.setattr(Path, "open", fail_execution)
+        with pytest.raises(OSError, match="計測出力"):
+            build(queue, selection, tmp_path / "execution-failed")
+    assert not (tmp_path / "execution-failed/manifest.json").exists()
 
 
-def test_union_uses_pixels_and_freezes_colors_without_images(queue, asset, tmp_path):
+@pytest.mark.parametrize("excluded", [False, True])
+def test_union_uses_pixels_and_freezes_colors_without_images(queue, asset, tmp_path, excluded):
+    import numpy as np
     from PIL import Image
     from sqlalchemy import select
 
@@ -243,7 +257,11 @@ def test_union_uses_pixels_and_freezes_colors_without_images(queue, asset, tmp_p
     chosen = selection["assets"][0]
     selection["assets"] = [chosen]
     image = tmp_path / "image.png"
-    Image.new("RGB", (20, 20), (120, 80, 50)).save(image)
+    if excluded:
+        Image.new("RGB", (20, 20), (120, 80, 50)).save(image)
+    else:
+        pixels = np.random.default_rng(74).integers(20, 220, (20, 20, 3), dtype="uint8")
+        Image.fromarray(pixels).save(image)
     with Session(queue.engine) as session, session.begin():
         segment = session.get(ProcessingRun, UUID(chosen["segment_run_id"]))
         regions = list(session.scalars(select(Region).where(
@@ -251,8 +269,6 @@ def test_union_uses_pixels_and_freezes_colors_without_images(queue, asset, tmp_p
         ).order_by(Region.id)))
         outputs = {}
         for index, region in enumerate(regions):
-            import numpy as np
-
             pixels = np.zeros((20, 20), dtype="uint8")
             pixels[:, :15] = 255
             if index == 1:
@@ -273,17 +289,46 @@ def test_union_uses_pixels_and_freezes_colors_without_images(queue, asset, tmp_p
         run = session.get(ProcessingRun, UUID(chosen["color_run_id"]))
         run.parameters = {"payload": payload}
         run.config_hash = color.config_hash(payload)
+    if excluded:
+        from colorstats.schema.models import Subject
+
+        with Session(queue.engine) as session, session.begin():
+            target = session.get(Asset, UUID(chosen["asset_id"]))
+            origin = session.get(Source, target.source_id)
+            origin.license = "cc-by-sa-4.0"
+            target.quality = {**target.quality, "license": origin.license}
+            subject = Subject(name="除外前対象", domain="real_building",
+                              taxonomy_version="0.1.0", scene_attributes={})
+            session.add(subject)
+            session.flush()
+            target.subject_id = subject.id
     quality = load_quality(Path(__file__).resolve().parents[1] / "configs/segment_stats.yaml")
     result = execute(queue.engine, selection, tmp_path / "fixed", quality=quality,
                      code_version="fixture")
-    assert result["counts"]["groups_eligible"] == 1
+    assert result["counts"]["groups_eligible"] == (0 if excluded else 1)
     with duckdb.connect() as db:
         row = db.execute("SELECT role, data FROM read_parquet(?)",
                          [str(tmp_path / "fixed/groups.parquet")]).fetchone()
     assert row[0] == "real_building/wall"
     data = json.loads(row[1])
     assert data["area_ratio"] == 1
-    assert len(data["observations"]) == 1
+    assert len(data["observations"]) == (1 if excluded else 5)
+    with duckdb.connect() as db:
+        gate = db.execute(
+            "SELECT g.eligible, g.quality_eligible, g.reasons, a.subject_id, "
+            "a.rights_eligible, a.analysis_available FROM read_parquet(?) g "
+            "JOIN read_parquet(?) a ON a.id = g.asset_id",
+            [str(tmp_path / "fixed/groups.parquet"), str(tmp_path / "fixed/assets.parquet")],
+        ).fetchone()
+    assert gate[0] is not excluded
+    assert gate[1] and gate[5]
+    assert gate[4] is not excluded
+    if excluded:
+        assert gate[3]
+        assert "license_conditions" in json.loads(gate[2])
+    repeated = execute(queue.engine, selection, tmp_path / "repeated", quality=quality,
+                       code_version="fixture")
+    assert repeated["snapshot_id"] == result["snapshot_id"]
     image.unlink()
     assert verify(tmp_path / "fixed", result["snapshot_id"]) == result
     with pytest.raises(FileNotFoundError):
@@ -344,3 +389,228 @@ def test_subject_attributes_candidates_and_all_input_rights_are_frozen(queue, as
     changed = build(queue, selection, tmp_path / "changed")
     assert changed["counts"]["representatives"] == 0
     assert changed["exclusions"]["restricted_run"] == 1
+
+
+def test_bulk_reads_finish_before_union_processing(queue, asset, tmp_path, monkeypatch):
+    from colorstats.stats import snapshot
+
+    selection = prepare(queue, asset)
+    statements = []
+    completed = False
+
+    def record(connection, cursor, statement, parameters, context, executemany):
+        statements.append(statement)
+
+    original = snapshot._groups
+
+    def after_transaction(*args):
+        nonlocal completed
+        assert queue.engine.pool.checkedout() == 0
+        completed = True
+        yield from original(*args)
+
+    monkeypatch.setattr(snapshot, "_groups", after_transaction)
+    event.listen(queue.engine, "before_cursor_execute", record)
+    try:
+        first = build(queue, selection, tmp_path / "first")
+    finally:
+        event.remove(queue.engine, "before_cursor_execute", record)
+    assert completed
+    assert len(statements) <= 14
+    second = build(queue, selection, tmp_path / "second")
+    assert first["snapshot_id"] == second["snapshot_id"]
+    assert first == second
+
+
+@pytest.fixture
+def subject_attribute_input(queue, asset, tmp_path):
+    from colorstats.schema.models import Subject
+    from colorstats.stats.subjects import METHOD
+
+    selection = prepare(queue, asset)
+    chosen = selection["assets"][0]
+    selection["assets"] = [chosen]
+    with Session(queue.engine) as session, session.begin():
+        subject = Subject(name="属性対象", domain="real_building",
+                          taxonomy_version="0.1.0", scene_attributes={})
+        session.add(subject)
+        session.flush()
+        sid = subject.id
+        identity = ProcessingRun(
+            stage="subject", license_class="open", config_hash="a" * 64,
+            parameters={"method": METHOD, "subject_keys": [{
+                "subject_id": str(sid), "domain": "real_building", "wikidata_id": "Q100",
+            }]}, code_version="fixture", taxonomy_version="0.1.0", node="test",
+            finished_at=datetime.now(UTC),
+        )
+        session.add(identity)
+        session.flush()
+        target = session.get(Asset, UUID(chosen["asset_id"]))
+        target.subject_id = sid
+        target.quality = {**target.quality, "subject_inference": {
+            "run_id": str(identity.id), "state": "confirmed",
+        }}
+    return selection, sid
+
+
+@pytest.mark.parametrize("state", ["inferred", "preserved", "unknown"])
+@pytest.mark.parametrize("restricted_analysis", [False, True])
+def test_subject_attribute_evidence_and_input_run_are_frozen(
+    queue, subject_attribute_input, tmp_path, monkeypatch, state, restricted_analysis,
+):
+    from colorstats.schema.models import Subject
+    from colorstats.stats.subject_attributes import execute as derive_attributes
+    from tests.test_subjects_attributes import entity
+    from tests.test_subjects_attributes_db import Catalog
+
+    selection, sid = subject_attribute_input
+    rules = yaml.safe_load(
+        (Path(__file__).resolve().parents[1] / "configs/subject_attributes.yaml")
+        .read_text(encoding="utf-8")
+    )
+    catalog = Catalog()
+    if state == "preserved":
+        with Session(queue.engine) as session, session.begin():
+            subject = session.get(Subject, sid)
+            subject.location, subject.era = "europe", "medieval"
+    if state == "unknown":
+        catalog.attribute_claims = lambda ids: {
+            qid: entity(countries=(), dates=[]) for qid in ids
+        }
+    path = tmp_path / "attribute-source.json"
+    attributes = derive_attributes(queue.engine, rules, catalog, path, code_version="fixture")
+    if restricted_analysis:
+        with Session(queue.engine) as session, session.begin():
+            session.get(ProcessingRun, UUID(
+                selection["assets"][0]["segment_run_id"],
+            )).license_class = "restricted"
+    baseline = build(queue, selection, tmp_path / "baseline")
+    selection["subject_attribute_run_ids"] = [attributes["run_id"]]
+    source = next(row for row in attributes["subjects"] if row["subject_id"] == str(sid))
+    original = Path.read_bytes
+
+    def read_evidence(target):
+        if target == path:
+            assert queue.engine.pool.checkedout() == 0
+        return original(target)
+
+    monkeypatch.setattr(Path, "read_bytes", read_evidence)
+    first = build(queue, selection, tmp_path / "first")
+    repeated = build(queue, selection, tmp_path / "repeated")
+    assert first["snapshot_id"] == repeated["snapshot_id"]
+    assert attributes["run_id"] in first["input_run_ids"]
+    with duckdb.connect() as db:
+        subject = json.loads(db.execute(
+            "SELECT data FROM read_parquet(?)", [str(tmp_path / "first/assets.parquet")],
+        ).fetchone()[0])["subject"]
+        run_ids = {row[0] for row in db.execute(
+            "SELECT id FROM read_parquet(?)", [str(tmp_path / "first/runs.parquet")],
+        ).fetchall()}
+    assert attributes["run_id"] in run_ids
+    assert subject["location"] == source["after"]["region"]
+    assert subject["era"] == source["after"]["era"]
+    evidence = subject["attribute_evidence"]
+    assert evidence["attributes"] == source["attributes"]
+    assert {row["state"] for row in evidence["attributes"].values()} == {state}
+    assert evidence["run_id"] == attributes["run_id"]
+    assert evidence["config_hash"] == attributes["config_hash"]
+    assert evidence["evidence"] == source["evidence"]
+    assert evidence["snapshot_sha256"]
+    assert first["counts"]["runs_rows"] == baseline["counts"]["runs_rows"] + 1
+    assert {k: v for k, v in first["counts"].items() if k != "runs_rows"} == {
+        k: v for k, v in baseline["counts"].items() if k != "runs_rows"
+    }
+    assert first["exclusions"] == baseline["exclusions"]
+    assert first["exclusions"].get("restricted_run", 0) == int(restricted_analysis)
+    assert first["counts"]["rights_eligible"] == int(not restricted_analysis)
+    assert first["counts"]["representatives"] == int(not restricted_analysis)
+    path.unlink()
+    with Session(queue.engine) as session, session.begin():
+        session.get(Subject, sid).location = "変更後"
+    assert verify(tmp_path / "first", first["snapshot_id"]) == first
+
+
+@pytest.mark.parametrize("failure", ["file", "run_id", "values", "failed", "taxonomy", "ambiguous"])
+def test_reject_unmatched_subject_attribute_evidence(
+    queue, subject_attribute_input, tmp_path, failure,
+):
+    from colorstats.schema.models import Subject
+    from colorstats.stats.subject_attributes import execute as derive_attributes
+    from tests.test_subjects_attributes_db import Catalog
+
+    selection, sid = subject_attribute_input
+    rules = yaml.safe_load(
+        (Path(__file__).resolve().parents[1] / "configs/subject_attributes.yaml")
+        .read_text(encoding="utf-8")
+    )
+    path = tmp_path / "attribute-source.json"
+    attributes = derive_attributes(queue.engine, rules, Catalog(), path, code_version="fixture")
+    rid = UUID(attributes["run_id"])
+    selection["subject_attribute_run_ids"] = [str(rid)]
+    if failure == "file":
+        path.unlink()
+    if failure == "run_id":
+        changed = json.loads(path.read_text(encoding="utf-8"))
+        changed["run_id"] = str(uuid4())
+        path.write_text(json.dumps(changed), encoding="utf-8")
+    if failure == "ambiguous":
+        later = derive_attributes(
+            queue.engine, rules, Catalog(), tmp_path / "later.json", code_version="fixture",
+        )
+        selection["subject_attribute_run_ids"].append(later["run_id"])
+    with Session(queue.engine) as session, session.begin():
+        if failure == "values":
+            session.get(Subject, sid).location = "europe"
+        if failure == "failed":
+            session.get(ProcessingRun, rid).failure_reason = "属性処理失敗"
+        if failure == "taxonomy":
+            session.get(ProcessingRun, rid).taxonomy_version = "9.9.9"
+    with pytest.raises(FileNotFoundError if failure == "file" else ValueError):
+        build(queue, selection, tmp_path / "failed")
+    assert not (tmp_path / "failed/manifest.json").exists()
+
+
+@pytest.mark.parametrize(
+    ("name", "version", "verified", "origin", "eligible"),
+    [
+        ("by", "4.0", True, "by", True),
+        ("by-sa", "4.0", True, "by-sa", False),
+        ("by", "4.0", False, "by", False),
+        ("by", None, True, "by", False),
+        ("by", "4.0", True, "cc0", False),
+    ],
+)
+def test_verified_openverse_license_is_normalized_without_changing_provenance(
+    queue, asset, tmp_path, name, version, verified, origin, eligible,
+):
+    selection = prepare(queue, asset)
+    selection["assets"] = selection["assets"][:1]
+    with Session(queue.engine) as session, session.begin():
+        row = session.get(Asset, UUID(selection["assets"][0]["asset_id"]))
+        source = session.get(Source, row.source_id)
+        row.search_provider = "openverse"
+        row.quality = dict(row.quality) | {
+            "license": name, "metadata": {
+                "source_verified": verified,
+                "openverse": {"license": name, "license_version": version},
+            },
+        }
+        source.license = origin
+    result = build(queue, selection, tmp_path / "fixed")
+    assert result["counts"]["rights_eligible"] == int(eligible)
+    assert result["counts"]["representatives"] == int(eligible)
+    with duckdb.connect() as db:
+        data = json.loads(db.execute(
+            "SELECT data FROM read_parquet(?)", [str(tmp_path / "fixed/assets.parquet")],
+        ).fetchone()[0])
+        provenance = json.loads(db.execute(
+            "SELECT data FROM read_parquet(?)", [str(tmp_path / "fixed/provenance.parquet")],
+        ).fetchone()[0])
+    assert data["quality"]["license"] == name
+    assert provenance["license"] == origin
+    if verified and origin == name:
+        assert data["d15_license"] == {
+            "asset": f"cc-{name}-{version}", "source": f"cc-{name}-{version}",
+        }
+    if name == "by-sa":
+        assert result["exclusions"]["license_conditions"] == 1

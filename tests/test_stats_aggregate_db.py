@@ -1,7 +1,8 @@
 import copy
 import os
 from datetime import UTC, datetime
-from uuid import uuid4
+from pathlib import Path
+from uuid import UUID, uuid4
 
 import pytest
 from sqlalchemy import func, select, text
@@ -20,6 +21,7 @@ from tests.test_queue import queue as queue
 from tests.test_stats_aggregate import settings as settings
 from tests.test_stats_aggregate import snapshot
 from tests.test_stats_snapshot_db import build, prepare
+from tests.test_stats_snapshot_db import subject_attribute_input as subject_attribute_input
 
 pytestmark = pytest.mark.skipif(
     not os.environ.get("TEST_DATABASE_URL"), reason="隔離PostgreSQL16専用",
@@ -144,3 +146,53 @@ def test_real_snapshot_contract_with_excluded_inputs(queue, asset, tmp_path, set
         assert door.subject_count == 0
         assert door.quality["unknown_images"] == 2
         assert door.quality["status"] == "unsupported"
+
+
+@pytest.mark.parametrize("failure", [
+    None, "unlisted_attribute", "changed_method", "restricted_analysis",
+])
+def test_attribute_evidence_run_is_metadata_not_image_permission(
+    queue, subject_attribute_input, tmp_path, settings, failure,
+):
+    import yaml
+
+    from colorstats.stats.subject_attributes import execute as derive_attributes
+    from tests.test_subjects_attributes_db import Catalog
+
+    selection, _ = subject_attribute_input
+    root = Path(__file__).resolve().parents[1]
+    rules = yaml.safe_load((root / "configs/subject_attributes.yaml").read_text(encoding="utf-8"))
+    derived = derive_attributes(
+        queue.engine, rules, Catalog(), tmp_path / "attributes.json", code_version="fixture",
+    )
+    selection["subject_attribute_run_ids"] = [derived["run_id"]]
+    path = tmp_path / "snapshot"
+    manifest = build(queue, selection, path)
+    payload = {"snapshot": str(path), "snapshot_id": manifest["snapshot_id"], "settings": settings,
+               "output_path": str(tmp_path / "aggregate.json")}
+    queue.enqueue("aggregate", None, module.config_hash(payload), payload)
+    claim = queue.claim(["aggregate"])
+    result = module.prepare(claim)
+    assert result.data["subject_attribute_run_ids"] == [derived["run_id"]]
+    assert derived["run_id"] in {r["id"] for r in result.data["input_runs"]}
+    assert any("attributes_inferred" in r["quality"]["flags"] for r in result.data["rows"])
+    if failure == "unlisted_attribute":
+        result.data["subject_attribute_run_ids"] = []
+    elif failure in {"changed_method", "restricted_analysis"}:
+        with Session(queue.engine) as session, session.begin():
+            if failure == "changed_method":
+                source = session.get(ProcessingRun, UUID(derived["run_id"]))
+                source.parameters = source.parameters | {"method": "unrelated"}
+            else:
+                source = session.get(ProcessingRun, UUID(selection["assets"][0]["prep_run_id"]))
+                source.license_class = "restricted"
+    before = counts(queue)
+    if failure:
+        with pytest.raises(ValueError, match="由来"):
+            queue.complete(claim, result.info, lambda s, r: module.register(s, r, result.data))
+        assert counts(queue) == before
+    else:
+        rid = queue.complete(claim, result.info, lambda s, r: module.register(s, r, result.data))
+        with Session(queue.engine) as session:
+            assert session.get(ProcessingRun, rid).license_class == "open"
+            assert session.get(ProcessingRunInput, (rid, UUID(derived["run_id"])))
