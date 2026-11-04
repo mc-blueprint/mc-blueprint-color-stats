@@ -4,7 +4,6 @@ import hashlib
 import json
 import os
 import random
-import re
 import uuid
 from dataclasses import asdict, replace
 from decimal import Decimal
@@ -25,7 +24,6 @@ from colorstats.schema.models import (
     Job,
     ProcessingRun,
     Source,
-    Subject,
 )
 
 # 実際に参照する予約テーブルを識別し、search_pathの違いでも排他を共有する。
@@ -78,32 +76,6 @@ def pending(session) -> list[dict]:
     ]
 
 
-def resolve_subject(session, candidate, layer, aliases):
-    """登録済みsubjectの名称・別名がタイトル内で一意に一致した候補だけを扱う。
-
-    別名は設定のsubject_aliases。空属性の旧prep生成行は同定根拠にしない。
-    一致しない候補も収集対象にできる。
-    """
-    found = []
-    for subject in session.scalars(
-        select(Subject).where(Subject.domain == layer["attributes"]["domain"])
-    ):
-        if not subject.scene_attributes:
-            continue
-        names = [subject.name, *aliases.get(subject.name, [])]
-        if any(
-            name
-            and re.search(
-                rf"(?<![a-z0-9]){re.escape(name)}(?![a-z0-9])", candidate.title, re.IGNORECASE
-            )
-            for name in names
-        ):
-            found.append(subject)
-    if len(found) == 1:
-        return found[0]
-    return None
-
-
 def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None:
     """短い直列化取引で採否を決め、採用時だけリース付きの枠を確保する。"""
     layer = next((s for s in config["strata"] if s["id"] == request.stratum), None)
@@ -140,12 +112,9 @@ def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None
                     == candidate.original_url)
             ).limit(1)):
                 return "reserved_url"
-        subject = resolve_subject(session, candidate, layer, config["subject_aliases"])
         author = (candidate.author or "").strip().casefold()
-        subject_id = subject.id if subject else None
-        if subject and subject.location and subject.location.strip():
-            region, region_basis = subject.location.strip(), "subject.location"
-        elif candidate.location and candidate.location.strip():
+        subject_id = None
+        if candidate.location and candidate.location.strip():
             region, region_basis = candidate.location.strip(), "candidate.location"
         elif layer["attributes"].get("region"):
             region, region_basis = layer["attributes"]["region"], "stratum.region"
