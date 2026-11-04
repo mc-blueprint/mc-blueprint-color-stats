@@ -6,7 +6,6 @@ from html.parser import HTMLParser
 from pathlib import Path
 from time import monotonic, sleep
 from urllib.parse import urlencode
-from urllib.request import urlopen
 
 from colorstats.collect import Candidate, SearchRequest, SearchResult
 from colorstats.collect.http import HttpClient, RetryResponse
@@ -44,13 +43,13 @@ class CommonsAdapter(HttpClient):
     openerはurllib互換で、記録済みレスポンスをテストに注入できる。
     """
 
-    def __init__(self, policy: dict, *, opener=urlopen, clock=monotonic, wait=sleep):
+    def __init__(self, policy: dict, *, opener=None, clock=monotonic, wait=sleep):
         check_commons_policy(policy)
         super().__init__(policy, opener=opener, clock=clock, wait=wait)
 
     def _get(self, url: str, *, target: Path | None = None):
         check_commons_policy(self.policy)
-        return self.get(url, target=target, read=self._read)
+        return self.get(url, target=target, read=self._read, api=target is None)
 
     @staticmethod
     def _read(response):
@@ -82,9 +81,22 @@ class CommonsAdapter(HttpClient):
             "srqiprofile": "classic",
             "uselang": request.language,
         }
+        effective = {
+            **parameters,
+            "endpoint": ENDPOINT,
+            "api": "MediaWiki Action API",
+            "defaults": {"srinterwiki": False, "srenablerewrites": False},
+            "rank_basis": {"base": 0, "scope": "search", "calculation": "sroffset + index"},
+            "page_basis": {"base": 0, "value": request.page, "origin": "SearchRequest.page"},
+        }
+        self.observe("search", {"effective": effective})
         search = self._get(ENDPOINT + "?" + urlencode(parameters))
+        next_offset = search.get("continue", {}).get("sroffset")
+        self.observe("search", {"api_next_offset": next_offset})
+        self.observe("search", {"api_results": search.get("query", {}).get("search", [])})
         candidates = []
         for index, hit in enumerate(search.get("query", {}).get("search", [])):
+            self.observe("search", {"pending_candidate": {**hit, "rank": request.start + index}})
             metadata_parameters = {
                 "action": "query",
                 "format": "json",
@@ -197,15 +209,9 @@ class CommonsAdapter(HttpClient):
                     else None,
                 )
             )
-        effective = {
-            **parameters,
-            "endpoint": ENDPOINT,
-            "api": "MediaWiki Action API",
-            "defaults": {"srinterwiki": False, "srenablerewrites": False},
-            "rank_basis": {"base": 0, "scope": "search", "calculation": "sroffset + index"},
-            "page_basis": {"base": 0, "value": request.page, "origin": "SearchRequest.page"},
-        }
-        return SearchResult(candidates, effective, search.get("continue", {}).get("sroffset"))
+            self.record_candidate(candidates[-1], verified=not candidates[-1].exclusion_reason)
+
+        return SearchResult(candidates, effective, next_offset)
 
     def download(self, candidate: Candidate, target: Path) -> None:
         if license_class(self.policy, candidate.license) == "restricted":

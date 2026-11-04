@@ -1,0 +1,43 @@
+{
+  "root": "/opt/colorstats/work/issue77-20261105/outputs",
+  "unit": {
+    "MainPID": "0",
+    "Result": "success",
+    "ExecMainStatus": "0",
+    "ActiveState": "inactive",
+    "SubState": "dead",
+    "InactiveEnterTimestamp": "",
+    "unit": "colorstats-issue77-measure-20261105.service",
+    "initial_pid": 174779
+  },
+  "files": {
+    "after.json": {
+      "sha256": "90352b0888d35ef21b3e4228c2cdb5173b7281dd4c1460a113eb0aff99936e68",
+      "bytes": 10796
+    },
+    "before.json": {
+      "sha256": "e753f777e8fcf76a21118d64bcb46fde667a8765a65149c9d6610420bf60040b",
+      "bytes": 10804
+    },
+    "implementation.json": {
+      "sha256": "7a28bb127cc4c376f9f859ec9c22e2bc96aa8dd6e7dd421d592d4ee57695cd8f",
+      "bytes": 5903
+    },
+    "measurement.json": {
+      "sha256": "fc351baee199d0273cac36f3c71befcf2e9577662235b528a44a28ac4da40730",
+      "bytes": 3943339
+    },
+    "progress.json": {
+      "sha256": "3d82fab1f8d4b357eb724c7e6c4ad9049acbaf246da73a80d874d826c775f706",
+      "bytes": 19013
+    },
+    "summary.json": {
+      "sha256": "5125c3901e9a1b459ec23ed5d2fb87375822aa9f4c8a2b894e1538fee43a2790",
+      "bytes": 45360
+    },
+    "raw-audit.json": {
+      "sha256": "8cac5327f128ee08d88b1a4305a170369694a01ae092c6a5433ad8c52b413af0",
+      "bytes": 102
+    }
+  }
+}
