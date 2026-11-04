@@ -189,7 +189,7 @@ def record(session, run, data, known):
         quality = dict(asset.quality)
         origin = {
             key: getattr(source, key)
-            for key in ("license", "license_class", "url", "attribution", "author")
+            for key in ("license", "license_class", "url", "attribution", "author", "policy")
         }
         metadata = quality.get("metadata", {})
         selected = metadata.get("openverse", {})
@@ -203,7 +203,8 @@ def record(session, run, data, known):
         ):
             quality["license"] = origin["license"] = f"cc-{name}-{selected.get('license_version')}"
         excluded = exclusion_reasons(
-            {"quality": quality, "license_class": asset.license_class},
+            {"quality": quality, "license_class": asset.license_class,
+             "url": asset.url, "retrieved_at": asset.retrieved_at},
             origin,
             [],
         )

@@ -4,6 +4,8 @@ from pathlib import Path
 
 import yaml
 
+from colorstats.rights import analysis_review_reasons
+
 
 def load_policy(path: Path, provider: str) -> dict:
     """YAMLから有効なソース設定を読む。未登録・無効なら通信前に拒否する。"""
@@ -24,10 +26,15 @@ def check_policy(policy: dict | None) -> None:
         if not policy.get(key):
             raise ValueError(f"source_policyに{key}が必要です")
 
+    if policy["license_rules"].get("analysis_only") and analysis_review_reasons(policy):
+        raise ValueError("解析専用入力の取得根拠が未確認または失効しています")
+
 
 def license_class(policy: dict, license_name: str) -> str:
-    """完全一致の許可リストで判定する。不明・複合表記・NDはrestricted。"""
+    """完全一致の許可リストで判定する。解析専用は別途確認済みの根拠を必須とする。"""
     name = license_name.strip().lower()
+    if name in policy["license_rules"].get("analysis_only", []):
+        return "analysis_only" if not analysis_review_reasons(policy) else "restricted"
     if "nd" in name.split("-"):
         return "restricted"
     for category in ("open", "noncommercial", "academic_only"):

@@ -18,6 +18,7 @@ from colorstats.analyze.segment import _digest, _hash, _license
 from colorstats.colors import QUANTILES, rgb_to_oklab
 from colorstats.queue.core import Claim, RunInfo
 from colorstats.queue.worker import Prepared
+from colorstats.rights import LICENSES
 from colorstats.schema.models import Asset
 from colorstats.store import temporary_path
 
@@ -31,7 +32,7 @@ def _configuration(payload):
         raise ValueError("methodはnone・gray-world・intrinsicです")
     if not payload.get("region_run_id") or "regions" not in payload:
         raise ValueError("shadeにはregion_run_idとregionsが必要です")
-    if payload["license_class"] not in {"open", "noncommercial", "academic_only", "restricted"}:
+    if payload["license_class"] not in LICENSES:
         raise ValueError("未知のlicense_classです")
     parameters = {"payload": payload, "code_version": CODE_VERSION,
                   "input_hash": color.config_hash(payload)}
