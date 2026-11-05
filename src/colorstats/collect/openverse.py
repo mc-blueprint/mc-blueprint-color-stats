@@ -144,7 +144,7 @@ class OpenverseAdapter(HttpClient):
 
         def authorized(request, **options):
             parts = urlsplit(request.full_url)
-            if parts.hostname == "api.openverse.org":
+            if (parts.hostname or "").lower().rstrip(".") == "api.openverse.org":
                 if self.auth_mode == "standard" and request.colorstats_redirected:
                     raise NonRetryableError("Openverse登録APIへのredirectを拒否しました")
                 if parts.scheme != "https" or parts.port not in (None, 443):
