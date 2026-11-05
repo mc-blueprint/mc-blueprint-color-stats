@@ -15,7 +15,7 @@
 
 - [x] source policy YAML構文
 - [x] Python 3.12構文compile
-- [x] 関連テスト — 627 passed, 271 skipped
+- [x] 関連テスト — 932 passed, 1 skipped（GPU実行条件なし）
 - [x] ruff
 - [x] build
 - [x] API実取得 — 403 challenge、適格画像0。画像一括取得なし
