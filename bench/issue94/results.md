@@ -9,7 +9,7 @@ branch: feature/issue-94。引継ぎ起点: origin/develop cecc325。
 
 | 条件 | 状態・根拠 |
 | --- | --- |
-| 規約・用途・大量保存・保持・レートの確認記録 | 一部未完了。規約全文はIssueコメントのユーザー確認を再利用。公開API・内部色解析・CC BY-SA 4.0・30日保持をpolicy/docsへ記録。現行API文書はログイン画面で、公開レート本文とrobotsの公開APIへの適用関係は未確認。ソース無効を維持 |
+| 規約・用途・大量保存・保持・レートの確認記録 | 完成条件1は未完了。規約全文はIssueコメントのユーザー確認を再利用。公開API・内部色解析・CC BY-SA 4.0・30日保持を記録。ユーザー決定によりレートは自主上限。robotsと規約§5・§11の関係をMapillaryへ確認し、回答まで全host停止 |
 | 1ページ・継続・順位・画像対応のfixture | 実装・fixture検証済み。固定意図/bbox、整数offset→内部cursorをSTATE_DIRECTORYに永続化。別インスタンスの再開、未知offset拒否、同ページ再検索、URL失効を検証。fixtureは公式SDKのフィールド契約に基づく合成データであり実画像応答ではない |
 | 禁止・未確認・人物主体・非画像・対応不明の事前除外 | 実装・fixture検証済み。無効policy、作者/ID/sequence/日時/寸法不足、CDN未確認、人物検出、検出未確認/継続を取得前に拒否。APIの人物検出ゼロだけで内部privacy確認を省略しない |
 | 重複・連写・作者/地域集中・subject | 実装・fixture/既存全回帰で確認。同条件の同sequenceを抑制、native ID・安定URL・SHA・既存prepのpHash・bias予約を再利用。作者/地域を記録。subject_idを推測せず未確定とする。確定subject支持は増えない |
@@ -29,7 +29,7 @@ branch: feature/issue-94。引継ぎ起点: origin/develop cecc325。
   HTTP200、11 byteの空結果、画像0枚・適格0枚。API byteにrobots応答は含めていない。
   判明後に追加通信を停止し、policyを無効化。probeにも禁止/未確認時の停止を追加した。
 - 運用者へ公開APIとrobotsの関係に関する既存判断・公式根拠を照会中。
-  robotsを無視して実取得・有効化することはしない。再開にはこの判断と現行レートの確認が必要。
+  robotsを無視して実取得・有効化することはしない。再開にはMapillaryの回答が必要。
 - API条件・認証の一次情報:
   [公式SDK entities](https://github.com/mapillary/mapillary-python-sdk/blob/main/src/mapillary/config/api/entities.py)、
   [公式SDK client](https://github.com/mapillary/mapillary-python-sdk/blob/main/src/mapillary/models/client.py)。
@@ -43,7 +43,7 @@ branch: feature/issue-94。引継ぎ起点: origin/develop cecc325。
 ## 検証
 
 - WSLはUbuntu-24.04、ext4の`/tmp/colorstats-issue94/code`で実施。Python3.12、PostgreSQL16。
-- 最終全pytest: 911 passed / 1 skipped、147.51秒。skipは既存の実GPUテスト。
+- 初回実装の全pytest: 911 passed / 1 skipped、147.51秒。skipは既存の実GPUテスト。
   colour-scienceの既存任意Matplotlib未導入警告が1件。実GPU成功とは扱わない。
 - 追加差分の重点検証: 20 passed。署名query全除去・継続状態保全を含む。
 - ubuntu-1の隔離PostgreSQL16: 20 passed。既存の一時検証venv・PostgreSQLバイナリを読み取り利用。
@@ -64,3 +64,34 @@ branch: feature/issue-94。引継ぎ起点: origin/develop cecc325。
 未解決条件が残るため、通常PRとして完成したとは報告しない。push・PRはユーザー指示どおり未実行。
 新しいドメイン知識候補: 公開APIのhostもrobotsが全面拒否を返す事実。規約解釈は未確定。
 外部AI-Knowledgeは編集していない。メインで正本・記録要否を判断する。
+
+## 反証指摘への修正（同一owner、2026-11-05）
+
+基準commit: 549f5c13d0d6520a143c5442f8864b61af167e70。既存worktreeを継続。
+ユーザー決定により、回答までMapillaryは全経路で通信しない。レートは既存の自主上限を維持。
+今回の修正・検証で外部サイトへ通信していない。SSHは指定された本番DB件数のREAD ONLY確認のみ。
+
+- P1修正: HttpClient共通層でmapillary.com・fbcdn.netと全subdomainを現行policyに従わせる。
+  Openverseの元ページ照合・原画像取得、古い許可host表、別host redirectにも同じ停止を適用。
+  全host・元ページ照合・redirectの回帰テストを追加した。
+- P2共有枠修正: media_transferと台帳に実hostとrate_groupを併記。
+  復元はgroup単位で行い、旧台帳のgroup欠落は記録時policyのsuffix規則で対応付ける。
+  メモリ内レート状態を初期化し、a.fbcdn.netの4MBをb.fbcdn.netの受信へ復元するDB回帰を追加。
+  新旧両台帳で5MB/10秒の共有枠を超えないことを確認した。
+- P2認証拒否修正: 401/403をNonRetryableErrorに変換。
+  worker子プロセスの失敗応答へ再試行可否を含め、Queue.fail(retryable=False)で1試行のfailedにする。
+  401・403それぞれについて実spawn経由でfailure_reasonと再claim不能を検証した。
+- 懸念修正: prepare開始時に現在のprovider許可を再確認。
+  Mapillary hostはHTTP送信直前にも再確認し、レート待機中の無効化も拒否。
+  現行ファイルはCOLORSTATS_SOURCE_POLICY、未指定時はcwd/configs/source_policy.yaml。
+  payload内の過去policy・任意のpathで現行停止を迂回しない。過去enabledジョブと待機中停止の回帰を追加。
+- 本番READ ONLY確認（2026-11-05 10:28:42 UTC）: transaction_read_only=on。
+  provider=mapillaryかつ保存policy.enabled=trueのcollect jobは全状態合計0件。
+  Mapillary hostの許可を持つOpenverse collect jobも全状態合計0件。個別payload・接続情報は非表示。
+  ログ: 20261105T102842Z-23f788163ebe4c60a8b206c67b9df67b.jsonl。
+  再現スクリプト: read-production-counts.py。本番DBは変更していない。
+- 最終全体検証: WSL Ubuntu-24.04、Python3.12・隔離PostgreSQL16で923 passed / 1 skipped、149.90秒。
+  skipは既存実GPUテスト、任意Matplotlib未導入の既存警告1件。ruff・sdist/wheel・diff check成功。
+  関連回帰64件も成功。専用PostgreSQLはtrapで停止済み。新規回帰は計12件。
+- PR本文はRefs #94へ変更。完成条件1・6未達とMapillary回答待ちを明記。
+  push・PRは行わない。変更範囲は指摘のHTTP/policy/stage/台帳・queue伝播と対応テスト・文書だけ。

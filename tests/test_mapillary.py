@@ -9,6 +9,7 @@ import yaml
 from colorstats.collect import SearchRequest
 from colorstats.collect.mapillary import ENDPOINT, MapillaryAdapter
 from colorstats.collect.policy import load_policy
+from colorstats.queue.core import NonRetryableError
 from tests.test_collect import ROOT, Clock, Response
 
 
@@ -21,7 +22,11 @@ def setup(tmp_path, monkeypatch):
     monkeypatch.setenv("STATE_DIRECTORY", str(tmp_path / "state"))
     sources = yaml.safe_load((ROOT / "configs/source_policy.yaml").read_text())["sources"]
     policy = sources["mapillary"]
-    return {**policy, "enabled": True}
+    policy = {**policy, "enabled": True}
+    current = tmp_path / "source_policy.yaml"
+    current.write_text(yaml.safe_dump({"sources": {"mapillary": policy}}))
+    monkeypatch.setenv("COLORSTATS_SOURCE_POLICY", str(current))
+    return policy
 
 
 def item(**changes):
@@ -140,7 +145,7 @@ def test_署名URL失効は再取得で更新しnativeIDは維持する(setup, t
     adapter, calls = client(setup, [{"data": [item()]}, HTTPError(
         "https://scontent.example.fbcdn.net/image?access_token=secret", 403, "secret", {}, None)])
     candidate = adapter.search(request()).candidates[0]
-    with pytest.raises(HTTPError) as error:
+    with pytest.raises(NonRetryableError) as error:
         adapter.download(candidate, tmp_path / "image")
     assert "secret" not in str(error.value)
     adapter, _ = client(setup, [{"data": [item(

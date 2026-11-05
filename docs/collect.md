@@ -430,7 +430,11 @@ source.policyは初回の共有情報を保持する。後日のlicense/根拠�
 
 `mapillary`は登録アプリの公開Images APIだけに接続する解析専用アダプターです。
 2026-11-05、graph.mapillary.comのrobots.txtが`User-agent: * / Disallow: /`を返しました。
-公開APIとの適用関係を確認するまで`source_policy.yaml`では無効です。無効状態では投入・取得を拒否します。
+ユーザー決定（2026-11-05）に従い、robotsと規約§5・§11の関係をMapillaryへ確認し、
+回答まで`source_policy.yaml`では無効です。Openverse経由を含む全Mapillary hostへの通信を止めます。
+実行環境の現行policyは`COLORSTATS_SOURCE_POLICY`、未指定時はcwdの`configs/source_policy.yaml`です。
+prepare開始時と各HTTP要求・redirectの送信直前に読み直し、保存済み`enabled: true`より優先します。
+現行ファイルの欠落・無効・確認不能時は通信しません。長時間待機後の送信にも停止を適用します。
 API文書はログイン画面のため、フィールドと認証は公式Python SDKの実装も参照しています。
 Terms of Use（2024-02-15発効）の全文確認はIssue #94のユーザー確認コメントを根拠とします。
 §3(b)・5・11・12に従い公開API以外の自動取得、過負荷、再配布、画像配信、
@@ -471,7 +475,10 @@ CC BY-SA 4.0の原表記・帰属を保存し、#87の`analysis_only`だけを�
 原画像・縮小画像・CVAT・精密位置は公開せず、配布は既存の非表現的統計ゲートに限定します。
 レートはAPI・CDN各同時1、通信終了後2秒、API30要求/60秒、画像5 MB/10秒です。
 これは公開上限の断定ではなく、少量検証用の保守的な自主枠です。
-現行公式API文書の公開レート本文は未確認のため、本収集前に再確認してください。
-401/403は停止、429/503はRetry-Afterと60秒以上のbackoffを守って停止し、自動再試行しません。
+公開レート本文は未確認で、2026-11-05のユーザー決定により自主上限で進めます。
+CDNのbyte台帳には実hostとrate_groupを記録し、再起動後も別subdomainの同じ共有枠を復元します。
+401/403は理由をjobへ記録し、spawnされたworker経由でも1試行でfailedとし自動再試行しません。
+429/503はRetry-Afterと60秒以上のbackoffを守ってHTTP内では再試行せず停止します。
+通常の負荷制限はキューの既存試行枠に従い、401/403の再試行禁止とは区別します。
 
 実測・未完了条件は`bench/issue94/results.md`を参照してください。

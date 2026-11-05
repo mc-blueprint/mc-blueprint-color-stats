@@ -1,6 +1,6 @@
-feat: Mapillaryの解析専用アダプターと安全な認証経路を追加
+fix: Mapillaryの通信停止と共有枠復元と認証拒否処理を修正
 
-- 固定意図とbboxによる検索、cursor再開、thumbnail取得と連写除外を追加
-- LoadCredential専用認証と別hostへの認証非転送、署名URLの非保存を実装
-- 保持・権利・出力境界を再利用しfixtureと隔離PostgreSQLで検証
-- robots全面拒否の実測を記録し、適用判断までソースを無効に保つ
+- 現行policyによる全Mapillary hostの遮断を集約元ページと過去ジョブにも適用
+- rate_group単位でCDN帯域台帳を記録・復元し別subdomainへ共有
+- 401と403を子プロセスからworkerへ再試行しない失敗として伝播
+- 本番DBの該当ジョブ0件をREAD ONLYで確認し回帰と公開文面を更新
