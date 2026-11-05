@@ -5,6 +5,7 @@ from urllib.error import HTTPError
 from urllib.parse import parse_qs, urlsplit
 
 import pytest
+import yaml
 from PIL import Image
 
 from colorstats.collect import SearchRequest
@@ -13,6 +14,15 @@ from colorstats.collect.loc import COLLECTION, LoCAdapter
 from colorstats.collect.policy import load_policy
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def policy_for_test():
+    sources = yaml.safe_load(
+        (ROOT / "configs/source_policy.yaml").read_text(encoding="utf-8")
+    )["sources"]
+    policy = sources["loc"]
+    policy["enabled"] = True
+    return policy
 
 
 class Response(io.BytesIO):
@@ -37,7 +47,7 @@ def jpeg(color):
 
 
 def adapter_for(responses, *, endpoint_type="collection"):
-    policy = load_policy(ROOT / "configs/source_policy.yaml", "loc")
+    policy = policy_for_test()
     policy["endpoint_type"] = endpoint_type
     clock = Clock()
     requests = []
@@ -142,7 +152,7 @@ def test_captchaとrate_limitで測定を停止する():
     with pytest.raises(MeasurementLimit, match="HTMLまたはCAPTCHA"):
         adapter.search(SearchRequest("loc", "building", limit=1))
 
-    policy = load_policy(ROOT / "configs/source_policy.yaml", "loc")
+    policy = policy_for_test()
     clock = Clock()
 
     def rate_limited(request, **kwargs):
@@ -151,3 +161,22 @@ def test_captchaとrate_limitで測定を停止する():
     adapter = LoCAdapter(policy, opener=rate_limited, clock=lambda: clock.now, wait=clock.wait)
     with pytest.raises(MeasurementLimit, match="429/503"):
         adapter.search(SearchRequest("loc", "building", limit=1))
+
+
+def test_cloudflare_challengeは即停止し再試行しない():
+    policy = policy_for_test()
+    calls = []
+
+    def challenged(request, **kwargs):
+        calls.append(request.full_url)
+        raise HTTPError(request.full_url, 403, "Forbidden", {"Cf-Mitigated": "challenge"}, None)
+
+    adapter = LoCAdapter(policy, opener=challenged)
+    with pytest.raises(MeasurementLimit, match="Cloudflare challenge"):
+        adapter.search(SearchRequest("loc", "building", limit=1))
+    assert len(calls) == 1
+
+
+def test_source_policyでLoC取得を無効化している():
+    with pytest.raises(ValueError, match="source_policy"):
+        load_policy(ROOT / "configs/source_policy.yaml", "loc")

@@ -125,7 +125,7 @@ sources:
       - https://docs.openverse.org/api/reference/authentication_and_throttling.html
       - https://github.com/WordPress/openverse/blob/main/documentation/terms_of_service.md
   loc:
-    enabled: true
+    enabled: false
     endpoint_type: collection
     user_agent: "mc-blueprint-color-stats-bot/0.1 (https://github.com/mc-blueprint/mc-blueprint-color-stats; https://github.com/mc-blueprint)"
     min_interval: 6.0
@@ -134,6 +134,7 @@ sources:
     hosts:
       www.loc.gov:
         kind: api
+        rate_group: loc.gov
         min_interval: 6.0
         api_windows: [{seconds: 60, limit: 10}]
       tile.loc.gov:
@@ -164,11 +165,11 @@ sources:
       robots_url: https://www.loc.gov/robots.txt
       image_robots_url: https://tile.loc.gov/robots.txt
       cdn_robots_url: https://cdn.loc.gov/robots.txt
-      summary: "API規約とitem別権利を個別確認する。No known restrictionsはPDではなく解析専用として扱う。Legalの全機械合計10要求/分推奨とCrawl-Delay 5に従い、API・画像を含め6秒以上間隔とする。tile robotsは404、cdn robotsの/service・/masterは禁止。"
+      summary: "公式JSON APIはCloudflare challenge (403/Cf-Mitigated: challenge)を返すためアダプターを無効化。challenge検出時は再試行せず停止し、回避しない。"
       purpose: non_expressive_color_statistics
       decision: allowed
       reviewer: user (Issue 92)
-      policy_version: issue92-v1
+      policy_version: issue92-v2
     references:
       - https://www.loc.gov/apis/json-and-yaml/requests/
       - https://www.loc.gov/apis/json-and-yaml/working-within-limits/
