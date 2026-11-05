@@ -1,5 +1,53 @@
 # 公式確認日: 2026-11-01。数値は公式の固定上限ではなく本プロジェクトの制限。
 sources:
+  mapillary:
+    enabled: false
+    user_agent: "mc-blueprint-color-stats-bot/0.1 (https://github.com/mc-blueprint/mc-blueprint-color-stats; https://github.com/mc-blueprint)"
+    credential: mapillary-client-token
+    min_interval: 2.0
+    retries: 0
+    backoff: 60.0
+    hosts:
+      graph.mapillary.com:
+        kind: api
+        min_interval: 2.0
+        max_concurrency: 1
+        api_windows: [{seconds: 60, limit: 30}]
+      fbcdn.net:
+        kind: media
+        rate_group: mapillary-media
+        min_interval: 2.0
+        max_concurrency: 1
+        media_bytes_per_10_seconds: 5000000
+    media_hosts: [fbcdn.net]
+    searches:
+      kyoto-street-buildings:
+        intent: 京都の道路沿い建築の色解析候補（建築分類は未確認）
+        region: japan-kyoto
+        bbox: [135.768, 35.003, 135.773, 35.008]
+    attribution: 作者ID・画像ページ・CC BY-SA 4.0を内部台帳へ保存
+    redistribution: 原画像・縮小画像・CVAT・個人情報を配布せず非表現的統計だけを使用
+    license_rules:
+      analysis_only: [cc-by-sa-4.0]
+    rights_basis: copyright_act_30_4
+    attribution_required: false
+    access_scope: internal
+    image_redistribution: false
+    retention: {raw_days: 30, rejected_days: 7, deletion_request_days: 7, backup_days: 30}
+    rights_review:
+      reviewed_at: "2026-11-05T09:00:00+00:00"
+      terms_url: https://www.mapillary.com/terms
+      api_url: https://www.mapillary.com/developer/api-documentation
+      robots_url: https://graph.mapillary.com/robots.txt
+      summary: "Issue 94のユーザー確認済み2024-02-15発効規約§3(b)・5・11・12。登録アプリの公開APIのみ、単純再配布・画像配信・再識別・ぼかし解除は禁止。大量本収集は105完了後に別途実行。保持は承認済み30日、削除窓口はdocs/retention.md。"
+      purpose: non_expressive_color_statistics
+      decision: allowed
+      reviewer: user (Issue 94 comments, 2026-11-05)
+      policy_version: issue94-v1
+      robots_status: "2026-11-05実確認: User-agent * / Disallow /。公開APIとの適用関係の判断待ち、有効化禁止"
+    references:
+      - https://github.com/mapillary/mapillary-python-sdk/blob/main/src/mapillary/config/api/entities.py
+      - https://github.com/mapillary/mapillary-python-sdk/blob/main/src/mapillary/models/client.py
   wikimedia_commons:
     enabled: true
     user_agent: "mc-blueprint-color-stats-bot/0.1 (https://github.com/mc-blueprint/mc-blueprint-color-stats; https://github.com/mc-blueprint)"
