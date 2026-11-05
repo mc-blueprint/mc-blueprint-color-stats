@@ -398,7 +398,7 @@ ubuntu-1から3層を各1回、同じ条件で直列に送った。japanese-cast
 
 ## Library of Congress
 
-`LoCAdapter` は `https://www.loc.gov/collections/john-margolies-roadside-america/` のJSON結果を使う。item URLと権利記述を候補metadataへそのまま保持し、`No known restrictions` は `loc-analysis-only` として扱い、public domainやCreative Commonsへ変換しない。権利記述欠落・不明、アクセス制限、非写真／図面、画像なし、白黒画像は原画像の取得前に除外する。API応答の画像URLだけを使い、URLを組み立てない。
+`LoCAdapter` は `https://www.loc.gov/collections/john-margolies-roadside-america/` と `/photos/` のJSON経路を実装しているが、現在はCloudflare challenge (403, `Cf-Mitigated: challenge`)を確認したためsource policyで無効。challenge検出時は再試行せず停止し、回避しない。`No known restrictions`をpublic domainやCreative Commonsへ変換しない。候補調査と未承認の一括データ取り込み案は`bench/issue92/results.md`を参照。
 
 このcollectionはJohn Margolies個人による米国沿道商業建築（1969〜2008年）の写真に偏る。[LoCのResearch Guide](https://guides.loc.gov/roadside-america-photographs)は11,710点のカラー35mmスライドと説明している。建築・地形全般の代表標本とはせず、検索語とitem IDを測定記録へ残す。
 
