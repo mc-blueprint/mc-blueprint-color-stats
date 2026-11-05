@@ -26,6 +26,7 @@ from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import check_current_source, license_class, load_policy
 from colorstats.collect.quality import QUALITY_POLICY, schedule_original
 from colorstats.queue import RunInfo
+from colorstats.queue.core import NonRetryableError
 from colorstats.queue.worker import Prepared
 from colorstats.rights import combine_license
 from colorstats.schema.models import Asset, Source
@@ -176,6 +177,9 @@ def prepare(
         if meter is not None and hasattr(meter, "reserve_quota"):
             adapter.quota_reserve = meter.reserve_quota
             adapter.media_history = meter.media_history
+    if (request.provider == "openverse" and payload["policy"].get("auth_mode") == "standard"
+            and adapter.quota_reserve is None):
+        raise NonRetryableError("Openverse standardは共有枠台帳付きの収集が必要です")
     temporary = None
     engine = create_engine(database_url)
     try:
