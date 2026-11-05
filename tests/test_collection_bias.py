@@ -573,7 +573,8 @@ def test_同じ出典URLも検索providerごとに予約と確定集計を揃え
     current = claims(queue, config, 1)[0]
     for provider in ("wikimedia_commons", "openverse"):
         assert bias.reserve(
-            queue, current, config, replace(request(), provider=provider), candidate(1)
+                queue, current, config,
+                replace(request(), provider=provider, download_mode=None), candidate(1)
         ) == "source_limit"
 
 

@@ -85,7 +85,8 @@ def responses():
 def test_記録レスポンスからメタデータと選ばれ方を保持する(policy, tmp_path):
     adapter, requests = adapter_for(policy, responses() + [Response(b"original")])
     request = SearchRequest(
-        "wikimedia_commons", "姫路城", "ja", page=3, offset=17, limit=1, stratum="japan-castle"
+        "wikimedia_commons", "姫路城", "ja", download_mode="original",
+        page=3, offset=17, limit=1, stratum="japan-castle"
     )
     result = adapter.search(request)
     candidate = result.candidates[0]
@@ -136,7 +137,9 @@ def test_帰属表示は指定を優先し未指定なら作者とCreditを使�
         ext["Attribution"] = {"value": specified}
         ext.pop("Artist")
     adapter, _ = adapter_for(policy, [Response(record) for record in recorded])
-    candidate = adapter.search(SearchRequest("wikimedia_commons", "castle")).candidates[0]
+    candidate = adapter.search(SearchRequest(
+        "wikimedia_commons", "castle", download_mode="original",
+    )).candidates[0]
     assert candidate.exclusion_reason is None
     prefix = "指定クレジット" if specified else "Martin Falbisoner | Own work"
     assert candidate.attribution == (
@@ -174,7 +177,9 @@ def test_帰属必須情報不足はフラグ欠落や偽でも取得しない(
     assert f"missing_attribution:{reason}" in caplog.text
     assert len(requests) == 2
     direct, calls = adapter_for(policy, [Response(record) for record in recorded])
-    candidate = direct.search(SearchRequest("wikimedia_commons", "castle")).candidates[0]
+    candidate = direct.search(SearchRequest(
+        "wikimedia_commons", "castle", download_mode="original",
+    )).candidates[0]
     with pytest.raises(ValueError, match="missing_attribution"):
         direct.download(candidate, tmp_path / "denied")
     assert len(calls) == 2 and not (tmp_path / "denied").exists()
@@ -189,7 +194,9 @@ def test_PDとCC0は帰属情報なしでも取得できる(policy, tmp_path, li
         "AttributionRequired": {"value": "false"},
     }
     adapter, _ = adapter_for(policy, [Response(r) for r in recorded] + [Response(b"pd")])
-    candidate = adapter.search(SearchRequest("wikimedia_commons", "castle")).candidates[0]
+    candidate = adapter.search(SearchRequest(
+        "wikimedia_commons", "castle", download_mode="original",
+    )).candidates[0]
     assert candidate.exclusion_reason is None
     adapter.download(candidate, tmp_path / "original")
     assert (tmp_path / "original").read_bytes() == b"pd"
@@ -199,7 +206,8 @@ def test_実応答の複数ライセンスからCommonsMetadataの選択を採�
     recorded = json.loads((ROOT / "tests/fixtures/commons-multilicense.json").read_text("utf-8"))
     adapter, _ = adapter_for(policy, [Response(r) for r in recorded] + [Response(b"original")])
     candidate = adapter.search(
-        SearchRequest("wikimedia_commons", 'intitle:"Example.jpg"', limit=1)
+        SearchRequest("wikimedia_commons", 'intitle:"Example.jpg"', limit=1,
+                      download_mode="original")
     ).candidates[0]
     selection = candidate.metadata["license_selection"]
     assert selection["selected"] == candidate.license == "pd"
@@ -216,7 +224,9 @@ def test_ライセンス候補カテゴリは継続応答も保持する(policy)
     recorded[1]["continue"] = {"clcontinue": "1|GFDL", "continue": "||"}
     continuation = {"query": {"pages": [{"categories": [{"title": "Category:GFDL"}]}]}}
     adapter, requests = adapter_for(policy, [Response(r) for r in recorded + [continuation]])
-    candidate = adapter.search(SearchRequest("wikimedia_commons", "castle")).candidates[0]
+    candidate = adapter.search(SearchRequest(
+        "wikimedia_commons", "castle", download_mode="original",
+    )).candidates[0]
     assert candidate.metadata["license_selection"]["candidates"] == [
         "Category:CC-BY-SA-4.0",
         "Category:GFDL",
@@ -248,7 +258,9 @@ def test_取得禁止とポリシー欠落では通信しない(policy, tmp_path
     with pytest.raises(ValueError):
         CommonsAdapter({**policy, "enabled": False})
     adapter, requests = adapter_for(policy, responses())
-    candidate = adapter.search(SearchRequest("wikimedia_commons", "castle")).candidates[0]
+    candidate = adapter.search(SearchRequest(
+        "wikimedia_commons", "castle", download_mode="original",
+    )).candidates[0]
     with pytest.raises(ValueError, match="restricted"):
         adapter.download(replace(candidate, license="cc-by-nd-4.0"), tmp_path / "denied")
     assert len(requests) == 2 and not (tmp_path / "denied").exists()
@@ -266,7 +278,7 @@ def test_負荷制限のRetryAfterと指数待機を守る(policy, failure):
         return Response({"error": {"code": failure}}, {"Retry-After": "12"})
 
     adapter, requests = adapter_for(policy, [error(), error()] + responses())
-    adapter.search(SearchRequest("wikimedia_commons", "castle"))
+    adapter.search(SearchRequest("wikimedia_commons", "castle", download_mode="original"))
     assert [time for _, time in requests] == [0, 12, 24, 24.5]
 
 
@@ -276,7 +288,7 @@ def test_負荷制限の最終試行も待機してから失敗する(policy, co
         policy, [Response({"error": {"code": code}}) for _ in range(3)]
     )
     with pytest.raises(RuntimeError, match="負荷制限"):
-        adapter.search(SearchRequest("wikimedia_commons", "castle"))
+        adapter.search(SearchRequest("wikimedia_commons", "castle", download_mode="original"))
     assert [time for _, time in requests] == [0, 5, 15]
     assert adapter.clock() == 35
 
@@ -284,7 +296,7 @@ def test_負荷制限の最終試行も待機してから失敗する(policy, co
 def test_恒久APIエラーは再試行しない(policy):
     adapter, requests = adapter_for(policy, [Response({"error": {"code": "badvalue"}})])
     with pytest.raises(RuntimeError, match="badvalue"):
-        adapter.search(SearchRequest("wikimedia_commons", "castle"))
+        adapter.search(SearchRequest("wikimedia_commons", "castle", download_mode="original"))
     assert len(requests) == 1
 
 
@@ -304,7 +316,7 @@ def test_HTTP日時のRetryAfterを守る(policy, monkeypatch):
             *responses(),
         ],
     )
-    adapter.search(SearchRequest("wikimedia_commons", "castle"))
+    adapter.search(SearchRequest("wikimedia_commons", "castle", download_mode="original"))
     assert [time for _, time in requests] == [0, 30, 30.5]
 
 
@@ -316,7 +328,9 @@ def test_短いHTTPボディを原本として受理しない(policy, tmp_path):
             Response(b"short", {"Content-Length": "100"}),
         ],
     )
-    candidate = adapter.search(SearchRequest("wikimedia_commons", "castle")).candidates[0]
+    candidate = adapter.search(SearchRequest(
+        "wikimedia_commons", "castle", download_mode="original",
+    )).candidates[0]
     with pytest.raises(OSError, match="途中"):
         adapter.download(candidate, tmp_path / "original")
 
@@ -345,7 +359,8 @@ def payload_for(tmp_path):
     recorder = Queue()
     enqueue_collect(
         recorder,
-        SearchRequest("wikimedia_commons", "castle", stratum="castles"),
+        SearchRequest("wikimedia_commons", "castle", stratum="castles",
+                      download_mode="original"),
         policy_path=ROOT / "configs/source_policy.yaml",
         storage_config=config,
         host="windows",
@@ -353,6 +368,7 @@ def payload_for(tmp_path):
         code_version="test",
         taxonomy_version="0.1.0",
     )
+    recorder.payload.pop("quality_policy")
     return recorder.payload, recorder.hash
 
 
@@ -600,7 +616,9 @@ def test_欠落した原本と非画像を候補から除外する(policy, missi
     else:
         info["imageinfo"][0]["mime"] = "application/pdf"
     adapter, _ = adapter_for(policy, [Response(record) for record in recorded])
-    assert adapter.search(SearchRequest("wikimedia_commons", "castle")).candidates == []
+    assert adapter.search(SearchRequest(
+        "wikimedia_commons", "castle", download_mode="original",
+    )).candidates == []
 
 
 def test_同じ内容の原本は一つの出力を共有する(policy, tmp_path, monkeypatch):

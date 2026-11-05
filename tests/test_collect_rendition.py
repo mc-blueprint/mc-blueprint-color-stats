@@ -84,7 +84,7 @@ def test_幅1280の縦長画像と原本の契約を分ける(policy, tmp_path):
 
 
 @pytest.mark.parametrize("change,reason", [
-    ({"width": 800}, "thumbnail_not_smaller"),
+    ({"width": 800, "height": 800}, "thumbnail_not_smaller"),
     ({"thumburl": None}, "thumbnail_missing"),
     ({"thumbmime": None}, "thumbnail_missing"),
     ({"timestamp": None}, "thumbnail_revision_missing"),
@@ -102,7 +102,7 @@ def test_縮小が成立しない候補を明示除外し原本へ戻らない(p
     assert len(calls) == 2
 
 
-def test_取得モードでjobのハッシュが変わり既定は原本(tmp_path):
+def test_取得モードでjobのハッシュが変わり他ソースの明示縮小は拒否する(tmp_path):
     payload, before = payload_for(tmp_path)
     assert payload["request"]["download_mode"] == "original"
     with pytest.raises(ValueError):
@@ -146,8 +146,9 @@ def test_受信PNGの寸法とMIMEを原本JPEGの値から分離する(
 
 
 @pytest.mark.parametrize("sha1", [None, "matching", "mismatch"])
+@pytest.mark.parametrize("quality_policy", [False, True])
 def test_原本はPillow上限で失敗せずSHA1不一致候補だけを除外する(
-    policy, tmp_path, monkeypatch, sha1,  # noqa: F811
+    policy, tmp_path, monkeypatch, sha1, quality_policy,  # noqa: F811
 ):
     from PIL import Image
 
@@ -162,7 +163,7 @@ def test_原本はPillow上限で失敗せずSHA1不一致候補だけを除外�
         None: None, "matching": expected, "mismatch": "0" * 40,
     }[sha1]
     adapter, _ = adapter_for(policy, [Response(r) for r in recorded])
-    result = adapter.search(SearchRequest("wikimedia_commons", "castle"))
+    result = adapter.search(SearchRequest("wikimedia_commons", "castle", download_mode="original"))
     first = result.candidates[0]
     following = replace(
         first, source_url=first.source_url + "/next", original_url=first.original_url + "?next",
@@ -181,6 +182,10 @@ def test_原本はPillow上限で失敗せずSHA1不一致候補だけを除外�
         Image.open(io.BytesIO(content))
     discarded, events = [], []
     payload, digest = payload_for(tmp_path)
+    if quality_policy:
+        from colorstats.collect.quality import QUALITY_POLICY
+
+        payload["quality_policy"] = QUALITY_POLICY
     prepared = prepare(
         claim_for(payload, digest), discard=lambda request, candidate: discarded.append(candidate),
         observer=lambda event, value: events.append((event, value)),

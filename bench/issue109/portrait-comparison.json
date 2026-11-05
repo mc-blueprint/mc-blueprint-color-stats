@@ -1,0 +1,2662 @@
+{
+  "summary": {
+    "selected": 27,
+    "evaluated": 27,
+    "unevaluated": 0,
+    "status": {
+      "acquired": 27
+    },
+    "budget": {
+      "limits": {
+        "api": 5,
+        "thumbnail": 30,
+        "original": 0
+      },
+      "used": {
+        "api": 1,
+        "thumbnail": 27,
+        "original": 0
+      }
+    },
+    "dominant_oklab_mean": 0.0020194708505899958,
+    "major_agreement": 0.8864913192996784,
+    "intersection": 10216652,
+    "union": 11524819,
+    "passed": true,
+    "originals_unchanged": 27,
+    "analysis_errors": [],
+    "received_long_edges": [
+      1280,
+      1304,
+      1308,
+      1321,
+      1327,
+      1338,
+      1367,
+      1376,
+      1392,
+      1416,
+      1434,
+      1436,
+      1440,
+      1474,
+      1480,
+      1547,
+      1607,
+      1671,
+      1707,
+      1712
+    ]
+  },
+  "selection": {
+    "source": "/mnt/data/derived/issue90-20261105/existing100/manifest.json",
+    "rule": "#90固定100件からheight > widthの全件を元index順に選定。除外・追加選定なし。",
+    "count": 27,
+    "indices": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99
+    ],
+    "original_sha256": {
+      "/srv/colorstats/raw-orico/c4/.output-970450bf-19c5-49db-9361-593c76a23d98-7a99039b-782d-4e99-a48f-64350bc84465/c4bca759810a47d5e978eb04c967ca82e0e3ac2a37cf30621ad86522c3731fca.jpg": "c4bca759810a47d5e978eb04c967ca82e0e3ac2a37cf30621ad86522c3731fca",
+      "/srv/colorstats/raw-suneast/f8/.output-a55bfea4-eafc-448e-b985-a27bfd6808ad-fcf1ef34-fe2a-411c-9c4b-ebc379efba50/f8463e982e97ef468db38c9142b7c6f98c2596e832b16247830245cbc33d806b.jpg": "f8463e982e97ef468db38c9142b7c6f98c2596e832b16247830245cbc33d806b",
+      "/srv/colorstats/raw-orico/1a/.output-d5220c8c-3ba0-4b21-bb23-41e7d6fc121d-9c2b39b6-28e4-4896-95eb-af217327fbdf/1ac70d42fe849344b11ed26e06c3c583350a99893674ab8a155cff8a36f0ede6.jpg": "1ac70d42fe849344b11ed26e06c3c583350a99893674ab8a155cff8a36f0ede6",
+      "/srv/colorstats/raw-orico/cd/.output-b9a95a65-d487-4309-95b8-95407345d4e9-ca4b9923-bff8-49c8-9e42-675bd89fc8a8/cd4474e5b125712da4db72a7f24bb5922165a3ce1ff8d6893a2ceed050a0f030.jpg": "cd4474e5b125712da4db72a7f24bb5922165a3ce1ff8d6893a2ceed050a0f030",
+      "/srv/colorstats/raw-orico/fb/.output-267223ec-b6e3-4f38-96f3-33fdfb4f661e-aa2bc829-6cd7-4b62-87e6-02addd117e39/fbe49cd9e90df3a79926322d57e0e661e85e265aab37349fc98537bcc6517a92.jpg": "fbe49cd9e90df3a79926322d57e0e661e85e265aab37349fc98537bcc6517a92",
+      "/srv/colorstats/raw-orico/9d/.output-cac7e59b-02c3-4f74-8d97-a17184df247f-80112ee4-e7fd-4ea6-8335-5fe8364599da/9d6387233e955d7ad1192433e74da3213c91eeb6d6c46f711a9e1c63e2caa854.jpg": "9d6387233e955d7ad1192433e74da3213c91eeb6d6c46f711a9e1c63e2caa854",
+      "/srv/colorstats/raw-orico/c1/.output-b9a95a65-d487-4309-95b8-95407345d4e9-05a1acc9-8186-46c8-af55-8bca4207fb53/c1706f5913e9d93c81915cc8ca3ad4eb6ea788e3d1acadfc867143b621e3e446.jpg": "c1706f5913e9d93c81915cc8ca3ad4eb6ea788e3d1acadfc867143b621e3e446",
+      "/srv/colorstats/raw-orico/5c/.output-3cc21261-14e1-4482-9521-f4eb48ec1ea7-d52797bb-44cc-4751-926e-cfb34bdb01fa/5ceafb15f66b44cb219557e8c9bcc68004056365c1dbf562f630801c6b5d6f9a.jpg": "5ceafb15f66b44cb219557e8c9bcc68004056365c1dbf562f630801c6b5d6f9a",
+      "/srv/colorstats/raw-suneast/4f/.output-0d9e0f8b-a04e-4f8a-b1e4-c7533757ea84-9e778c58-9eca-42b9-a47e-1c144295d797/4f30835d6de37547b5d8439fa64237fef5942cf262d84e11e29dd25d9a0a75d9.jpg": "4f30835d6de37547b5d8439fa64237fef5942cf262d84e11e29dd25d9a0a75d9",
+      "/srv/colorstats/raw-orico/36/.output-7c9ae52f-6c06-49ec-b962-0bbc073e0b67-e8a28a81-a441-46ae-898a-43197690493d/3691a6afe4c5d00f461e200a22391be6c2c9b742b4d0607a2f521499fb9008a2.jpg": "3691a6afe4c5d00f461e200a22391be6c2c9b742b4d0607a2f521499fb9008a2",
+      "/srv/colorstats/raw-suneast/22/.output-3cc21261-14e1-4482-9521-f4eb48ec1ea7-b6ee6764-4f10-4803-9c00-34fee54679f4/22cdbfa2f9067c583c5e88b3c6284c9b58d716c05eeb98da3cbb447a9991bb83.jpg": "22cdbfa2f9067c583c5e88b3c6284c9b58d716c05eeb98da3cbb447a9991bb83",
+      "/srv/colorstats/raw-orico/e5/.output-267223ec-b6e3-4f38-96f3-33fdfb4f661e-6e2f2847-a45c-4b60-b92e-6663750639b5/e5fe3e725e9b9ccb4938a3604a51f219e27cc1f253081a60223434c288263dce.jpg": "e5fe3e725e9b9ccb4938a3604a51f219e27cc1f253081a60223434c288263dce",
+      "/srv/colorstats/raw-orico/4f/.output-8c4cc8e3-5703-4fd2-8fcd-d4d6086016f4-adca767a-7255-4c7e-8bad-df3f0249ad51/4f7ff95697180c2108db0d1aab14f05b89926eafedfe24478ab910452434be7c.jpg": "4f7ff95697180c2108db0d1aab14f05b89926eafedfe24478ab910452434be7c",
+      "/srv/colorstats/raw-orico/ab/.output-1499fa2d-2fd9-464b-b36a-266e38fdf8f2-930c8b99-d16f-4a3e-8a50-990d4ee304c0/abd7bcca42d8bdc2133a14b776712b79afc404749f9729b56a12d45851657224.jpg": "abd7bcca42d8bdc2133a14b776712b79afc404749f9729b56a12d45851657224",
+      "/srv/colorstats/raw-suneast/83/.output-a55bfea4-eafc-448e-b985-a27bfd6808ad-cd2eccd0-f763-4583-97be-e1fd6ea4a5e9/83153f66d12e6275160a2f9f32eb3d9a1f3f80663a1b316a79f9137e23405e0f.jpg": "83153f66d12e6275160a2f9f32eb3d9a1f3f80663a1b316a79f9137e23405e0f",
+      "/srv/colorstats/raw-suneast/31/.output-6dfbb733-e6c0-4d4a-b0e7-aeccfb5465f4-f47945d4-0efa-415f-9352-7b4b99ce454e/3118cb92286610289e0da9993b199b8b3502c22ad013dd59c879a3c834d9f2bb.jpg": "3118cb92286610289e0da9993b199b8b3502c22ad013dd59c879a3c834d9f2bb",
+      "/srv/colorstats/raw-suneast/f6/.output-89120fc6-1a22-4989-bfef-f65156373a91-0e815a4f-f9b2-4259-81ae-f4292bf01c68/f6dc07f92dc4a719c00932e10804e67d7db17144ab6bd0fe7ed6a1ed888b97bb.jpg": "f6dc07f92dc4a719c00932e10804e67d7db17144ab6bd0fe7ed6a1ed888b97bb",
+      "/srv/colorstats/raw-suneast/65/.output-fd3f8aa6-10ee-4385-bc7e-018e6b615b1c-78b4be71-3f6d-4ef5-b524-d3bae8eb9908/651202811e2547d12ead50636e1e90b25a2b992cd1d603582efd97810e644979.jpg": "651202811e2547d12ead50636e1e90b25a2b992cd1d603582efd97810e644979",
+      "/srv/colorstats/raw-suneast/01/.output-eed628d8-c733-4082-b8fb-a0860a2bd0b8-ba1794ff-e096-42bd-b6ec-a45497968349/0175b5895d01944dfaeb3bcf3ef3884905b44366f53d005ee9497a402d9dff35.jpg": "0175b5895d01944dfaeb3bcf3ef3884905b44366f53d005ee9497a402d9dff35",
+      "/srv/colorstats/raw-orico/f9/.output-e691598d-6134-47a7-a2df-652d78c0b37a-e48c21bb-0081-46a8-98f0-1a7379475558/f9b10876d879ec67932d8377dfcb43672e03da7eb2a7ae3d4be2ec29665418fc.jpg": "f9b10876d879ec67932d8377dfcb43672e03da7eb2a7ae3d4be2ec29665418fc",
+      "/srv/colorstats/raw-suneast/35/.output-17babee5-3f00-4f3e-ac18-c1c91098fae6-726fd2e2-1109-432f-9356-92c132c478ea/35fbd3441cd2a5a27affbbf6731fb5cfe34e6b0f504b58f9fa4c99e80e4790f9.jpg": "35fbd3441cd2a5a27affbbf6731fb5cfe34e6b0f504b58f9fa4c99e80e4790f9",
+      "/srv/colorstats/raw-orico/13/.output-3a10f48d-d776-477f-918d-8dac4953deb7-ce718abf-d41e-4e7c-96aa-9bf3240d2051/131de70e4addc40178cbd10437128f527bd062cbaccd102ffa9847d949968382.jpg": "131de70e4addc40178cbd10437128f527bd062cbaccd102ffa9847d949968382",
+      "/srv/colorstats/raw-orico/0a/.output-449246f3-5de8-488c-9dc1-b835281e2f2c-f1f5d4cc-6263-4e0d-8a16-95b8d1c9fd5d/0a77cc1626486fec45c15eeb3ad859dd9bafe8cf2f50c92b0b57f19ac4b7b0b0.jpg": "0a77cc1626486fec45c15eeb3ad859dd9bafe8cf2f50c92b0b57f19ac4b7b0b0",
+      "/srv/colorstats/raw-suneast/40/.output-8d96b817-4b77-4458-a485-9edde53921e7-54d87a6f-2c39-4dd6-9d8d-fb6ca231ae87/40084ddf4573f2644639eff3a59e8d17da636f36c6c4153461e77a281390fa37.jpg": "40084ddf4573f2644639eff3a59e8d17da636f36c6c4153461e77a281390fa37",
+      "/srv/colorstats/raw-orico/e0/.output-56bde08f-0574-4ef7-b981-a804a41f5d8e-2bfd39cb-4c5b-4768-898d-2dd5ac974271/e0a2adb9a4251514d3b081fe86583e024a2c2f548729f35d21d0a03d5d2c8312.jpg": "e0a2adb9a4251514d3b081fe86583e024a2c2f548729f35d21d0a03d5d2c8312",
+      "/srv/colorstats/raw-orico/bb/.output-d9468120-6f28-40ed-b898-833032e664b5-ac61e6ca-4793-4a39-86c7-c539b5493f8f/bb158ffa209bb3b6ad644060fba8344a01f1db1663fad7a4636868ae87b1c62c.jpg": "bb158ffa209bb3b6ad644060fba8344a01f1db1663fad7a4636868ae87b1c62c",
+      "/srv/colorstats/raw-suneast/d9/.output-abf7c4e4-c5ec-4e10-9b13-f631b0618732-9c51c0a8-36b6-4339-902b-5a4cccf935e7/d9bb42ebbc023da167225df78404fa2bd126531bca6e50e8513f8b9544f6ec9b.jpg": "d9bb42ebbc023da167225df78404fa2bd126531bca6e50e8513f8b9544f6ec9b"
+    },
+    "source_sha256": "060befcf489a973f6e80748a2448b0ae32f2e9f6b72b57697ca9108ef6505285"
+  },
+  "records": [
+    {
+      "index": 32,
+      "asset_id": "3028f33a-29ad-43d1-b27a-7f43718cfe1e",
+      "original_sha256": "c4bca759810a47d5e978eb04c967ca82e0e3ac2a37cf30621ad86522c3731fca",
+      "original_dimensions": [
+        2288,
+        4080
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1712
+      ],
+      "thumbnail_sha256": "38348377eb92b7d20be97d340f6c471003d504f05f2b61dcf306912bc04ee098",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 2331.059,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 7264.018,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0011799963260979741,
+        "weighted_oklab_distance": 0.0017305478759353588,
+        "mask_agreement": {
+          "column": {
+            "intersection": 73687,
+            "union": 73860,
+            "agreement": 0.9976577308421337,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 121060,
+            "union": 121221,
+            "agreement": 0.9986718472871862,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 3530,
+            "union": 3637,
+            "agreement": 0.9705801484740171,
+            "group": "detail"
+          },
+          "roof_surface": {
+            "intersection": 37406,
+            "union": 37782,
+            "agreement": 0.9900481710867609,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 12944,
+            "union": 13084,
+            "agreement": 0.9892999082849282,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 114412,
+            "union": 116438,
+            "agreement": 0.9826001820711452,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 11546,
+            "union": 12054,
+            "agreement": 0.9578563132570102,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 33,
+      "asset_id": "9699c37b-2c49-40c2-bfc3-a6f262ce8f9a",
+      "original_sha256": "f8463e982e97ef468db38c9142b7c6f98c2596e832b16247830245cbc33d806b",
+      "original_dimensions": [
+        3488,
+        5059
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1392
+      ],
+      "thumbnail_sha256": "613f3dafd5d0e61e97061bd4ae8ce00f67a1f834d49430b56f25f027fcb73e46",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 3414.602,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 8014.531,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0015183717888325237,
+        "weighted_oklab_distance": 0.004445691663347143,
+        "mask_agreement": {
+          "column": {
+            "intersection": 164961,
+            "union": 165161,
+            "agreement": 0.9987890603713951,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 165076,
+            "union": 165277,
+            "agreement": 0.9987838598232059,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 12903,
+            "union": 13237,
+            "agreement": 0.9747676966079928,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 86423,
+            "union": 87915,
+            "agreement": 0.9830290621623159,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 0,
+            "union": 66694,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 0,
+            "union": 60224,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 5011,
+            "union": 5239,
+            "agreement": 0.9564802443214354,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 65356,
+            "union": 66315,
+            "agreement": 0.9855387167307548,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 85314,
+            "union": 85961,
+            "agreement": 0.9924733309291423,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 165071,
+            "union": 165265,
+            "agreement": 0.998826127734245,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 34,
+      "asset_id": "f16abd2e-55cb-4a7f-a5a4-19fa4b71edb3",
+      "original_sha256": "1ac70d42fe849344b11ed26e06c3c583350a99893674ab8a155cff8a36f0ede6",
+      "original_dimensions": [
+        3686,
+        5008
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1304
+      ],
+      "thumbnail_sha256": "e2da41d4890e7c6f9dc609943d4901154ae08e877f0f37c6c23476865dd83479",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 288.331,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 2583.495,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0027753509936343864,
+        "weighted_oklab_distance": 0.00020655220342075245,
+        "mask_agreement": {
+          "column": {
+            "intersection": 171757,
+            "union": 172036,
+            "agreement": 0.9983782464135413,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 153475,
+            "union": 164772,
+            "agreement": 0.9314385939358629,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 20149,
+            "union": 188372,
+            "agreement": 0.10696387998216296,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 152235,
+            "union": 152457,
+            "agreement": 0.9985438517090065,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 152258,
+            "union": 152551,
+            "agreement": 0.9980793308467332,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 13426,
+            "union": 170055,
+            "agreement": 0.07895092764105731,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 153309,
+            "union": 163930,
+            "agreement": 0.9352101506740682,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 13574,
+            "union": 186280,
+            "agreement": 0.07286879965643119,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 151926,
+            "union": 157038,
+            "agreement": 0.9674473694265082,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 167394,
+            "union": 168648,
+            "agreement": 0.9925643944784402,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 35,
+      "asset_id": "076e52eb-f1f4-49d0-8654-28baa5d8ee07",
+      "original_sha256": "cd4474e5b125712da4db72a7f24bb5922165a3ce1ff8d6893a2ceed050a0f030",
+      "original_dimensions": [
+        2304,
+        3456
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1440
+      ],
+      "thumbnail_sha256": "827dddef4246828dec13cac4755d6cfa4cac23bead19f0e450521323a7fadf3d",
+      "comparison": {
+        "phash_distance": 2,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 4761.024,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 10076.906,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [
+          "watermark_suspected"
+        ],
+        "dominant_oklab_distance": 0.005450881770141904,
+        "weighted_oklab_distance": 0.002034524521668746,
+        "mask_agreement": {
+          "column": {
+            "intersection": 7644,
+            "union": 7847,
+            "agreement": 0.9741302408563782,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 2950,
+            "union": 2998,
+            "agreement": 0.9839893262174784,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 0,
+            "union": 10736,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "rock_face": {
+            "intersection": 0,
+            "union": 9532,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 749,
+            "union": 1928,
+            "agreement": 0.38848547717842324,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 119073,
+            "union": 126641,
+            "agreement": 0.9402405224216486,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 4311,
+            "union": 4386,
+            "agreement": 0.9829001367989056,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 4375,
+            "union": 4523,
+            "agreement": 0.9672783550740659,
+            "group": "major"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 36,
+      "asset_id": "6405a553-ab23-4afd-a796-53901d5e8dd2",
+      "original_sha256": "fbe49cd9e90df3a79926322d57e0e661e85e265aab37349fc98537bcc6517a92",
+      "original_dimensions": [
+        3581,
+        4992
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1338
+      ],
+      "thumbnail_sha256": "71ccbd5d4ca51b6b7d2fd0225769995a8904587e0b7276d0a109e8c559003c40",
+      "comparison": {
+        "phash_distance": 2,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 321.313,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 929.912,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0019147624305307373,
+        "weighted_oklab_distance": 0.00046409348509095314,
+        "mask_agreement": {
+          "column": {
+            "intersection": 76361,
+            "union": 101890,
+            "agreement": 0.7494454804200609,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 84900,
+            "union": 117460,
+            "agreement": 0.7227992508087859,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 188,
+            "union": 251,
+            "agreement": 0.749003984063745,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 16352,
+            "union": 16450,
+            "agreement": 0.9940425531914894,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 16504,
+            "union": 16552,
+            "agreement": 0.9971000483325277,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 79200,
+            "union": 113578,
+            "agreement": 0.6973181425980384,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 16489,
+            "union": 16531,
+            "agreement": 0.9974593188554837,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 63035,
+            "union": 97153,
+            "agreement": 0.6488219612364003,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 77320,
+            "union": 101866,
+            "agreement": 0.7590363811281488,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 37,
+      "asset_id": "45a56ee0-0fb8-4fe0-b908-0515ca9a70b2",
+      "original_sha256": "9d6387233e955d7ad1192433e74da3213c91eeb6d6c46f711a9e1c63e2caa854",
+      "original_dimensions": [
+        2304,
+        3456
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1440
+      ],
+      "thumbnail_sha256": "0a02f45f7c8f6d32517bea34b59ab7e3460a2316b0182645ede45eeb71d33fa9",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 4412.318,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 9713.151,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.002001691096941056,
+        "weighted_oklab_distance": 0.0041438506574499505,
+        "mask_agreement": {
+          "column": {
+            "intersection": 1019,
+            "union": 1056,
+            "agreement": 0.9649621212121212,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 48512,
+            "union": 50634,
+            "agreement": 0.9580914010348778,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 48586,
+            "union": 50793,
+            "agreement": 0.9565491307857382,
+            "group": "major"
+          },
+          "rock_face": {
+            "intersection": 1010,
+            "union": 1816,
+            "agreement": 0.5561674008810573,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 0,
+            "union": 49438,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 10826,
+            "union": 136793,
+            "agreement": 0.07914147653754212,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 20714,
+            "union": 21273,
+            "agreement": 0.9737225591124901,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 153318,
+            "union": 158559,
+            "agreement": 0.9669460579342706,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 38,
+      "asset_id": "29a40afa-e48e-4fd2-8894-63b4a8acff06",
+      "original_sha256": "c1706f5913e9d93c81915cc8ca3ad4eb6ea788e3d1acadfc867143b621e3e446",
+      "original_dimensions": [
+        2304,
+        3456
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1440
+      ],
+      "thumbnail_sha256": "fdd0b3710e5976f0c42f72c3e0ba9f0fe0eb753c8835f7de724f85624bd563ad",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 2860.769,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 6875.942,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0011317334056807362,
+        "weighted_oklab_distance": 0.002301425640327877,
+        "mask_agreement": {
+          "cornice": {
+            "intersection": 15218,
+            "union": 15252,
+            "agreement": 0.9977707841594545,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 32519,
+            "union": 35241,
+            "agreement": 0.9227604211004228,
+            "group": "major"
+          },
+          "rock_face": {
+            "intersection": 228,
+            "union": 286,
+            "agreement": 0.7972027972027972,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 4112,
+            "union": 4146,
+            "agreement": 0.9917993246502653,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 7281,
+            "union": 7656,
+            "agreement": 0.9510188087774295,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 0,
+            "union": 2543,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 0,
+            "union": 23733,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 0,
+            "union": 2235,
+            "agreement": 0.0,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 39,
+      "asset_id": "a1144454-43df-4b20-a063-98f06994aa13",
+      "original_sha256": "5ceafb15f66b44cb219557e8c9bcc68004056365c1dbf562f630801c6b5d6f9a",
+      "original_dimensions": [
+        3451,
+        5321
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1480
+      ],
+      "thumbnail_sha256": "7758b80656b1eb18742b274c15ff7d5aa0ce036fa56524ee14736e3ae4df4f5c",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 413.335,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 2918.02,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0013820368923295203,
+        "weighted_oklab_distance": 0.0012801300624921067,
+        "mask_agreement": {
+          "column": {
+            "intersection": 167398,
+            "union": 169910,
+            "agreement": 0.9852157024306986,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 151965,
+            "union": 152834,
+            "agreement": 0.9943140924139916,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 167398,
+            "union": 169934,
+            "agreement": 0.9850765591347229,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 148352,
+            "union": 148710,
+            "agreement": 0.9975926299509111,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 152588,
+            "union": 153814,
+            "agreement": 0.9920293341308334,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 167439,
+            "union": 169944,
+            "agreement": 0.9852598503036294,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 150480,
+            "union": 151012,
+            "agreement": 0.9964771011575239,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 167439,
+            "union": 169934,
+            "agreement": 0.985317829274895,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 150977,
+            "union": 151699,
+            "agreement": 0.9952405750861905,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 168324,
+            "union": 169201,
+            "agreement": 0.9948168155034545,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 40,
+      "asset_id": "462d69dc-8bf7-4ce1-8727-3d2236f4998c",
+      "original_sha256": "4f30835d6de37547b5d8439fa64237fef5942cf262d84e11e29dd25d9a0a75d9",
+      "original_dimensions": [
+        2127,
+        3560
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1607
+      ],
+      "thumbnail_sha256": "2c4fd13d13b227aa732d9736c404ec45198a3c07375f136aea8ab30a7573fc13",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 273.815,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 3832.121,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0005669423961515798,
+        "weighted_oklab_distance": 0.00034952967921098797,
+        "mask_agreement": {
+          "column": {
+            "intersection": 151587,
+            "union": 151693,
+            "agreement": 0.9993012202276967,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 151583,
+            "union": 151690,
+            "agreement": 0.9992946140154262,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 151606,
+            "union": 151717,
+            "agreement": 0.999268374671263,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 22240,
+            "union": 22346,
+            "agreement": 0.9952564217309585,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 151603,
+            "union": 151718,
+            "agreement": 0.9992420147905984,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 151664,
+            "union": 151760,
+            "agreement": 0.999367422245651,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 151584,
+            "union": 151694,
+            "agreement": 0.9992748559600247,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 151605,
+            "union": 151722,
+            "agreement": 0.9992288527701981,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 151584,
+            "union": 151694,
+            "agreement": 0.9992748559600247,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 151588,
+            "union": 151697,
+            "agreement": 0.999281462388841,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 41,
+      "asset_id": "3d9fdf15-1303-4bcd-883f-e57391cd6777",
+      "original_sha256": "3691a6afe4c5d00f461e200a22391be6c2c9b742b4d0607a2f521499fb9008a2",
+      "original_dimensions": [
+        2288,
+        4080
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1712
+      ],
+      "thumbnail_sha256": "34c9b1adc032aed162aafe3234f15e6e018a8f9805c8a181b3e879cc8429c87a",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 1239.739,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 7188.29,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0025972717383173785,
+        "weighted_oklab_distance": 0.0014904718420799801,
+        "mask_agreement": {
+          "column": {
+            "intersection": 6793,
+            "union": 66995,
+            "agreement": 0.10139562653929397,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 126312,
+            "union": 126941,
+            "agreement": 0.9950449421384738,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 1818,
+            "union": 4627,
+            "agreement": 0.39291117354657445,
+            "group": "detail"
+          },
+          "roof_surface": {
+            "intersection": 39068,
+            "union": 39750,
+            "agreement": 0.9828427672955975,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 17248,
+            "union": 17421,
+            "agreement": 0.9900694564031916,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 102068,
+            "union": 102678,
+            "agreement": 0.994059097372368,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 8747,
+            "union": 8780,
+            "agreement": 0.9962414578587699,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 42,
+      "asset_id": "70761c21-a31e-4b34-b215-b6b2598b2811",
+      "original_sha256": "22cdbfa2f9067c583c5e88b3c6284c9b58d716c05eeb98da3cbb447a9991bb83",
+      "original_dimensions": [
+        3607,
+        5321
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1416
+      ],
+      "thumbnail_sha256": "bf98861f3cad88bc4c1d20a2a90ce3d294f5a34d6f700f931d62ef9ca347b82e",
+      "comparison": {
+        "phash_distance": 2,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 351.374,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 2528.104,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.003895912052682524,
+        "weighted_oklab_distance": 0.0009360324073343461,
+        "mask_agreement": {
+          "column": {
+            "intersection": 167847,
+            "union": 168998,
+            "agreement": 0.9931892685120534,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 158610,
+            "union": 159162,
+            "agreement": 0.9965318354883703,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 172334,
+            "union": 173045,
+            "agreement": 0.9958912421624433,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 148120,
+            "union": 152208,
+            "agreement": 0.9731420161883738,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 158675,
+            "union": 160044,
+            "agreement": 0.9914461023218615,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 170971,
+            "union": 172501,
+            "agreement": 0.99113048620008,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 158665,
+            "union": 159102,
+            "agreement": 0.9972533343389776,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 171817,
+            "union": 172631,
+            "agreement": 0.99528474028419,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 164435,
+            "union": 165582,
+            "agreement": 0.9930729185539491,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 159406,
+            "union": 164508,
+            "agreement": 0.9689863106961364,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 43,
+      "asset_id": "4c97d7a5-6552-4faa-8659-2a97c5047e71",
+      "original_sha256": "e5fe3e725e9b9ccb4938a3604a51f219e27cc1f253081a60223434c288263dce",
+      "original_dimensions": [
+        3556,
+        5321
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1436
+      ],
+      "thumbnail_sha256": "acb50f8a8288cfb600b06c11632b12471d1eb5040d79e825bb3885f1af5aa254",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 272.627,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 2128.747,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0001866864762540172,
+        "weighted_oklab_distance": 0.0007107451215080963,
+        "mask_agreement": {
+          "column": {
+            "intersection": 36220,
+            "union": 36472,
+            "agreement": 0.9930905900416758,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 125982,
+            "union": 126149,
+            "agreement": 0.9986761686576985,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 36240,
+            "union": 36513,
+            "agreement": 0.9925232109111823,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 125564,
+            "union": 125686,
+            "agreement": 0.9990293270531324,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 125590,
+            "union": 162075,
+            "agreement": 0.7748881690575351,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 36221,
+            "union": 36463,
+            "agreement": 0.9933631352329759,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 125739,
+            "union": 125854,
+            "agreement": 0.9990862427892637,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 36219,
+            "union": 36461,
+            "agreement": 0.9933627711801651,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 161713,
+            "union": 162073,
+            "agreement": 0.9977787786984877,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 128005,
+            "union": 128928,
+            "agreement": 0.9928409655001241,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 44,
+      "asset_id": "1e7f7262-c604-42ba-a5d2-c0fd12cf7bdf",
+      "original_sha256": "4f7ff95697180c2108db0d1aab14f05b89926eafedfe24478ab910452434be7c",
+      "original_dimensions": [
+        3456,
+        4608
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1280
+      ],
+      "thumbnail_sha256": "85d592799662fc0c5c92b73737cb17d98c3fd06fa17226f193c558d9d80f5596",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 220.327,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 3268.922,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0001809039090885857,
+        "weighted_oklab_distance": 0.00040412906157044534,
+        "mask_agreement": {
+          "column": {
+            "intersection": 47725,
+            "union": 47873,
+            "agreement": 0.996908487038623,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 140635,
+            "union": 150972,
+            "agreement": 0.9315303499986752,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 32741,
+            "union": 33197,
+            "agreement": 0.986263819019791,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 21663,
+            "union": 21689,
+            "agreement": 0.9988012356494075,
+            "group": "detail"
+          },
+          "roof_surface": {
+            "intersection": 153712,
+            "union": 157721,
+            "agreement": 0.9745816980617673,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 26464,
+            "union": 26501,
+            "agreement": 0.9986038262707068,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 141808,
+            "union": 145492,
+            "agreement": 0.9746790201523108,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 21663,
+            "union": 21687,
+            "agreement": 0.9988933462442938,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 26505,
+            "union": 26529,
+            "agreement": 0.9990953296392627,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 45,
+      "asset_id": "e8d9e5e6-3dfa-4183-96da-ccaa0798bb36",
+      "original_sha256": "abd7bcca42d8bdc2133a14b776712b79afc404749f9729b56a12d45851657224",
+      "original_dimensions": [
+        2545,
+        2930
+      ],
+      "thumbnail_dimensions": [
+        1280,
+        1474
+      ],
+      "thumbnail_sha256": "feb87900957ec4c45f2463bc03b33ab71bc03907dd4b2ddacf6b0235844b8dc9",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 1425.8,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 3969.751,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0007079606286351425,
+        "weighted_oklab_distance": 0.0009877307438989993,
+        "mask_agreement": {
+          "cornice": {
+            "intersection": 56183,
+            "union": 57373,
+            "agreement": 0.9792585362452721,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 0,
+            "union": 572,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 20497,
+            "union": 20945,
+            "agreement": 0.9786106469324422,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 16714,
+            "union": 16920,
+            "agreement": 0.9878250591016549,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 71607,
+            "union": 109654,
+            "agreement": 0.653026793368231,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 5753,
+            "union": 9062,
+            "agreement": 0.6348488192451998,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 46,
+      "asset_id": "e73169de-a1d1-4797-847e-9ea4129e5d5f",
+      "original_sha256": "83153f66d12e6275160a2f9f32eb3d9a1f3f80663a1b316a79f9137e23405e0f",
+      "original_dimensions": [
+        3586,
+        5105
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1367
+      ],
+      "thumbnail_sha256": "188774cddbbb0785a4e82163cc0dab8f4dc3c61f7071badb4e24b156373e75aa",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 2167.477,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 5983.263,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0008041946477197648,
+        "weighted_oklab_distance": 0.004485879090787137,
+        "mask_agreement": {
+          "column": {
+            "intersection": 166512,
+            "union": 166680,
+            "agreement": 0.9989920806335493,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 166619,
+            "union": 166836,
+            "agreement": 0.9986993214893668,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 169042,
+            "union": 169568,
+            "agreement": 0.9968979996225703,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 28381,
+            "union": 28872,
+            "agreement": 0.9829939041285675,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 27947,
+            "union": 28492,
+            "agreement": 0.9808718236698021,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 169686,
+            "union": 170288,
+            "agreement": 0.9964648125528517,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 27670,
+            "union": 28399,
+            "agreement": 0.9743300820451425,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 167361,
+            "union": 168624,
+            "agreement": 0.9925099629945915,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 166766,
+            "union": 167029,
+            "agreement": 0.9984254231301152,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 166598,
+            "union": 166801,
+            "agreement": 0.9987829809173806,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 47,
+      "asset_id": "47d3595d-a521-4783-a611-d2307fe3690e",
+      "original_sha256": "3118cb92286610289e0da9993b199b8b3502c22ad013dd59c879a3c834d9f2bb",
+      "original_dimensions": [
+        3676,
+        5080
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1327
+      ],
+      "thumbnail_sha256": "36ed6dfa2474ce00bd849336164a51b495aa1227dd3aa3e02fcc2406c07b8978",
+      "comparison": {
+        "phash_distance": 2,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 2348.588,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 6635.835,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0015611871564353292,
+        "weighted_oklab_distance": 0.005220911642233583,
+        "mask_agreement": {
+          "column": {
+            "intersection": 171202,
+            "union": 171416,
+            "agreement": 0.9987515751155085,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 171207,
+            "union": 171452,
+            "agreement": 0.9985710286260878,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 172967,
+            "union": 173202,
+            "agreement": 0.9986432027343796,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 171198,
+            "union": 171405,
+            "agreement": 0.9987923339459176,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 3832,
+            "union": 3864,
+            "agreement": 0.9917184265010351,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 2151,
+            "union": 2451,
+            "agreement": 0.8776009791921665,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 33502,
+            "union": 35329,
+            "agreement": 0.9482861105607292,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 25559,
+            "union": 26113,
+            "agreement": 0.9787845134607284,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 171257,
+            "union": 171500,
+            "agreement": 0.9985830903790087,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 48,
+      "asset_id": "9b249eef-6ab6-4ed7-b41b-df2d1af9613e",
+      "original_sha256": "f6dc07f92dc4a719c00932e10804e67d7db17144ab6bd0fe7ed6a1ed888b97bb",
+      "original_dimensions": [
+        2592,
+        3872
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1434
+      ],
+      "thumbnail_sha256": "a0a1fbcb9e0ca9c1ee233a5731b4d78043aeaac53df5115118042b6b869cc59b",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 646.619,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 4401.2,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0021583752302424637,
+        "weighted_oklab_distance": 0.00028998948446491685,
+        "mask_agreement": {
+          "column": {
+            "intersection": 4276,
+            "union": 4435,
+            "agreement": 0.9641488162344983,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 69380,
+            "union": 70170,
+            "agreement": 0.9887416274761294,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 64286,
+            "union": 64954,
+            "agreement": 0.9897157988730486,
+            "group": "major"
+          },
+          "rock_face": {
+            "intersection": 60361,
+            "union": 60729,
+            "agreement": 0.9939402921174397,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 64268,
+            "union": 64948,
+            "agreement": 0.9895300856069471,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 0,
+            "union": 26242,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 60386,
+            "union": 60758,
+            "agreement": 0.9938773494848415,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 5161,
+            "union": 5388,
+            "agreement": 0.9578693392724573,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 49,
+      "asset_id": "6ab86d6b-4a5e-4675-830b-b5d2100cecdc",
+      "original_sha256": "651202811e2547d12ead50636e1e90b25a2b992cd1d603582efd97810e644979",
+      "original_dimensions": [
+        3024,
+        4032
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1280
+      ],
+      "thumbnail_sha256": "fd211e4b551f33efd4e329db10fafd9002556532acb501fffc17311e3e1e50a5",
+      "comparison": {
+        "phash_distance": 2,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 3050.867,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 6400.847,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0006079128947568412,
+        "weighted_oklab_distance": 0.0014825340315551144,
+        "mask_agreement": {
+          "column": {
+            "intersection": 855,
+            "union": 878,
+            "agreement": 0.9738041002277904,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 17284,
+            "union": 17495,
+            "agreement": 0.9879394112603601,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 27282,
+            "union": 27857,
+            "agreement": 0.979358868507018,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 3813,
+            "union": 3852,
+            "agreement": 0.9898753894080997,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 3809,
+            "union": 3848,
+            "agreement": 0.9898648648648649,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 7796,
+            "union": 8038,
+            "agreement": 0.9698930082109978,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 54514,
+            "union": 63267,
+            "agreement": 0.8616498332464002,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 6603,
+            "union": 6846,
+            "agreement": 0.9645048203330412,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 91,
+      "asset_id": "289c0956-19cc-4a11-9a48-bbc99fcc922c",
+      "original_sha256": "0175b5895d01944dfaeb3bcf3ef3884905b44366f53d005ee9497a402d9dff35",
+      "original_dimensions": [
+        3295,
+        3983
+      ],
+      "thumbnail_dimensions": [
+        1280,
+        1547
+      ],
+      "thumbnail_sha256": "20c631bc9f3e06490ea8fbf4041279060c878f8d4cf3857f0daf97a950a25c0e",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 3566.981,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 8775.298,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.004433478931516438,
+        "weighted_oklab_distance": 0.0025263111024600234,
+        "mask_agreement": {
+          "cornice": {
+            "intersection": 1171,
+            "union": 1214,
+            "agreement": 0.9645799011532126,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 16693,
+            "union": 16860,
+            "agreement": 0.9900948991696322,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 1162,
+            "union": 1208,
+            "agreement": 0.9619205298013245,
+            "group": "detail"
+          },
+          "vegetation_low": {
+            "intersection": 171925,
+            "union": 174716,
+            "agreement": 0.9840255042468921,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 175171,
+            "union": 177637,
+            "agreement": 0.9861177569988234,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 92,
+      "asset_id": "0fbe3f50-b64f-4733-bd11-1f352cfc8e19",
+      "original_sha256": "f9b10876d879ec67932d8377dfcb43672e03da7eb2a7ae3d4be2ec29665418fc",
+      "original_dimensions": [
+        2268,
+        4032
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1707
+      ],
+      "thumbnail_sha256": "754e54dfc9761fe7b63101aa20ad3b413be2fa6c90fb5adbe7e3c032cb585928",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 1863.525,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 5079.539,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0011145683177793894,
+        "weighted_oklab_distance": 0.0007279801906932036,
+        "mask_agreement": {
+          "ground_soil": {
+            "intersection": 26869,
+            "union": 27616,
+            "agreement": 0.9729504634994206,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 292,
+            "union": 315,
+            "agreement": 0.926984126984127,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 68469,
+            "union": 69149,
+            "agreement": 0.9901661629235419,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 689,
+            "union": 711,
+            "agreement": 0.9690576652601969,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 5985,
+            "union": 6351,
+            "agreement": 0.942371280113368,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 0,
+            "union": 111,
+            "agreement": 0.0,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 93,
+      "asset_id": "0072b55b-07f8-4c2b-a812-7eb888c7b6d9",
+      "original_sha256": "35fbd3441cd2a5a27affbbf6731fb5cfe34e6b0f504b58f9fa4c99e80e4790f9",
+      "original_dimensions": [
+        3694,
+        5259
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1367
+      ],
+      "thumbnail_sha256": "73c835026281d3d236a8e2dba30841968ec375ac9d0cdda7972daa9774391a86",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 1093.965,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 6525.355,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0012769090266713495,
+        "weighted_oklab_distance": 0.0025933661224882294,
+        "mask_agreement": {
+          "column": {
+            "intersection": 957,
+            "union": 993,
+            "agreement": 0.9637462235649547,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 959,
+            "union": 994,
+            "agreement": 0.9647887323943662,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 43942,
+            "union": 44387,
+            "agreement": 0.9899745420956586,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 974,
+            "union": 1015,
+            "agreement": 0.9596059113300492,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 0,
+            "union": 291,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 38334,
+            "union": 38947,
+            "agreement": 0.9842606619251804,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 94155,
+            "union": 95478,
+            "agreement": 0.986143404763401,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 38251,
+            "union": 38840,
+            "agreement": 0.9848352214212153,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 165723,
+            "union": 166129,
+            "agreement": 0.9975561160303138,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 94,
+      "asset_id": "26da2a93-1459-4358-a4f0-a07c133fe6bd",
+      "original_sha256": "131de70e4addc40178cbd10437128f527bd062cbaccd102ffa9847d949968382",
+      "original_dimensions": [
+        3744,
+        5616
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1440
+      ],
+      "thumbnail_sha256": "ea227bdb0f682f9eb07092488e8ef079e9f05f4ebd6e98e9460eb82cf6b4ecd0",
+      "comparison": {
+        "phash_distance": 2,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 1557.73,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 6424.296,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_modded_or_shader"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0054445681648343,
+        "weighted_oklab_distance": 0.007644543440196676,
+        "mask_agreement": {
+          "column": {
+            "intersection": 174012,
+            "union": 174060,
+            "agreement": 0.9997242330230954,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 174023,
+            "union": 174060,
+            "agreement": 0.9997874296219694,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 174012,
+            "union": 174061,
+            "agreement": 0.999718489495062,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 174016,
+            "union": 174058,
+            "agreement": 0.9997587011226143,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 174023,
+            "union": 174060,
+            "agreement": 0.9997874296219694,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 174024,
+            "union": 174058,
+            "agreement": 0.999804662813545,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 174020,
+            "union": 174060,
+            "agreement": 0.999770194185913,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 174023,
+            "union": 174060,
+            "agreement": 0.9997874296219694,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 174011,
+            "union": 174053,
+            "agreement": 0.99975869419085,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 174024,
+            "union": 174058,
+            "agreement": 0.999804662813545,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 95,
+      "asset_id": "192c37d0-f139-45ee-9950-2cf9fe4fe091",
+      "original_sha256": "0a77cc1626486fec45c15eeb3ad859dd9bafe8cf2f50c92b0b57f19ac4b7b0b0",
+      "original_dimensions": [
+        2694,
+        3707
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1321
+      ],
+      "thumbnail_sha256": "654f0f4b11b2f90725ad8719cea4401108957d399f693b0bec12e19d49a55f57",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 3657.269,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 6533.316,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.004514748194517798,
+        "weighted_oklab_distance": 0.0004519779830755336,
+        "mask_agreement": {
+          "cornice": {
+            "intersection": 0,
+            "union": 3943,
+            "agreement": 0.0,
+            "group": "detail"
+          },
+          "relief": {
+            "intersection": 0,
+            "union": 26383,
+            "agreement": 0.0,
+            "group": "detail"
+          },
+          "roof_surface": {
+            "intersection": 0,
+            "union": 26407,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 82838,
+            "union": 85891,
+            "agreement": 0.9644549487140678,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 0,
+            "union": 38590,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 148596,
+            "union": 151301,
+            "agreement": 0.9821217308543896,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 96,
+      "asset_id": "d5430824-c76e-4110-9f7c-c54cb9a3be3c",
+      "original_sha256": "40084ddf4573f2644639eff3a59e8d17da636f36c6c4153461e77a281390fa37",
+      "original_dimensions": [
+        7200,
+        9400
+      ],
+      "thumbnail_dimensions": [
+        1280,
+        1671
+      ],
+      "thumbnail_sha256": "a172e6e2c4aebb2e37f835916f13c618a58bda4a78ff22e58188f7532e15a6d6",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 796.26,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 4738.198,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0015315860731258417,
+        "weighted_oklab_distance": 0.0012787878134178294,
+        "mask_agreement": {
+          "column": {
+            "intersection": 198685,
+            "union": 199819,
+            "agreement": 0.9943248640019218,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 198687,
+            "union": 200431,
+            "agreement": 0.991298751191183,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 198685,
+            "union": 199819,
+            "agreement": 0.9943248640019218,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 198685,
+            "union": 199819,
+            "agreement": 0.9943248640019218,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 198685,
+            "union": 199819,
+            "agreement": 0.9943248640019218,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 198720,
+            "union": 199813,
+            "agreement": 0.9945298854428891,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 198685,
+            "union": 199819,
+            "agreement": 0.9943248640019218,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 198685,
+            "union": 199819,
+            "agreement": 0.9943248640019218,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 198720,
+            "union": 199813,
+            "agreement": 0.9945298854428891,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 198685,
+            "union": 199819,
+            "agreement": 0.9943248640019218,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 97,
+      "asset_id": "b5eeb604-d71f-483e-add9-33ffe3b318c5",
+      "original_sha256": "e0a2adb9a4251514d3b081fe86583e024a2c2f548729f35d21d0a03d5d2c8312",
+      "original_dimensions": [
+        4000,
+        6000
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1440
+      ],
+      "thumbnail_sha256": "f6f82e988c4d8e8699fcc0fe965b05a168421da959fd4cfe24ec314bdf71fe12",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 664.25,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 6453.433,
+            "blur_suspected": false,
+            "watermark_suspected": true,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0038557145201268284,
+        "weighted_oklab_distance": 0.0007360191267003928,
+        "mask_agreement": {
+          "column": {
+            "intersection": 5198,
+            "union": 5373,
+            "agreement": 0.967429741299088,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 5233,
+            "union": 5404,
+            "agreement": 0.9683567727609178,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 36414,
+            "union": 73963,
+            "agreement": 0.4923272447034328,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 0,
+            "union": 5242,
+            "agreement": 0.0,
+            "group": "detail"
+          },
+          "roof_surface": {
+            "intersection": 5266,
+            "union": 5439,
+            "agreement": 0.9681926824783967,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 38665,
+            "union": 39010,
+            "agreement": 0.99115611381697,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 17767,
+            "union": 18540,
+            "agreement": 0.9583063646170442,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 36384,
+            "union": 37343,
+            "agreement": 0.9743191495059315,
+            "group": "major"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 98,
+      "asset_id": "24ae1764-0d2c-48f4-9aac-8f136b934d1a",
+      "original_sha256": "bb158ffa209bb3b6ad644060fba8344a01f1db1663fad7a4636868ae87b1c62c",
+      "original_dimensions": [
+        2863,
+        3900
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1308
+      ],
+      "thumbnail_sha256": "0e0f6b7b6fa34e858d9890c9d6511751aef4bcccb67a81326b86ecfb04f8740c",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 490.059,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 4460.251,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.000497773870699319,
+        "weighted_oklab_distance": 0.0005209208192958587,
+        "mask_agreement": {
+          "column": {
+            "intersection": 2769,
+            "union": 2799,
+            "agreement": 0.9892818863879957,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 2770,
+            "union": 2800,
+            "agreement": 0.9892857142857143,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 48260,
+            "union": 48678,
+            "agreement": 0.9914129586260734,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 3296,
+            "union": 3330,
+            "agreement": 0.9897897897897898,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 519,
+            "union": 537,
+            "agreement": 0.9664804469273743,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 792,
+            "union": 1159,
+            "agreement": 0.6833477135461605,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 5647,
+            "union": 71056,
+            "agreement": 0.07947252870975005,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 2770,
+            "union": 2800,
+            "agreement": 0.9892857142857143,
+            "group": "major"
+          },
+          "water": {
+            "intersection": 48270,
+            "union": 48687,
+            "agreement": 0.9914350853410562,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 1074,
+            "union": 1091,
+            "agreement": 0.9844179651695693,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    },
+    {
+      "index": 99,
+      "asset_id": "29ab35ac-ad98-42bd-891e-029dc7f2dd6d",
+      "original_sha256": "d9bb42ebbc023da167225df78404fa2bd126531bca6e50e8513f8b9544f6ec9b",
+      "original_dimensions": [
+        2408,
+        3451
+      ],
+      "thumbnail_dimensions": [
+        960,
+        1376
+      ],
+      "thumbnail_sha256": "e2183a8f01dc37f06f385d24c42a935dbcb576ab4c6b5d453dae85ee2d351b06",
+      "comparison": {
+        "phash_distance": 0,
+        "quality": [
+          {
+            "resolution_ok": true,
+            "sharpness": 3316.34,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          },
+          {
+            "resolution_ok": true,
+            "sharpness": 7253.8,
+            "blur_suspected": false,
+            "watermark_suspected": false,
+            "collage_suspected": false,
+            "domain_estimate": "mc_unknown"
+          }
+        ],
+        "flag_flips": [],
+        "dominant_oklab_distance": 0.0012341940321861575,
+        "weighted_oklab_distance": 0.00040265124781077273,
+        "mask_agreement": {
+          "column": {
+            "intersection": 10194,
+            "union": 10376,
+            "agreement": 0.9824595219737856,
+            "group": "detail"
+          },
+          "cornice": {
+            "intersection": 1520,
+            "union": 1556,
+            "agreement": 0.9768637532133676,
+            "group": "detail"
+          },
+          "ground_soil": {
+            "intersection": 58217,
+            "union": 58550,
+            "agreement": 0.9943125533731854,
+            "group": "major"
+          },
+          "relief": {
+            "intersection": 10233,
+            "union": 10410,
+            "agreement": 0.9829971181556196,
+            "group": "detail"
+          },
+          "rock_face": {
+            "intersection": 0,
+            "union": 10268,
+            "agreement": 0.0,
+            "group": "major"
+          },
+          "roof_surface": {
+            "intersection": 130562,
+            "union": 131587,
+            "agreement": 0.9922104767188248,
+            "group": "major"
+          },
+          "vegetation_low": {
+            "intersection": 15159,
+            "union": 15574,
+            "agreement": 0.9733530242712213,
+            "group": "major"
+          },
+          "wall_main": {
+            "intersection": 95304,
+            "union": 101410,
+            "agreement": 0.9397889754462084,
+            "group": "major"
+          },
+          "window_frame": {
+            "intersection": 21391,
+            "union": 174932,
+            "agreement": 0.12228180092836073,
+            "group": "detail"
+          }
+        },
+        "truth_iou": null,
+        "truth_reason": "この固定入力に人手正解なし。一致度は精度ではない"
+      },
+      "analysis_error": null
+    }
+  ],
+  "remote_root": "/mnt/data/derived/issue109-portrait-20261105T122000Z",
+  "code_sha256": "b60ad3df2dd39ca01b57483d6b756c957132f8f663983dc42f08d8f983c0247d"
+}

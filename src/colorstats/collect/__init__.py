@@ -7,7 +7,11 @@ from typing import Protocol
 
 @dataclass(frozen=True)
 class SearchRequest:
-    """1ページ分の検索。pageは0始まり、offset指定時はそちらを優先する。"""
+    """1ページ分の検索。pageは0始まり、offset指定時はそちらを優先する。
+
+    download_mode省略時はCommonsがthumbnail、他ソースが各既存方式のoriginal。
+    原本取得はoriginalを明示する。providerをreplaceする際はNoneで既定を再解決できる。
+    """
 
     provider: str
     query: str
@@ -16,9 +20,13 @@ class SearchRequest:
     offset: int | None = None
     limit: int = 10
     stratum: str | None = None
-    download_mode: str = "original"
+    download_mode: str | None = None
 
     def __post_init__(self):
+        if self.download_mode is None:
+            object.__setattr__(self, "download_mode", (
+                "thumbnail" if self.provider == "wikimedia_commons" else "original"
+            ))
         if self.download_mode not in ("original", "thumbnail"):
             raise ValueError("取得モードはoriginalまたはthumbnailです")
         if self.download_mode == "thumbnail" and self.provider != "wikimedia_commons":
