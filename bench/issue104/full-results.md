@@ -4,6 +4,27 @@
 #89 PR #106のdevelop d97c218をabd66ddでmerge。競合なし。
 hosts・レートと解析専用の確認根拠を両方保持し、collect配下は独自編集していない。
 
+## 反証P2：確認根拠URLの訂正
+
+Robot policyとRate limitsの指定2 URLを2026-11-05に取得し、両方HTTP 200を確認した。
+`api_url`はRobot policyのAction API rules節へ訂正し、`rate_limits_url`を追加した。
+確認日時は`2026-11-05T08:37:41.631340+00:00`、policy_versionは`issue104-v2`。
+Robot policy自身が`/w/api.php`を例示して未認証の同時1・5 req/s未満・1秒超の要求後5秒待機を
+定めていることを根拠とし、robots.txtを踏まえた利用継続は2026-11-05のユーザー判断である旨を
+docs/collect.mdとrights_review.summaryに記載した。
+
+asset 4,531件・source 1,955件のrights_reviewを同じ取引で訂正し、再実行は両方変更0件。
+訂正前後の完全な値と件数をreview-correction-*.jsonに記録し、確認記録以外の全列hashは一致した。
+区分・元license・出典・元qualityの他の値は変えていない。
+訂正後の全7,607件の再分類dry-runも変更予定0件で、現在の計画hashはclassification-v2-dry.jsonへ保存した。
+
+訂正前snapshot `fb7bc1af34b036cb111ae9ae6274195931e2c2271d764eb040e96bda55326942` とrun `3b46cfe4-9965-48d3-b041-b9b63bba75fc`は
+履歴として保持し、本書の現行IDを訂正後の新しいIDへ差し替えた。
+asset・provenanceの2 Parquetだけが変化し、残る5 Parquetはhashが同一。
+全569行を含む統計全体は、置換対象のsnapshot_idとrows[].quality.snapshot_id以外が完全一致した。
+統計値hash：`789d23b9ec91ea13124c90e2769aa1cfe2823839f31b680b68bb3b3feaa04549`。許容誤差や数値改変は使っていない。
+旧M3 snapshotと旧runに加え、訂正前#104のsnapshotとrunの不変も確認した。
+
 ## バックアップとmigration
 
 - バックアップ：`/mnt/data/work/issue-104/backup-20261105T074401Z/colorstats.dump`。
@@ -26,17 +47,17 @@ Openverseは対象0件のため、実測されていない短縮表記の許可�
 
 ## 新snapshotと統計
 
-- snapshot ID：`fb7bc1af34b036cb111ae9ae6274195931e2c2271d764eb040e96bda55326942`。
-- rule_stat run：`3b46cfe4-9965-48d3-b041-b9b63bba75fc`。
-- aggregate job：`ce84aa5d-a09c-40a2-96a1-56a4a0fb28d3`。
-- 正本：`/mnt/data/derived/stats/issue104-full-20261105T075242Z`。
-- コード版：`abd66dd+i104-f72351221b1080cf`。全src・設定・taxonomyのhashをimplementation.jsonに固定。
+- snapshot ID：`e60bc14c7076a405b75333d1a0b280d9b088534796bdc4fedec0fbdebe414471`。
+- rule_stat run：`928993fa-d498-4f68-85f4-35169d5d07c5`。
+- aggregate job：`36b5dfc9-0cf7-40d2-9cd1-5c68ca1484a3`。
+- 正本：`/mnt/data/derived/stats/issue104-full-20261105T084843Z`。
+- コード版：`5ffa603+i104-v2-658d3c05cef6fa29`。全src・設定・taxonomyのhashをimplementation.jsonに固定。
 - #74の既存snapshot CLI、#75のdry/register、#76のreport CLIを使用。
   新規収集、segment・colorのjob実行、再推定はしていない。
 - 新snapshotの全7ファイル・D15・SHA代表・失敗6件の非算入を全量監査し、違反0。
 - 新rule_stat全行と入力辺を固定計算と照合し、二重完了・再投入でも同じjob/run/行数を維持。
 - 旧snapshot 3e785e67…の全hashと旧run d7297e42の569行・4,856辺・統計hashは不変。
-- 初回2回のsnapshot起動はDATABASE_URL未設定で停止。失敗領域を保全し、設定後の新規領域で成功した。
+- v1初回2回のsnapshot起動はDATABASE_URL未設定で停止。失敗領域を保全し、設定後の新規領域で成功した。
   元画像・maskはM3と同じroot読取り、DBはREAD ONLY、生成物は非公開の新規領域だけへ保存した。
 
 ## 新旧比較
@@ -75,8 +96,8 @@ n_effはsubject重みの集中度で、未知の層所属や欠測偏りの不�
 ## 検証
 
 - WSL Ubuntu 24.04、Python 3.12.3、クライアントと専用PostgreSQL 16.15を同一環境で実行。
-- #89統合後の全pytest：867 passed / 1 skipped（既存の明示GPUテストのみ）。
+- #89統合後の全pytest：868 passed / 1 skipped（既存の明示GPUテストのみ）。
 - ruff・sdist/wheel build・wheelでの外部cwd CLIが成功。検証150ファイルはworktreeとバイト一致。
 - 配布allowlistで画像・原meta・個別出典の混入拒否を回帰確認。内部snapshotを配布しない。
-- 解析専用の確認根拠はIssueのユーザー判断を記録し、外部サイトへの再照会なし。
+- 解析専用の確認根拠はIssueのユーザー判断を記録し、外部通信は許可されたRobot policy・Rate limitsの2 URL確認だけ。
 - 専用PGは正常停止済み。本番の既存サービスは変更せず、起動した未完了処理は残していない。

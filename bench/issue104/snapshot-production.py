@@ -32,7 +32,7 @@ implementation = {
     for path in sorted((code / directory).rglob("*"))
     if path.is_file() and "__pycache__" not in path.parts
 }
-version = "abd66dd+i104-" + snapshot.digest(implementation)[:16]
+version = "5ffa603+i104-v2-" + snapshot.digest(implementation)[:16]
 (root / "implementation.json").write_text(snapshot.canonical({
     "code_version": version, "files": implementation,
 }) + "\n", encoding="utf-8")

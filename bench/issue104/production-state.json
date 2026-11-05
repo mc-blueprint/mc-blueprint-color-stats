@@ -33,7 +33,8 @@
       "missing_rights_basis": 0,
       "unknown_license": 0
     },
-    "legacy_retention_rows": 0
+    "legacy_retention_rows": 0,
+    "policy_version": "issue104-v1"
   },
   "original_information": {
     "assets": 7607,
@@ -45,15 +46,64 @@
     "/mnt/data/derived/stats/issue104-full-20261105T075116Z",
     "/mnt/data/derived/stats/issue104-full-20261105T075218Z"
   ],
-  "new_snapshot_id": "fb7bc1af34b036cb111ae9ae6274195931e2c2271d764eb040e96bda55326942",
-  "new_rule_stat_run": "3b46cfe4-9965-48d3-b041-b9b63bba75fc",
-  "new_aggregate_job": "ce84aa5d-a09c-40a2-96a1-56a4a0fb28d3",
+  "new_snapshot_id": "e60bc14c7076a405b75333d1a0b280d9b088534796bdc4fedec0fbdebe414471",
+  "new_rule_stat_run": "928993fa-d498-4f68-85f4-35169d5d07c5",
+  "new_aggregate_job": "36b5dfc9-0cf7-40d2-9cd1-5c68ca1484a3",
   "artifacts": {
-    "registered_rows_hash": "703f83c268b96e8cf3d49da343e3c1ba154db07186b8bc11b6400cc99661c95b",
-    "report_sha256": "37bf5721d8e1df6b64e11b5bd46e1f41552759600866c0cf16cde4127e01e5e1",
-    "root": "/mnt/data/derived/stats/issue104-full-20261105T075242Z"
+    "registered_rows_hash": "c17069da9f8b94f4690ac4086c9f70d879a65c2a323958341b2a07b82f8a68ce",
+    "report_sha256": "629317281b10c7dabc4a75ff2b7514fc4cc8dec0eaeaea854970f2bdebcda949",
+    "root": "/mnt/data/derived/stats/issue104-full-20261105T084843Z"
   },
   "old_snapshot_verified_after": true,
   "old_statistics_equal_after": true,
-  "original_information_equal_after": true
+  "original_information_equal_after": true,
+  "policy_version": "issue104-v2",
+  "superseded_snapshot_id": "fb7bc1af34b036cb111ae9ae6274195931e2c2271d764eb040e96bda55326942",
+  "superseded_rule_stat_run": "3b46cfe4-9965-48d3-b041-b9b63bba75fc",
+  "current_classification_plan": {
+    "after": {
+      "analysis_only": 4531,
+      "open": 3076
+    },
+    "applied": false,
+    "before": {
+      "analysis_only": 4531,
+      "open": 3076
+    },
+    "changes": 0,
+    "evidence_hash": "3bb349c7a36919d2b741bfe039c731e8416806a5f2da19c339e84a6ca74823b5",
+    "exclusions": {},
+    "plan_hash": "c988f2d59f930bde04cf45f4634a7cf1855df13ca2a2aa30e807caf0e40b298c",
+    "total": 7607
+  },
+  "rights_review_correction": {
+    "assets": 4531,
+    "sources": 1955,
+    "repeated_changes": 0,
+    "previous": {
+      "api_url": "https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_Robot_policy",
+      "decision": "allowed",
+      "policy_version": "issue104-v1",
+      "purpose": "non_expressive_color_statistics",
+      "reviewed_at": "2026-11-05T00:00:00+00:00",
+      "reviewer": "user (Issue 104, 2026-11-05)",
+      "robots_url": "https://commons.wikimedia.org/robots.txt",
+      "summary": "Issue #104のユーザー判断。非表現的な色統計の内部解析に限定し、原画像・原metaは配布しない。Action APIは認証なし同時1・5 req/s未満、1秒超の要求後は5秒待つ。robots.txtのDisallow /w/は動的ページ巡回向けと解釈しAction APIの公式規定に従う。保持期限は新規収集分だけに適用し、既存アーカイブには設定しない。外部再照会は行わずIssueの確認済み判断を記録。",
+      "terms_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use"
+    },
+    "corrected": {
+      "api_url": "https://wikitech.wikimedia.org/wiki/Robot_policy#Action_API_rules",
+      "decision": "allowed",
+      "policy_version": "issue104-v2",
+      "purpose": "non_expressive_color_statistics",
+      "rate_limits_url": "https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits",
+      "reviewed_at": "2026-11-05T08:37:41.631340+00:00",
+      "reviewer": "user (Issue 104, 2026-11-05)",
+      "robots_url": "https://commons.wikimedia.org/robots.txt",
+      "summary": "2026-11-05のユーザー判断。Robot policy自身が/w/api.phpを例示したAction API rules節で、未認証の同時1・5 req/s未満・1秒超の要求後5秒待機を定めていることを根拠として、robots.txtのDisallow /w/を踏まえてAction API利用を継続する。レートの一次情報も同日確認。非表現的な色統計の内部解析に限定し、原画像・原metaは配布しない。保持期限は新規収集分だけに適用し、既存アーカイブには設定しない。",
+      "terms_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use"
+    },
+    "other_columns_preserved_hash": "a223cae4d1a3bfca75baae18cfdc6e8d148935d3b6a7b32084842567882addce",
+    "statistical_values_hash": "789d23b9ec91ea13124c90e2769aa1cfe2823839f31b680b68bb3b3feaa04549"
+  }
 }

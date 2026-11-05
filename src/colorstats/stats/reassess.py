@@ -18,6 +18,61 @@ RIGHTS_KEYS = (
 )
 
 
+def correct_review(engine, asset_ids, previous, corrected, *, apply=False, expected_hash=None):
+    """解析専用入力の確認記録だけを訂正する。既定はREAD ONLYで変更予定を返す。
+
+    apply時は保存済み計画のexpected_hashと訂正前の完全一致を検査し、assetとsourceを
+    同じ取引で更新する。訂正済みの同一値は変更しない。区分・元情報・他の権利設定は保持する。
+    想定外の確認記録・計画不一致はValueErrorとし、取引全体を巻き戻す。
+    """
+    with Session(engine) as session, session.begin():
+        session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ" + (
+            "" if apply else ", READ ONLY"
+        )))
+        query = select(Asset).where(
+            Asset.id.in_(asset_ids), Asset.license_class == "analysis_only",
+        ).order_by(Asset.id)
+        assets = session.scalars(query.with_for_update() if apply else query).all()
+        query = select(Source).where(
+            Source.id.in_({row.source_id for row in assets}),
+        ).order_by(Source.id)
+        sources = session.scalars(query.with_for_update() if apply else query).all()
+        evidence, changes = [], []
+        counts = {"asset": Counter(), "source": Counter()}
+        for kind, rows in (("asset", assets), ("source", sources)):
+            for row in rows:
+                data = {col.name: getattr(row, col.name) for col in row.__table__.columns}
+                policy = row.quality.get("rights", {}) if kind == "asset" else row.policy
+                review = policy.get("rights_review")
+                if row.license_class != "analysis_only" or review not in (previous, corrected):
+                    raise ValueError("訂正対象の確認記録が想定外です")
+                counts[kind][review["policy_version"]] += 1
+                if kind == "asset":
+                    data["quality"] = row.quality | {"rights": {
+                        key: value for key, value in policy.items() if key != "rights_review"
+                    }}
+                else:
+                    data["policy"] = {k: v for k, v in policy.items() if k != "rights_review"}
+                evidence.append(data)
+                if review != corrected:
+                    changes.append((kind, row, policy | {"rights_review": corrected}))
+        preserved_hash = digest(evidence)
+        if apply and (not expected_hash or expected_hash != preserved_hash):
+            raise ValueError("訂正前の元情報hashが一致しません")
+        if apply:
+            for kind, row, policy in changes:
+                if kind == "asset":
+                    row.quality = row.quality | {"rights": policy}
+                else:
+                    row.policy = policy
+        return {
+            "assets": len(assets), "sources": len(sources), "applied": apply,
+            "before": {key: dict(value) for key, value in counts.items()},
+            "changes": dict(Counter(kind for kind, row, policy in changes)),
+            "preserved_hash": preserved_hash, "previous": previous, "corrected": corrected,
+        }
+
+
 def assessment(asset, source, policy):
     """元表記の完全一致と確認根拠で区分を判定し、追記予定値と除外理由を返す。
 
