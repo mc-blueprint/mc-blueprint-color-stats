@@ -29,6 +29,7 @@ from colorstats.schema.models import (
 from colorstats.stats.licenses import exclusion_reasons
 from colorstats.stats.subject_attributes import COLUMNS as ATTRIBUTE_COLUMNS
 from colorstats.stats.subject_attributes import METHOD as ATTRIBUTE_METHOD
+from colorstats.stats.supplement import METHOD as SUPPLEMENT_METHOD
 
 TABLES = {
     "assets": "id VARCHAR, sha256 VARCHAR, domain VARCHAR, subject_id VARCHAR, "
@@ -278,7 +279,10 @@ def _collect(db, selection, quality, records, directory):
                 f"cc-{name}-{selected.get('license_version')}"
             )
         excluded = exclusion_reasons(
-            dict(asset) | {"quality": quality_license}, origin, adopted.values(),
+            dict(asset) | {"quality": quality_license}, origin,
+            [run for run in adopted.values() if not (
+                run["stage"] == "subject" and run["parameters"].get("method") == SUPPLEMENT_METHOD
+            )],
         )
         attribute_evidence = attributes.get(asset["subject_id"])
         if attribute_evidence:
