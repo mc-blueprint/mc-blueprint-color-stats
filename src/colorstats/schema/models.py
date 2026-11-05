@@ -235,6 +235,13 @@ class Job(Identity, Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
+class CollectionLimit(Base):
+    __tablename__ = "collection_limit"
+
+    key: Mapped[str] = mapped_column(Text, primary_key=True)
+    state: Mapped[dict] = mapped_column(JSONB)
+
+
 class CollectionReservation(Identity, Base):
     __tablename__ = "collection_reservation"
     __table_args__ = (UniqueConstraint("job_id", "lease_token", "source_url"),)

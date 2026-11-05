@@ -25,7 +25,7 @@ from colorstats.collect.mapillary import MapillaryAdapter
 from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import check_current_source, license_class, load_policy
 from colorstats.collect.quality import QUALITY_POLICY, schedule_original
-from colorstats.queue import RunInfo
+from colorstats.queue import Queue, RunInfo
 from colorstats.queue.core import NonRetryableError
 from colorstats.queue.worker import Prepared
 from colorstats.rights import combine_license
@@ -183,6 +183,9 @@ def prepare(
     temporary = None
     engine = create_engine(database_url)
     try:
+        from colorstats.collect.limits import SharedLimits
+
+        adapter.shared_limits = SharedLimits(Queue(engine), claim)
         observe("search", parameters.copy())
         try:
             if "original_review" in payload:
