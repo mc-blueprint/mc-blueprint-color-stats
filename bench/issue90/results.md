@@ -79,7 +79,8 @@ seed0・bfloat16・batch1、既存colorを両側へ同条件で適用した。
 選定と予算を固定し、追加通信を許可された範囲で同コマンドの`--fetch`を実行する。
 続いて`compare.py --root <保存先> --models <既存モデル> --analysis-id analysis`、
 `summarize.py --root <保存先> --output <新規report先>`を使う。
-旧14組を再利用する場合は親のprevious14を保全済みとし、SHAとvariantの一致を確認する。
+旧14組を再利用する場合だけ`--reuse-previous14`を指定し、親のprevious14を保全済みとする。
+省略時は旧14組を読まない。再利用時はSHAとvariantの一致を確認する。
 100件の成否・未評価と各組の数値は`existing100/comparison.json`、集計は`existing100/summary.json`。
 
 ## 初期14組（別の固定入力・参考値）
@@ -110,8 +111,15 @@ chunked応答のread(-1)混入とthumbmime要求漏れは修正し回帰検証�
 
 ## 検証と残る判断
 
-実装の全pytestはWSL Ubuntu-24.04 ext4コピーで608成功・265スキップ、
-ubuntu-1の専用venv/空PostgreSQL16で872成功・1スキップ。最終identity差分は関連155成功。
+反証修正後の最終差分はWSL Ubuntu-24.04のext4コピーと新規の隔離PostgreSQL16で
+全pytest 878成功・1スキップ。ruff・sdist/wheel・diff checkも成功した。
 スキップはSEGMENT_GPU_MODELS未指定の専用smokeであり、本比較の実GPU実行とは別である。
-追加100件は固定ID・一意SHA・予算・保全・原本不変を監査し、ruff・sdist/wheel・diff checkを再確認した。
+検証ログ・build出力は`/tmp/colorstats-issue90-review-3xtKPS/`、一時PostgreSQLは停止済み。
+追加100件は固定ID・一意SHA・予算・保全・原本不変を監査済み。比較データは再取得していない。
+
+反証修正では原本のPillow検査を外して従来のAPI寸法・MIMEを維持し、縮小だけを検査する。
+原本のAPI SHA-1がある場合は受信物と照合し、不一致は`original_sha1_mismatch`として
+予約を解放・候補を除外してバッチを継続する。SHA-1欠落時の扱いは維持する。
+再利用assetのSHAではなく受信SHAで計測し、旧14組の読み込みは`--reuse-previous14`指定時だけとした。
+上限超過原本、SHA-1一致・欠落・不一致、variant再利用のSHA計測、旧14組なしの100件選定を回帰検証した。
 品質許容差・最低実解像度・既定切替はユーザー判断を待つ。追加画像取得や本番再計算は行わない。

@@ -19,8 +19,11 @@ URL/寸法/MIME欠落は`thumbnail_missing`、版欠落は`thumbnail_revision_mi
 
 `rendition`は`provider/native_id/revision/variant`、要求幅、原本のURL・実寸・MIME・API SHA-1を持つ。
 API SHA-1と受信SHA-256は別物で、縮小から原本SHA-256を推測しない。
-`Asset.sha256/width/height`と`quality.received`は受信物、`quality.rendition.original`は原本の情報。
-原本を取得した場合だけ原本SHA-256が既知になる。legacy候補の版情報がない原本モードは従来値を使う。
+`Asset.sha256`と`quality.received.sha256`は受信SHA-256、`quality.rendition.original`は原本の情報。
+縮小だけPillowで受信寸法・MIMEを検査し、原本の寸法・MIMEは従来どおりAPI値を使う。
+原本を取得した場合だけ原本SHA-256が既知になる。API SHA-1がある原本は受信物と照合し、
+不一致なら`original_sha1_mismatch`で候補だけを除外して予約を解放し、バッチを継続する。
+不一致でも取得件数・byteは計上する。SHA-1欠落の原本は従来どおり扱う。
 取得URLと日時もrenditionへ残す。prepはvariantとRGB/LANCZOS/JPEG品質90の変換条件をrunへ記録する。
 
 取得前に既存原本URL・出典URL・provider/native ID＋revisionを照合し、bias予約にはvariantも含める。
@@ -29,6 +32,7 @@ Wikimedia原本URLの追跡query違いも同じ元画像として扱う。登録
 既存assetを参照して`rendition_reused`へ記録する。
 別variantのSHA一致や確定subjectは捏造せず、pHashも従来どおり候補だけに使う。
 この収集経路から解像度違いの独立asset支持を増やさず、既存asset/raw/runを更新しない。
+計測のSHA重複・新規判定には受信SHAを使い、再利用した既存assetのSHAへ置き換えない。
 
 公式[移行告知](https://meta.wikimedia.org/wiki/Tech/News/2026/36)に従い
 `thumb.wikimedia.org`もmediaとして登録する。`rate_group: upload.wikimedia.org`によって

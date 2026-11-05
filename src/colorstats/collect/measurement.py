@@ -325,7 +325,8 @@ def record(session, run, data, known):
     counts = Counter(trial.parameters["counts"])
     reasons = Counter()
     seen, eligible = set(), set()
-    for asset_id in run.parameters["asset_ids"]:
+    for record, asset_id in zip(data["records"], run.parameters["asset_ids"], strict=True):
+        digest = record["sha256"]
         asset = session.get(Asset, uuid.UUID(asset_id))
         source = session.get(Source, asset.source_id)
         quality = dict(asset.quality)
@@ -350,11 +351,11 @@ def record(session, run, data, known):
             origin,
             [],
         )
-        if asset.sha256 in known or asset.sha256 in seen:
+        if digest in known or digest in seen:
             counts["duplicate_sha"] += 1
-        if not excluded and asset.sha256 not in known:
-            eligible.add(asset.sha256)
-        seen.add(asset.sha256)
+        if not excluded and digest not in known:
+            eligible.add(digest)
+        seen.add(digest)
         reasons.update(excluded)
     counts["registered"] = len(run.parameters["asset_ids"])
     counts["new_sha"] = len(seen - known)
