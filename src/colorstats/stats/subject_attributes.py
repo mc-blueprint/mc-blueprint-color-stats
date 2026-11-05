@@ -17,6 +17,7 @@ from sqlalchemy import create_engine, select
 from colorstats.schema.models import Asset, ProcessingRun, Subject
 from colorstats.stats.subjects import METHOD as SUBJECT_METHOD
 from colorstats.stats.subjects import digest, subject_transaction, write_snapshot
+from colorstats.stats.supplement import METHOD as SUPPLEMENT_METHOD
 from colorstats.stats.wikidata import WikidataCatalog
 
 METHOD = "subject-attributes-v1"
@@ -130,10 +131,11 @@ def derive(entity, rules):
     return result
 
 
-def execute(engine, rules, catalog, snapshot, *, code_version, dry_run=False, cancel_run=None):
+def execute(engine, rules, catalog, snapshot, *, code_version, dry_run=False, cancel_run=None,
+            domains=("real_building",)):
     """#72と同じ排他・1取引・新規snapshotで属性と成功runを確定する。
 
-    確定画像を持つ建築subjectを対象とし、成功した対象同定runのキーだけを取得に使う。
+    domains内の確定画像を持つsubjectを対象とし、成功した対象同定runのキーだけを使う。
     既存の非NULL値は保存する。stateとclaimはrun/snapshotへ記録し、Subject列は文字列を保つ。
     dry_runはDB無更新。取消は指定runが付けた値のうち、後続runで変更されず現在も一致する
     値だけを更新前へ戻す。取消は元runの対象を使い、確定画像がなくても取り消す。
@@ -143,7 +145,7 @@ def execute(engine, rules, catalog, snapshot, *, code_version, dry_run=False, ca
     run_id = str(uuid.uuid4())
     with subject_transaction(engine, dry_run, attributes_only=True) as session:
         subjects = session.scalars(select(Subject).where(
-            Subject.domain == "real_building",
+            Subject.domain.in_(domains),
             True if cancel_run else select(Asset.id).where(Asset.subject_id == Subject.id).exists(),
         ).order_by(Subject.id)).all()
         runs = session.scalars(select(ProcessingRun).where(
@@ -152,9 +154,9 @@ def execute(engine, rules, catalog, snapshot, *, code_version, dry_run=False, ca
         ).order_by(ProcessingRun.started_at, ProcessingRun.id)).all()
         bindings = defaultdict(set)
         for run in runs:
-            if run.parameters.get("method") == SUBJECT_METHOD:
+            if run.parameters.get("method") in (SUBJECT_METHOD, SUPPLEMENT_METHOD):
                 for key in run.parameters.get("subject_keys", []):
-                    if key["domain"] == "real_building" and key.get("wikidata_id"):
+                    if key["domain"] in domains and key.get("wikidata_id"):
                         bindings[key["subject_id"]].add(key["wikidata_id"])
         qids = {next(iter(bindings[str(s.id)])) for s in subjects if len(bindings[str(s.id)]) == 1}
         entities = catalog.attribute_claims(qids) if cancel_run is None else {}
