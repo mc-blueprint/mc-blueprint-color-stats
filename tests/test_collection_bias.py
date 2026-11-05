@@ -142,8 +142,9 @@ def test_一万枚の集中枠はCommons八千枚で止まる():
     row = dict(subject_id=None, author="", source="wikimedia_commons", region=None,
                attributes=layer["attributes"])
     values = (None, "", "wikimedia_commons", None, layer)
-    assert bias.quota_reason([row] * 667, config, *values) is None
-    assert bias.quota_reason([row] * 668, config, *values) == "stratum_source_limit"
+    quota = int(layer["images"] * config["limits"]["source_share"])
+    assert bias.quota_reason([row] * (quota - 1), config, *values) is None
+    assert bias.quota_reason([row] * quota, config, *values) == "stratum_source_limit"
     assert bias.quota_reason([row] * 8000, config, *values) == "source_limit"
 
 
