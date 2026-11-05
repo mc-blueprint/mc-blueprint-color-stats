@@ -69,7 +69,7 @@ def test_収集からsubjectと全stageを経由して統計へ区分と根拠�
     collection["policy"] = analysis_policy
     queue.enqueue("collect", None, "a" * 64, collection)
     claim = queue.claim(("collect",))
-    result = collect.prepare(claim)
+    result = collect.prepare(claim, database_url=queue.engine.url)
     run_id = queue.complete(
         claim, result.info, lambda s, r: collect.register(s, r, result.data), result.files,
     )

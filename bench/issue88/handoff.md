@@ -30,7 +30,7 @@ primary、並行担当のcollect/http.py・measurement.py・source_policy.yaml�
 ## 最終検証
 
 - WSL Ubuntu-24.04、Python 3.12.3、PostgreSQL 16.15を同一環境で実行。
-- 全pytest：820 passed / 1 skipped。skipは明示重み・CUDAが必要な既存GPUテストのみ。
+- 全pytest：830 passed / 1 skipped。skipは明示重み・CUDAが必要な既存GPUテストのみ。
 - 時間依存テストの断続失敗なし。単独再実行による救済なし。
 - ruff check .、sdist/wheel build、git diff --check成功。
 - 中間で検出したワーカープロトコル、ロック順、照会増加、台帳fixtureの隔離、空DB再作成を修正済み。
@@ -71,3 +71,25 @@ primary、並行担当のcollect/http.py・measurement.py・source_policy.yaml�
 - `tests/test_retention.py`
 - `tests/test_schema.py`
 - `tests/test_stats_aggregate.py`
+
+## 反証指摘の追加修正
+
+前提commit：bd7e29bb608219ee4b46544c8ee883a6304bc81f。owner継続、再委譲なし。
+確認済みP1×4・P2×2を修正した。追加回帰はtests/test_retention_cvat.pyの10ケース。
+
+- P1誤削除：旧画像が混在する共有ZIP/manifest/draftは台帳へ登録しない。画像固有maskだけを該当新規assetへ登録する。
+  前版で登録済みの共有物もJobなし旧run・所有者不明runの参照で保護する。削除しない側へ倒す。
+- P1削除不能：run.output_paths.masksと相対mask_pathを同じ表現へ揃えて参照解除し、自身の参照による保護判定を解消する。
+- P1 CVATゲート：prepare_draftはDB必須で、XML読取り前に停止・期限を確認する。新規画像だけの生成XML/JSONは保持登録する。
+  APIのdatabase_urlまたは既存DATABASE_URLを渡す。整形だけの私有関数_write_draftは単体テスト用の検証対象と区別した。
+- P1再取得ゲート：stage.prepareは引数・環境ともDB未指定なら通信前に拒否する。
+- P2停止範囲：取得前の画像照会は同じ原画像URLに限定する。source全体停止は従来どおり維持する。
+- P2権限：CVAT draft/maskをos.openの作成時mode 0600で開き、書込み後chmodへ依存しない。
+
+全pytest：830 passed / 1 skipped。ruff・sdist/wheel・diff check成功。
+DB必須化による既存単体テストの呼出しを依存注入へ変更し、アプリの停止ゲートは緩めていない。
+実環境のACL・NFS・CVAT認可、運用復元、M4実接続は未検証。本番操作なし。
+docs/retention.mdと指定公開文面3ファイルを更新した。push・PRは行わない。
+
+追加差分：src/colorstats/{cvat.py,retention.py,collect/stage.py}、docs/retention.md、
+tests/{test_retention_cvat.py,test_retention.py,test_cvat.py,test_cvat_db.py,test_collect.py,test_openverse.py,test_analysis_rights_db.py}、本引継ぎ。

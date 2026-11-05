@@ -6,12 +6,11 @@ import uuid
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from sqlalchemy import or_, select, text
+from sqlalchemy import func, or_, select, text
 
 from colorstats.rights import analysis_review_reasons
 from colorstats.schema.models import (
     Asset,
-    Job,
     ProcessingRun,
     Region,
     Retention,
@@ -103,12 +102,7 @@ def check_acquisition(session, provider, source_url, original_url):
         or_(Source.policy["use_stopped"].as_boolean() == True,  # noqa: E712
             Source.policy["deletion_requested"].as_boolean() == True),  # noqa: E712
     ))
-    previous = session.scalars(select(Asset).where(or_(
-        Asset.url == original_url,
-        Asset.source_id.in_(select(Source.id).where(
-            Source.site == provider, Source.url == source_url,
-        )),
-    ))).all()
+    previous = session.scalars(select(Asset).where(Asset.url == original_url)).all()
     if stopped:
         raise PermissionError("削除受付済みの出典です")
     for asset in previous:
@@ -205,8 +199,14 @@ def cleanup(session, *, host, now=None):
         asset = session.get(Asset, file.asset_id)
         if asset.storage_path == file.path:
             asset.storage_path = ""
-        for region in session.scalars(select(Region).where(
-            Region.asset_id == file.asset_id, Region.mask_path == file.path,
+        mask_path = func.replace(Region.mask_path, "\\", "/")
+        mask_root = func.replace(ProcessingRun.output_paths["masks"].as_string(), "\\", "/")
+        mask_target = file.path.replace("\\", "/")
+        matches_mask = or_(mask_path == mask_target, mask_root + "/" + mask_path == mask_target)
+        for region in session.scalars(select(Region).join(
+            ProcessingRun, Region.processing_run_id == ProcessingRun.id,
+        ).where(
+            Region.asset_id == file.asset_id, matches_mask,
         )):
             region.mask_path = None
         file.released_at = file.released_at or now
@@ -218,17 +218,20 @@ def cleanup(session, *, host, now=None):
         legacy = session.scalar(select(Asset.id).where(Asset.storage_path == file.path))
         legacy_region = session.scalar(select(Region.id).join(
             ProcessingRun, Region.processing_run_id == ProcessingRun.id,
-        ).where(or_(
-            Region.mask_path == file.path,
-            ProcessingRun.output_paths["masks"].as_string() + "/" + Region.mask_path == file.path,
-        )).limit(1))
-        legacy_run = session.scalar(select(ProcessingRun.id).join(
-            Job, Job.run_id == ProcessingRun.id,
-        ).outerjoin(Retention, Retention.asset_id == Job.asset_id).where(
-            Retention.id.is_(None), Job.asset_id.is_not(None),
-            text("EXISTS (SELECT 1 FROM jsonb_each_text(processing_run.output_paths) p "
-                 "WHERE p.value = :path)"),
-        ).params(path=file.path).limit(1))
+        ).where(matches_mask).limit(1))
+        legacy_run = session.scalar(text("""
+            SELECT r.id FROM processing_run r
+            WHERE EXISTS (SELECT 1 FROM jsonb_each_text(r.output_paths) p WHERE p.value = :path)
+            AND (
+                EXISTS (SELECT 1 FROM job j LEFT JOIN retention t ON t.asset_id = j.asset_id
+                        WHERE j.run_id = r.id AND j.asset_id IS NOT NULL AND t.id IS NULL)
+                OR (NOT EXISTS (SELECT 1 FROM job j WHERE j.run_id = r.id)
+                    AND (NOT (r.parameters ? 'asset_ids') OR EXISTS (
+                        SELECT 1 FROM jsonb_array_elements_text(r.parameters->'asset_ids') a
+                        LEFT JOIN retention t ON t.asset_id::text = a.value WHERE t.id IS NULL
+                    )))
+            ) LIMIT 1
+        """), {"path": file.path})
         if shared or legacy or legacy_region or legacy_run:
             file.error = "shared_reference"
             continue

@@ -39,6 +39,8 @@ python -m colorstats.retention_cli export-stops --output /private/deletion-ledge
 受付と収集確定・画像参照登録・集計登録はPostgreSQL取引ロックで直列化します。
 実収集は`stage.prepare(..., database_url=...)`で取得直前にも停止を照会します。
 標準Workerはこれを注入します。独自収集入口は同じ確認を必須とします。
+DB未指定時は収集を開始しません。`prepare-draft`もDATABASE_URL（APIではdatabase_url）を
+必須とし、XMLを読む前に停止・期限を確認して生成XML/JSONを保持台帳へ登録します。
 
 画像処理は認可された内部worker/管理者のOSアカウントだけで実行してください。
 新規の一時ファイル・確定ファイルは0600、確定ディレクトリは0700です。
@@ -53,6 +55,10 @@ shadeにも同じperson_maskを渡し、人物をWB推定・色観測・部位�
 CVAT・replica・cache・backupを作成する処理は同じ取引ロック内で
 `retention.register_file(session, asset_id, host, absolute_path, kind)`を必ず呼びます。
 新規ファイルを保持期限の外へ複製しないでください。CVATのタスク・ZIPを外部共有しません。
+旧画像を含むCVATの共通ZIP・manifest・draftは新規画像の期限削除へ登録しません。
+Jobを持たない旧runや所有者を特定できないrunの共有参照も保護します。新旧は別のCVAT
+タスク・出力へ分けてください。既存共有物の削除は本タスクの対象外です。
+CVATのdraft・maskは既存ディレクトリの権限やumaskにかかわらず、作成時から0600とします。
 解析出力のhostはpayload.host（省略時は実行host名）、CVATと人物maskは呼出し時のhost
 （省略時は実行host名）です。NFSの別名を使う場合は清掃hostと同じ名前を明示してください。
 
