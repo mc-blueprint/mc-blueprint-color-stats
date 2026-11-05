@@ -1,8 +1,9 @@
 """ジョブの取得・更新は短いトランザクション、結果登録は完了確定と同一取引。"""
 
+import socket
 import uuid
 from collections.abc import Callable, Sequence
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -11,6 +12,7 @@ from sqlalchemy import Engine, func, or_, select, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from colorstats import retention
 from colorstats.rights import combine_license
 from colorstats.schema.models import Asset, Job, ProcessingRun, Source
 
@@ -160,6 +162,8 @@ class Queue:
         """有効な所有権のみ延長する。期限切れはLeaseLost。"""
         with self._transaction() as session:
             job = self._owned(session, claim)
+            if job.asset_id is not None:
+                retention.assert_usable(session, job.asset_id, images=True)
             job.lease_until = session.scalar(select(func.clock_timestamp())) + self.lease
 
     def fail(self, claim: Claim, reason: str) -> None:
@@ -198,49 +202,84 @@ class Queue:
         DB失敗や所有権喪失では未参照ファイルが残りうる。既存ファイルは置換しない。
         成功済みの再呼出しは既存run IDを返す。
         """
-        with self._transaction() as session:
-            job = session.get(Job, claim.id)
-            if job.status == "succeeded":
-                return job.run_id
-            if job.lease_token != claim.token:
-                raise LeaseLost("ジョブのリースを失いました")
         output_paths = {}
-        for temporary, target in files:
-            if temporary.parent != target.parent or temporary == target:
-                raise ValueError("一時ファイルは出力名と同じディレクトリに分離してください")
-            directory = target.parent / f".output-{claim.token}-{uuid.uuid4()}"
-            directory.mkdir()
-            published = directory / target.name
-            temporary.replace(published)
-            output_paths[str(target)] = str(published)
+        try:
+            with self._transaction() as session:
+                job = session.get(Job, claim.id)
+                if job.status == "succeeded":
+                    return job.run_id
+                if job.lease_token != claim.token:
+                    raise LeaseLost("ジョブのリースを失いました")
+                managed = job.asset_id is not None and session.scalar(select(
+                    retention.Retention.id,
+                ).where(retention.Retention.asset_id == job.asset_id)) is not None
+                if managed:
+                    retention.lock(session)
+                    retention.assert_usable(session, job.asset_id, images=True)
+                for temporary, target in files:
+                    if temporary.parent != target.parent or temporary == target:
+                        raise ValueError("一時ファイルは出力名と同じディレクトリに分離してください")
+                    directory = target.parent / f".output-{claim.token}-{uuid.uuid4()}"
+                    published = directory / target.name
+                    output_paths[str(target)] = str(published)
+                    if managed:
+                        retention.register_file(
+                            session, job.asset_id,
+                            claim.payload.get("host", socket.gethostname()), published,
+                            "mask" if job.stage == "segment" else "derived",
+                        )
+            with (self._transaction() if managed else nullcontext()) as session:
+                if managed:
+                    retention.lock(session)
+                    retention.assert_usable(session, claim.asset_id, images=True)
+                for temporary, target in files:
+                    published = Path(output_paths[str(target)])
+                    published.parent.mkdir(mode=0o700)
+                    temporary.replace(published)
+                    published.chmod(0o600)
+            with self._transaction() as session:
+                retention.lock(session)
+                job = session.scalars(select(Job).where(Job.id == claim.id).with_for_update()).one()
+                if job.status == "succeeded":
+                    return job.run_id
+                self._owned(session, claim)
+                category = info.license_class
+                if job.asset_id is not None:
+                    retention.assert_usable(session, job.asset_id, images=True)
+                    asset = session.get(Asset, job.asset_id)
+                    source = session.get(Source, asset.source_id)
+                    category = combine_license(category, asset.license_class, source.license_class)
+                run = ProcessingRun(
+                    stage=job.stage,
+                    config_hash=job.stage_config_hash,
+                    license_class=category,
+                    code_version=info.code_version,
+                    taxonomy_version=info.taxonomy_version,
+                    node=info.node,
+                    parameters=info.parameters,
+                    output_paths=output_paths,
+                    model_name=info.model_name,
+                    weights_hash=info.weights_hash,
+                    started_at=claim.started_at,
+                )
+                session.add(run)
+                session.flush()
+                register(session, run)
+                run.finished_at = session.scalar(select(func.clock_timestamp()))
+                job.run_id = run.id
+                job.status = "succeeded"
+                job.lease_token = job.lease_until = None
+                return run.id
+        except BaseException:
+            if claim.stage == "collect":
+                for path in output_paths.values():
+                    Path(path).unlink(missing_ok=True)
+            raise
+
+    def check_input(self, claim: Claim) -> None:
+        """子プロセスへ画像を渡す前に現在の保持・利用条件を確認する。"""
         with self._transaction() as session:
-            job = session.scalars(select(Job).where(Job.id == claim.id).with_for_update()).one()
-            if job.status == "succeeded":
-                return job.run_id
-            self._owned(session, claim)
-            category = info.license_class
-            if job.asset_id is not None:
-                asset = session.get(Asset, job.asset_id)
-                source = session.get(Source, asset.source_id)
-                category = combine_license(category, asset.license_class, source.license_class)
-            run = ProcessingRun(
-                stage=job.stage,
-                config_hash=job.stage_config_hash,
-                license_class=category,
-                code_version=info.code_version,
-                taxonomy_version=info.taxonomy_version,
-                node=info.node,
-                parameters=info.parameters,
-                output_paths=output_paths,
-                model_name=info.model_name,
-                weights_hash=info.weights_hash,
-                started_at=claim.started_at,
-            )
-            session.add(run)
-            session.flush()
-            register(session, run)
-            run.finished_at = session.scalar(select(func.clock_timestamp()))
-            job.run_id = run.id
-            job.status = "succeeded"
-            job.lease_token = job.lease_until = None
-            return run.id
+            if claim.asset_id is not None:
+                retention.assert_usable(session, claim.asset_id, images=True)
+                if claim.stage in {"color", "shade"}:
+                    retention.check_privacy(session, claim.asset_id, claim.payload)

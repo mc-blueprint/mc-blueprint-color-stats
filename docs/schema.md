@@ -596,3 +596,21 @@ downgradeは全対象表をロックしてanalysis_only行の存在を検査し�
 assetの元URL・取得日時・確認根拠を保持し、原画像保存期限と統計利用失効を分離する。
 verifyは固定済みformat_version=1も引き続き照合するが、旧M3 snapshotを再生成・上書きしない。
 snapshotは配布パックではなく、[M4配布契約](pack-contract.md)に従って別の出力を作る。
+
+## 新規入力の保持・停止台帳（Issue #88）
+
+revision `0007`は既存行を登録せず、次の3表を追加する。
+
+- retention：assetごとの画像期限expires_at、停止時刻stopped_at、理由reason、受付Issue URL、
+  backup最大残留期限backup_until。画像期限だけでは数値統計を失効させない。
+- retention_file：asset/host/絶対pathを一意な依存参照とし、raw/derived/mask/cvat/replica/cache/backupを
+  区別する。released_atは参照解除、deleted_atは物理削除確認、errorは共有保護・削除失敗。
+- retention_stop：provider/source_url/target_urlごとの停止台帳。target_urlの空文字列は出典全体、
+  それ以外は対象の原画像URL。detailsは原画像URL・受付時刻・理由・受付Issue。
+  asset/sourceの復元より古いbackupでも再取得を拒否できるよう、外部キーを持たず別保管する。
+
+downgradeは保持・停止台帳が残っていれば拒否する。台帳を暗黙削除しない。
+asset.quality.privacy_reviewは目視確認者・建築/地形の主体・確認時刻・人物除外maskとSHA-256。
+新規画像は確認前の色処理を拒否し、maskはcolor設定hashへ含める。
+停止入力を除いた新selectionの生成、復元時の停止台帳先行適用、共有ファイル保護は
+[管理手順](retention.md)に従う。旧snapshotの内容・識別子は変更しない。

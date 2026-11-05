@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "statistics", "provenance", "data_license"],
+  "properties": {
+    "format": {"const": "color-statistics-v1"},
+    "data_license": {"const": "MIT"},
+    "statistics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["oklab", "ratio", "count"],
+        "properties": {
+          "oklab": {"type": "array", "minItems": 3, "maxItems": 3,
+                    "items": {"type": "number"}},
+          "ratio": {"type": "number", "minimum": 0, "maximum": 1},
+          "count": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider_counts", "policy_version", "build_version", "excluded_count"],
+      "properties": {
+        "provider_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "wikimedia_commons": {"type": "integer", "minimum": 0},
+            "openverse": {"type": "integer", "minimum": 0},
+            "loc": {"type": "integer", "minimum": 0},
+            "mapillary": {"type": "integer", "minimum": 0}
+          }
+        },
+        "policy_version": {"type": "string", "pattern": "^[a-zA-Z0-9_.-]{1,64}$"},
+        "build_version": {"type": "string", "pattern": "^[a-zA-Z0-9_.-]{1,64}$"},
+        "excluded_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

@@ -336,6 +336,7 @@ def prepare(claim):
             ),
             discard=lambda request, candidate: release(queue, claim, candidate),
             observer=meter.observe if meter else None,
+            database_url=engine.url,
         )
         prepared.data["claim_id"] = str(claim.id)
         prepared.data["claim_token"] = str(claim.token)

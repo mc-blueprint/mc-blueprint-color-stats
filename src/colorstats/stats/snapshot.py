@@ -5,12 +5,15 @@ import json
 import tempfile
 import uuid
 from collections import Counter, defaultdict
+from datetime import UTC, datetime
 from pathlib import Path
 from time import monotonic
 
 import duckdb
 from sqlalchemy import select, text
+from sqlalchemy.orm import Session
 
+from colorstats.retention import check_selection
 from colorstats.schema.models import (
     Asset,
     ColorObservation,
@@ -320,7 +323,9 @@ def _collect(db, selection, quality, records, directory):
         if "color" in chosen:
             colors.append({"id": chosen["color"], "asset_id": aid,
                            "segment_id": chosen.get("segment")})
-        if available:
+        expiry = asset["quality"].get("retention_until")
+        image_available = not expiry or datetime.fromisoformat(expiry) > datetime.now(UTC)
+        if available and image_available:
             tasks.append((asset, chosen, selected_regions, runs[chosen["color"]],
                           runs[chosen["segment"]]))
         counts["assets"] += 1
@@ -473,12 +478,20 @@ def _groups(asset, chosen, regions, run, segment, quality):
     cv2.setNumThreads(1)
     try:
         with Image.open(payload["input_path"]) as image:
+            people = None
+            if payload.get("person_mask"):
+                with Image.open(payload["person_mask"]) as person:
+                    people = np.asarray(person.convert("L")) != 0
             masks = {row["region_id"]: color._region_mask(row, image.size) for row in expected
                      if any(labels[row["region_id"]] in members for members in groups.values())}
             for role, members in sorted(groups.items()):
                 ids = [row["region_id"] for row in expected
                        if labels[row["region_id"]] in members]
                 mask = np.logical_or.reduce([masks[rid] for rid in ids])
+                if people is not None:
+                    mask &= ~people
+                if people is not None and not mask.any():
+                    continue
                 data = {
                     "members": members, "region_ids": ids,
                     "area_ratio": float(mask.mean()),
@@ -517,7 +530,7 @@ def execute(engine, selection, output, *, quality, code_version, dry_run=False):
         directory = Path(temporary)
         root = directory if dry_run else Path(output)
         if not dry_run:
-            root.mkdir(parents=True, exist_ok=False)
+            root.mkdir(mode=0o700, parents=True, exist_ok=False)
         started = monotonic()
         with engine.connect() as connection:
             connection.execution_options(isolation_level="REPEATABLE READ")
@@ -529,6 +542,8 @@ def execute(engine, selection, output, *, quality, code_version, dry_run=False):
                     "current_setting('transaction_read_only') AS read_only"
                 )).mappings().one()
                 records = _read(connection, selection, directory)
+        with Session(engine) as session:
+            check_selection(session, selection)
         read_seconds = monotonic() - started
         with duckdb.connect(str(directory / "work.duckdb"), config={"threads": 1}) as db:
             db.execute("BEGIN")
