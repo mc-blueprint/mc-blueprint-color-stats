@@ -1,6 +1,7 @@
 import copy
 import io
 import json
+import multiprocessing
 import socket
 import threading
 from collections import Counter
@@ -39,6 +40,33 @@ from tests.test_queue import database, expire  # noqa: F401
 from tests.test_queue import queue as queue
 
 
+def _spawn_media_ledger(database_url, job_id, result):
+    import uuid
+
+    from sqlalchemy import create_engine
+
+    from colorstats.queue import Queue
+
+    engine = create_engine(database_url)
+    queue = Queue(engine)
+    claim = queue.claim(["collect"], job_ids=[uuid.UUID(job_id)])
+    meter = Meter(queue, claim)
+    from colorstats.collect.commons import CommonsAdapter
+
+    policy = claim.payload["policy"]
+    now = [0.0]
+    adapter = CommonsAdapter(
+        policy, opener=lambda *args, **kwargs: io.BytesIO(b"x" * 20_000_000),
+        clock=lambda: now[0], wait=lambda delay: now.__setitem__(0, now[0] + delay),
+    )
+    adapter.observer = meter.observe
+    adapter.media_history = meter.media_history
+    adapter.get("https://upload.wikimedia.org/file", read=lambda response: response.read())
+    result.send(now[0])
+    queue.fail(claim, "spawn fixture")
+    engine.dispose()
+
+
 @pytest.fixture
 def measured(config):
     config["measurement"] = {
@@ -49,23 +77,87 @@ def measured(config):
     return config
 
 
+@DB
+def test_spawn子job間でmedia帯域窓をDB台帳から復元する(queue, measured, tmp_path):
+    from colorstats.collect.policy import load_policy
+
+    jobs = []
+    for index in range(2):
+        payload, _ = payload_for(tmp_path)
+        payload["bias"] = copy.deepcopy(measured)
+        payload["request"]["stratum"] = request().stratum
+        payload["policy"] = load_policy(ROOT / "configs/source_policy.yaml", "wikimedia_commons")
+        jobs.append(queue.enqueue("collect", None, f"{index + 1:064x}", payload))
+
+    context = multiprocessing.get_context("spawn")
+    elapsed = []
+    for job_id in jobs:
+        parent, child = context.Pipe(duplex=False)
+        process = context.Process(
+            target=_spawn_media_ledger,
+            args=(queue.engine.url.render_as_string(hide_password=False), str(job_id), child),
+        )
+        process.start()
+        child.close()
+        elapsed.append(parent.recv())
+        process.join()
+        assert process.exitcode == 0
+        parent.close()
+
+    assert elapsed[0] == 0
+    assert elapsed[1] >= 5
+
+
 @pytest.mark.parametrize(
     "failure", [TimeoutError(), HTTPError("https://example.test", 503, "busy", {}, None)]
 )
 def test_HTTP再試行とtimeoutも要求の分母へ含む(failure):
     from colorstats.collect.commons import CommonsAdapter
 
-    adapter, calls = make_client(("wikimedia_commons", CommonsAdapter), [failure, Response(b"{}")])
+    adapter, calls = make_client(
+        ("wikimedia_commons", CommonsAdapter), [failure, Response(b"{}")], example_kind="api"
+    )
     counts = Counter()
     adapter.observer = lambda event, value: counts.update({event: value})
     if isinstance(failure, TimeoutError):
         with pytest.raises(TimeoutError):
             adapter.get("https://example.test", api=True)
-        assert counts == {"api_request": 1, "timeouts": 1}
+        assert counts == {"api_request": 1, "timeouts": 1, "network_api_seconds": 0.0}
     else:
         adapter.get("https://example.test", api=True)
-        assert counts == {"api_request": 2, "responses": 2, "bytes": 2}
+        assert counts == {
+            "api_request": 2,
+            "responses": 2,
+            "bytes": 2,
+            "network_api_seconds": 0.0,
+            "backoff_seconds": 5.0,
+        }
     assert counts["api_request"] == len(calls)
+
+
+def test_body_read_timeoutもAPI応答時間に含め5秒cooldownを守る():
+    from colorstats.collect.commons import CommonsAdapter
+
+    clock = Clock()
+
+    class SlowTimeout(Response):
+        def read(self, *args):
+            clock.now += 2
+            raise TimeoutError
+
+    adapter, calls = make_client(
+        ("wikimedia_commons", CommonsAdapter),
+        [SlowTimeout(b""), Response(b"{}")],
+        clock=clock,
+        example_kind="api",
+    )
+    observed = []
+    adapter.observer = lambda event, value: observed.append((event, value))
+    with pytest.raises(TimeoutError):
+        adapter.get("https://example.test")
+    adapter.get("https://example.test")
+    assert calls == [("https://example.test", 0), ("https://example.test", 7)]
+    assert ("network_api_seconds", 2) in observed
 
 
 @DB
@@ -362,6 +454,7 @@ def test_既定openerのリダイレクトも枠待機と応答byteを計数す�
 
     clock, counts, calls = Clock(), Counter(), []
     policy = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
+    policy["hosts"]["example.test"] = {"kind": "page"}
 
     def forbidden(*args, **kwargs):
         pytest.fail("外部ネットワークへの接続は禁止")
@@ -512,6 +605,11 @@ def test_照合途中の枠停止でも除外URLと受信済み継続位置を�
     with Session(queue.engine) as session:
         history = report(session, "fixture-77")["strata"][request().stratum]["history"][0]
         search = history["search"]
+        assert "network_api_seconds" in history["counts"]
+        assert history["database_timing"]["lock_wait_seconds"] >= 0
+        assert history["database_timing"]["processing_seconds"] >= 0
+        assert history["database_timing"]["commit_seconds"] >= 0
+        assert history["elapsed_seconds"] >= 0
         assert search["effective"]["api"] == "Openverse API v1"
         assert search["api_next_offset"] == 2 and not search["search_complete"]
         assert search["skipped"][0]["source_url"] == data["results"][0]["foreign_landing_url"]
@@ -591,3 +689,56 @@ def test_Commonsが供給元枠を使い切ってもOpenverse枠を残す(queue,
             report(session, "fixture-77")["strata"][request().stratum]["counts"]["api_requests"]
             == 2
         )
+
+
+@DB
+def test_Openverse長周期枠は別jobとworker再生成後もDB台帳で復元する(
+    queue, measured, tmp_path
+):
+    from colorstats.collect.policy import load_policy
+
+    measured["measurement"]["id"] = "fixture-openverse-1"
+    payload, _ = payload_for(tmp_path)
+    payload["bias"] = copy.deepcopy(measured)
+    payload["request"].update(provider="openverse", stratum=request().stratum)
+    payload["policy"] = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
+    host_policy = payload["policy"]["hosts"]["api.openverse.org"]
+    queue.enqueue("collect", None, "e" * 64, payload)
+    first = queue.claim(["collect"])
+    first_meter = Meter(queue, first)
+    for _ in range(host_policy["api_windows"][0]["limit"]):
+        assert first_meter.reserve_quota(
+            "api.openverse.org", "api", host_policy["api_windows"]
+        ) == 0
+    with Session(queue.engine) as session:
+        assert any(
+            event["host"] == "api.openverse.org"
+            for run in session.scalars(select(ProcessingRun))
+            for event in run.parameters.get("quota_events", [])
+        )
+    queue.fail(first, "restart fixture")
+
+    queue.enqueue("collect", None, "f" * 64, payload)
+    restarted_worker_claim = queue.claim(["collect"])
+    next_meter = Meter(queue, restarted_worker_claim)
+    assert next_meter.reserve_quota(
+        "api.openverse.org", "api", host_policy["api_windows"]
+    ) >= 3599
+
+
+@DB
+def test_stage_observerとmeasurement台帳へ秘密queryを残さない(
+    queue, measured, tmp_path, monkeypatch
+):
+    data = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    item = data["results"][0]
+    item["foreign_landing_url"] = "https://openverse.org/page?access_token=private"
+    item["url"] = "https://upload.wikimedia.org/image?signature=private"
+    claim, _ = openverse_job(
+        queue, measured, tmp_path, monkeypatch, [Response(data), Response(b"unverified")]
+    )
+    prepared = bias.prepare(claim)
+    assert "private" not in json.dumps(prepared.info.parameters)
+    with Session(queue.engine) as session:
+        search = report(session, "fixture-77")["strata"][request().stratum]["history"][0]["search"]
+        assert "private" not in json.dumps(search)

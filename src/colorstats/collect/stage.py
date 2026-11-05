@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 from colorstats import retention
 from colorstats.collect import Candidate, SearchRequest
 from colorstats.collect.commons import CommonsAdapter, check_commons_policy
-from colorstats.collect.http import MeasurementLimit
+from colorstats.collect.http import HttpClient, MeasurementLimit
 from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import license_class, load_policy
 from colorstats.queue import RunInfo
@@ -117,8 +117,10 @@ def prepare(
     }
 
     def observe(event, value=1):
+        value = HttpClient._safe_value(value)
         if event == "search":
             parameters.update(value)
+            parameters["skipped"] = skipped
         elif event == "candidate":
             parameters["candidates"].append(value)
             if value["reason"]:
@@ -132,6 +134,10 @@ def prepare(
 
     if observer is not None:
         adapter.observer = observe
+        meter = getattr(observer, "__self__", None)
+        if meter is not None and hasattr(meter, "reserve_quota"):
+            adapter.quota_reserve = meter.reserve_quota
+            adapter.media_history = meter.media_history
     temporary = None
     engine = create_engine(database_url)
     try:
@@ -260,7 +266,7 @@ def prepare(
             payload["code_version"],
             payload["taxonomy_version"],
             payload["host"],
-            parameters,
+            HttpClient._safe_value(parameters),
         )
         return Prepared(info, {"records": records, "payload": payload}, files)
     except BaseException as error:
