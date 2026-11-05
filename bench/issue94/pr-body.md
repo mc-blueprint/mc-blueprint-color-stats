@@ -9,6 +9,7 @@
 - LoadCredential専用認証、API完全一致先だけのOAuthヘッダー、署名URL非保存、未確認/人物/連写候補の事前除外を追加。
 - analysis_only・bias・非公開保持/削除・配布境界を再利用。目標の本収集は#105完了後。
 - 現行policyをprepare時とHTTP送信直前に照合し、過去の許可・redirect・待機中の無効化にも従う。
+- 確認用probeも現行policyと共通HttpClientを使い、cwd側の許可でrobots取得の停止を迂回しない。
 - CDNの共有枠をrate_group単位で台帳復元し、401/403をworkerの再試行なし失敗として記録する。
 - priority: medium / type: feature（Issueと同じ。Commonsによる回避策があるためmedium）。
 

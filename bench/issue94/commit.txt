@@ -1,6 +1,5 @@
-fix: Mapillaryの通信停止と共有枠復元と認証拒否処理を修正
+fix: Mapillaryの確認スクリプトにも現行policyの停止を適用
 
-- 現行policyによる全Mapillary hostの遮断を集約元ページと過去ジョブにも適用
-- rate_group単位でCDN帯域台帳を記録・復元し別subdomainへ共有
-- 401と403を子プロセスからworkerへ再試行しない失敗として伝播
-- 本番DBの該当ジョブ0件をREAD ONLYで確認し回帰と公開文面を更新
+- probeの直接urlopenを共通HttpClientへ置き換え現行policyを読み込む
+- cwd側が有効でも現行policy無効時はrobots取得前に停止する回帰を追加
+- 関連33件とruffとsdist/wheelの成功を記録
