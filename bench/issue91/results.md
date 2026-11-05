@@ -82,3 +82,21 @@ API/byte台帳を消去せず、旧接続の終了と待機期限を確認して
 - 応答後DB障害の回帰では、host予約を保持しつつプロセス内semaphoreを解放することを確認。
 
 最終コマンド記録：`%USERPROFILE%\.codex\logs\commands\20261105T145206Z-6b7caf6244264458890d87c4261d580e.jsonl`。
+
+## 2026-11-06 JST 反証修正後の最終検証
+
+- P1：429/503のヘッダー受信時に共有DBのcooldownを確定してから本文とobserverを処理する。
+  同時枠2で本文を保留し、別processのworkerが送信しないことを両statusで確認した。
+- P2：共有予約待ちではAPI履歴を加算せず、送信直前に記録する。
+  匿名5回/時・共有待機5秒でも初回は10秒未満に1要求だけ送信し、3600秒待ちにならない。
+- API/media台帳の記録・復元と共有予約をDB時計へ統一した。worker時計±24時間と
+  HTTP日時Retry-Afterを検証し、分・日枠の境界テストもDB時刻の注入へ切り替えた。
+- 非空台帳のmigration0008 downgradeは拒否され、台帳とrevisionが保全されることを確認した。
+- WSL Ubuntu-24.04・ext4一時コピー・PostgreSQL16でruff、全pytest 1050 passed/1 skipped、
+  sdist/wheel build、git diff --checkが成功した。skipは既存GPUテスト。
+- unshareの独立ネットワーク名前空間でloopbackだけを有効にし、既存build環境を再利用した。
+  外部通信、SSH、本番DB・外部APIへの接続、pilotの操作は行っていない。
+- 過去の実測は同一応答条件ではないため効果比較の未達を維持し、外部通信禁止の今回も再測定しない。
+  公開文面はRefs #91を維持する。全検証processと一時PostgreSQLは終了済み。
+
+最終コマンド記録：`%USERPROFILE%\.codex\logs\commands\20261105T152658Z-3de426bfecf84f9b958bff81ed3c5daf.jsonl`。
