@@ -199,6 +199,7 @@ PostgreSQLの`clock_timestamp()`を使う。worker間の時計差による枠の
 共有収集のHTTP日時形式Retry-AfterもDB時計と比較する。429/503の停止期限はヘッダーを
 受けた直後、本文・observerの処理前に共有DBへ反映し、空いている同時枠からの送信も止める。
 共有予約が成立しない待機ではプロセス内API履歴を増やさず、実送信直前にだけ加算する。
+共有予約なしの並行API呼出しでも、窓の確認・待機・履歴追加を送信直前の同一ロック内で行う。
 GET・JSON、非対話用`maxlag=5`、連絡先付きBot User-Agentを使用する。
 HTTP 429/503とAPI maxlag/ratelimited/cirrussearch-too-busy-errorは
 Retry-After（秒数・HTTP日時）と5秒からの指数待機の
