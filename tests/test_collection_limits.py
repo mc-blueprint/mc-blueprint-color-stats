@@ -2,16 +2,18 @@
 
 import multiprocessing
 import os
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
-from datetime import timedelta
+from datetime import UTC, timedelta
 from unittest.mock import Mock
+from urllib.error import HTTPError
 
 import pytest
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 
-from colorstats.collect.http import HttpClient
+from colorstats.collect.http import HttpClient, MeasurementLimit
 from colorstats.collect.limits import ProviderLease, SharedLimits, locked
 from colorstats.queue import LeaseLost, Queue
 from colorstats.queue.core import NonRetryableError
@@ -46,6 +48,30 @@ def lease_process(url, output):
         from time import sleep
 
         sleep(1)
+
+
+def request_process(url, claim, policy, output):
+    engine = create_engine(url)
+    sent, waits = [], []
+
+    def opener(*args, **kwargs):
+        sent.append(True)
+        return Response(b"ok")
+
+    def wait(delay):
+        waits.append(delay)
+        raise MeasurementLimit("fixture_wait")
+
+    try:
+        client = HttpClient(policy, opener=opener, wait=wait)
+        client.shared_limits = SharedLimits(Queue(engine), claim)
+        try:
+            client.get("https://upload.wikimedia.org/file", read=lambda r: r.read())
+        except MeasurementLimit:
+            pass
+        output.put((sent, waits))
+    finally:
+        engine.dispose()
 
 
 def test_独立processはSQLでproviderを限定し未指定callerは従来どおり(queue):
@@ -286,3 +312,128 @@ def test_応答後のDB障害では不明なcooldownを期限切れで解除し�
         state["slots"][0]["until"] = now - 1
     with pytest.raises(NonRetryableError, match="未完了"):
         SharedLimits(queue, claim).reserve("commons.wikimedia.org", "api", {}, 0, [])
+
+
+@pytest.mark.parametrize("status", [429, 503])
+def test_RetryAfterを本文受信中に別workerへ共有する(queue, policy, status):
+    for number, provider in enumerate(("wikimedia_commons", "openverse")):
+        enqueue(queue, provider, number)
+    first = queue.claim(["collect"], provider="wikimedia_commons")
+    second = queue.claim(["collect"], provider="openverse")
+    body_started, release = threading.Event(), threading.Event()
+
+    class Body(Response):
+        def read1(self, size):
+            body_started.set()
+            assert release.wait(15)
+            return super().read1(size)
+
+    policy["retries"] = 0
+    policy["hosts"]["upload.wikimedia.org"]["min_interval"] = 0.001
+
+    def opener(*args, **kwargs):
+        raise HTTPError("https://upload.wikimedia.org/file", status, "busy",
+                        {"Retry-After": "30"}, Body(b"busy"))
+
+    client = HttpClient(policy, opener=opener, wait=lambda _: None)
+    client.shared_limits = SharedLimits(queue, first)
+    context = multiprocessing.get_context("spawn")
+    output = context.Queue()
+    process = context.Process(target=request_process, args=(
+        queue.engine.url.render_as_string(hide_password=False), second, policy, output,
+    ))
+    with ThreadPoolExecutor(1) as pool:
+        future = pool.submit(client.get, "https://upload.wikimedia.org/file")
+        try:
+            assert body_started.wait(10)
+            process.start()
+            process.join(10)
+            assert process.exitcode == 0
+            sent, waits = output.get(timeout=1)
+            assert not sent and waits
+            with locked(queue, "host:upload.wikimedia.org") as (_, state, now):
+                assert len(state["slots"]) == 1
+                assert state["concurrency"] == 2 and state["cooldown"] > now + 15
+        finally:
+            release.set()
+            if process.pid is not None:
+                if process.is_alive():
+                    process.kill()
+                    process.join()
+                process.close()
+            output.close()
+            output.join_thread()
+        with pytest.raises(RuntimeError, match="負荷制限"):
+            future.result(timeout=5)
+
+
+def test_匿名5回毎時の初回は共有待機を消費せず3600秒待たない(queue, monkeypatch):
+    from pathlib import Path
+
+    from colorstats.collect import limits
+    from colorstats.collect.http import _host_state
+    from colorstats.collect.policy import load_policy
+
+    policy = load_policy(Path("configs/source_policy.yaml"), "openverse")
+    enqueue(queue, "openverse", 1)
+    claim = queue.claim(["collect"])
+    with locked(queue, "host:api.openverse.org") as (_, state, epoch):
+        state.update(slots=[], events=[], chunks=[], cooldown=epoch + 5)
+    clock = Clock()
+    original = limits.locked
+
+    @contextmanager
+    def timed(*args):
+        with original(*args) as (session, state, _):
+            yield session, state, epoch + clock.now
+
+    monkeypatch.setattr(limits, "locked", timed)
+    sends = []
+
+    def opener(*args, **kwargs):
+        sends.append(clock.now)
+        return Response({})
+
+    client = HttpClient(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+    client.shared_limits = SharedLimits(queue, claim)
+    assert client.get("https://api.openverse.org/v1/images/") == {}
+    assert len(sends) == 1 and 5 <= sends[0] < 10
+    assert list(_host_state("api.openverse.org")["api_requests"]) == sends
+    with locked(queue, "host:api.openverse.org") as (_, state, _):
+        assert len(state["events"]) == 1
+
+
+def test_0008の非空台帳はdowngradeを拒否して台帳とrevisionを保全する(queue, monkeypatch):
+    from alembic import command
+    from alembic.config import Config
+    from sqlalchemy.exc import DBAPIError
+
+    monkeypatch.setenv("DATABASE_URL", queue.engine.url.render_as_string(hide_password=False))
+    lease = ProviderLease(queue, "openverse")
+    lease.acquire()
+    with queue.engine.connect() as connection:
+        before = connection.execute(text("SELECT key, state FROM collection_limit")).all()
+    with pytest.raises(DBAPIError, match="通信枠台帳が残る"):
+        command.downgrade(Config("alembic.ini"), "0007")
+    with queue.engine.connect() as connection:
+        assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0008"
+        assert connection.execute(text("SELECT key, state FROM collection_limit")).all() == before
+
+
+def test_HTTP日時のRetryAfterもworker時計ではなくDB時計と比較する(queue, policy, monkeypatch):
+    from email.utils import format_datetime
+
+    enqueue(queue, "wikimedia_commons", 1)
+    limiter = SharedLimits(queue, queue.claim(["collect"]))
+    assert limiter.reserve("upload.wikimedia.org", "media", {}, 0, []) == 0
+    with queue.engine.connect() as connection:
+        due = connection.scalar(text("SELECT clock_timestamp()")) + timedelta(seconds=60)
+    client = HttpClient(policy)
+    client.shared_limits = limiter
+    worker_clock = Mock()
+    monkeypatch.setattr("colorstats.collect.http.datetime", worker_clock)
+    client._delay({"Retry-After": format_datetime(due.astimezone(UTC), usegmt=True)}, 0,
+                  "https://upload.wikimedia.org/file")
+    worker_clock.now.assert_not_called()
+    with locked(queue, "host:upload.wikimedia.org") as (_, state, now):
+        assert 58 < state["cooldown"] - now <= 60

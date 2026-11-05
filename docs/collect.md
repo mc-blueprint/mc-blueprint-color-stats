@@ -192,6 +192,13 @@ measurement runごとにhost・byte・取得時刻をDB台帳へ記録し、spaw
 区分と枠はproviderや呼出し側の指定よりredirect後の実host policyを優先する。ジョブ末尾にも
 残りの待機を完了してから次のspawnへ進む。JSONB復元後も最長host suffixを優先し、
 APIやmediaが親ドメインのpage設定に隠れないようにする。
+通信制限の時刻は、共有予約・API/mediaの計測台帳・復元時の窓判定ともに
+PostgreSQLの`clock_timestamp()`を使う。worker間の時計差による枠の早期解放を防ぐため、
+ロック取得後の実時刻で判定し、イベントはUTCで保存する。ローカルのmonotonic時計は
+待機秒数と処理時間だけに使う。過去のUTCイベントを推測した時計差で書き換えない。
+共有収集のHTTP日時形式Retry-AfterもDB時計と比較する。429/503の停止期限はヘッダーを
+受けた直後、本文・observerの処理前に共有DBへ反映し、空いている同時枠からの送信も止める。
+共有予約が成立しない待機ではプロセス内API履歴を増やさず、実送信直前にだけ加算する。
 GET・JSON、非対話用`maxlag=5`、連絡先付きBot User-Agentを使用する。
 HTTP 429/503とAPI maxlag/ratelimited/cirrussearch-too-busy-errorは
 Retry-After（秒数・HTTP日時）と5秒からの指数待機の

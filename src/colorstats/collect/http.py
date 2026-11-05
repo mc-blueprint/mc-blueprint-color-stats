@@ -179,18 +179,25 @@ class HttpClient:
 
     def _delay(self, headers, attempt, url):
         delay = self.policy["backoff"] * 2**attempt
+        retry_at = None
         value = headers.get("Retry-After")
         if value:
             try:
                 seconds = float(value)
             except ValueError:
                 try:
-                    seconds = (parsedate_to_datetime(value) - datetime.now(UTC)).total_seconds()
+                    retry_at = parsedate_to_datetime(value).timestamp()
+                    seconds = 0 if self.shared_limits is not None else (
+                        retry_at - datetime.now(UTC).timestamp()
+                    )
                 except (TypeError, ValueError, OverflowError):
                     seconds = 0
             delay = max(delay, seconds)
         host = urlsplit(url).hostname.lower().rstrip(".")
-        state = _host_state(self._host_policy(url).get("rate_group", host))
+        group = self._host_policy(url).get("rate_group", host)
+        state = _host_state(group)
+        if self.shared_limits is not None:
+            delay = self.shared_limits.cooldown(group, delay, retry_at)
         state["backoff_until"] = max(state["backoff_until"], self.clock() + delay)
 
     def _observe_wait(self, event, delay):
@@ -273,8 +280,6 @@ class HttpClient:
                 self.wait(normal_delay + backoff_delay)
             slot_time = self.clock()
             state["next_request"] = max(state["next_request"], slot_time + interval)
-            if kind == "api":
-                state["api_requests"].append(slot_time)
         return kind, interval, host_name, host_policy, state
 
     def get(self, url, *, target=None, text=False, read=json.load, api=False,
@@ -316,10 +321,13 @@ class HttpClient:
                             self._observe_wait("normal_wait_seconds", delay)
                             self.wait(delay)
                             continue
-                    self.observe("api_request" if kind == "api" else "request")
                     request = Request(current, headers={"User-Agent": self.policy["user_agent"]})
                     request.colorstats_redirected = redirects > 0
                     self._check_current_url(current)
+                    self.observe("api_request" if kind == "api" else "request")
+                    if kind == "api":
+                        with state["schedule_lock"]:
+                            state["api_requests"].append(self.clock())
                     open_started = self.clock()
                     try:
                         response_context = self.opener(request, timeout=60)
@@ -347,6 +355,8 @@ class HttpClient:
                         kind == "media" or self.shared_limits is not None
                     ) else None
                     counted = _CountingResponse(error, self.clock, media)
+                    if error.code in (429, 503):
+                        self._delay(error.headers, attempt, current)
                     self.observe("responses")
                     if error.code == 403 and (
                         error.headers.get("Cf-Mitigated", "").casefold() == "challenge"
@@ -378,7 +388,6 @@ class HttpClient:
                     if error.code not in (429, 503):
                         self._error_bytes(counted)
                         raise
-                    self._delay(error.headers, attempt, current)
                     self._error_bytes(counted)
                     error.close()
                     break

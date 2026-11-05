@@ -113,6 +113,13 @@ class SharedLimits:
             self.slots[group] = token
         return 0.0
 
+    def cooldown(self, group, delay, retry_at=None):
+        """応答ヘッダーの停止指定を本文読取り前にDB時計で確定し、残り秒数を返す。"""
+        with locked(self.queue, "host:" + group) as (session, state, now):
+            self.queue._owned(session, self.claim)
+            state["cooldown"] = max(state.get("cooldown", 0), now + delay, retry_at or 0)
+            return state["cooldown"] - now
+
     def chunk(self, group, size, limit):
         with locked(self.queue, "host:" + group) as (session, state, now):
             self.queue._owned(session, self.claim)

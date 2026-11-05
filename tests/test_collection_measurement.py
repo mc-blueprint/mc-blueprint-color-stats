@@ -9,12 +9,13 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from types import SimpleNamespace
 from urllib.error import HTTPError
 from urllib.request import HTTPHandler
 from urllib.response import addinfourl
 
 import pytest
-from sqlalchemy import func, select
+from sqlalchemy import func, literal, select
 from sqlalchemy.orm import Session
 
 from colorstats.collect import bias
@@ -77,6 +78,42 @@ def measured(config):
         "http_requests_per_stratum": 40,
     }
     return config
+
+
+@DB
+@pytest.mark.parametrize("skew", [-86400, 86400])
+def test_通信台帳と共有予約はworker時計がずれてもDB時計を使う(
+    queue, measured, tmp_path, monkeypatch, skew,
+):
+    from colorstats.collect import measurement
+    from colorstats.collect.limits import SharedLimits
+
+    payload, digest = payload_for(tmp_path)
+    payload["bias"] = measured
+    payload["request"]["stratum"] = request().stratum
+    queue.enqueue("collect", None, digest, payload)
+    claim = queue.claim(["collect"])
+    meter = Meter(queue, claim)
+
+    class Skewed(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return super().now(tz) + timedelta(seconds=skew)
+
+    monkeypatch.setattr(measurement, "datetime", Skewed)
+    with queue.engine.connect() as connection:
+        before = connection.scalar(select(func.clock_timestamp()))
+    windows = [{"seconds": 60, "limit": 1}]
+    assert meter.reserve_quota("commons.wikimedia.org", "api", windows) == 0
+    meter.observe("media_transfer", {"host": "upload.wikimedia.org", "bytes": 123})
+    history = meter.media_history("upload.wikimedia.org")
+    assert len(history) == 1 and history[0][1] == 123
+    with Session(queue.engine) as session:
+        after = session.scalar(select(func.clock_timestamp()))
+        events = session.get(ProcessingRun, meter.id).parameters["quota_events"]
+        assert all(before <= datetime.fromisoformat(e["at"]) <= after for e in events)
+    limiter = SharedLimits(queue, claim)
+    assert limiter.reserve("commons.wikimedia.org", "api", {}, 0, windows) > 0
 
 
 @DB
@@ -795,7 +832,9 @@ def test_standard分日枠を別jobへ復元し境界ちょうどで解除する
     queue.fail(first, "restart fixture", retryable=False)
     queue.enqueue("collect", None, "b" * 64, payload)
     restarted = Meter(queue, queue.claim(["collect"]))
-    monkeypatch.setattr("colorstats.collect.measurement.datetime", Time)
+    monkeypatch.setattr("colorstats.collect.measurement.func", SimpleNamespace(
+        clock_timestamp=lambda: literal(Time.now(UTC)),
+    ))
     assert restarted.reserve_quota("api.openverse.org", "api", windows) == 1
     now += timedelta(seconds=1)
     assert restarted.reserve_quota("api.openverse.org", "api", windows) == 0
@@ -816,7 +855,9 @@ def test_RetryAfterの翌日送信を送信時刻で記録し再起動後の1000
         def now(cls, tz=None):
             return epoch + timedelta(seconds=clock.now)
 
-    monkeypatch.setattr("colorstats.collect.measurement.datetime", Time)
+    monkeypatch.setattr("colorstats.collect.measurement.func", SimpleNamespace(
+        clock_timestamp=lambda: literal(Time.now(UTC)),
+    ))
     payload, _ = payload_for(tmp_path)
     payload["bias"] = copy.deepcopy(measured)
     payload["request"].update(provider="openverse", stratum=request().stratum)
