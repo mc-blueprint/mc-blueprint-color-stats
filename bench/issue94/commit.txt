@@ -1,0 +1,6 @@
+feat: Mapillaryの解析専用アダプターと安全な認証経路を追加
+
+- 固定意図とbboxによる検索、cursor再開、thumbnail取得と連写除外を追加
+- LoadCredential専用認証と別hostへの認証非転送、署名URLの非保存を実装
+- 保持・権利・出力境界を再利用しfixtureと隔離PostgreSQLで検証
+- robots全面拒否の実測を記録し、適用判断までソースを無効に保つ

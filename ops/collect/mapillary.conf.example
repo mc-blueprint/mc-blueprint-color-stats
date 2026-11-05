@@ -1,0 +1,7 @@
+# 有効化と公開API・robotsの関係を確認した後、専用の収集unitへ適用する例。
+# ExecStartとDB・Storageは既存の収集unit側で指定する。
+[Service]
+LoadCredential=mapillary-client-token:/etc/colorstats/credentials/mapillary-client-token
+StateDirectory=colorstats-mapillary
+StateDirectoryMode=0700
+UMask=0077
