@@ -28,6 +28,17 @@ ROOT = Path(__file__).resolve().parents[1]
 RECORDED = json.loads((ROOT / "tests/fixtures/commons.json").read_text(encoding="utf-8"))
 
 
+@pytest.fixture(autouse=True)
+def isolated_acquisition_check(request, monkeypatch):
+    if "queue" in request.fixturenames:
+        queue = request.getfixturevalue("queue")
+        monkeypatch.setenv("DATABASE_URL", queue.engine.url.render_as_string(hide_password=False))
+    else:
+        monkeypatch.setenv("DATABASE_URL", "sqlite://")
+        monkeypatch.setattr("colorstats.collect.stage.retention.check_acquisition",
+                            lambda *args: None)
+
+
 class Response(io.BytesIO):
     def __init__(self, data, headers=None):
         super().__init__(json.dumps(data).encode() if isinstance(data, dict) else data)
@@ -669,7 +680,8 @@ def test_キュー完了と同時に出典画像と確定原本の参照を登�
 
 
 @pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason="CIのPostgreSQL専用")
-def test_spawnワーカーでcollectが実行される(queue, tmp_path):  # noqa: F811
+def test_spawnワーカーでcollectが実行される(queue, tmp_path, monkeypatch):  # noqa: F811
+    monkeypatch.setenv("DATABASE_URL", queue.engine.url.render_as_string(hide_password=False))
     payload, config_hash = payload_for(tmp_path)
     job_id = queue.enqueue("collect", None, config_hash, payload)
     Worker(queue, {"collect": "tests.collect_handler"}, tmp_path / "stop").run(once=True)

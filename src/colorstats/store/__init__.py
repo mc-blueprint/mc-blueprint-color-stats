@@ -49,4 +49,5 @@ def temporary_path(target: Path, token: str) -> Path:
     target.parent.mkdir(parents=True, exist_ok=True)
     fd, name = tempfile.mkstemp(prefix=f".{target.name}.{token}.", suffix=".tmp", dir=target.parent)
     os.close(fd)
+    os.chmod(name, 0o600)
     return Path(name)

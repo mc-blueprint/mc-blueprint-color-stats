@@ -7,6 +7,7 @@ import json
 import math
 import os
 import random
+import socket
 import uuid
 import zipfile
 from collections import defaultdict
@@ -17,6 +18,7 @@ from xml.etree import ElementTree
 from sqlalchemy import create_engine, select, text
 from sqlalchemy.orm import Session
 
+from colorstats import retention
 from colorstats.schema.models import Asset, ProcessingRun, Region
 from colorstats.schema.taxonomy import load_taxonomy
 
@@ -34,13 +36,63 @@ def part_labels(taxonomy_dir: Path) -> list[dict]:
     ]
 
 
-def prepare_draft(manifest: Path, output: Path, taxonomy_dir: Path):
+def prepare_draft(manifest: Path, output: Path, taxonomy_dir: Path,
+                  *, database_url=None, host=None):
+    """停止・画像期限をDBで確認し、内部CVAT下書きと共有依存を同じ取引で登録する。
+
+    database_urlまたはDATABASE_URLは必須。保持期限付き画像と旧画像の混在は拒否する。
+    出力先は未使用パスとする。DB・I/O失敗時は今回の生成物だけを清掃する。
+    """
+    database_url = database_url or os.environ.get("DATABASE_URL")
+    if not database_url:
+        raise ValueError("下書き生成には停止台帳を照会するDATABASE_URLが必要です")
+    with manifest.open(encoding="utf-8", newline="") as file:
+        ids = {uuid.UUID(row["asset_id"]) for row in csv.DictReader(file)}
+    engine = create_engine(database_url)
+    created = False
+    paths = [output, output.with_suffix(".json")]
+    try:
+        with Session(engine) as session, session.begin():
+            retention.lock(session)
+            managed = _check_retention_group(session, ids)
+            for asset_id in ids:
+                retention.assert_usable(session, asset_id, images=True)
+            _write_draft(manifest, output, taxonomy_dir)
+            created = True
+            _register_shared(session, managed, host or socket.gethostname(), paths)
+    except BaseException:
+        if created:
+            for path in paths:
+                path.unlink(missing_ok=True)
+        raise
+    finally:
+        engine.dispose()
+
+
+def _check_retention_group(session, asset_ids):
+    managed = set(session.scalars(select(retention.Retention.asset_id).where(
+        retention.Retention.asset_id.in_(asset_ids),
+    )))
+    if managed and managed != set(asset_ids):
+        raise ValueError(
+            "保持期限付き画像と旧画像は混在できません。CVATタスク・出力を分けて実行してください"
+        )
+    return managed
+
+
+def _register_shared(session, managed, host, paths):
+    for asset_id in managed:
+        for path in paths:
+            retention.register_file(session, asset_id, host, path, "cvat")
+
+
+def _write_draft(manifest: Path, output: Path, taxonomy_dir: Path):
     """各行のsegment_xmlを結合し、CVAT XMLと比較用JSONを新規作成する。
 
     manifestには選定列に加え原画像のoriginal_width/original_heightが必要。
     filenameはCVATへ渡す縮小画像名。画像の拡縮は行わず、RLEをそのまま保持する。
     outputと同名の.jsonには原画像寸法、出典SHA、model下書きを保存する。
-    不正なRLE・語彙・画像対応、既存出力は例外とし、DBは操作しない。
+    内部整形処理。呼出し前の認可と生成物の保持登録はprepare_draftが担う。
     """
     with manifest.open(encoding="utf-8", newline="") as file:
         rows = list(csv.DictReader(file))
@@ -109,7 +161,8 @@ def prepare_draft(manifest: Path, output: Path, taxonomy_dir: Path):
     try:
         for path, data in [(output, xml), (output.with_suffix(".json"),
                            json.dumps(baseline, ensure_ascii=False, indent=2).encode())]:
-            with path.open("xb") as file:
+            descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(descriptor, "wb") as file:
                 paths.append(path)
                 file.write(data)
     except BaseException:
@@ -334,12 +387,14 @@ def annotation_diff(baseline: dict, polygons: dict) -> dict:
 def import_cvat(
     archive: Path, manifest: Path, mask_dir: Path, taxonomy_dir: Path, database_url: str,
     draft: Path,
+    *, host=None,
 ):
     """選定manifestとDBのID・SHA・寸法を照合し、人手注釈を新しいrunへ登録する。
 
     archiveは画像を含むCVAT for images 1.1 ZIP、draftはprepare_draftのJSON。
     mask_dirに原画像座標polygonとmodel下書きのコピーを保存する。
     形式・照合不一致や同一ZIPの再取込みはValueError。
+    保持期限付き画像と旧画像の混在も、ファイル・DBへの書込み前にValueErrorで拒否する。
     DB/I/O失敗は呼出し元へ伝播し、この取込みのDB変更と作成ファイルを戻す。
     PostgreSQLのREAD COMMITTEDで、ZIPのSHAごとに取引単位の排他を行う。
     """
@@ -350,12 +405,14 @@ def import_cvat(
     taxonomy = load_taxonomy(taxonomy_dir)
     engine = create_engine(database_url)
     files = []
+    host = host or socket.gethostname()
     try:
         with Session(engine) as session, session.begin():
             session.execute(
                 text("SELECT pg_advisory_xact_lock(41, :key)"),
                 {"key": int.from_bytes(bytes.fromhex(digest[:8]), signed=True)},
             )
+            retention.lock(session)
             if session.execute(
                 select(ProcessingRun.id).where(
                     ProcessingRun.stage == "human_annotation", ProcessingRun.config_hash == digest
@@ -366,6 +423,7 @@ def import_cvat(
             for row in assets.values():
                 asset_id = uuid.UUID(row["asset_id"])
                 asset = session.get(Asset, asset_id)
+                retention.assert_usable(session, asset_id, images=True)
                 if asset is None or asset.sha256.lower() != row["sha256"].lower():
                     raise ValueError(f"asset IDまたはSHA-256が一致しません: {row['filename']}")
                 if (int(row["export_width"]), int(row["export_height"])) != (
@@ -374,11 +432,17 @@ def import_cvat(
                         f"エクスポートとassetの画像寸法が異なります: {row['filename']}"
                     )
                 db_assets[row["filename"]] = asset
-            output_paths = {"masks": str(mask_dir.resolve())}
+            managed = _check_retention_group(session, {asset.id for asset in db_assets.values()})
+            output_paths = {
+                "masks": str(mask_dir.resolve()), "archive": str(archive.resolve()),
+                "manifest": str(manifest.resolve()), "input_draft": str(draft.resolve()),
+            }
             path = mask_dir / f"{uuid.uuid4()}-draft.json"
-            path.parent.mkdir(parents=True, exist_ok=True)
+            path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
             files.append(path)
-            path.write_text(json.dumps(baseline, ensure_ascii=False), encoding="utf-8")
+            descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(descriptor, "w", encoding="utf-8") as file:
+                json.dump(baseline, file, ensure_ascii=False)
             output_paths["draft"] = str(path.resolve())
             license_classes = {asset.license_class for asset in db_assets.values()}
             run_ids = {}
@@ -388,6 +452,7 @@ def import_cvat(
                     license_class=license_class,
                     config_hash=digest,
                     parameters={
+                        "asset_ids": [str(asset.id) for asset in db_assets.values()],
                         "format": "CVAT for images 1.1",
                         "label_source": "human",
                         "taxonomy_version": taxonomy["parts"]["taxonomy_version"],
@@ -405,6 +470,8 @@ def import_cvat(
                 session.flush()
                 run_ids[license_class] = run.id
             session.flush()
+            shared_paths = [archive, manifest, draft, *files]
+            _register_shared(session, managed, host, shared_paths)
             for filename, shapes in polygons.items():
                 row = assets[filename]
                 asset = db_assets[filename]
@@ -413,12 +480,13 @@ def import_cvat(
                     region_id = uuid.uuid4()
                     relative = Path(str(row["asset_id"])) / f"{region_id}.json"
                     path = mask_dir / relative
-                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
                     files.append(path)
-                    path.write_text(
-                        json.dumps({"format": "polygon-pixels-v1", "points": shape["points"]}),
-                        encoding="utf-8",
-                    )
+                    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+                    with os.fdopen(descriptor, "w", encoding="utf-8") as file:
+                        json.dump({"format": "polygon-pixels-v1", "points": shape["points"]}, file)
+                    if asset.id in managed:
+                        retention.register_file(session, asset.id, host, path, "cvat")
                     bbox = [
                         min(p[0] for p in shape["points"]),
                         min(p[1] for p in shape["points"]),
