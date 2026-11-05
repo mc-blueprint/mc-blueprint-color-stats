@@ -1,9 +1,12 @@
 """未登録ソースと未確認ライセンスを拒否するポリシー。"""
 
+import os
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import yaml
 
+from colorstats.queue.core import NonRetryableError
 from colorstats.rights import analysis_review_reasons
 
 
@@ -13,6 +16,33 @@ def load_policy(path: Path, provider: str) -> dict:
     policy = sources.get(provider)
     check_policy(policy)
     return policy
+
+
+def check_current_source(provider: str) -> None:
+    """実行環境の現行policyで許可を再確認する。過去のジョブの許可は流用しない。"""
+    path = Path(os.environ.get("COLORSTATS_SOURCE_POLICY", "configs/source_policy.yaml"))
+    try:
+        load_policy(path, provider)
+    except (OSError, ValueError, yaml.YAMLError):
+        raise NonRetryableError(f"現行source_policyで{provider}の通信を許可できません") from None
+
+
+def check_current_url(url: str) -> None:
+    """Mapillaryの停止を集約API経由の元ページ・CDN・redirectにも適用する。"""
+    host = (urlsplit(url).hostname or "").lower().rstrip(".")
+    if any(host == domain or host.endswith("." + domain)
+           for domain in ("mapillary.com", "fbcdn.net")):
+        check_current_source("mapillary")
+
+
+def host_rate_group(host: str, hosts: dict) -> str:
+    """実hostを、HTTP接続先policyと同じsuffix規則で共有枠へ対応付ける。"""
+    host = host.lower().rstrip(".")
+    for suffix, policy in hosts.items():
+        suffix = suffix.lower().lstrip(".")
+        if host == suffix or host.endswith("." + suffix):
+            return policy.get("rate_group", host)
+    return host
 
 
 def check_policy(policy: dict | None) -> None:
