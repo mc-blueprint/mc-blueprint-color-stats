@@ -4,6 +4,26 @@ sources:
     enabled: true
     user_agent: "mc-blueprint-color-stats-bot/0.1 (https://github.com/mc-blueprint/mc-blueprint-color-stats; https://github.com/mc-blueprint)"
     min_interval: 1.0
+    api_min_interval: 0.5
+    api_slow_seconds: 5.0
+    api_windows:
+      - {seconds: 60, limit: 199}
+    media_bytes_per_10_seconds: 31250000
+    hosts:
+      commons.wikimedia.org:
+        kind: api
+        min_interval: 0.5
+        api_windows: [{seconds: 60, limit: 199}]
+      upload.wikimedia.org:
+        kind: media
+        min_interval: 1.0
+        max_concurrency: 2
+        media_bytes_per_10_seconds: 31250000
+        disallow_paths: [/archive/]
+      www.wikidata.org:
+        kind: api
+        min_interval: 0.5
+        api_windows: [{seconds: 60, limit: 199}]
     maxlag: 5
     retries: 2
     backoff: 5.0
@@ -32,6 +52,27 @@ sources:
     enabled: true
     user_agent: "mc-blueprint-color-stats-bot/0.1 (https://github.com/mc-blueprint/mc-blueprint-color-stats; https://github.com/mc-blueprint)"
     min_interval: 1.0
+    api_windows:
+      - {seconds: 3600, limit: 5}
+      - {seconds: 86400, limit: 100}
+    hosts:
+      api.openverse.org:
+        kind: api
+        min_interval: 1.0
+        api_windows: [{seconds: 3600, limit: 5}, {seconds: 86400, limit: 100}]
+      openverse.org: {kind: page}
+      flickr.com: {kind: page}
+      staticflickr.com: {kind: media}
+      upload.wikimedia.org:
+        kind: media
+        min_interval: 1.0
+        max_concurrency: 2
+        media_bytes_per_10_seconds: 31250000
+        disallow_paths: [/archive/]
+      wikimedia.org: {kind: page}
+      loc.gov: {kind: page}
+      images.mapillary.com: {kind: media}
+      mapillary.com: {kind: page}
     retries: 2
     backoff: 5.0
     attribution: "作者・元サイトページ・ライセンス名・ライセンスURLを保存し、元サイトの対象画像で作者とライセンス識別子・版・URLを照合できない候補はreviewとして取得しない"

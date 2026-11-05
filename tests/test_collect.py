@@ -115,10 +115,10 @@ def test_記録レスポンスからメタデータと選ばれ方を保持す�
     assert parse_qs(urlsplit(requests[1][0].full_url).query)["iiextmetadatalanguage"] == ["ja"]
     adapter.download(candidate, tmp_path / "original")
     assert (tmp_path / "original").read_bytes() == b"original"
-    assert [time for _, time in requests] == [0, 1, 2]
+    assert [time for _, time in requests] == [0, 0.5, 0.5]
     assert all(r.get_header("User-agent") == policy["user_agent"] for r, _ in requests)
     adapter.finish()
-    assert adapter.clock() == 3
+    assert adapter.clock() == 1.5
 
 
 def test_共通ポリシーはmaxlagを要求せずCommonsは通信前に検証する(policy):
@@ -267,7 +267,7 @@ def test_負荷制限のRetryAfterと指数待機を守る(policy, failure):
 
     adapter, requests = adapter_for(policy, [error(), error()] + responses())
     adapter.search(SearchRequest("wikimedia_commons", "castle"))
-    assert [time for _, time in requests] == [0, 12, 24, 25]
+    assert [time for _, time in requests] == [0, 12, 24, 24.5]
 
 
 @pytest.mark.parametrize("code", ["maxlag", "cirrussearch-too-busy-error"])
@@ -305,7 +305,7 @@ def test_HTTP日時のRetryAfterを守る(policy, monkeypatch):
         ],
     )
     adapter.search(SearchRequest("wikimedia_commons", "castle"))
-    assert [time for _, time in requests] == [0, 30, 31]
+    assert [time for _, time in requests] == [0, 30, 30.5]
 
 
 def test_短いHTTPボディを原本として受理しない(policy, tmp_path):

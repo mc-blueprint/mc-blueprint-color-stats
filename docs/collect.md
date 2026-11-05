@@ -57,6 +57,9 @@ restricted・帰属不足・非対応MIMEの候補はdecideへ渡さず除外す
 `configs/source_policy.yaml` の`sources`からprovider名で読み、有効な設定がないソースは拒否する。
 共通の`check_policy`は`enabled`、連絡先付き`user_agent`、`min_interval`、`retries`、`backoff`、
 帰属表示`attribution`、再配布条件`redistribution`、`license_rules`を検証する。
+`hosts`は接続先ドメイン suffix と区分（`api`/`page`/`media`）の許可表であり、未登録先と
+未登録先へのredirectは通信前に拒否する。秘密query parameterは測定observerへ渡す前に除去する。
+APIのrolling枠、API/mediaの待機間隔、mediaの10秒転送量はprovider policyに固定する。
 Commons固有の正の`maxlag`は`check_commons_policy`が共通検証に加えて検証する。
 投入時とアダプターの構築・通信時に適用し、#8等の別ソースにmaxlagは要求しない。
 ライセンス名を小文字化して許可リストへ完全一致させる。解析専用の明示確認がない
@@ -89,15 +92,33 @@ CC BY系はフラグ欠落・falseでも必須情報を確認する。PD・CC0�
 HTMLを含む作者・説明はテキスト化し、元のimageinfoもasset.quality.metadataへ保存する。
 撮影地点はGPS座標を優先し、なければLocation、双方なければNone。
 
-取得間隔は前の通信終了から1秒以上、同時接続は1。**同一運用者のCommons収集は全ホストを通して
-単一collectワーカーに割り当てる**。複数ワーカーによるレートの共有・分散制御は実装しない。
-ジョブ末尾にも残りの間隔を待ち、次のspawnプロセスへ切り替わっても間隔を保つ。
+Commons Action APIは同時接続1、1秒未満の応答後は0.5秒以上、1秒を超える応答後は5秒待つ。
+policyのAPI rolling枠は1分199要求未満、`maxlag`・429/503・Retry-Afterと指数待機を適用する。
+Wikimedia mediaは実host `upload.wikimedia.org` ごとに同時接続2、要求間1秒以上、
+10秒窓31,250,000 byteまでに制限する。Openverse匿名APIは実host `api.openverse.org` の
+rolling 5/hour・100/day枠を適用し、計測DBの直近request ledgerから再起動後も消費を復元する。
+短周期interval・backoffは同一プロセス内のhost stateを共有する。media byte窓は
+measurement runごとにhost・byte・取得時刻をDB台帳へ記録し、spawnされた次のjobが直近10秒分を復元する。
+同じprocess内でもhost stateを共有する。API/mediaの
+区分と枠はproviderや呼出し側の指定よりredirect後の実host policyを優先する。ジョブ末尾にも
+残りの待機を完了してから次のspawnへ進む。短周期interval・backoffの複数process間共有は#91のDB共有予約まで行わない。
 GET・JSON、非対話用`maxlag=5`、連絡先付きBot User-Agentを使用する。
 HTTP 429/503とAPI maxlag/ratelimited/cirrussearch-too-busy-errorは
 Retry-After（秒数・HTTP日時）と5秒からの指数待機の
 長い方を守って最大2回再試行する。最終試行でも待機してから失敗し、キュー側の最大3試行へ返す。
 それ以外のHTTP/APIエラー、通信失敗はそのまま試行を失敗させる。
 Content-Lengthがある原本は受信サイズを照合し、途中で切れた応答を成功にしない。
+
+2026-11-05のユーザー決定により、Commons Action APIは[Robot policy](https://wikitech.wikimedia.org/wiki/Robot_policy)
+のAction API rules（未認証は同時1、5 req/s未満、1秒超の応答後5秒待機、batch推奨）と
+[Rate limits](https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits)の識別User-Agent枠
+（200 req/min）に従って利用する。`robots.txt`の`Disallow: /w/`は動的ページを巡回する
+クローラー向けと解釈し、Action API利用を継続する。[Commons robots.txt](https://commons.wikimedia.org/robots.txt)
+および確認日は`bench/issue89/results.md`に記録する。HTMLの動的ページは巡回せず、
+`upload.wikimedia.org`では`/archive/`を巡回しない。source_policyの`disallow_paths`により、
+直接URLとredirect先のどちらも通信前に拒否する。
+
+`upload.wikimedia.org`にはproviderではなく接続先hostの制限を適用する。Wikimediaの25 Mbps/10秒窓は31,250,000 byte/10秒、同時要求2、要求間隔1秒として設定し、`/archive/`は取得対象外とする。帯域窓と長周期API枠は計測台帳から復元する。短周期interval・backoffの複数process間共有は#91の対象とする。
 
 2026-11-01に確認した一次情報:
 
@@ -188,7 +209,7 @@ DBテストはTEST_DATABASE_URLの専用schemaを使用し、実通信なしで�
 
 ## Openverse
 
-`OpenverseAdapter` は匿名の Openverse Images API v1 を使用し、認証キーは導入しない。Openverseは認証時に標準・拡張など異なるスロットリング階層を設けている。Commons・Openverseは`collect/http.py`の共通処理で検索・元ページ・原本の取得を直列化する。source_policyの`min_interval`、`retries`（初回を除く回数）、`backoff * 2**attempt`とRetry-After（秒数またはHTTP日時）の長い方を守る。不正なRetry-Afterではbackoffを使用し、最終試行でも待機してから失敗する。Commons固有のmaxlag・ratelimited・cirrussearch-too-busy-errorも同じ待機処理へ渡す。
+`OpenverseAdapter` は匿名の Openverse Images API v1 を使用し、認証キーは導入しない。Openverseは認証時に標準・拡張など異なるスロットリング階層を設けている。Commons・Openverseは`collect/http.py`で検索・元ページ・原本を直列取得する。各測定runはAPI/page/mediaの応答時間、通常待機、backoff、media帯域待機、受信byteを記録する。`database_timing`はadvisory lock取得、Meter内トランザクション処理、flush後のcommit完了までの各実時間を分けて記録する。`elapsed_seconds`はrun開始から最終計測更新までのmonotonic時間。自己計測の再帰を避けるため、最後の計測値を書き込むトランザクション自体は集計外とする。
 
 検索結果の `foreign_landing_url` を `source_url` として保存する。Openverse は第三者サイト上のライセンス情報を保証しないため、元ページのJSON-LDにあるSchema.orgのImageObjectで対象原本URLと一致する`contentUrl`（未指定時は`url`）を探し、その画像の`creator`（未指定時は`author`）と`license`を照合する。作者名は前後空白・大文字小文字を除いて完全一致、ライセンスはAPIの識別子・版から決まるCreative Commons URLとAPI・元ページの両URLの完全一致を必要とする。HTTP/HTTPSと末尾スラッシュだけを同一視し、CC0はpublicdomain/zero、PDMはpublicdomain/markを使う。
 

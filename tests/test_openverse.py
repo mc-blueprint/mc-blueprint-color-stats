@@ -101,15 +101,17 @@ def test_実際の検索元ページ原本の全経路で再試行する(tmp_pat
             raise response
         return response
 
-    adapter = OpenverseAdapter(load_policy(POLICY, "openverse"), opener=opener,
+    policy = load_policy(POLICY, "openverse")
+    policy["hosts"]["example.test"] = {"kind": "page"}
+    adapter = OpenverseAdapter(policy, opener=opener,
                               clock=clock.clock, wait=clock.wait)
     candidate = adapter.search(SearchRequest("openverse", "castle", limit=1)).candidates[0]
     adapter.download(candidate, tmp_path / "image")
     adapter.finish()
-    assert [time for _, time in calls] == [0, 12, 13, 25, 26, 38]
+    assert [time for _, time in calls] == [0, 12, 12, 24, 24, 36]
     assert [url for url, _ in calls[2:4]] == [item["foreign_landing_url"]] * 2
     assert [url for url, _ in calls[4:]] == [item["url"]] * 2
-    assert clock.now == 39 and (tmp_path / "image").read_bytes() == b"image bytes"
+    assert clock.now == 37 and (tmp_path / "image").read_bytes() == b"image bytes"
 
 
 @pytest.mark.parametrize(
