@@ -17,13 +17,14 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from colorstats import retention
-from colorstats.collect import Candidate, SearchRequest
+from colorstats.collect import Candidate, SearchRequest, SearchResult
 from colorstats.collect.commons import CommonsAdapter, check_commons_policy
 from colorstats.collect.http import HttpClient, MeasurementLimit
 from colorstats.collect.loc import LoCAdapter
 from colorstats.collect.mapillary import MapillaryAdapter
 from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import check_current_source, license_class, load_policy
+from colorstats.collect.quality import QUALITY_POLICY, schedule_original
 from colorstats.queue import RunInfo
 from colorstats.queue.worker import Prepared
 from colorstats.rights import combine_license
@@ -109,6 +110,7 @@ def enqueue_collect(
         "domain": domain,
         "code_version": code_version,
         "taxonomy_version": taxonomy_version,
+        "quality_policy": QUALITY_POLICY,
     }
     config_hash = hashlib.sha256(
         json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()
@@ -140,7 +142,7 @@ def prepare(
     if hashlib.sha256(config.read_bytes()).hexdigest() != payload["storage_hash"]:
         raise ValueError("投入後に保存先設定が変更されました")
     storage = Storage(config)
-    request = SearchRequest(**payload["request"])
+    request = SearchRequest(**{"download_mode": "original", **payload["request"]})
     check_current_source(request.provider)
     adapter = adapter_for(request.provider, payload["policy"])
     files, records, skipped = [], [], []
@@ -148,6 +150,8 @@ def prepare(
         "request": asdict(request), "effective": {}, "next_offset": None,
         "api_next_offset": None, "skipped": skipped, "candidates": [],
         "policy": payload["policy"], "search_complete": False,
+        "quality_policy": payload.get("quality_policy"),
+        "original_review": payload.get("original_review"),
     }
 
     def observe(event, value=1):
@@ -177,7 +181,10 @@ def prepare(
     try:
         observe("search", parameters.copy())
         try:
-            result = adapter.search(request)
+            if "original_review" in payload:
+                result = SearchResult([Candidate(**payload["original_review"]["candidate"])], {})
+            else:
+                result = adapter.search(request)
         except MeasurementLimit as error:
             if observer is None:
                 raise
@@ -202,7 +209,8 @@ def prepare(
                 if category == "restricted"
                 else candidate.exclusion_reason or ("mime" if extension is None else None)
             )
-            if reason is None and candidate.rendition.get("revision"):
+            if (reason is None and candidate.rendition.get("revision")
+                    and "original_review" not in payload):
                 with Session(engine) as session:
                     if existing_rendition(session, asdict(candidate)):
                         reason = "rediscovered_original"
@@ -294,13 +302,31 @@ def prepare(
             received = {
                 "width": candidate.width, "height": candidate.height, "mime": candidate.mime,
             }
+            quality = {}
             if candidate.rendition.get("variant") == "thumbnail":
+                from colorstats.analyze.prep import _inspect, _quality
+
                 with Image.open(temporary) as image:
-                    received = {
-                        "width": image.width, "height": image.height,
-                        "mime": Image.MIME[image.format],
-                    }
+                    received = {"width": image.width, "height": image.height,
+                                "mime": Image.MIME[image.format]}
                 extension = MIME_EXTENSIONS[received["mime"]]
+            if payload.get("quality_policy"):
+                if max(received["width"], received["height"]) < payload["quality_policy"][
+                    "min_long_edge"
+                ]:
+                    temporary.unlink()
+                    temporary = None
+                    if discard is not None:
+                        discard(request, candidate)
+                    skipped.append({
+                        "source_url": candidate.source_url,
+                        "original_url": candidate.original_url,
+                        "rank": candidate.rank, "reason": "below_min_resolution",
+                    })
+                    observe("exclusion", skipped[-1])
+                    continue
+                if candidate.rendition.get("variant") == "thumbnail":
+                    quality = _quality(_inspect(temporary))
             logical = f"raw/{digest[:2]}/{digest}.{extension}"
             target = storage.resolve(logical).local_path(payload["host"])
             if temporary.parent != target.parent:
@@ -325,6 +351,7 @@ def prepare(
                     "license_class": category,
                     "sha256": digest,
                     "received": received,
+                    "quality": quality,
                     "logical_path": logical,
                     "target": str(target),
                     "retrieved_at": datetime.now(UTC),
@@ -358,6 +385,26 @@ def register(session, run, data):
     payload = data["payload"]
     retention.lock(session)
     session.execute(text("SELECT pg_advisory_xact_lock(29, 90)"))
+    if "original_review" in payload:
+        original = payload["original_review"]["candidate"]
+        retention.check_acquisition(
+            session, payload["request"]["provider"], original["source_url"],
+            original["original_url"],
+        )
+        run.parameters = {
+            **run.parameters,
+            "original_review_status": "evaluated" if data["records"] else "unevaluated",
+            "original_results": [
+                {**record, "retrieved_at": record["retrieved_at"].isoformat(),
+                 "path": run.output_paths[record["target"]],
+                 "decision": "rejected" if any(
+                     record["quality"][key]
+                     for key in payload["quality_policy"]["original_review_flags"]
+                 ) else "accepted"}
+                for record in data["records"]
+            ],
+        }
+        return
     asset_ids = []
     for record in data["records"]:
         candidate = record["candidate"]
@@ -416,6 +463,7 @@ def register(session, run, data):
             taxonomy_version=payload["taxonomy_version"],
             scene_attributes={},
             quality={
+                **record.get("quality", {}),
                 "description": candidate["description"],
                 "metadata": candidate["metadata"],
                 "license": candidate["license"],
@@ -450,4 +498,5 @@ def register(session, run, data):
         session.flush()
         retention.register_asset(session, asset, payload["policy"], payload["host"])
         asset_ids.append(str(asset.id))
+        schedule_original(session, run, asset, record, payload)
     run.parameters = {**run.parameters, "asset_ids": asset_ids}

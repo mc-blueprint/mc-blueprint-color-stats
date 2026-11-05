@@ -9,10 +9,10 @@ BLOCKED = Path("/var/lib/colorstats-storage/blocked")
 
 
 def storage_available(stage: str, paths: tuple[Path, ...] = ()) -> bool:
-    """collect/prepは監視対象rawも確認する。追加pathsはstageの入出力root。"""
+    """collect/prep/reviewは監視対象rawも確認する。追加pathsはstageの入出力root。"""
     try:
         roots = list(paths)
-        if stage in ("collect", "prep") and CONFIG.exists():
+        if stage in ("collect", "prep", "review") and CONFIG.exists():
             for disk in json.loads(CONFIG.read_text())["disks"]:
                 if disk.get("raw"):
                     if (BLOCKED / disk["uuid"]).exists():
