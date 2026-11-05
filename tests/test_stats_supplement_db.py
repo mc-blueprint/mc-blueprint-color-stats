@@ -128,3 +128,25 @@ def test_painting_does_not_gain_terrain_attributes(queue, asset, tmp_path):
     result = execute(queue.engine, RULES, tmp_path / "painting.json", code_version="test")
     assert result["changes"] == 0
     assert result["assets"][0]["after"] == {}
+
+
+def test_normal_supplement_preserves_manual_correction_with_owned_history(queue, asset, tmp_path):
+    from colorstats.stats.supplement import METHOD
+
+    with Session(queue.engine) as session, session.begin():
+        row = session.get(Asset, asset)
+        row.collected_location = "35,139"
+        row.scene_attributes = {"season": "autumn"}
+        row.quality = {"metadata": {"extmetadata": {"DateTimeOriginal": {
+            "value": "2020-07-01 12:00:00", "source": "exif"}}},
+            "scene_inference": {"method": METHOD, "owned_attributes": ["season"],
+                                "attributes": {"season": {"state": "inferred",
+                                                          "value": "summer"}}}}
+    dry = execute(queue.engine, RULES, tmp_path / "manual-dry.json", code_version="test")
+    assert dry["changes"] == 0
+    assert dry["assets"][0]["attributes"]["season"]["state"] == "preserved"
+    execute(queue.engine, RULES, tmp_path / "manual-apply.json", code_version="test",
+            dry_run=False, expected_hash=dry["plan_hash"])
+    with Session(queue.engine) as session:
+        assert session.get(Asset, asset).scene_attributes == {"season": "autumn"}
+        assert session.scalars(select(ProcessingRun)).all() == []
