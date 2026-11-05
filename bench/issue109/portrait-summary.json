@@ -1,0 +1,49 @@
+{
+  "selected": 27,
+  "evaluated": 27,
+  "unevaluated": 0,
+  "status": {
+    "acquired": 27
+  },
+  "budget": {
+    "limits": {
+      "api": 5,
+      "thumbnail": 30,
+      "original": 0
+    },
+    "used": {
+      "api": 1,
+      "thumbnail": 27,
+      "original": 0
+    }
+  },
+  "dominant_oklab_mean": 0.0020194708505899958,
+  "major_agreement": 0.8864913192996784,
+  "intersection": 10216652,
+  "union": 11524819,
+  "passed": true,
+  "originals_unchanged": 27,
+  "analysis_errors": [],
+  "received_long_edges": [
+    1280,
+    1304,
+    1308,
+    1321,
+    1327,
+    1338,
+    1367,
+    1376,
+    1392,
+    1416,
+    1434,
+    1436,
+    1440,
+    1474,
+    1480,
+    1547,
+    1607,
+    1671,
+    1707,
+    1712
+  ]
+}

@@ -295,6 +295,7 @@ def plan(
                 "taxonomy_version": config["taxonomy_version"],
                 "bias": config,
                 "seed": seed,
+                "quality_policy": stage.QUALITY_POLICY,
             }
             digest = hashlib.sha256(
                 json.dumps(
