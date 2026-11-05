@@ -1,5 +1,50 @@
 # 収集契約
 
+## 原本とAPI縮小の比較（Issue #90）
+
+既定は原本のまま。Commonsだけが次の明示指定に対応する。
+
+```python
+from colorstats.collect import SearchRequest
+
+request = SearchRequest("wikimedia_commons", "castle", download_mode="thumbnail")
+```
+
+`enqueue_collect`の設定ハッシュは取得モードを含む。Candidate末尾の省略可能な
+`download_url`と`rendition`以外は原本契約を維持する。原本URLを縮小URLで置き換えない。
+Commonsは`imageinfo`へ標準幅1280と`thumbmime`を要求し、返されたURL・実寸・MIMEを使う。
+1280は長辺ではない。縦長は高さ1280を超え得る。小原本は`thumbnail_not_smaller`、
+URL/寸法/MIME欠落は`thumbnail_missing`、版欠落は`thumbnail_revision_missing`で除外する。
+原本への暗黙fallback、任意サイズURLの生成、archive取得は行わない。
+
+`rendition`は`provider/native_id/revision/variant`、要求幅、原本のURL・実寸・MIME・API SHA-1を持つ。
+API SHA-1と受信SHA-256は別物で、縮小から原本SHA-256を推測しない。
+`Asset.sha256`と`quality.received.sha256`は受信SHA-256、`quality.rendition.original`は原本の情報。
+縮小だけPillowで受信寸法・MIMEを検査し、原本の寸法・MIMEは従来どおりAPI値を使う。
+原本を取得した場合だけ原本SHA-256が既知になる。API SHA-1がある原本は受信物と照合し、
+不一致なら`original_sha1_mismatch`で候補だけを除外して予約を解放し、バッチを継続する。
+不一致でも取得件数・byteは計上する。SHA-1欠落の原本は従来どおり扱う。
+取得URLと日時もrenditionへ残す。prepはvariantとRGB/LANCZOS/JPEG品質90の変換条件をrunへ記録する。
+
+取得前に既存原本URL・出典URL・provider/native ID＋revisionを照合し、bias予約にはvariantも含める。
+Wikimedia原本URLの追跡query違いも同じ元画像として扱う。登録時も排他して再照合し、
+縮小を含む同じ原画像の組や同じnative ID＋revision＋variantの再投入は、
+既存assetを参照して`rendition_reused`へ記録する。
+別variantのSHA一致や確定subjectは捏造せず、pHashも従来どおり候補だけに使う。
+この収集経路から解像度違いの独立asset支持を増やさず、既存asset/raw/runを更新しない。
+計測のSHA重複・新規判定には受信SHAを使い、再利用した既存assetのSHAへ置き換えない。
+
+公式[移行告知](https://meta.wikimedia.org/wiki/Tech/News/2026/36)に従い
+`thumb.wikimedia.org`もmediaとして登録する。`rate_group: upload.wikimedia.org`によって
+原本hostと同じ同時枠・待機・25Mbps/10秒帯域窓を共有し、計測台帳復元でも両hostを合算する。
+イベントのhostは実接続先を保持する。同時process間の原子的な共有予約は#91の担当。
+UA、既定の画像間隔1秒、license_rules/rights_reviewは変更しない。
+
+比較手順・固定100枠・失敗/未評価を含む分母は`bench/issue90/results.md`とJSONを参照。
+原本・縮小のSHA不一致を「重複なし」としない。色距離、主要/細部分割の一致度、
+品質フラグ反転は観測値であり採用閾値ではない。人手正解がない入力のIoUは未評価とする。
+品質許容差、最低実解像度、既定切替は本Issueでは確定しない。
+
 ## 追加収集の測定（Issue #77）
 
 `bench/issue77/plan.md` と `targets.yaml` が測定前に固定した条件。
@@ -381,3 +426,59 @@ source.policyは初回の共有情報を保持する。後日のlicense/根拠�
 `rights.analysis_review_reasons(policy, now=None)`は不足・停止・失効の理由文字列リストを返す。
 `stats.licenses.exclusion_reasons(asset, source, runs)`は元権利一致、二経路、全run・全モデルを検査する。
 未確認のrestrictedからanalysis_onlyへ落とすフォールバックはない。
+## Mapillary（Issue #94）
+
+`mapillary`は登録アプリの公開Images APIだけに接続する解析専用アダプターです。
+2026-11-05、graph.mapillary.comのrobots.txtが`User-agent: * / Disallow: /`を返しました。
+ユーザー決定（2026-11-05）に従い、robotsと規約§5・§11の関係をMapillaryへ確認し、
+回答まで`source_policy.yaml`では無効です。Openverse経由を含む全Mapillary hostへの通信を止めます。
+実行環境の現行policyは`COLORSTATS_SOURCE_POLICY`、未指定時はcwdの`configs/source_policy.yaml`です。
+prepare開始時と各HTTP要求・redirectの送信直前に読み直し、保存済み`enabled: true`より優先します。
+現行ファイルの欠落・無効・確認不能時は通信しません。長時間待機後の送信にも停止を適用します。
+API文書はログイン画面のため、フィールドと認証は公式Python SDKの実装も参照しています。
+Terms of Use（2024-02-15発効）の全文確認はIssue #94のユーザー確認コメントを根拠とします。
+§3(b)・5・11・12に従い公開API以外の自動取得、過負荷、再配布、画像配信、
+再識別・ぼかし解除は行いません。大量本収集の許可・歩留まりはこの少量確認で保証しません。
+
+認証は収集unitの`LoadCredential=mapillary-client-token:/etc/colorstats/credentials/mapillary-client-token`
+で渡します。root専用ファイルを直接読む実装や別認証へのフォールバックはありません。
+実行時の`CREDENTIALS_DIRECTORY`からだけ読み、欠落なら通信せず停止します。
+`STATE_DIRECTORY`には非公開の専用状態ディレクトリを指定してください。
+再開状態はその配下の`mapillary/`に0600で保存します。unit例は`ops/collect/mapillary.conf.example`です。
+この例の配置・サービス変更は行っていません。
+
+検索語は任意の文字列検索ではなく、policyの`searches`のキーです。
+`kyoto-street-buildings`は京都の小bboxによる道路沿い建築候補の固定意図で、建築の存在・分類は未確認です。
+本収集では#105の不足目標に合わせて検索意図とbboxをレビューしてください。
+targetsの各層に`mapillary_searches: [kyoto-street-buildings]`を明示した場合だけ先頭ページを生成します。
+後続は記録された`next_offset`を使います。cursorを整数へ変換せず、固定条件・limit別に対応を保存し、
+未確認offsetと無作為な後続ページは拒否します。状態保存は単一ownerで実行してください。
+順位は`request.start + index`であり、API側の時点間ランキングの不変性は保証しません。
+
+候補の`original_url`は署名URLの恒久化を避けるため`https://graph.mapillary.com/<native ID>`という
+画像エンティティ識別子です。原本ファイルのダウンロードURLではありません。
+公式`thumb_1024_url`だけを取得し、原本へフォールバックしません。
+署名付きURLは同じアダプターのメモリ内だけに保持し、候補には全queryを除いたURLを記録します。
+失効時は失敗を記録し、同じoffsetを再検索してURLを更新します。
+APIへのAuthorizationはHTTPS・標準ポート・graph.mapillary.com・`/images`の完全一致に限定します。
+画像CDNと別hostへのredirectにAuthorizationを転送しません。例外にAPI本文や署名queryを含めません。
+
+作者・native ID・sequence・撮影日時・寸法・許可CDNが欠ける候補、人物検出あり、
+検出結果未確認・検出結果に継続ありを画像取得前に除外します。
+同じ検索条件のページ内・前ページと同sequenceの連写も除外し、subjectは未確定のままです。
+作者ID・地域とnative ID/安定URL/受信SHAは既存bias予約・重複契約へ渡します。
+pHashは既存prepの補助情報として扱い、独立subjectの自動確定には使いません。
+人物検出ゼロはプライバシー確認済みを意味しません。共通の内部確認・人物maskゲートを通す必要があります。
+
+CC BY-SA 4.0の原表記・帰属を保存し、#87の`analysis_only`だけを使います。
+30日保持、不採用7日、削除受付時に停止し7日以内、backup残留30日という#88の契約を再利用します。
+原画像・縮小画像・CVAT・精密位置は公開せず、配布は既存の非表現的統計ゲートに限定します。
+レートはAPI・CDN各同時1、通信終了後2秒、API30要求/60秒、画像5 MB/10秒です。
+これは公開上限の断定ではなく、少量検証用の保守的な自主枠です。
+公開レート本文は未確認で、2026-11-05のユーザー決定により自主上限で進めます。
+CDNのbyte台帳には実hostとrate_groupを記録し、再起動後も別subdomainの同じ共有枠を復元します。
+401/403は理由をjobへ記録し、spawnされたworker経由でも1試行でfailedとし自動再試行しません。
+429/503はRetry-Afterと60秒以上のbackoffを守ってHTTP内では再試行せず停止します。
+通常の負荷制限はキューの既存試行枠に従い、401/403の再試行禁止とは区別します。
+
+実測・未完了条件は`bench/issue94/results.md`を参照してください。

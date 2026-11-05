@@ -79,6 +79,13 @@ def requests(config: dict, layer: dict, rng: random.Random):
     """各言語の先頭ページと、無作為に選んだ後続ページを検索する。"""
     search = config["search"]
     for provider in search["providers"]:
+        if provider == "mapillary":
+            intents = layer.get("mapillary_searches", [])
+            if not intents:
+                raise ValueError("Mapillaryには固定検索意図mapillary_searchesが必要です")
+            for intent in intents:
+                yield SearchRequest(provider, intent, limit=search["limit"], stratum=layer["id"])
+            continue
         if provider == "wikimedia_commons":
             for category in layer.get("commons_categories", []):
                 yield SearchRequest(

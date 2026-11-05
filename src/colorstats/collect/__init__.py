@@ -16,8 +16,13 @@ class SearchRequest:
     offset: int | None = None
     limit: int = 10
     stratum: str | None = None
+    download_mode: str = "original"
 
     def __post_init__(self):
+        if self.download_mode not in ("original", "thumbnail"):
+            raise ValueError("取得モードはoriginalまたはthumbnailです")
+        if self.download_mode == "thumbnail" and self.provider != "wikimedia_commons":
+            raise ValueError("縮小取得はCommonsだけに対応しています")
         if not self.query.strip() or not self.language.strip():
             raise ValueError("検索語と言語が必要です")
         if self.page < 0 or (self.offset is not None and self.offset < 0):
@@ -36,6 +41,8 @@ class Candidate:
 
     attributionはアダプターが構成する帰属表示。原本取得を許可できない場合は
     exclusion_reasonへ理由を設定し、許可時はNoneとする。
+    width/height/mimeは原本値。download_urlは明示した別取得先、renditionは
+    provider/native_id/revision/variantと原本メタデータを持つ。受信値は取得後に記録する。
     """
 
     source_url: str
@@ -54,6 +61,8 @@ class Candidate:
     metadata: dict = field(default_factory=dict)
     attribution: str | None = None
     exclusion_reason: str | None = None
+    download_url: str | None = None
+    rendition: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -66,7 +75,7 @@ class SearchResult:
 
 
 class Adapter(Protocol):
-    """searchはメタデータまで、downloadは原本を指定の試行専用パスへ書く。
+    """searchはメタデータまで、downloadは指定variantを試行専用パスへ書く。
 
     両方にsource_policyを適用し、禁止ソース・restrictedの原本取得は例外にする。
     通信・APIエラーは呼出し元へ伝播し、キューが試行単位で再実行する。

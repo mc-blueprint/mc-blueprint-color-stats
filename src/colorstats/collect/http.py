@@ -10,7 +10,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlunsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-from colorstats.collect.policy import check_policy
+from colorstats.collect.policy import check_current_url, check_policy
 
 _HOST_STATES = {}
 _HOST_STATES_LOCK = Lock()
@@ -71,7 +71,7 @@ class _CountingResponse:
                 return data
         started = self.clock()
         try:
-            data = self.response.read(size)
+            data = self.response.read() if size < 0 else self.response.read(size)
         finally:
             self.network_seconds += max(0.0, self.clock() - started)
         self.bytes += len(data)
@@ -160,7 +160,7 @@ class HttpClient:
                     seconds = 0
             delay = max(delay, seconds)
         host = urlsplit(url).hostname.lower().rstrip(".")
-        state = _host_state(host)
+        state = _host_state(self._host_policy(url).get("rate_group", host))
         state["backoff_until"] = max(state["backoff_until"], self.clock() + delay)
 
     def _observe_wait(self, event, delay):
@@ -168,6 +168,7 @@ class HttpClient:
             self.observe(event, delay)
 
     def _host_policy(self, url):
+        check_current_url(url)
         parts = urlsplit(url)
         if parts.username or parts.password:
             raise ValueError("URL埋め込み認証を拒否しました")
@@ -196,11 +197,12 @@ class HttpClient:
             self.policy.get(f"{kind}_min_interval", self.policy["min_interval"]),
         )
         host_name = (urlsplit(url).hostname or "").lower().rstrip(".")
-        state = _host_state(host_name, host_policy.get("max_concurrency", 1))
+        rate_group = host_policy.get("rate_group", host_name)
+        state = _host_state(rate_group, host_policy.get("max_concurrency", 1))
         state["media_limit"] = host_policy.get(
             "media_bytes_per_10_seconds", self.policy.get("media_bytes_per_10_seconds")
         )
-        self.hosts_used.add(host_name)
+        self.hosts_used.add(rate_group)
         with state["schedule_lock"]:
             now = self.clock()
             normal_due = state["next_request"]
@@ -257,6 +259,7 @@ class HttpClient:
                 network_seconds = 0.0
                 try:
                     request = Request(current, headers={"User-Agent": self.policy["user_agent"]})
+                    check_current_url(current)
                     open_started = self.clock()
                     try:
                         response_context = self.opener(request, timeout=60)
@@ -318,6 +321,7 @@ class HttpClient:
                         if kind == "media" and counted.bytes:
                             self.observe("media_transfer", {
                                 "host": host_name, "bytes": counted.bytes,
+                                "rate_group": host_policy.get("rate_group", host_name),
                             })
                     self.observe(f"network_{kind}_seconds", network_seconds)
                     cooldown = host_policy.get(

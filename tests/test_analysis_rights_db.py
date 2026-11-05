@@ -91,7 +91,7 @@ def test_収集からsubjectと全stageを経由して統計へ区分と根拠�
         session.add(trial)
         session.flush()
         measurement.record(session, session.get(ProcessingRun, run_id),
-                           {"measurement_run_id": str(trial.id)}, set())
+                           {**result.data, "measurement_run_id": str(trial.id)}, set())
         assert trial.parameters["counts"]["eligible_new_sha"] == 1
         assert trial.parameters["d15_exclusions"] == {}
     # 同じ出典で後日の異なる権利が届いても初回sourceを更新しない。
