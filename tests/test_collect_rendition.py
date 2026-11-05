@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import io
 import json
 import os
@@ -144,6 +145,60 @@ def test_受信PNGの寸法とMIMEを原本JPEGの値から分離する(
     assert prepared.files[0][1].suffix == ".png"
 
 
+@pytest.mark.parametrize("sha1", [None, "matching", "mismatch"])
+def test_原本はPillow上限で失敗せずSHA1不一致候補だけを除外する(
+    policy, tmp_path, monkeypatch, sha1,  # noqa: F811
+):
+    from PIL import Image
+
+    from colorstats.collect.stage import prepare
+
+    image = io.BytesIO()
+    Image.new("RGB", (20, 20), "blue").save(image, format="PNG")
+    content = image.getvalue()
+    expected = hashlib.sha1(content).hexdigest()
+    recorded = recorded_thumbnail()
+    recorded[1]["query"]["pages"][0]["imageinfo"][0]["sha1"] = {
+        None: None, "matching": expected, "mismatch": "0" * 40,
+    }[sha1]
+    adapter, _ = adapter_for(policy, [Response(r) for r in recorded])
+    result = adapter.search(SearchRequest("wikimedia_commons", "castle"))
+    first = result.candidates[0]
+    following = replace(
+        first, source_url=first.source_url + "/next", original_url=first.original_url + "?next",
+        rendition={
+            **first.rendition, "original": {**first.rendition["original"], "sha1": expected},
+        },
+    )
+    monkeypatch.setattr(adapter, "search", lambda request: replace(
+        result, candidates=[first, following],
+    ))
+    monkeypatch.setattr(adapter, "download", lambda candidate, path: path.write_bytes(content))
+    monkeypatch.setattr("colorstats.collect.stage.CommonsAdapter", lambda policy: adapter)
+    monkeypatch.setattr("colorstats.collect.stage.existing_rendition", lambda *args: None)
+    monkeypatch.setattr(Image, "MAX_IMAGE_PIXELS", 100)
+    with pytest.raises(Image.DecompressionBombError):
+        Image.open(io.BytesIO(content))
+    discarded, events = [], []
+    payload, digest = payload_for(tmp_path)
+    prepared = prepare(
+        claim_for(payload, digest), discard=lambda request, candidate: discarded.append(candidate),
+        observer=lambda event, value: events.append((event, value)),
+    )
+    assert len(prepared.data["records"]) == (1 if sha1 == "mismatch" else 2)
+    assert all(record["received"] == {
+        "width": first.width, "height": first.height, "mime": first.mime,
+    } for record in prepared.data["records"])
+    assert sum(value for event, value in events if event == "downloads") == 2
+    if sha1 == "mismatch":
+        assert discarded == [first]
+        assert prepared.info.parameters["skipped"][0]["reason"] == "original_sha1_mismatch"
+        assert prepared.data["records"][0]["candidate"]["source_url"] == following.source_url
+        assert set(tmp_path.rglob("*.tmp")) == {path for path, _ in prepared.files}
+    else:
+        assert not discarded and not prepared.info.parameters["skipped"]
+
+
 @pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason="隔離PostgreSQL")
 @pytest.mark.parametrize("first", ["original", "thumbnail"])
 @pytest.mark.parametrize("identity", ["url", "native", "tracking", "same_variant"])
@@ -196,3 +251,18 @@ def test_異なるSHAのvariantは独立asset支持に増えず既存値を保�
         assert session.get(Asset, asset.id).sha256 == "a" * 64
         assert session.get(Asset, asset.id).quality == original_quality
         assert run.parameters["rendition_reused"]
+        from colorstats.collect.measurement import record as record_measurement
+
+        for received_sha, duplicates in [("b" * 64, 0), ("a" * 64, 1)]:
+            trial = ProcessingRun(
+                stage="collect", license_class="open", config_hash="c" * 64,
+                code_version="test", taxonomy_version="0.1.0", node="test",
+                parameters={"counts": {"duplicate_sha": 0}},
+            )
+            session.add(trial)
+            session.flush()
+            record_measurement(session, run, {
+                "measurement_run_id": str(trial.id), "records": [{"sha256": received_sha}],
+            }, {"a" * 64})
+            assert trial.parameters["counts"]["duplicate_sha"] == duplicates
+            assert trial.parameters["counts"]["new_sha"] == 1 - duplicates

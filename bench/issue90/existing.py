@@ -23,7 +23,7 @@ def order(row):
     return hashlib.sha256(("issue90-existing-v1:" + row["sha256"]).encode()).hexdigest()
 
 
-def freeze(root, snapshot, raw_manifest):
+def freeze(root, snapshot, raw_manifest, *, reuse_previous14=False):
     if (root / "selection.json").exists():
         raise FileExistsError("固定選定を上書きしません")
     paths = {}
@@ -71,7 +71,10 @@ def freeze(root, snapshot, raw_manifest):
         selected.extend(chosen)
     assert len(selected) == len({row["sha256"] for row in selected}) == 100
     selected.sort(key=lambda row: (row["domain"], row["orientation"], order(row)))
-    old = json.loads((root.parent / "previous14/manifest.json").read_text())
+    old = (
+        json.loads((root.parent / "previous14/manifest.json").read_text())
+        if reuse_previous14 else []
+    )
     cache = {row["arms"]["original-1.0"]["sha256"]: row for row in old
              if "comparison" in row}
     manifest = []
@@ -246,10 +249,13 @@ def main():
     parser.add_argument("--raw-manifest", type=Path)
     parser.add_argument("--policy", type=Path, default=Path("configs/source_policy.yaml"))
     parser.add_argument("--fetch", action="store_true")
+    parser.add_argument(
+        "--reuse-previous14", action="store_true", help="親のprevious14を再利用する",
+    )
     args = parser.parse_args()
     args.root.mkdir(exist_ok=True)
     if args.snapshot:
-        freeze(args.root, args.snapshot, args.raw_manifest)
+        freeze(args.root, args.snapshot, args.raw_manifest, reuse_previous14=args.reuse_previous14)
     if args.fetch:
         fetch(args.root, args.policy)
 

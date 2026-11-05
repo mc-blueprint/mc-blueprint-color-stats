@@ -264,19 +264,36 @@ def prepare(
                 continue
             with temporary.open("rb") as stream:
                 digest = hashlib.file_digest(stream, "sha256").hexdigest()
+            if observer is not None:
+                observer("downloads", 1)
+                observer("download_bytes", temporary.stat().st_size)
+            if candidate.rendition.get("variant") == "original":
+                expected_sha1 = candidate.rendition["original"].get("sha1")
+                if expected_sha1:
+                    with temporary.open("rb") as stream:
+                        received_sha1 = hashlib.file_digest(stream, "sha1").hexdigest()
+                    if received_sha1 != expected_sha1:
+                        temporary.unlink()
+                        temporary = None
+                        if discard is not None:
+                            discard(request, candidate)
+                        skipped.append({
+                            "source_url": candidate.source_url,
+                            "original_url": candidate.original_url,
+                            "rank": candidate.rank, "reason": "original_sha1_mismatch",
+                        })
+                        observe("exclusion", skipped[-1])
+                        continue
             received = {
                 "width": candidate.width, "height": candidate.height, "mime": candidate.mime,
             }
-            if candidate.rendition.get("revision"):
+            if candidate.rendition.get("variant") == "thumbnail":
                 with Image.open(temporary) as image:
                     received = {
                         "width": image.width, "height": image.height,
                         "mime": Image.MIME[image.format],
                     }
                 extension = MIME_EXTENSIONS[received["mime"]]
-            if observer is not None:
-                observer("downloads", 1)
-                observer("download_bytes", temporary.stat().st_size)
             logical = f"raw/{digest[:2]}/{digest}.{extension}"
             target = storage.resolve(logical).local_path(payload["host"])
             if temporary.parent != target.parent:
