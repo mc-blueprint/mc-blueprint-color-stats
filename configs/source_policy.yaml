@@ -172,3 +172,57 @@ sources:
       - https://docs.openverse.org/api/reference/made_with_ov.html
       - https://docs.openverse.org/api/reference/authentication_and_throttling.html
       - https://github.com/WordPress/openverse/blob/main/documentation/terms_of_service.md
+  loc:
+    enabled: false
+    endpoint_type: collection
+    user_agent: "mc-blueprint-color-stats-bot/0.1 (https://github.com/mc-blueprint/mc-blueprint-color-stats; https://github.com/mc-blueprint)"
+    min_interval: 6.0
+    api_min_interval: 6.0
+    api_windows: [{seconds: 60, limit: 10}]
+    hosts:
+      www.loc.gov:
+        kind: api
+        rate_group: loc.gov
+        min_interval: 6.0
+        api_windows: [{seconds: 60, limit: 10}]
+      tile.loc.gov:
+        kind: media
+        rate_group: loc.gov
+        min_interval: 6.0
+      cdn.loc.gov:
+        kind: media
+        rate_group: loc.gov
+        min_interval: 10.0
+        disallow_paths: [/service, /master]
+    retries: 0
+    backoff: 5.0
+    attribution: "LoCのitem別Rights and Access原文と出典URLを保持し、No known restrictionsをpublic domainへ変換しない"
+    redistribution: "open区分のみ条件に従い許可。解析専用入力と画像は内部限定、配布物へ含めない"
+    license_rules:
+      open: [pd]
+      analysis_only: [loc-analysis-only]
+    rights_basis: copyright_act_30_4
+    attribution_required: false
+    access_scope: internal
+    image_redistribution: false
+    retention: {raw_days: 30, rejected_days: 7, deletion_request_days: 7, backup_days: 30}
+    rights_review:
+      reviewed_at: "2026-11-05T10:00:00+00:00"
+      terms_url: https://www.loc.gov/legal/
+      api_url: https://www.loc.gov/apis/json-and-yaml/working-within-limits/
+      robots_url: https://www.loc.gov/robots.txt
+      image_robots_url: https://tile.loc.gov/robots.txt
+      cdn_robots_url: https://cdn.loc.gov/robots.txt
+      summary: "公式JSON APIはCloudflare challenge (403/Cf-Mitigated: challenge)を返すためアダプターを無効化。challenge検出時は再試行せず停止し、回避しない。"
+      purpose: non_expressive_color_statistics
+      decision: allowed
+      reviewer: user (Issue 92)
+      policy_version: issue92-v2
+    references:
+      - https://www.loc.gov/apis/json-and-yaml/requests/
+      - https://www.loc.gov/apis/json-and-yaml/working-within-limits/
+      - https://www.loc.gov/legal/
+      - https://www.loc.gov/legal/security-copyright-and-privacy/understanding-copyright/
+      - https://www.loc.gov/robots.txt
+      - https://tile.loc.gov/robots.txt
+      - https://cdn.loc.gov/robots.txt
