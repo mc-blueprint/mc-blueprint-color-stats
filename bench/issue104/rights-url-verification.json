@@ -1,0 +1,18 @@
+[
+  {
+    "url": "https://wikitech.wikimedia.org/wiki/Robot_policy",
+    "status": 200,
+    "final_url": "https://wikitech.wikimedia.org/wiki/Robot_policy",
+    "checked_at": "2026-11-05T08:37:41.167021+00:00",
+    "sha256": "ea80a3d47f0e6e9de0e6c7e4873aebe4a045faed51ec30b7e509be121bbe9cf7",
+    "bytes": 69142
+  },
+  {
+    "url": "https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits",
+    "status": 200,
+    "final_url": "https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits",
+    "checked_at": "2026-11-05T08:37:41.631340+00:00",
+    "sha256": "87d0fbe929c2da562e06ea79ed5ebd3136a1a05b0da5cb3d214db1a4211435d4",
+    "bytes": 78253
+  }
+]

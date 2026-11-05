@@ -85,8 +85,12 @@ def audit(root, expected):
             violations["rights_reasons"] += bool(set(excluded) - set(json.loads(reasons)))
             if eligible:
                 attribution["missing_url"] += not bool(source["url"])
-                attribution["missing_attribution"] += not bool(source["attribution"])
-                attribution["restricted_source"] += source["license_class"] != "open"
+                if (source["license_class"] != "analysis_only"
+                        or source["policy"].get("attribution_required")):
+                    attribution["missing_attribution"] += not bool(source["attribution"])
+                attribution["restricted_source"] += source["license_class"] not in {
+                    "open", "analysis_only",
+                }
             subject = data["subject"]
             if subject and (evidence := subject.get("attribute_evidence")):
                 attribute_assets += 1

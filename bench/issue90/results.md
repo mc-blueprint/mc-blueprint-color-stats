@@ -111,10 +111,10 @@ chunked応答のread(-1)混入とthumbmime要求漏れは修正し回帰検証�
 
 ## 検証と残る判断
 
-反証修正後の最終差分はWSL Ubuntu-24.04のext4コピーと新規の隔離PostgreSQL16で
-全pytest 878成功・1スキップ。ruff・sdist/wheel・diff checkも成功した。
+develop（#104、9c0011f）を競合なしでmergeした最終差分はWSL Ubuntu-24.04のext4コピーと新規の隔離PostgreSQL16で
+全pytest 890成功・1スキップ。ruff全体・sdist/wheel・diff checkも成功した。
 スキップはSEGMENT_GPU_MODELS未指定の専用smokeであり、本比較の実GPU実行とは別である。
-検証ログ・build出力は`/tmp/colorstats-issue90-review-3xtKPS/`、一時PostgreSQLは停止済み。
+検証ログ・build出力は`/tmp/colorstats-issue90-merge-m37xWY/`、一時PostgreSQLは停止済み。
 追加100件は固定ID・一意SHA・予算・保全・原本不変を監査済み。比較データは再取得していない。
 
 反証修正では原本のPillow検査を外して従来のAPI寸法・MIMEを維持し、縮小だけを検査する。
