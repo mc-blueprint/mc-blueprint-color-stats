@@ -1,0 +1,11 @@
+{
+  "reviewed_at": "2026-11-05T00:00:00+00:00",
+  "terms_url": "https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use",
+  "api_url": "https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_Robot_policy",
+  "robots_url": "https://commons.wikimedia.org/robots.txt",
+  "summary": "Issue #104のユーザー判断。非表現的な色統計の内部解析に限定し、原画像・原metaは配布しない。Action APIは認証なし同時1・5 req/s未満、1秒超の要求後は5秒待つ。robots.txtのDisallow /w/は動的ページ巡回向けと解釈しAction APIの公式規定に従う。保持期限は新規収集分だけに適用し、既存アーカイブには設定しない。外部再照会は行わずIssueの確認済み判断を記録。",
+  "purpose": "non_expressive_color_statistics",
+  "decision": "allowed",
+  "reviewer": "user (Issue 104, 2026-11-05)",
+  "policy_version": "issue104-v1"
+}
