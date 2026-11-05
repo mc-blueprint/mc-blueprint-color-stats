@@ -4,12 +4,33 @@ import json
 from collections import deque
 from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
+from threading import BoundedSemaphore, Lock
 from time import monotonic, sleep
 from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlunsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from colorstats.collect.policy import check_policy
+
+_HOST_STATES = {}
+_HOST_STATES_LOCK = Lock()
+
+
+def _host_state(host, max_concurrency=1):
+    with _HOST_STATES_LOCK:
+        return _HOST_STATES.setdefault(
+            host,
+            {
+                "next_request": 0.0,
+                "backoff_until": 0.0,
+                "api_requests": deque(),
+                "media_window": deque(),
+                "media_bytes": 0,
+                "media_lock": Lock(),
+                "schedule_lock": Lock(),
+                "semaphore": BoundedSemaphore(max_concurrency),
+            },
+        )
 
 
 class MeasurementLimit(RuntimeError):
@@ -30,8 +51,10 @@ class _CountingResponse:
 
     def read(self, *args):
         started = self.clock()
-        data = self.response.read(*args)
-        self.network_seconds += max(0.0, self.clock() - started)
+        try:
+            data = self.response.read(*args)
+        finally:
+            self.network_seconds += max(0.0, self.clock() - started)
         self.bytes += len(data)
         return data
 
@@ -50,15 +73,9 @@ class HttpClient:
         check_policy(policy)
         self.policy, self.clock, self.wait = policy, clock, wait
         self.opener = opener if opener is not None else build_opener(_NoRedirect()).open
-        self.next_request = 0.0
-        self.next_api_request = 0.0
-        self.next_media_request = 0.0
-        self.next_host_request = {}
-        self.host_backoff_until = {}
-        self.media_window = deque()
-        self.media_bytes = 0
-        self.api_requests = deque()
         self.observer = None
+        self.quota_reserve = None
+        self.hosts_used = set()
 
     def observe(self, event, value=1):
         if self.observer is not None:
@@ -76,14 +93,18 @@ class HttpClient:
         if isinstance(value, tuple):
             return tuple(cls._safe_value(item) for item in value)
         if isinstance(value, str) and value.startswith(("http://", "https://")):
-            parts = urlsplit(value)
-            query = [
-                (key, val) for key, val in parse_qsl(parts.query, keep_blank_values=True)
-                if not cls._secret_query_key(key)
-            ]
-            netloc = parts.netloc.rsplit("@", 1)[-1]
-            return urlunsplit((parts.scheme, netloc, parts.path, urlencode(query), ""))
+            return cls._without_secret_query(value)
         return value
+
+    @classmethod
+    def _without_secret_query(cls, url):
+        parts = urlsplit(url)
+        query = [
+            (key, val) for key, val in parse_qsl(parts.query, keep_blank_values=True)
+            if not cls._secret_query_key(key)
+        ]
+        netloc = parts.netloc.rsplit("@", 1)[-1]
+        return urlunsplit((parts.scheme, netloc, parts.path, urlencode(query), ""))
 
     @staticmethod
     def _secret_query_key(key):
@@ -119,9 +140,8 @@ class HttpClient:
                     seconds = 0
             delay = max(delay, seconds)
         host = urlsplit(url).hostname.lower().rstrip(".")
-        self.host_backoff_until[host] = max(
-            self.host_backoff_until.get(host, 0.0), self.clock() + delay
-        )
+        state = _host_state(host)
+        state["backoff_until"] = max(state["backoff_until"], self.clock() + delay)
 
     def _observe_wait(self, event, delay):
         if delay > 0:
@@ -143,47 +163,59 @@ class HttpClient:
                 return config
         raise ValueError("source_policy未登録の接続先です")
 
-    def _error_bytes(self, error, *, media=False):
+    def _error_bytes(self, error, *, media=False, state=None, host_policy=None):
         if error.fp is None:
             return 0
         if not media:
             return len(error.read())
         total = 0
-        while chunk := error.read(self._media_chunk_size()):
+        while chunk := self._read_media(error, state, host_policy):
             total += len(chunk)
-            self._record_media(len(chunk))
+            self._record_media(len(chunk), state)
         return total
 
-    def _wait_for_slot(self, url, api, media):
-        host = self._host_policy(url)
-        kind = "api" if api else "media" if media else host.get("kind", "page")
-        interval = self.policy.get(f"{kind}_min_interval", self.policy["min_interval"])
-        field = f"next_{kind}_request"
-        due = getattr(self, field, 0.0)
+    def _wait_for_slot(self, url):
+        host_policy = self._host_policy(url)
+        kind = host_policy["kind"]
+        interval = host_policy.get(
+            "min_interval",
+            self.policy.get(f"{kind}_min_interval", self.policy["min_interval"]),
+        )
         host_name = (urlsplit(url).hostname or "").lower().rstrip(".")
-        now = self.clock()
-        normal_due = max(due, self.next_host_request.get(host_name, 0.0))
-        if kind == "api":
-            windows = self.policy.get("api_windows", [])
-            for window in windows:
-                recent = [t for t in self.api_requests if t > now - window["seconds"]]
-                if len(recent) >= window["limit"]:
-                    normal_due = max(normal_due, recent[0] + window["seconds"])
-            if windows:
-                oldest = now - max(window["seconds"] for window in windows)
-                while self.api_requests and self.api_requests[0] <= oldest:
-                    self.api_requests.popleft()
-        backoff_due = self.host_backoff_until.get(host_name, 0.0)
-        total_delay = max(0.0, max(normal_due, backoff_due) - now)
-        backoff_delay = min(total_delay, max(0.0, backoff_due - now))
-        normal_delay = total_delay - backoff_delay
-        self._observe_wait("normal_wait_seconds", normal_delay)
-        self._observe_wait("backoff_seconds", backoff_delay)
-        if normal_delay + backoff_delay:
-            self.wait(normal_delay + backoff_delay)
-        if kind == "api":
-            self.api_requests.append(self.clock())
-        return kind, interval
+        state = _host_state(host_name, host_policy.get("max_concurrency", 1))
+        state["media_limit"] = host_policy.get(
+            "media_bytes_per_10_seconds", self.policy.get("media_bytes_per_10_seconds")
+        )
+        self.hosts_used.add(host_name)
+        with state["schedule_lock"]:
+            now = self.clock()
+            normal_due = state["next_request"]
+            if kind == "api":
+                windows = host_policy.get("api_windows", self.policy.get("api_windows", []))
+                for window in windows:
+                    recent = [
+                        timestamp for timestamp in state["api_requests"]
+                        if timestamp > now - window["seconds"]
+                    ]
+                    if len(recent) >= window["limit"]:
+                        normal_due = max(normal_due, recent[0] + window["seconds"])
+                if windows:
+                    oldest = now - max(window["seconds"] for window in windows)
+                    while state["api_requests"] and state["api_requests"][0] <= oldest:
+                        state["api_requests"].popleft()
+            backoff_due = state["backoff_until"]
+            total_delay = max(0.0, max(normal_due, backoff_due) - now)
+            backoff_delay = min(total_delay, max(0.0, backoff_due - now))
+            normal_delay = total_delay - backoff_delay
+            self._observe_wait("normal_wait_seconds", normal_delay)
+            self._observe_wait("backoff_seconds", backoff_delay)
+            if normal_delay + backoff_delay:
+                self.wait(normal_delay + backoff_delay)
+            slot_time = self.clock()
+            state["next_request"] = max(state["next_request"], slot_time + interval)
+            if kind == "api":
+                state["api_requests"].append(slot_time)
+        return kind, interval, host_name, host_policy, state
 
     def get(self, url, *, target=None, text=False, read=json.load, api=False):
         """JSON・テキストを返すか、試行専用targetへ原本を書き込む。
@@ -195,8 +227,17 @@ class HttpClient:
             current, redirects = url, 0
             while True:
                 check_policy(self.policy)
-                kind, interval = self._wait_for_slot(current, api, target is not None)
-                self.observe("api_request" if api else "request")
+                kind, interval, host_name, host_policy, state = self._wait_for_slot(current)
+                self.observe("api_request" if kind == "api" else "request")
+                if kind == "api" and self.quota_reserve is not None:
+                    windows = host_policy.get(
+                        "api_windows", self.policy.get("api_windows", [])
+                    )
+                    while delay := self.quota_reserve(host_name, kind, windows):
+                        self._observe_wait("normal_wait_seconds", delay)
+                        self.wait(delay)
+                state["semaphore"].acquire()
+                acquired = True
                 counted = None
                 started = self.clock()
                 network_seconds = 0.0
@@ -209,8 +250,7 @@ class HttpClient:
                         counted = response = _CountingResponse(response, self.clock)
                         if target is not None:
                             with target.open("wb") as output:
-                                while chunk := response.read(self._media_chunk_size()):
-                                    self._record_media(len(chunk))
+                                while chunk := self._read_media(response, state, host_policy):
                                     output.write(chunk)
                             length = response.headers.get("Content-Length")
                             if length is not None and target.stat().st_size != int(length):
@@ -224,9 +264,15 @@ class HttpClient:
                     self.observe("responses")
                     if error.code in (301, 302, 303, 307, 308):
                         try:
-                            received = self._error_bytes(error, media=target is not None)
+                            received = self._error_bytes(
+                                error, media=kind == "media", state=state, host_policy=host_policy
+                            )
                             self.observe("bytes", received)
                             target_url = urljoin(current, error.headers.get("Location", ""))
+                            source_host = (urlsplit(current).hostname or "").casefold()
+                            target_host = (urlsplit(target_url).hostname or "").casefold()
+                            if target_host != source_host:
+                                target_url = self._without_secret_query(target_url)
                         finally:
                             error.close()
                         redirects += 1
@@ -236,9 +282,13 @@ class HttpClient:
                         current = target_url
                         continue
                     if error.code not in (429, 503):
-                        self.observe("bytes", self._error_bytes(error, media=target is not None))
+                        self.observe("bytes", self._error_bytes(
+                            error, media=kind == "media", state=state, host_policy=host_policy
+                        ))
                         raise
-                    self.observe("bytes", self._error_bytes(error, media=target is not None))
+                    self.observe("bytes", self._error_bytes(
+                        error, media=kind == "media", state=state, host_policy=host_policy
+                    ))
                     self._delay(error.headers, attempt, current)
                     error.close()
                     break
@@ -251,59 +301,63 @@ class HttpClient:
                     raise
                 finally:
                     elapsed = max(0.0, self.clock() - started)
-                    if counted is None and not network_seconds:
-                        network_seconds = elapsed
                     if counted is not None:
                         self.observe("bytes", counted.bytes)
                         network_seconds += counted.network_seconds
+                    else:
+                        network_seconds = max(network_seconds, elapsed)
                     self.observe(f"network_{kind}_seconds", network_seconds)
-                    field = f"next_{kind}_request"
-                    cooldown = self.policy.get(f"{kind}_slow_seconds", 0)
-                    delay = cooldown if kind == "api" and network_seconds > 1.0 else interval
-                    setattr(self, field, max(getattr(self, field, 0.0), self.clock() + delay))
-                    host_name = (urlsplit(current).hostname or "").lower().rstrip(".")
-                    self.next_host_request[host_name] = max(
-                        self.next_host_request.get(host_name, 0.0), self.clock() + delay
+                    cooldown = host_policy.get(
+                        f"{kind}_slow_seconds", self.policy.get(f"{kind}_slow_seconds", 0)
                     )
+                    delay = cooldown if kind == "api" and network_seconds > 1.0 else interval
+                    state["next_request"] = max(state["next_request"], self.clock() + delay)
+                    if acquired:
+                        state["semaphore"].release()
 
         self.finish()
         raise RuntimeError("負荷制限により取得を中断しました")
 
-    def _media_chunk_size(self):
-        limit = self.policy.get("media_bytes_per_10_seconds")
+    def _media_chunk_size(self, state, host_policy):
+        limit = host_policy.get(
+            "media_bytes_per_10_seconds", self.policy.get("media_bytes_per_10_seconds")
+        )
         if not limit:
             return 64 * 1024
         now = self.clock()
-        while self.media_window and self.media_window[0][0] <= now - 10:
-            _, old_size = self.media_window.popleft()
-            self.media_bytes -= old_size
-        if self.media_bytes >= limit:
-            delay = max(0.0, self.media_window[0][0] + 10 - now)
+        while state["media_window"] and state["media_window"][0][0] <= now - 10:
+            _, old_size = state["media_window"].popleft()
+            state["media_bytes"] -= old_size
+        if state["media_bytes"] >= limit:
+            delay = max(0.0, state["media_window"][0][0] + 10 - now)
             self._observe_wait("bandwidth_wait_seconds", delay)
             self.wait(delay)
             now = self.clock()
-            while self.media_window and self.media_window[0][0] <= now - 10:
-                _, old_size = self.media_window.popleft()
-                self.media_bytes -= old_size
-        return min(64 * 1024, limit - self.media_bytes)
+            while state["media_window"] and state["media_window"][0][0] <= now - 10:
+                _, old_size = state["media_window"].popleft()
+                state["media_bytes"] -= old_size
+        return min(64 * 1024, limit - state["media_bytes"])
 
-    def _record_media(self, size):
-        if not self.policy.get("media_bytes_per_10_seconds"):
+    def _record_media(self, size, state):
+        if not state.get("media_limit"):
             return
         now = self.clock()
-        self.media_window.append((now, size))
-        self.media_bytes += size
+        state["media_window"].append((now, size))
+        state["media_bytes"] += size
+
+    def _read_media(self, response, state, host_policy):
+        with state["media_lock"]:
+            chunk = response.read(self._media_chunk_size(state, host_policy))
+            if chunk:
+                self._record_media(len(chunk), state)
+            return chunk
 
     def finish(self):
         """別プロセスの次ジョブにも待機を引き継ぐため、残りの待機を済ませる。"""
         now = self.clock()
-        normal_due = max(
-            self.next_request,
-            self.next_api_request,
-            self.next_media_request,
-            max(self.next_host_request.values(), default=0.0),
-        )
-        backoff_due = max(self.host_backoff_until.values(), default=0.0)
+        states = [_host_state(host) for host in self.hosts_used]
+        normal_due = max((state["next_request"] for state in states), default=0.0)
+        backoff_due = max((state["backoff_until"] for state in states), default=0.0)
         total_delay = max(0.0, max(normal_due, backoff_due) - now)
         backoff_delay = min(total_delay, max(0.0, backoff_due - now))
         normal_delay = total_delay - backoff_delay

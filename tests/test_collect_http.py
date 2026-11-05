@@ -19,16 +19,17 @@ def client(request):
 
 def make_client(client, responses, **changes):
     provider, adapter = client
+    clock = changes.pop("clock", Clock())
     source_policy = load_policy(ROOT / "configs/source_policy.yaml", provider)
     policy = {
         **source_policy,
         "hosts": {
             **source_policy.get("hosts", {}),
-            "example.test": {"kind": "page"},
+            "example.test": {"kind": changes.pop("example_kind", "page")},
         },
         **changes,
     }
-    clock, calls = Clock(), []
+    calls = []
     responses = iter(responses)
 
     def opener(request, **kwargs):
@@ -51,9 +52,9 @@ def test_検索と元ページと原本が共通のRetryAfterで待機する(cli
     result = adapter.get("https://example.test/first", **kwargs)
     adapter.get("https://example.test/next")
     adapter.finish()
-    wait = 0.5 if client[0] == "wikimedia_commons" and mode == "file" else 1.0
+    wait = 1.0
     assert [time for _, time in calls] == [0, 12, 12 + wait]
-    assert adapter.clock() == 12 + (3 if wait == 0.5 else 2) * wait
+    assert adapter.clock() == 12 + 2 * wait
     if mode == "file":
         assert result is None and (tmp_path / "image").read_bytes() == b'{}'
 
@@ -150,17 +151,101 @@ def test_未登録リダイレクト先へ通信しない(client):
 
 def test_Openverse匿名APIの時枠と日枠(client):
     policy = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
-    policy["api_windows"] = [{"seconds": 3600, "limit": 2}, {"seconds": 86400, "limit": 3}]
+    policy["hosts"]["api.openverse.org"]["api_windows"] = [
+        {"seconds": 3600, "limit": 2}, {"seconds": 86400, "limit": 3}
+    ]
     clock, calls = Clock(), []
 
     def opener(request, **kwargs):
         calls.append(clock.now)
         return Response(b"{}")
 
-    http = HttpClient(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+    first = HttpClient(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+    second = HttpClient(policy, opener=opener, clock=clock.clock, wait=clock.wait)
     for _ in range(4):
-        http.get("https://api.openverse.org/v1/images/", api=True)
+        (first if _ < 2 else second).get("https://api.openverse.org/v1/images/")
     assert calls == [0, 1, 3600, 86400]
+
+
+def test_別providerのclient間で同じmedia_hostの帯域窓を共有する(tmp_path):
+    commons = load_policy(ROOT / "configs/source_policy.yaml", "wikimedia_commons")
+    openverse = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
+    for policy in (commons, openverse):
+        policy["hosts"]["upload.wikimedia.org"]["media_bytes_per_10_seconds"] = 4
+    clock, calls = Clock(), []
+    responses = iter((Response(b"abcd"), Response(b"efgh")))
+
+    def opener(request, **kwargs):
+        calls.append(clock.now)
+        return next(responses)
+
+    first = CommonsAdapter(commons, opener=opener, clock=clock.clock, wait=clock.wait)
+    second = OpenverseAdapter(openverse, opener=opener, clock=clock.clock, wait=clock.wait)
+    first.get("https://upload.wikimedia.org/first", target=tmp_path / "first")
+    first.finish()
+    second.get("https://upload.wikimedia.org/second", target=tmp_path / "second")
+    assert calls == [0, 11]
+    assert clock.now == 21
+
+
+def test_redirect_host_policyがapi引数と元hostのkindに優先する():
+    policy = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
+    policy["hosts"]["upload.wikimedia.org"]["min_interval"] = 1.0
+    clock, calls, events = Clock(), [], []
+    responses = iter((
+        HTTPError(
+            "https://upload.wikimedia.org/file", 302, "redirect",
+            {"Location": "https://api.openverse.org/v1/images/"}, io.BytesIO(),
+        ),
+        Response(b"{}"),
+    ))
+
+    def opener(request, **kwargs):
+        calls.append((request.full_url, clock.now))
+        response = next(responses)
+        if isinstance(response, Exception):
+            raise response
+        return response
+
+    adapter = OpenverseAdapter(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+    adapter.observer = lambda event, value: events.append(event)
+    adapter.get(
+        "https://upload.wikimedia.org/file", api=True, read=lambda response: response.read()
+    )
+    assert [event for event in events if event in ("request", "api_request")] == [
+        "request", "api_request"
+    ]
+    assert calls == [
+        ("https://upload.wikimedia.org/file", 0),
+        ("https://api.openverse.org/v1/images/", 0),
+    ]
+
+
+def test_別hostへのredirectで秘密queryを送らない():
+    policy = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
+    policy["hosts"]["example.test"] = {"kind": "page"}
+    redirect = HTTPError(
+        "https://example.test/start?access_token=private", 302, "redirect",
+        {"Location": "https://api.openverse.org/v1/?token=redirect-secret&page=2"},
+        io.BytesIO(),
+    )
+    responses, urls = iter((redirect, Response(b"{}"))), []
+
+    def opener(request, **kwargs):
+        urls.append(request.full_url)
+        response = next(responses)
+        if isinstance(response, Exception):
+            raise response
+        return response
+
+    adapter = OpenverseAdapter(policy, opener=opener, clock=Clock().clock, wait=lambda _: None)
+    adapter.get(
+        "https://example.test/start?access_token=private", read=lambda response: response.read()
+    )
+    assert urls == [
+        "https://example.test/start?access_token=private",
+        "https://api.openverse.org/v1/?page=2",
+    ]
 
 
 def test_計測へ送るURLから秘密クエリを除く(client):
