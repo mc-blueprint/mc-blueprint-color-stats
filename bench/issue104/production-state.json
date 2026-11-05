@@ -1,0 +1,59 @@
+{
+  "develop_commit": "d97c2189ae6876214607ec7173a4d1d3f2e5700a",
+  "integration_commit": "abd66dd",
+  "backup": {
+    "path": "/mnt/data/work/issue-104/backup-20261105T074401Z/colorstats.dump",
+    "bytes": 580605022,
+    "sha256": "3a2328cdaf909795857dc7f5d98eb34c1062bd6729d17c8415fc63bfbb9bbe6c",
+    "format": "pg_dump custom, complete database",
+    "free_space_before_rounded_gib": 855,
+    "archive_list_verified": true,
+    "complete_sql_stream_verified": true,
+    "restored": false
+  },
+  "migration": {
+    "before": "0005",
+    "after": "0007",
+    "method": "alembic upgrade head"
+  },
+  "classification": {
+    "total": 7607,
+    "before": {
+      "open": 7607
+    },
+    "after": {
+      "open": 3076,
+      "analysis_only": 4531
+    },
+    "plan_hash": "3e2bf34873a1ece73b1ce69b49c906ab7b0337a2b3c16328699cf033254d2f45",
+    "first_changes": 4531,
+    "repeated_changes": 0,
+    "exclusions": {
+      "noncommercial": 0,
+      "missing_rights_basis": 0,
+      "unknown_license": 0
+    },
+    "legacy_retention_rows": 0
+  },
+  "original_information": {
+    "assets": 7607,
+    "sources": 3575,
+    "asset_hash_before_and_after": "adb90827b98de1c2f50c2a66335a52edb3b914f54928819e55a10f789bb0abb3",
+    "source_hash_before_and_after": "c3b4d4f32a45259358a9bb0702b6454c47b8065151f4b1824597c4e62c0837e3"
+  },
+  "snapshot_failures_preserved": [
+    "/mnt/data/derived/stats/issue104-full-20261105T075116Z",
+    "/mnt/data/derived/stats/issue104-full-20261105T075218Z"
+  ],
+  "new_snapshot_id": "fb7bc1af34b036cb111ae9ae6274195931e2c2271d764eb040e96bda55326942",
+  "new_rule_stat_run": "3b46cfe4-9965-48d3-b041-b9b63bba75fc",
+  "new_aggregate_job": "ce84aa5d-a09c-40a2-96a1-56a4a0fb28d3",
+  "artifacts": {
+    "registered_rows_hash": "703f83c268b96e8cf3d49da343e3c1ba154db07186b8bc11b6400cc99661c95b",
+    "report_sha256": "37bf5721d8e1df6b64e11b5bd46e1f41552759600866c0cf16cde4127e01e5e1",
+    "root": "/mnt/data/derived/stats/issue104-full-20261105T075242Z"
+  },
+  "old_snapshot_verified_after": true,
+  "old_statistics_equal_after": true,
+  "original_information_equal_after": true
+}
