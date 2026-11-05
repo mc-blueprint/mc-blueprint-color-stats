@@ -1,0 +1,154 @@
+{
+  "fixed_slots": 100,
+  "status": {
+    "acquired": 14,
+    "thumbnail_not_smaller": 1,
+    "budget_not_evaluated": 83,
+    "search_missing": 2
+  },
+  "budget": {
+    "limits": {
+      "api": 120,
+      "original": 30,
+      "thumbnail": 30
+    },
+    "used": {
+      "api": 114,
+      "original": 28,
+      "thumbnail": 28
+    },
+    "created_at": "2026-11-05T07:53:23.150633+00:00",
+    "base_commit": "d97c218",
+    "queries": [
+      "Japanese castle",
+      "Gothic cathedral facade",
+      "skyscraper vertical",
+      "building architectural ornament",
+      "building backlit sunset",
+      "mountain landscape",
+      "waterfall vertical",
+      "canyon landscape",
+      "rock formation detail",
+      "forest backlight"
+    ],
+    "intervals": [
+      1.0,
+      0.5
+    ],
+    "paired_images": 15
+  },
+  "arms": {
+    "original-1.0": {
+      "attempted": 14,
+      "succeeded": 14,
+      "failed": 0,
+      "bytes": 200624430,
+      "elapsed_seconds": 74.22608935198514,
+      "events": {
+        "request": 14,
+        "responses": 14,
+        "bytes": 200624430,
+        "network_media_seconds": 22.000842364737764,
+        "normal_wait_seconds": 13.999430283962283,
+        "bandwidth_wait_seconds": 36.995586660923436
+      },
+      "verified_original_sha1": 14
+    },
+    "thumbnail-1.0": {
+      "attempted": 14,
+      "succeeded": 14,
+      "failed": 0,
+      "bytes": 6495498,
+      "elapsed_seconds": 26.871184218034614,
+      "events": {
+        "request": 14,
+        "responses": 14,
+        "bytes": 6495498,
+        "network_media_seconds": 12.762548761442304,
+        "normal_wait_seconds": 13.999409290088806
+      },
+      "verified_original_sha1": 0
+    },
+    "original-0.5": {
+      "attempted": 14,
+      "succeeded": 14,
+      "failed": 0,
+      "bytes": 200624430,
+      "elapsed_seconds": 62.903297742130235,
+      "events": {
+        "request": 14,
+        "responses": 14,
+        "bytes": 200624430,
+        "network_media_seconds": 14.534184296964668,
+        "normal_wait_seconds": 6.999442345055286,
+        "bandwidth_wait_seconds": 40.064866622153204
+      },
+      "verified_original_sha1": 14
+    },
+    "thumbnail-0.5": {
+      "attempted": 14,
+      "succeeded": 14,
+      "failed": 0,
+      "bytes": 6495498,
+      "elapsed_seconds": 16.21401445392985,
+      "events": {
+        "request": 14,
+        "responses": 14,
+        "bytes": 6495498,
+        "network_media_seconds": 9.117607182764914,
+        "normal_wait_seconds": 6.999407297989819
+      },
+      "verified_original_sha1": 0
+    }
+  },
+  "runtime": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "packages": {
+      "torch": "2.11.0",
+      "torchvision": "0.26.0",
+      "transformers": "4.57.6",
+      "pillow": "12.3.0",
+      "numpy": "2.5.4",
+      "imagehash": "4.3.2",
+      "colour-science": "0.4.7",
+      "opencv-python-headless": "4.14.0.94"
+    }
+  },
+  "different_sha_pairs": 14,
+  "quality": {
+    "evaluated": 14,
+    "unevaluated": 86,
+    "flag_flips": {
+      "resolution_ok": 1
+    },
+    "phash_distance": {
+      "mean": 0.14285714285714285,
+      "median": 0.0,
+      "max": 2
+    },
+    "dominant_oklab_distance": {
+      "mean": 0.008689719077290868,
+      "median": 0.0017997372602429227,
+      "max": 0.04894440410775286
+    },
+    "weighted_oklab_distance": {
+      "mean": 0.0018681159976538782,
+      "median": 0.0016083120093245734,
+      "max": 0.005202004474692612
+    },
+    "major_agreement": {
+      "label_pairs": 73,
+      "intersection": 4753721,
+      "union": 5229703,
+      "value": 0.9089848888168219
+    },
+    "detail_agreement": {
+      "label_pairs": 46,
+      "intersection": 3088448,
+      "union": 3360101,
+      "value": 0.919153323069753
+    }
+  },
+  "analysis_errors": []
+}

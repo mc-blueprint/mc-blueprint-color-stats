@@ -40,7 +40,7 @@ from tests.test_queue import database, expire  # noqa: F401
 from tests.test_queue import queue as queue
 
 
-def _spawn_media_ledger(database_url, job_id, result):
+def _spawn_media_ledger(database_url, job_id, result, host):
     import uuid
 
     from sqlalchemy import create_engine
@@ -61,7 +61,7 @@ def _spawn_media_ledger(database_url, job_id, result):
     )
     adapter.observer = meter.observe
     adapter.media_history = meter.media_history
-    adapter.get("https://upload.wikimedia.org/file", read=lambda response: response.read())
+    adapter.get(f"https://{host}/file", read=lambda response: response.read())
     result.send(now[0])
     queue.fail(claim, "spawn fixture")
     engine.dispose()
@@ -78,7 +78,8 @@ def measured(config):
 
 
 @DB
-def test_spawn子job間でmedia帯域窓をDB台帳から復元する(queue, measured, tmp_path):
+@pytest.mark.parametrize("second_host", ["upload.wikimedia.org", "thumb.wikimedia.org"])
+def test_spawn子job間でmedia帯域窓をDB台帳から復元する(queue, measured, tmp_path, second_host):
     from colorstats.collect.policy import load_policy
 
     jobs = []
@@ -91,11 +92,12 @@ def test_spawn子job間でmedia帯域窓をDB台帳から復元する(queue, mea
 
     context = multiprocessing.get_context("spawn")
     elapsed = []
-    for job_id in jobs:
+    for index, job_id in enumerate(jobs):
         parent, child = context.Pipe(duplex=False)
         process = context.Process(
             target=_spawn_media_ledger,
-            args=(queue.engine.url.render_as_string(hide_password=False), str(job_id), child),
+            args=(queue.engine.url.render_as_string(hide_password=False), str(job_id), child,
+                  "upload.wikimedia.org" if index == 0 else second_host),
         )
         process.start()
         child.close()

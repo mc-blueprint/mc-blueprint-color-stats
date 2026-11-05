@@ -11,7 +11,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from urllib.error import HTTPError
 
-from sqlalchemy import create_engine, select
+from PIL import Image
+from sqlalchemy import create_engine, func, or_, select, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
@@ -35,6 +36,32 @@ MIME_EXTENSIONS = {
     "image/gif": "gif",
 }
 logger = logging.getLogger(__name__)
+
+
+def existing_rendition(session, candidate):
+    """原画像identityと縮小を含むURL組を照合する。SHA一致やsubject確定は推測しない。"""
+    rendition = candidate.get("rendition", {})
+    conditions = [Asset.url == candidate["original_url"], Source.url == candidate["source_url"]]
+    if candidate["original_url"].startswith("https://upload.wikimedia.org/"):
+        conditions.append(
+            func.split_part(Asset.url, "?", 1) == candidate["original_url"].partition("?")[0]
+        )
+    identity = None
+    if rendition.get("native_id") and rendition.get("revision"):
+        identity = (
+            (Asset.quality["rendition"]["provider"].astext == rendition["provider"])
+            & (Asset.quality["rendition"]["native_id"].astext == rendition["native_id"])
+            & (Asset.quality["rendition"]["revision"].astext == rendition["revision"])
+        )
+        conditions.append(identity)
+    query = select(Asset).join(Source).where(or_(*conditions))
+    if rendition.get("variant") != "thumbnail":
+        query = query.where(or_(
+            Asset.quality["rendition"]["variant"].astext == "thumbnail",
+            identity & (Asset.quality["rendition"]["variant"].astext == rendition["variant"])
+            if identity is not None else False,
+        ))
+    return session.scalar(query.order_by(Asset.id).limit(1))
 
 
 def adapter_for(provider, policy):
@@ -161,12 +188,21 @@ def prepare(
                     session, request.provider, candidate.source_url, candidate.original_url,
                 )
             category = license_class(payload["policy"], candidate.license)
-            extension = MIME_EXTENSIONS.get(candidate.mime)
+            mime = candidate.rendition.get("mime", candidate.mime)
+            extension = MIME_EXTENSIONS.get(mime)
             reason = (
                 "restricted"
                 if category == "restricted"
                 else candidate.exclusion_reason or ("mime" if extension is None else None)
             )
+            if reason is None and candidate.rendition.get("revision"):
+                with Session(engine) as session:
+                    if existing_rendition(session, asdict(candidate)):
+                        reason = "rediscovered_original"
+                if candidate.rendition["variant"] == "thumbnail" and any(
+                    r["candidate"]["original_url"] == candidate.original_url for r in records
+                ):
+                    reason = "duplicate_candidate"
             if reason is None and decide is not None:
                 reason = decide(request, candidate)
             if reason is not None:
@@ -231,6 +267,33 @@ def prepare(
             if observer is not None:
                 observer("downloads", 1)
                 observer("download_bytes", temporary.stat().st_size)
+            if candidate.rendition.get("variant") == "original":
+                expected_sha1 = candidate.rendition["original"].get("sha1")
+                if expected_sha1:
+                    with temporary.open("rb") as stream:
+                        received_sha1 = hashlib.file_digest(stream, "sha1").hexdigest()
+                    if received_sha1 != expected_sha1:
+                        temporary.unlink()
+                        temporary = None
+                        if discard is not None:
+                            discard(request, candidate)
+                        skipped.append({
+                            "source_url": candidate.source_url,
+                            "original_url": candidate.original_url,
+                            "rank": candidate.rank, "reason": "original_sha1_mismatch",
+                        })
+                        observe("exclusion", skipped[-1])
+                        continue
+            received = {
+                "width": candidate.width, "height": candidate.height, "mime": candidate.mime,
+            }
+            if candidate.rendition.get("variant") == "thumbnail":
+                with Image.open(temporary) as image:
+                    received = {
+                        "width": image.width, "height": image.height,
+                        "mime": Image.MIME[image.format],
+                    }
+                extension = MIME_EXTENSIONS[received["mime"]]
             logical = f"raw/{digest[:2]}/{digest}.{extension}"
             target = storage.resolve(logical).local_path(payload["host"])
             if temporary.parent != target.parent:
@@ -254,6 +317,7 @@ def prepare(
                     "candidate": asdict(candidate),
                     "license_class": category,
                     "sha256": digest,
+                    "received": received,
                     "logical_path": logical,
                     "target": str(target),
                     "retrieved_at": datetime.now(UTC),
@@ -286,6 +350,7 @@ def register(session, run, data):
     """キューの所有権付き完了取引内で登録する。ファイルI/Oとcommitは行わない。"""
     payload = data["payload"]
     retention.lock(session)
+    session.execute(text("SELECT pg_advisory_xact_lock(29, 90)"))
     asset_ids = []
     for record in data["records"]:
         candidate = record["candidate"]
@@ -293,6 +358,14 @@ def register(session, run, data):
             session, payload["request"]["provider"], candidate["source_url"],
             candidate["original_url"],
         )
+        existing = existing_rendition(session, candidate)
+        if existing is not None:
+            asset_ids.append(str(existing.id))
+            run.parameters = {**run.parameters, "rendition_reused": [
+                *run.parameters.get("rendition_reused", []),
+                {"asset_id": str(existing.id), "candidate": candidate},
+            ]}
+            continue
         attribution = candidate["attribution"]
         source_id = session.scalar(
             insert(Source)
@@ -319,8 +392,8 @@ def register(session, run, data):
             collected_location=candidate["location"],
             url=candidate["original_url"],
             sha256=record["sha256"],
-            width=candidate["width"],
-            height=candidate["height"],
+            width=record["received"]["width"],
+            height=record["received"]["height"],
             storage_path=run.output_paths[record["target"]],
             domain=payload["domain"],
             license_class=record["license_class"],
@@ -344,6 +417,17 @@ def register(session, run, data):
                 "attribution": attribution,
                 "source_policy": payload["policy"],
                 "logical_path": record["logical_path"],
+                "received": {**record["received"], "sha256": record["sha256"]},
+                "rendition": {
+                    **candidate.get("rendition", {}),
+                    "original": {
+                        **candidate.get("rendition", {}).get("original", {}),
+                        "sha256": record["sha256"]
+                        if candidate.get("rendition", {}).get("variant") == "original" else None,
+                    },
+                    "url": candidate.get("download_url") or candidate["original_url"],
+                    "retrieved_at": record["retrieved_at"].isoformat(),
+                },
             },
         )
         if record["license_class"] == "analysis_only":

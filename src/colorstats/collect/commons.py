@@ -82,6 +82,7 @@ class CommonsAdapter(HttpClient):
             "uselang": request.language,
         }
         effective = {
+            "download_mode": request.download_mode,
             **parameters,
             "endpoint": ENDPOINT,
             "api": "MediaWiki Action API",
@@ -105,9 +106,12 @@ class CommonsAdapter(HttpClient):
                 "pageids": hit["pageid"],
                 "prop": "imageinfo|categories",
                 "cllimit": "max",
-                "iiprop": "url|size|mime|extmetadata",
+                "iiprop": "url|size|mime|sha1|timestamp|extmetadata",
                 "iiextmetadatalanguage": request.language,
             }
+            if request.download_mode == "thumbnail":
+                metadata_parameters["iiurlwidth"] = 1280
+                metadata_parameters["iiprop"] += "|thumbmime"
             response = self._get(ENDPOINT + "?" + urlencode(metadata_parameters))
             pages = response.get("query", {}).get("pages", [])
             if not pages or not pages[0].get("imageinfo"):
@@ -171,7 +175,8 @@ class CommonsAdapter(HttpClient):
                         info["descriptionurl"],
                         short_name or license_name,
                         license_url,
-                        "原本・改変なし",
+                        "API縮小・再圧縮の可能性あり"
+                        if request.download_mode == "thumbnail" else "原本・改変なし",
                     ],
                 )
             )
@@ -187,6 +192,32 @@ class CommonsAdapter(HttpClient):
                 ],
                 "candidate_basis": "Commons license categories",
             }
+            rendition = {
+                "provider": request.provider,
+                "native_id": str(hit["pageid"]),
+                "revision": info.get("timestamp"),
+                "variant": request.download_mode,
+                "original": {
+                    "url": info["url"], "width": info["width"], "height": info["height"],
+                    "mime": info["mime"], "sha1": info.get("sha1"), "sha256": None,
+                },
+            }
+            download_url = None
+            rendition_reason = None
+            if request.download_mode == "thumbnail":
+                download_url = info.get("thumburl")
+                rendition.update(
+                    requested_width=1280, width=info.get("thumbwidth"),
+                    height=info.get("thumbheight"), mime=info.get("thumbmime"),
+                )
+                if info["width"] <= 1280:
+                    rendition_reason = "thumbnail_not_smaller"
+                elif not download_url or not all(
+                    rendition.get(key) for key in ("width", "height", "mime")
+                ):
+                    rendition_reason = "thumbnail_missing"
+                elif not rendition["revision"]:
+                    rendition_reason = "thumbnail_revision_missing"
             candidates.append(
                 Candidate(
                     source_url=info["descriptionurl"],
@@ -206,7 +237,9 @@ class CommonsAdapter(HttpClient):
                     attribution=attribution,
                     exclusion_reason="missing_attribution:" + ",".join(missing)
                     if missing
-                    else None,
+                    else rendition_reason,
+                    download_url=download_url,
+                    rendition=rendition,
                 )
             )
             self.record_candidate(candidates[-1], verified=not candidates[-1].exclusion_reason)
@@ -218,4 +251,6 @@ class CommonsAdapter(HttpClient):
             raise ValueError("restrictedの原本は取得しません")
         if candidate.exclusion_reason:
             raise ValueError(candidate.exclusion_reason)
-        self._get(candidate.original_url, target=target)
+        if candidate.rendition.get("variant") == "thumbnail" and not candidate.download_url:
+            raise ValueError("thumbnail_missing")
+        self._get(candidate.download_url or candidate.original_url, target=target)

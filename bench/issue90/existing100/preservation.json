@@ -1,0 +1,344 @@
+{
+  "preserved_images": [
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/000-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/000-original-0.5.image",
+      "sha256": "cd4917d7346f26e5821920e82e5cd9f0383fd15ae4d633cba6e87b8e7be0c8c1",
+      "bytes": 14896772
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/000-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/000-original-1.0.image",
+      "sha256": "cd4917d7346f26e5821920e82e5cd9f0383fd15ae4d633cba6e87b8e7be0c8c1",
+      "bytes": 14896772
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/000-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/000-thumbnail-0.5.image",
+      "sha256": "a392d8befcf2b9a6815bf13b7b704ff7698ca948bb1eef3486e4b1bb8c7d9b9a",
+      "bytes": 297276
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/000-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/000-thumbnail-1.0.image",
+      "sha256": "a392d8befcf2b9a6815bf13b7b704ff7698ca948bb1eef3486e4b1bb8c7d9b9a",
+      "bytes": 297276
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/001-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/001-original-0.5.image",
+      "sha256": "77818660a314a7f363692fa373ef0243199fe013209966fe46441072932a779f",
+      "bytes": 3461703
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/001-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/001-original-1.0.image",
+      "sha256": "77818660a314a7f363692fa373ef0243199fe013209966fe46441072932a779f",
+      "bytes": 3461703
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/001-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/001-thumbnail-0.5.image",
+      "sha256": "b403596f46beb83feb574607ff4d9a14a8fd1b9b819dcdc3defa5501c79686bc",
+      "bytes": 689810
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/001-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/001-thumbnail-1.0.image",
+      "sha256": "b403596f46beb83feb574607ff4d9a14a8fd1b9b819dcdc3defa5501c79686bc",
+      "bytes": 689810
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/002-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/002-original-0.5.image",
+      "sha256": "0ff3ee34c87e8618c427b1317d0895f360ce3a07dee0c48dceb5b66c6d0a4173",
+      "bytes": 42919737
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/002-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/002-original-1.0.image",
+      "sha256": "0ff3ee34c87e8618c427b1317d0895f360ce3a07dee0c48dceb5b66c6d0a4173",
+      "bytes": 42919737
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/002-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/002-thumbnail-0.5.image",
+      "sha256": "0f697c86db6d1c1ae9f67c9f3061d1bbf0cb03e534ec1943092e65e04d8255da",
+      "bytes": 348755
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/002-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/002-thumbnail-1.0.image",
+      "sha256": "0f697c86db6d1c1ae9f67c9f3061d1bbf0cb03e534ec1943092e65e04d8255da",
+      "bytes": 348755
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/003-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/003-original-0.5.image",
+      "sha256": "f7d0440a8e5fcb02c63bae1592283484852e691448759024ca6a031f98769feb",
+      "bytes": 25103572
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/003-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/003-original-1.0.image",
+      "sha256": "f7d0440a8e5fcb02c63bae1592283484852e691448759024ca6a031f98769feb",
+      "bytes": 25103572
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/003-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/003-thumbnail-0.5.image",
+      "sha256": "a316bb9246652751ef766d1d40634137795b7c7b72efae3a9dc03c357c1fc32f",
+      "bytes": 480044
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/003-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/003-thumbnail-1.0.image",
+      "sha256": "a316bb9246652751ef766d1d40634137795b7c7b72efae3a9dc03c357c1fc32f",
+      "bytes": 480044
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/004-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/004-original-0.5.image",
+      "sha256": "bf442b13633cbe48a058637e0fa4e1b8c6489933043ec678067c19d530b60dd6",
+      "bytes": 9494852
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/004-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/004-original-1.0.image",
+      "sha256": "bf442b13633cbe48a058637e0fa4e1b8c6489933043ec678067c19d530b60dd6",
+      "bytes": 9494852
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/004-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/004-thumbnail-0.5.image",
+      "sha256": "b42b143b859f9641e2c38b64e6c2b1812acd4df12c332a1bc30b6edf89a1a57a",
+      "bytes": 250563
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/004-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/004-thumbnail-1.0.image",
+      "sha256": "b42b143b859f9641e2c38b64e6c2b1812acd4df12c332a1bc30b6edf89a1a57a",
+      "bytes": 250563
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/005-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/005-original-0.5.image",
+      "sha256": "0a5d14ef501a7bea9e2d8bed227fd684177a18566e5d23e70e33d3c8882020e0",
+      "bytes": 1082290
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/005-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/005-original-1.0.image",
+      "sha256": "0a5d14ef501a7bea9e2d8bed227fd684177a18566e5d23e70e33d3c8882020e0",
+      "bytes": 1082290
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/005-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/005-thumbnail-0.5.image",
+      "sha256": "0df5193bd08e58a97728b0e0429f55ae8afd75f9b98ff9b41c2c7839525d4957",
+      "bytes": 610926
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/005-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/005-thumbnail-1.0.image",
+      "sha256": "0df5193bd08e58a97728b0e0429f55ae8afd75f9b98ff9b41c2c7839525d4957",
+      "bytes": 610926
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/006-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/006-original-0.5.image",
+      "sha256": "8038fefcc1b6ac0ad9ad043d73cc3ca6bad4b2ba061ce50639deb2ab144565f2",
+      "bytes": 723444
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/006-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/006-original-1.0.image",
+      "sha256": "8038fefcc1b6ac0ad9ad043d73cc3ca6bad4b2ba061ce50639deb2ab144565f2",
+      "bytes": 723444
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/006-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/006-thumbnail-0.5.image",
+      "sha256": "47b34845d2ce9be5eb54ccca6095e79126d23b75746d5a138dfd86c741a179c3",
+      "bytes": 465808
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/006-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/006-thumbnail-1.0.image",
+      "sha256": "47b34845d2ce9be5eb54ccca6095e79126d23b75746d5a138dfd86c741a179c3",
+      "bytes": 465808
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/007-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/007-original-0.5.image",
+      "sha256": "e687ed725302e49eb2232a2782a653beecb0b9a52b997bee62999e6c11b4370c",
+      "bytes": 6762155
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/007-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/007-original-1.0.image",
+      "sha256": "e687ed725302e49eb2232a2782a653beecb0b9a52b997bee62999e6c11b4370c",
+      "bytes": 6762155
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/007-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/007-thumbnail-0.5.image",
+      "sha256": "192305a1f054f7b7760a81d6c2f50e9c9cc1aedbf794bfdb0faf6e4dc1aaa513",
+      "bytes": 344885
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/007-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/007-thumbnail-1.0.image",
+      "sha256": "192305a1f054f7b7760a81d6c2f50e9c9cc1aedbf794bfdb0faf6e4dc1aaa513",
+      "bytes": 344885
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/008-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/008-original-0.5.image",
+      "sha256": "06ba531b5a3600dfecb4821544d55cd508f7d6db8bb0beaa6ec263746989a71a",
+      "bytes": 14839587
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/008-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/008-original-1.0.image",
+      "sha256": "06ba531b5a3600dfecb4821544d55cd508f7d6db8bb0beaa6ec263746989a71a",
+      "bytes": 14839587
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/008-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/008-thumbnail-0.5.image",
+      "sha256": "e586e620e85ccc985ad6375d7a5f8e32c8a8ba49feceda47b636e6eaf7d43888",
+      "bytes": 458190
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/008-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/008-thumbnail-1.0.image",
+      "sha256": "e586e620e85ccc985ad6375d7a5f8e32c8a8ba49feceda47b636e6eaf7d43888",
+      "bytes": 458190
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/009-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/009-original-0.5.image",
+      "sha256": "93b25c071d0225799e8e496c142ed3564bb39336c987aa1587b2a9747b8fac60",
+      "bytes": 17120078
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/009-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/009-original-1.0.image",
+      "sha256": "93b25c071d0225799e8e496c142ed3564bb39336c987aa1587b2a9747b8fac60",
+      "bytes": 17120078
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/009-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/009-thumbnail-0.5.image",
+      "sha256": "de62e99b6276e793189a4a7b899239e8aee86726ff86491137bf81e7e2d7e6dc",
+      "bytes": 1121119
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/009-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/009-thumbnail-1.0.image",
+      "sha256": "de62e99b6276e793189a4a7b899239e8aee86726ff86491137bf81e7e2d7e6dc",
+      "bytes": 1121119
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/010-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/010-original-0.5.image",
+      "sha256": "c6027c1268d60b2a526b998c19654072f976e9d5eea67a77f90e4f8445bdc27c",
+      "bytes": 4524613
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/010-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/010-original-1.0.image",
+      "sha256": "c6027c1268d60b2a526b998c19654072f976e9d5eea67a77f90e4f8445bdc27c",
+      "bytes": 4524613
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/010-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/010-thumbnail-0.5.image",
+      "sha256": "e719c3d2008c9f9c0473a57bb5aa8e818a753686a3e5ea144d67619b2a73dc0b",
+      "bytes": 297315
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/010-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/010-thumbnail-1.0.image",
+      "sha256": "e719c3d2008c9f9c0473a57bb5aa8e818a753686a3e5ea144d67619b2a73dc0b",
+      "bytes": 297315
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/011-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/011-original-0.5.image",
+      "sha256": "8525d38903032c25c9bfbda2cac8bbd523436e104d2190d8e801a212951f9ee9",
+      "bytes": 37424653
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/011-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/011-original-1.0.image",
+      "sha256": "8525d38903032c25c9bfbda2cac8bbd523436e104d2190d8e801a212951f9ee9",
+      "bytes": 37424653
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/011-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/011-thumbnail-0.5.image",
+      "sha256": "3b7bd4229a20905ae4ee5ec5515106f8c81be2739f2f1b59f3b1a186f56fb4a2",
+      "bytes": 149233
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/011-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/011-thumbnail-1.0.image",
+      "sha256": "3b7bd4229a20905ae4ee5ec5515106f8c81be2739f2f1b59f3b1a186f56fb4a2",
+      "bytes": 149233
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/012-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/012-original-0.5.image",
+      "sha256": "693dcf149103ee1b98b51edea89f6a125e3f50691e8c44f2397916e9a480ad84",
+      "bytes": 17833719
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/012-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/012-original-1.0.image",
+      "sha256": "693dcf149103ee1b98b51edea89f6a125e3f50691e8c44f2397916e9a480ad84",
+      "bytes": 17833719
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/012-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/012-thumbnail-0.5.image",
+      "sha256": "40b4a44477e37e1881a550b97152f2f6604f10fb30aabcda549e1749c82ff30f",
+      "bytes": 100035
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/012-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/012-thumbnail-1.0.image",
+      "sha256": "40b4a44477e37e1881a550b97152f2f6604f10fb30aabcda549e1749c82ff30f",
+      "bytes": 100035
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/013-original-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/013-original-0.5.image",
+      "sha256": "effdd7c5bf7a4125c085b31eecda87d6d850c3417df18383dd33bc1c3c01d6f4",
+      "bytes": 4437255
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/013-original-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/013-original-1.0.image",
+      "sha256": "effdd7c5bf7a4125c085b31eecda87d6d850c3417df18383dd33bc1c3c01d6f4",
+      "bytes": 4437255
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/013-thumbnail-0.5.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/013-thumbnail-0.5.image",
+      "sha256": "42753cd9714618a43a28d3b54e7b9de66ee421066e616ce6d31eff6c79dc5a1b",
+      "bytes": 881539
+    },
+    {
+      "old_path": "/tmp/colorstats-issue90/comparison/013-thumbnail-1.0.image",
+      "preserved_path": "/mnt/data/derived/issue90-20261105/previous14/013-thumbnail-1.0.image",
+      "sha256": "42753cd9714618a43a28d3b54e7b9de66ee421066e616ce6d31eff6c79dc5a1b",
+      "bytes": 881539
+    }
+  ],
+  "originals_unchanged": 100,
+  "old_prefix": "/tmp/colorstats-issue90/comparison",
+  "preserved_prefix": "/mnt/data/derived/issue90-20261105/previous14",
+  "production_database": "接続なし。#74固定snapshotの読取りだけ。"
+}

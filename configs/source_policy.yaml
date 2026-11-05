@@ -20,6 +20,13 @@ sources:
         max_concurrency: 2
         media_bytes_per_10_seconds: 31250000
         disallow_paths: [/archive/]
+      thumb.wikimedia.org:
+        kind: media
+        rate_group: upload.wikimedia.org
+        min_interval: 1.0
+        max_concurrency: 2
+        media_bytes_per_10_seconds: 31250000
+        disallow_paths: [/archive/]
       www.wikidata.org:
         kind: api
         min_interval: 0.5
@@ -87,6 +94,13 @@ sources:
       staticflickr.com: {kind: media}
       upload.wikimedia.org:
         kind: media
+        min_interval: 1.0
+        max_concurrency: 2
+        media_bytes_per_10_seconds: 31250000
+        disallow_paths: [/archive/]
+      thumb.wikimedia.org:
+        kind: media
+        rate_group: upload.wikimedia.org
         min_interval: 1.0
         max_concurrency: 2
         media_bytes_per_10_seconds: 31250000
