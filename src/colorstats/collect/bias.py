@@ -99,7 +99,30 @@ def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None
         reap(session)
         # ロック待ち中の期限切れも拒否する。
         queue._owned(session, claim)
-        if "measurement" in config:
+        rendition = candidate.rendition
+        if rendition.get("revision"):
+            if stage.existing_rendition(session, asdict(candidate)):
+                return "rediscovered_original"
+            if session.scalar(select(CollectionReservation.id).where(
+                CollectionReservation.attributes["_rendition"]["provider"].astext
+                == rendition["provider"],
+                CollectionReservation.attributes["_rendition"]["native_id"].astext
+                == rendition["native_id"],
+                CollectionReservation.attributes["_rendition"]["revision"].astext
+                == rendition["revision"],
+                CollectionReservation.attributes["_rendition"]["variant"].astext
+                == rendition["variant"],
+            ).limit(1)):
+                return "reserved_rendition"
+        if "measurement" in config or candidate.rendition.get("variant") == "thumbnail":
+            reserved_urls = [
+                CollectionReservation.source_url == candidate.source_url,
+                CollectionReservation.attributes["_original_url"].astext == candidate.original_url,
+            ]
+            if candidate.original_url.startswith("https://upload.wikimedia.org/"):
+                reserved_urls.append(func.split_part(
+                    CollectionReservation.attributes["_original_url"].astext, "?", 1,
+                ) == candidate.original_url.partition("?")[0])
             if session.scalar(
                 select(Asset.id).join(Source, Source.id == Asset.source_id).where(
                     or_(Source.url == candidate.source_url, Asset.url == candidate.original_url)
@@ -107,9 +130,7 @@ def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None
             ):
                 return "rediscovered_url"
             if session.scalar(select(CollectionReservation.id).where(
-                or_(CollectionReservation.source_url == candidate.source_url,
-                    CollectionReservation.attributes["_original_url"].astext
-                    == candidate.original_url)
+                or_(*reserved_urls)
             ).limit(1)):
                 return "reserved_url"
         author = (candidate.author or "").strip().casefold()
@@ -152,8 +173,9 @@ def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None
                 source=request.provider,
                 region=region,
                 region_basis=region_basis,
-                attributes={**layer["attributes"], "_original_url": candidate.original_url}
-                if "measurement" in config else layer["attributes"],
+                attributes={**layer["attributes"], "_original_url": candidate.original_url,
+                            "_rendition": candidate.rendition}
+                if "measurement" in config or candidate.rendition else layer["attributes"],
                 source_url=candidate.source_url,
             )
         )
@@ -393,13 +415,16 @@ def register(session, run, data):
     for record, asset_id in zip(data["records"], run.parameters["asset_ids"], strict=True):
         reservation = by_url[record["candidate"]["source_url"]]
         asset = session.get(Asset, uuid.UUID(asset_id))
+        if any(row["asset_id"] == asset_id for row in run.parameters.get("rendition_reused", [])):
+            reservation.asset_id = asset.id
+            continue
         asset.subject_id = reservation.subject_id
         asset.search_parameters = {
             **asset.search_parameters,
             "collection_bias": {
                 "stratum": reservation.stratum,
                 "intended_attributes": {
-                    k: v for k, v in reservation.attributes.items() if k != "_original_url"
+                    k: v for k, v in reservation.attributes.items() if not k.startswith("_")
                 },
                 "region": reservation.region,
                 "region_basis": reservation.region_basis,

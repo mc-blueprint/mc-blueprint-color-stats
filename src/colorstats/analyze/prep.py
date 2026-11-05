@@ -76,7 +76,12 @@ def prepare(claim: Claim) -> Prepared:
             code_version="issue-10",
             taxonomy_version=claim.payload["taxonomy_version"],
             node="prep",
-            parameters={"max_size": list(MAX_SIZE), "phash_distance": PHASH_DISTANCE},
+            parameters={
+                "max_size": list(MAX_SIZE), "phash_distance": PHASH_DISTANCE,
+                "rendition": claim.payload.get("rendition", {}),
+                "transform": {"mode": "RGB", "resample": "LANCZOS", "format": "JPEG",
+                              "quality": 90, "optimize": True},
+            },
         ),
         data=data,
         files=[(temporary, target)],
@@ -113,6 +118,7 @@ def register(session: Session, run, data: dict) -> None:
     ).all()
     asset = session.get(Asset, data["asset_id"])
     if run is not None:
+        run.parameters = {**run.parameters, "rendition": asset.quality.get("rendition", {})}
         source = session.get(Source, asset.source_id)
         run.license_class = combine_license(
             run.license_class, asset.license_class, source.license_class

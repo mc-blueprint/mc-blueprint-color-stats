@@ -1,0 +1,28 @@
+{
+  "fixed_count": 100,
+  "distinct_sha": 100,
+  "originals_unchanged": 100,
+  "budget": {
+    "created_at": "2026-11-05T08:44:06.557650+00:00",
+    "limits": {
+      "api": 10,
+      "original": 0,
+      "thumbnail": 100
+    },
+    "used": {
+      "api": 2,
+      "original": 0,
+      "thumbnail": 98
+    },
+    "original_source": "収集済み原本の読み取りのみ。本番DB接続なし。",
+    "api_batch_max": 50,
+    "thumbnail_width": 1280
+  },
+  "status": {
+    "acquired": 98,
+    "thumbnail_not_smaller": 2
+  },
+  "evaluated": 98,
+  "analysis_failed": 0,
+  "production_database": "接続なし。固定snapshotと原本の読取りだけ。"
+}

@@ -198,6 +198,10 @@ class Meter:
 
     def media_history(self, host):
         now = datetime.now(UTC)
+        hosts = self.claim.payload["policy"].get("hosts", {})
+        group = hosts.get(host, {}).get("rate_group", host)
+        aliases = {name for name, policy in hosts.items()
+                   if policy.get("rate_group", name) == group} | {group}
         with self.queue._transaction() as session:
             rows = session.scalars(
                 select(ProcessingRun).where(
@@ -209,7 +213,7 @@ class Meter:
                  event["bytes"])
                 for row in rows
                 for event in row.parameters["quota_events"]
-                if event["host"] == host and event["kind"] == "media"
+                if event["host"] in aliases and event["kind"] == "media"
                 and datetime.fromisoformat(event["at"]) > now - timedelta(seconds=10)
             ]
 
