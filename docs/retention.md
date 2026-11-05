@@ -55,9 +55,10 @@ shadeにも同じperson_maskを渡し、人物をWB推定・色観測・部位�
 CVAT・replica・cache・backupを作成する処理は同じ取引ロック内で
 `retention.register_file(session, asset_id, host, absolute_path, kind)`を必ず呼びます。
 新規ファイルを保持期限の外へ複製しないでください。CVATのタスク・ZIPを外部共有しません。
-旧画像を含むCVATの共通ZIP・manifest・draftは新規画像の期限削除へ登録しません。
-Jobを持たない旧runや所有者を特定できないrunの共有参照も保護します。新旧は別のCVAT
-タスク・出力へ分けてください。既存共有物の削除は本タスクの対象外です。
+保持期限付きの新規画像と旧画像が混在するCVAT draft生成・取込みは、出力前に拒否します。
+新旧は別のCVATタスク・出力へ分けて実行してください。新規画像だけの共有物は保持台帳へ
+登録し、旧画像だけの処理は従来どおり保持台帳へ登録しません。Jobを持たない旧runや
+所有者を特定できないrunの共有参照も保護します。既存共有物の削除は本タスクの対象外です。
 CVATのdraft・maskは既存ディレクトリの権限やumaskにかかわらず、作成時から0600とします。
 解析出力のhostはpayload.host（省略時は実行host名）、CVATと人物maskは呼出し時のhost
 （省略時は実行host名）です。NFSの別名を使う場合は清掃hostと同じ名前を明示してください。

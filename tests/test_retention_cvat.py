@@ -67,7 +67,7 @@ def mixed_export(queue, asset, cvat_export, tmp_path):
     with manifest.open("a", encoding="utf-8") as file:
         file.write(f"{new_id},other.png,{'a' * 64},segment.xml,100,100\n")
     output = tmp_path / "mixed.xml"
-    cvat.prepare_draft(manifest, output, TAXONOMY, database_url=queue.engine.url, host="test")
+    cvat._write_draft(manifest, output, TAXONOMY)
     with zipfile.ZipFile(archive) as file:
         xml = file.read("annotations.xml").decode()
     image = xml[xml.index("<image"):xml.index("</image>") + len("</image>")]
@@ -81,29 +81,51 @@ def mixed_export(queue, asset, cvat_export, tmp_path):
 
 
 @pytest.mark.parametrize("old_category", ["open", "analysis_only"])
-def test_混在CVATの共有物とJobなし旧runを新規画像の期限で削除しない(
-    queue, asset, mixed_export, old_category,
+@pytest.mark.parametrize("operation", ["draft", "import"])
+def test_新旧混在CVATは書込み前に拒否して分割実行を案内する(
+    queue, asset, mixed_export, old_category, operation, tmp_path,
 ):
     aid, archive, manifest, masks, draft = mixed_export
     with Session(queue.engine) as session, session.begin():
         session.get(Asset, asset).license_class = old_category
+    output = tmp_path / "blocked.xml"
+    with Session(queue.engine) as session:
+        before = set(session.scalars(select(RetentionFile.path)))
+    with pytest.raises(ValueError, match="混在.*分けて実行"):
+        if operation == "draft":
+            cvat.prepare_draft(manifest, output, TAXONOMY, database_url=queue.engine.url)
+        else:
+            cvat.import_cvat(archive, manifest, masks, TAXONOMY, queue.engine.url, draft)
+    assert not output.exists() and not output.with_suffix(".json").exists()
+    assert not masks.exists()
+    assert all(path.exists() for path in [archive, manifest, draft])
+    with Session(queue.engine) as session:
+        assert not session.scalar(select(ProcessingRun))
+        assert not session.scalar(select(Region))
+        assert set(session.scalars(select(RetentionFile.path))) == before
+
+
+@pytest.mark.parametrize("managed", [True, False])
+def test_単一保持区分のCVAT生成取込みは成功し新規だけ台帳登録する(
+    queue, asset, cvat_export, tmp_path, managed,
+):
+    archive, manifest, masks, _ = cvat_export
+    if managed:
+        with Session(queue.engine) as session, session.begin():
+            retention.register_asset(session, session.get(Asset, asset), {}, "test")
+    output = tmp_path / "single.xml"
+    cvat.prepare_draft(manifest, output, TAXONOMY, database_url=queue.engine.url, host="test")
+    draft = output.with_suffix(".json")
     cvat.import_cvat(archive, manifest, masks, TAXONOMY, queue.engine.url, draft, host="test")
-    with Session(queue.engine) as session, session.begin():
-        shared = {str(p.resolve()) for p in [archive, manifest, draft]}
-        shared.update(run.output_paths["draft"] for run in session.scalars(select(ProcessingRun)))
+    with Session(queue.engine) as session:
+        run = session.scalar(select(ProcessingRun))
+        assert run and session.scalar(select(Region))
+        paths = {str(p.resolve()) for p in [output, draft, archive, manifest]}
+        paths.add(run.output_paths["draft"])
+        paths.update(str(p.resolve()) for p in masks.rglob("*.json"))
         indexed = set(session.scalars(select(RetentionFile.path)))
-        assert not shared & indexed
-        # 前版で登録済みの共有物もJobなし旧runの参照で保護する。
-        for path in shared:
-            retention.register_file(session, aid, "test", path, "cvat")
-        session.scalar(select(Retention)).expires_at = datetime.now(UTC) - timedelta(seconds=1)
-        old_masks = [masks / r.mask_path for r in session.scalars(select(Region).where(
-            Region.asset_id == asset,
-        ))]
-    with Session(queue.engine) as session, session.begin():
-        retention.cleanup(session, host="test")
-    assert all(Path(path).exists() for path in shared)
-    assert all(path.exists() for path in old_masks)
+        assert paths <= indexed if managed else not indexed
+        assert all(Path(path).exists() for path in paths)
 
 
 def test_CVAT相対mask参照を解除して新規画像のmaskを期限削除する(queue, managed_cvat):
