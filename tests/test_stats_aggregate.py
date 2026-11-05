@@ -128,6 +128,7 @@ def snapshot(root, subjects=40, *, unknown=0, split=None, duplicates=False,
                 row["id"], row["stage"], canonical(row["data"]),
             ])
         manifest = {"format_version": 1, "gate_version": "D15-v1",
+                    "selection": {"assets": []},
                     "taxonomy_version": "0.1.0", "quality": quality, "files": {},
                     "exclusions": {"sha_duplicate": subjects if duplicates else 0}}
         for table in TABLES:

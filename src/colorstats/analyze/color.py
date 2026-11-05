@@ -15,6 +15,7 @@ from colorstats.analyze.segment import _license
 from colorstats.colors import QUANTILES, rgb_to_oklab
 from colorstats.queue.core import Claim, RunInfo
 from colorstats.queue.worker import Prepared
+from colorstats.retention import check_privacy
 from colorstats.schema.models import (
     Asset,
     ColorObservation,
@@ -24,6 +25,7 @@ from colorstats.schema.models import (
     Region,
     Relation,
 )
+from colorstats.store import temporary_path
 
 CLUSTERS = 5
 SEED = 0
@@ -42,6 +44,8 @@ def config_hash(payload: dict) -> str:
     paths = [payload["input_path"]]
     if payload.get("mask_path"):
         paths.append(payload["mask_path"])
+    if payload.get("person_mask"):
+        paths.append(payload["person_mask"])
     paths.extend(row["mask_path"] for row in payload.get("regions", []))
     hashes = {}
     for path in paths:
@@ -222,20 +226,29 @@ def prepare(claim: Claim) -> Prepared:
         with Image.open(claim.payload["mask_path"]) as source:
             mask = np.asarray(source.convert("L")) != 0
     with Image.open(claim.payload["input_path"]) as image:
+        if claim.payload.get("person_mask"):
+            with Image.open(claim.payload["person_mask"]) as person:
+                people = np.asarray(person.convert("L")) != 0
+            if people.shape != (image.height, image.width):
+                raise ValueError("人物maskは解析画像と同寸で指定してください")
+            mask = ~people if mask is None else mask & ~people
         records = extract_colors(image, mask)
         regions = []
         for row in rows:
             part_mask = _region_mask(row, image.size)
-            area = int(part_mask.sum())
+            area = int((part_mask & ~people).sum()) if claim.payload.get("person_mask") else int(
+                part_mask.sum(),
+            )
             if mask is not None:
                 part_mask &= mask
+            if not area and claim.payload.get("person_mask"):
+                continue
             regions.append({
                 "region_id": row["region_id"], "area": area,
                 "observations": extract_colors(image, part_mask),
             })
     target = Path(claim.payload["output_path"])
-    temporary = target.with_name(f".{target.name}.{claim.token}.tmp")
-    temporary.parent.mkdir(parents=True, exist_ok=True)
+    temporary = temporary_path(target, str(claim.token))
     data = {
         "asset_id": str(claim.asset_id),
         "input_run_id": claim.payload.get("input_run_id"),
@@ -286,6 +299,7 @@ def register(session: Session, run, data: dict) -> None:
     payload = run.parameters["payload"]
     if asset is None or run.taxonomy_version != asset.taxonomy_version:
         raise ValueError("assetまたはtaxonomyが一致しません")
+    check_privacy(session, asset.id, payload)
     licenses = [run.license_class, asset.license_class]
     inputs = set()
     if data["input_run_id"] is not None:

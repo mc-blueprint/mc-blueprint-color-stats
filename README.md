@@ -6,6 +6,7 @@
 ジョブの投入・ワーカーの起動と停止・保存先の契約は [docs/queue.md](docs/queue.md) を参照する。
 Commons収集・ソースポリシーと後続アダプターの共有契約は [docs/collect.md](docs/collect.md) を参照する。
 画像全体の主色・OKLab観測の抽出と登録は [docs/color.md](docs/color.md) を参照する。
+画像の利用目的・保持期間・GitHub Issueによる削除受付は [docs/retention.md](docs/retention.md) を参照する。
 
 ## 構成
 

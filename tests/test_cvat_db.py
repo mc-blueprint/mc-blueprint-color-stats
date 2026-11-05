@@ -37,7 +37,8 @@ def cvat_export(queue, asset, tmp_path):
         '<annotations><version>1.1</version><image name="front.png" '
         'width="100" height="100"/></annotations>', encoding="utf-8",
     )
-    prepare_draft(manifest, tmp_path / "draft.xml", TAXONOMY)
+    prepare_draft(manifest, tmp_path / "draft.xml", TAXONOMY,
+                  database_url=queue.engine.url, host="test")
     archive = tmp_path / "export.zip"
     polygon = '<polygon label="wall_main" points="10,10;80,10;80,80;10,80"/>'
     with zipfile.ZipFile(archive, "w") as file:
@@ -96,19 +97,21 @@ def test照合不一致ではrunもmaskも作らない(queue, asset, cvat_export
 
 def test保存途中の失敗では作成済みmaskとDB変更を戻す(queue, cvat_export, monkeypatch):
     archive, manifest, masks, draft = cvat_export
-    write_text = Path.write_text
+    from colorstats import cvat
+
+    dump = cvat.json.dump
     writes = 0
 
-    def fail_second(path, *args, **kwargs):
+    def fail_second(value, file, *args, **kwargs):
         nonlocal writes
-        result = write_text(path, *args, **kwargs)
-        if path.suffix == ".json":
+        result = dump(value, file, *args, **kwargs)
+        if str(file.name).isdigit():
             writes += 1
             if writes == 2:
                 raise OSError("保存失敗")
         return result
 
-    monkeypatch.setattr(Path, "write_text", fail_second)
+    monkeypatch.setattr(cvat.json, "dump", fail_second)
     with pytest.raises(OSError, match="保存失敗"):
         import_cvat(
             archive, manifest, masks, TAXONOMY,

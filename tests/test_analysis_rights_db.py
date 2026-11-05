@@ -16,6 +16,7 @@ from colorstats.analyze import color, prep, segment, shade
 from colorstats.collect import Candidate, SearchResult, measurement
 from colorstats.collect import stage as collect
 from colorstats.queue import RunInfo
+from colorstats.retention import review_privacy
 from colorstats.schema.models import Asset, ProcessingRun, Source, Subject
 from colorstats.stats import aggregate, subjects
 from colorstats.stats.snapshot import execute
@@ -68,7 +69,7 @@ def test_収集からsubjectと全stageを経由して統計へ区分と根拠�
     collection["policy"] = analysis_policy
     queue.enqueue("collect", None, "a" * 64, collection)
     claim = queue.claim(("collect",))
-    result = collect.prepare(claim)
+    result = collect.prepare(claim, database_url=queue.engine.url)
     run_id = queue.complete(
         claim, result.info, lambda s, r: collect.register(s, r, result.data), result.files,
     )
@@ -139,6 +140,8 @@ def test_収集からsubjectと全stageを経由して統計へ区分と根拠�
     base = {"input_path": payload["input_path"], "input_run_id": prep_id,
             "region_run_id": segment_id, "regions": regions, "license_class": category,
             "taxonomy_version": "0.1.0", "output_path": str(tmp_path / "shade.json")}
+    with Session(queue.engine) as session, session.begin():
+        review_privacy(session, asset_id, reviewer="fixture", subject="building")
     complete_stage(shade, "shade", base | {"method": "none"})
     color_id, _ = complete_stage(color, "color", base | {
         "output_path": str(tmp_path / "color.json"),
@@ -231,7 +234,7 @@ def test_全CHECKと列長を確認し解析行があれば巻戻しを拒否す
         command.downgrade(config, "0005")
     with database.begin() as connection:
         version = connection.execute(text("SELECT version_num FROM alembic_version")).scalar()
-        assert version == "0006"
+        assert version == "0007"
         connection.execute(text("DELETE FROM source WHERE url='https://migration.test'"))
     command.downgrade(config, "0005")
     command.upgrade(config, "head")
