@@ -1,0 +1,91 @@
+{
+  "snapshot_id": "fb7bc1af34b036cb111ae9ae6274195931e2c2271d764eb040e96bda55326942",
+  "verified_files": 7,
+  "counts": {
+    "analysis_eligible": 7601,
+    "assets": 7607,
+    "assets_rows": 7607,
+    "confirmed_subjects": 154,
+    "groups_eligible": 3483,
+    "groups_rows": 7404,
+    "observations_eligible": 9645,
+    "observations_rows": 1124717,
+    "provenance_rows": 7607,
+    "regions_rows": 217465,
+    "relations_eligible": 539,
+    "relations_rows": 3348707,
+    "representatives": 3570,
+    "rights_eligible": 7607,
+    "runs_rows": 22809,
+    "sha_distinct": 3575
+  },
+  "exclusions": {
+    "missing_analysis": 6,
+    "sha_duplicate": 4031
+  },
+  "successful_stages": {
+    "shade": 7603,
+    "color": 7601,
+    "segment": 7603,
+    "prep": 7603
+  },
+  "failed_assets": 6,
+  "failed_contributions": 0,
+  "attribute_assets": 719,
+  "attribute_subjects": 136,
+  "attribute_rights_eligible": 719,
+  "report_row_counts": {
+    "regions": 217465,
+    "part_observations": 1086712,
+    "relations": 3348707
+  },
+  "attribute_states_by_asset": {
+    "region:unknown": 60,
+    "era:unknown": 288,
+    "region:inferred": 659,
+    "era:inferred": 431
+  },
+  "attribute_states_by_subject": {
+    "region:unknown": 7,
+    "era:unknown": 92,
+    "region:inferred": 129,
+    "era:inferred": 44
+  },
+  "attribute_known_subjects": {
+    "region": 129,
+    "era": 44
+  },
+  "run_stages": {
+    "segment": 7603,
+    "prep": 7603,
+    "color": 7601,
+    "subject": 2
+  },
+  "roles": [
+    {
+      "role": "real_building/wall",
+      "before_d15": 4357,
+      "after_d15": 4357,
+      "after_sha": 2203,
+      "subjects": 135
+    },
+    {
+      "role": "real_terrain/tree",
+      "before_d15": 3047,
+      "after_d15": 3047,
+      "after_sha": 1280,
+      "subjects": 18
+    }
+  ],
+  "violations": {
+    "rights": 0,
+    "rights_reasons": 0,
+    "missing_url": 0,
+    "missing_attribution": 0,
+    "restricted_source": 0,
+    "sha_representative": 0,
+    "observations_eligibility": 0,
+    "relations_eligibility": 0,
+    "groups_eligibility": 0
+  }
+}

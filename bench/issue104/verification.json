@@ -1,7 +1,7 @@
 {
-  "tests_passed": 845,
+  "tests_passed": 867,
   "tests_skipped": 1,
-  "junit_sha256": "232cb421af83efe446512ddb102d44803bcac3e9ca2225bcc9cfea7196594b82",
+  "junit_sha256": "bdf086eb8b7cc490c5cf165e79537805bff13321b7a34c4773880ef0e7614fb9",
   "tested_files_byte_equal": 150,
   "ruff": "passed",
   "build": [
