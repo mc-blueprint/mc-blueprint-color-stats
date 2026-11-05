@@ -9,6 +9,7 @@ from time import monotonic
 from sqlalchemy import func, select
 
 from colorstats.collect.http import MeasurementLimit
+from colorstats.collect.policy import host_rate_group
 from colorstats.schema.models import Asset, Job, ProcessingRun, Source
 from colorstats.stats.licenses import exclusion_reasons
 
@@ -198,6 +199,8 @@ class Meter:
 
     def media_history(self, host):
         now = datetime.now(UTC)
+        hosts = self.claim.payload["policy"].get("hosts", {})
+        group = host_rate_group(host, hosts)
         with self.queue._transaction() as session:
             rows = session.scalars(
                 select(ProcessingRun).where(
@@ -209,7 +212,10 @@ class Meter:
                  event["bytes"])
                 for row in rows
                 for event in row.parameters["quota_events"]
-                if event["host"] == host and event["kind"] == "media"
+                if event["kind"] == "media"
+                and event.get("rate_group", host_rate_group(
+                    event["host"], row.parameters.get("policy", {}).get("hosts", hosts)
+                )) == group
                 and datetime.fromisoformat(event["at"]) > now - timedelta(seconds=10)
             ]
 
@@ -230,6 +236,9 @@ class Meter:
                     "quota_events": [
                         *run.parameters.get("quota_events", []),
                         {"host": value["host"], "kind": "media",
+                         "rate_group": value.get("rate_group", host_rate_group(
+                             value["host"], self.claim.payload["policy"].get("hosts", {})
+                         )),
                          "at": datetime.now(UTC).isoformat(), "bytes": value["bytes"]},
                     ],
                     "database_timing": database_timing,
@@ -321,7 +330,8 @@ def record(session, run, data, known):
     counts = Counter(trial.parameters["counts"])
     reasons = Counter()
     seen, eligible = set(), set()
-    for asset_id in run.parameters["asset_ids"]:
+    for record, asset_id in zip(data["records"], run.parameters["asset_ids"], strict=True):
+        digest = record["sha256"]
         asset = session.get(Asset, uuid.UUID(asset_id))
         source = session.get(Source, asset.source_id)
         quality = dict(asset.quality)
@@ -346,11 +356,11 @@ def record(session, run, data, known):
             origin,
             [],
         )
-        if asset.sha256 in known or asset.sha256 in seen:
+        if digest in known or digest in seen:
             counts["duplicate_sha"] += 1
-        if not excluded and asset.sha256 not in known:
-            eligible.add(asset.sha256)
-        seen.add(asset.sha256)
+        if not excluded and digest not in known:
+            eligible.add(digest)
+        seen.add(digest)
         reasons.update(excluded)
     counts["registered"] = len(run.parameters["asset_ids"])
     counts["new_sha"] = len(seen - known)

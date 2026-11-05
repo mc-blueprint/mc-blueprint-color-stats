@@ -1,0 +1,5 @@
+fix: Mapillaryの確認スクリプトにも現行policyの停止を適用
+
+- probeの直接urlopenを共通HttpClientへ置き換え現行policyを読み込む
+- cwd側が有効でも現行policy無効時はrobots取得前に停止する回帰を追加
+- 関連33件とruffとsdist/wheelの成功を記録
