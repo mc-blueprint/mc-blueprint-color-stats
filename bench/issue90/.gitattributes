@@ -1,0 +1,2 @@
+* text eol=lf
+*.json -text -eol whitespace=trailing-space,space-before-tab,cr-at-eol

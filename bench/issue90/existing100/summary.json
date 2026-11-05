@@ -1,0 +1,125 @@
+{
+  "fixed_slots": 100,
+  "status": {
+    "acquired": 98,
+    "thumbnail_not_smaller": 2
+  },
+  "budget": {
+    "created_at": "2026-11-05T08:44:06.557650+00:00",
+    "limits": {
+      "api": 10,
+      "original": 0,
+      "thumbnail": 100
+    },
+    "used": {
+      "api": 2,
+      "original": 0,
+      "thumbnail": 98
+    },
+    "original_source": "収集済み原本の読み取りのみ。本番DB接続なし。",
+    "api_batch_max": 50,
+    "thumbnail_width": 1280
+  },
+  "arms": {
+    "original-1.0": {
+      "attempted": 100,
+      "succeeded": 100,
+      "failed": 0,
+      "bytes": 678702557,
+      "elapsed_seconds": 2.580910939082969,
+      "events": {},
+      "verified_original_sha1": 100
+    },
+    "thumbnail-1.0": {
+      "attempted": 98,
+      "succeeded": 98,
+      "failed": 0,
+      "bytes": 48908329,
+      "elapsed_seconds": 293.5083938189782,
+      "events": {
+        "request": 98,
+        "responses": 98,
+        "bytes": 48908329,
+        "network_media_seconds": 191.64415028941585,
+        "normal_wait_seconds": 97.99569376383442
+      },
+      "verified_original_sha1": 0
+    },
+    "original-0.5": {
+      "attempted": 0,
+      "succeeded": 0,
+      "failed": 0,
+      "bytes": 0,
+      "elapsed_seconds": 0,
+      "events": {},
+      "verified_original_sha1": 0
+    },
+    "thumbnail-0.5": {
+      "attempted": 0,
+      "succeeded": 0,
+      "failed": 0,
+      "bytes": 0,
+      "elapsed_seconds": 0,
+      "events": {},
+      "verified_original_sha1": 0
+    }
+  },
+  "runtime": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "platform": "Linux-6.8.0-147-generic-x86_64-with-glibc2.39",
+    "packages": {
+      "torch": "2.11.0",
+      "torchvision": "0.26.0",
+      "transformers": "4.57.6",
+      "pillow": "12.3.0",
+      "numpy": "2.5.4",
+      "imagehash": "4.3.2",
+      "colour-science": "0.4.7",
+      "opencv-python-headless": "4.14.0.94"
+    }
+  },
+  "paired_file_bytes": {
+    "original": 678067949,
+    "thumbnail": 48908329
+  },
+  "existing_originals": 100,
+  "reused_pairs": 0,
+  "different_sha_pairs": 98,
+  "quality": {
+    "evaluated": 98,
+    "unevaluated": 2,
+    "flag_flips": {
+      "watermark_suspected": 5,
+      "blur_suspected": 2,
+      "collage_suspected": 1
+    },
+    "phash_distance": {
+      "mean": 1.2040816326530612,
+      "median": 0.0,
+      "max": 32
+    },
+    "dominant_oklab_distance": {
+      "mean": 0.015432534620013913,
+      "median": 0.0015078851201414099,
+      "max": 0.4963347563875715
+    },
+    "weighted_oklab_distance": {
+      "mean": 0.0023455744266878847,
+      "median": 0.0009638269174204741,
+      "max": 0.08859214779216726
+    },
+    "major_agreement": {
+      "label_pairs": 518,
+      "intersection": 32341934,
+      "union": 37200950,
+      "value": 0.8693846259302518
+    },
+    "detail_agreement": {
+      "label_pairs": 337,
+      "intersection": 21774780,
+      "union": 25017424,
+      "value": 0.8703845767653776
+    }
+  },
+  "analysis_errors": []
+}
