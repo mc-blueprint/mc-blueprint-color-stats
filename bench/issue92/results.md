@@ -53,8 +53,8 @@ Free to Use の集計対象はタイトル・説明・subjects・genre・medium�
 
 ### 実装・検証状態
 
-- `source_policy`でLoC APIを無効化。403と`Cf-Mitigated: challenge`は一度で停止し再試行しない回帰テストを追加。
+- `source_policy`でLoC APIを無効化。Openverseなど全providerのLoC系host照合を送信前に止める。共通HTTPの403＋`Cf-Mitigated: challenge`を非再試行停止とし、Commons/Openverse/LoCの回帰テストを追加。
 - API実取得: 要求1、レスポンスbyte未記録、適格画像0。画像要求0。データ一括画像取得0。
 - 今回のmetadata/manifest/README転送は合計11,264,251 bytes。これらは候補調査用であり、統計用の取得画像ではない。
-- WSL Ubuntu-24.04 / Python 3.12.3 / 隔離PostgreSQL 16: `ruff check .`成功、`pytest -q` **932 passed, 1 skipped**、`python -m build`でsdist/wheel成功。全件pytestはext4一時コピーから実行。skipはGPU実行条件不足のみ。
-- LoC対象回帰テスト: 7 passed。challenge 403で要求1回のみ、source policy無効時は通信前に拒否。
+- WSL Ubuntu-24.04 / Python 3.12.3 / 隔離PostgreSQL 16: `ruff check .`成功、`pytest -q` **936 passed, 1 skipped**、`python -m build`でsdist/wheel成功。全件pytestはext4一時コピーから実行。skipはGPU実行条件不足のみ。
+- challengeのmock回帰: Commons・Openverseそれぞれ1要求で停止。LoC系hostのOpenverse元ページ照合はAPI fixture後の追加要求0。外部通信なし。

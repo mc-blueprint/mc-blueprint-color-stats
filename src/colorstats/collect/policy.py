@@ -28,10 +28,12 @@ def check_current_source(provider: str) -> None:
 
 
 def check_current_url(url: str) -> None:
-    """Mapillaryの停止を集約API経由の元ページ・CDN・redirectにも適用する。"""
+    """無効ソースのhostを、集約API経由の元ページ・CDN・redirectにも適用する。"""
     host = (urlsplit(url).hostname or "").lower().rstrip(".")
-    if any(host == domain or host.endswith("." + domain)
-           for domain in ("mapillary.com", "fbcdn.net")):
+    if host == "loc.gov" or host.endswith(".loc.gov"):
+        check_current_source("loc")
+    elif any(host == domain or host.endswith("." + domain)
+             for domain in ("mapillary.com", "fbcdn.net")):
         check_current_source("mapillary")
 
 

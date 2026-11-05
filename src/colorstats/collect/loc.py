@@ -3,7 +3,6 @@
 import io
 import json
 from pathlib import Path
-from urllib.error import HTTPError
 from urllib.parse import urlencode
 
 from PIL import Image
@@ -59,13 +58,6 @@ class LoCAdapter(HttpClient):
     def _get(self, url, *, api=False, read=None, target=None):
         try:
             return self.get(url, api=api, read=read or _read_json, target=target)
-        except HTTPError as error:
-            challenge = error.headers.get("Cf-Mitigated", "").casefold()
-            if error.code == 403 and challenge == "challenge":
-                raise MeasurementLimit(
-                    "LoCのCloudflare challengeを検出したため、再試行せず停止します"
-                ) from error
-            raise
         except RuntimeError as error:
             if str(error) == "負荷制限により取得を中断しました":
                 raise MeasurementLimit("LoCが429/503を返したため、この測定を延期します") from error

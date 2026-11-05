@@ -25,6 +25,15 @@ def policy_for_test():
     return policy
 
 
+@pytest.fixture(autouse=True)
+def current_loc_policy(tmp_path, monkeypatch):
+    sources = yaml.safe_load((ROOT / "configs/source_policy.yaml").read_text(encoding="utf-8"))
+    sources["sources"]["loc"]["enabled"] = True
+    path = tmp_path / "source_policy.yaml"
+    path.write_text(yaml.safe_dump(sources), encoding="utf-8")
+    monkeypatch.setenv("COLORSTATS_SOURCE_POLICY", str(path))
+
+
 class Response(io.BytesIO):
     def __init__(self, value):
         if isinstance(value, dict):

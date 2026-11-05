@@ -10,6 +10,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from colorstats.collect import SearchRequest
+from colorstats.collect.http import NonRetryableMeasurementLimit
 from colorstats.collect.openverse import ENDPOINT, OpenverseAdapter
 from colorstats.collect.policy import load_policy
 from colorstats.collect.stage import enqueue_collect, prepare, register
@@ -79,6 +80,41 @@ def test_openverse_rejects_other_provider():
     adapter = OpenverseAdapter(load_policy(POLICY, "openverse"), wait=lambda _: None)
     with pytest.raises(ValueError, match="Openverse"):
         adapter.search(SearchRequest("wikimedia_commons", "castle"))
+
+
+def test_LoC無効時はOpenverse経由のLoC元ページへ通信しない(monkeypatch):
+    item = json.loads(FIXTURE.read_text(encoding="utf-8"))["results"][0]
+    item["foreign_landing_url"] = "https://data.labs.loc.gov/free-to-use/item"
+    calls = []
+
+    def opener(request, timeout):
+        calls.append(request.full_url)
+        return Response(json.dumps({"results": [item]}).encode())
+
+    monkeypatch.setenv("COLORSTATS_SOURCE_POLICY", str(POLICY))
+    adapter = OpenverseAdapter(load_policy(POLICY, "openverse"), opener=opener)
+    with pytest.raises(NonRetryableMeasurementLimit, match="LoC source policy"):
+        adapter.search(SearchRequest("openverse", "castle", limit=1))
+    assert len(calls) == 1 and calls[0].startswith(ENDPOINT)
+
+
+def test_Openverseの元ページchallengeは候補除外にせず処理を停止する():
+    item = json.loads(FIXTURE.read_text(encoding="utf-8"))["results"][0]
+    item["foreign_landing_url"] = "https://example.test/item"
+    calls = []
+
+    def opener(request, timeout):
+        calls.append(request.full_url)
+        if request.full_url.startswith(ENDPOINT):
+            return Response(json.dumps({"results": [item]}).encode())
+        raise HTTPError(request.full_url, 403, "Forbidden", {"Cf-Mitigated": "challenge"}, None)
+
+    policy = load_policy(POLICY, "openverse")
+    policy["hosts"]["example.test"] = {"kind": "page"}
+    adapter = OpenverseAdapter(policy, opener=opener)
+    with pytest.raises(NonRetryableMeasurementLimit, match="Cloudflare challenge"):
+        adapter.search(SearchRequest("openverse", "castle", limit=1))
+    assert len(calls) == 2 and calls[1] == item["foreign_landing_url"]
 
 
 def test_実際の検索元ページ原本の全経路で再試行する(tmp_path):
