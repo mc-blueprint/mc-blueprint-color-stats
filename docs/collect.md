@@ -2,25 +2,27 @@
 
 ## 原本とAPI縮小の比較（Issue #90）
 
-既定は原本のまま。Commonsだけが次の明示指定に対応する。
+新規収集の既定はCommonsのAPI縮小（長辺1280px）。原本は明示指定できる。
 
 ```python
 from colorstats.collect import SearchRequest
 
-request = SearchRequest("wikimedia_commons", "castle", download_mode="thumbnail")
+request = SearchRequest("wikimedia_commons", "castle")
+original = SearchRequest("wikimedia_commons", "castle", download_mode="original")
 ```
 
 `enqueue_collect`の設定ハッシュは取得モードを含む。Candidate末尾の省略可能な
 `download_url`と`rendition`以外は原本契約を維持する。原本URLを縮小URLで置き換えない。
-Commonsは`imageinfo`へ標準幅1280と`thumbmime`を要求し、返されたURL・実寸・MIMEを使う。
-1280は長辺ではない。縦長は高さ1280を超え得る。小原本は`thumbnail_not_smaller`、
+Commonsは`imageinfo`へ幅・高さとも1280と`thumbmime`を要求し、返されたURL・実寸・MIMEを使う。
+長辺1280以下の原本は`thumbnail_not_smaller`、
 URL/寸法/MIME欠落は`thumbnail_missing`、版欠落は`thumbnail_revision_missing`で除外する。
 原本への暗黙fallback、任意サイズURLの生成、archive取得は行わない。
 
 `rendition`は`provider/native_id/revision/variant`、要求幅、原本のURL・実寸・MIME・API SHA-1を持つ。
 API SHA-1と受信SHA-256は別物で、縮小から原本SHA-256を推測しない。
 `Asset.sha256`と`quality.received.sha256`は受信SHA-256、`quality.rendition.original`は原本の情報。
-縮小だけPillowで受信寸法・MIMEを検査し、原本の寸法・MIMEは従来どおりAPI値を使う。
+新規jobは原本・縮小とも画像ヘッダーから受信寸法・MIMEを検査する。
+通常原本の画素展開は行わず、API値はrendition.originalへ分離して保持する。
 原本を取得した場合だけ原本SHA-256が既知になる。API SHA-1がある原本は受信物と照合し、
 不一致なら`original_sha1_mismatch`で候補だけを除外して予約を解放し、バッチを継続する。
 不一致でも取得件数・byteは計上する。SHA-1欠落の原本は従来どおり扱う。
@@ -43,7 +45,48 @@ UA、既定の画像間隔1秒、license_rules/rights_reviewは変更しない�
 比較手順・固定100枠・失敗/未評価を含む分母は`bench/issue90/results.md`とJSONを参照。
 原本・縮小のSHA不一致を「重複なし」としない。色距離、主要/細部分割の一致度、
 品質フラグ反転は観測値であり採用閾値ではない。人手正解がない入力のIoUは未評価とする。
-品質許容差、最低実解像度、既定切替は本Issueでは確定しない。
+品質許容差・最低実解像度・既定切替は以下の#109で確定した。
+
+## 閾値付きの縮小既定（Issue #109）
+
+2026-11-05のユーザー決定に従い、新規jobの`quality_policy`へ次を固定する。
+主色OKLab距離の平均は0.02以下、主要部位一致は0.85以上、最低実解像度は長辺1280px。
+原本・縮小とも受信実寸が最低値未満なら`below_min_resolution`として除外する。
+原本の受信寸法とAPI寸法が一致しなければ`original_dimensions_mismatch`を優先して記録する。
+ヘッダー検査のPillow上限は`received_header_image_limit`、読取り不能は
+`received_header_unreadable`として候補単位で除外・予約解放し、同バッチの先行取得を保持して続行する。
+通常の原本取得では画素を展開しない。既存job・asset・raw・runの一括更新はしない。
+APIの幅・高さ1280は要求値であり、CDNのサイズ段階により受信長辺が1280を超える場合がある。
+採用可否と解析はAPIの表示寸法と区別した受信実寸で記録する。
+Openverse・LoC・Mapillaryは各ソースの既存方式を保つ（縮小APIを共通に仮定しない）。
+共通の最低実解像度は適用する。LoC・Mapillaryの無効化と権利・認証の停止条件は維持する。
+
+縮小版の品質判定はprepの既存検査を再利用する。`watermark_suspected`・`blur_suspected`・
+`collage_suspected`のいずれかがtrueなら、登録取引で`review` jobを明示予約する。
+`original_review_jobs`へjob ID・理由・元variant、job payloadへ元asset ID・収集run ID・
+原本候補とrevisionを残す。workerには`--handler review=colorstats.collect.quality`を追加する。
+通常collectのhandlerは従来どおりstageまたはbiasを使う。
+
+再判定jobは固定原本URLを取得し、#90のSHA-1照合、現行source停止・削除停止、
+#89のinterval・Retry-After・rate_groupを適用する。測定job由来なら同じ測定IDの通信枠・
+media台帳も使用し、再試行分も枠へ含める。新たな検索やarchive取得、暗黙fallbackはしない。
+結果は元assetへ書き戻さず新規review runの不変出力と`original_results`へ保存する。
+原本でも対象フラグが残れば`rejected`、すべて消えれば`accepted`。
+最低実解像度・SHA-1不一致・HTTP除外・枠停止で結果がなければ`unevaluated`として理由を残す。
+専用の原本再判定でPillow上限に達した場合も`original_quality_image_limit`の理由付き未評価とし、
+検査不能なら`original_quality_unreadable`とする。原本取得バッチ全体の失敗にはしない。
+これは機械的な品質再判定であり、人手確認済み・統計採用済みを意味しない。
+元画像を別assetとして増やさず、同一画像の支持数を水増ししない。
+
+対応解析後の監査は#90の`comparison.json`形式（各行の`comparison`）を使う。
+`colorstats.collect.quality.enqueue_audit(queue, comparison_path, output_path, code_version=...)`
+で入力SHA-256・閾値を固定したreview jobを投入する。同じquality handlerが監査JSONと
+run.parameters.auditを新規に記録する。主色距離は組の平均、主要部位は全主要ラベルの
+intersection/unionの合算比。閾値超過は`warning`とログ、欠測は`unevaluated`数を残す。
+比較組または主要部位の有効unionがなければ合格とはしない。人手正解に対するIoUとは区別する。
+監査のためのモデル実行や原本の一律再取得は自動では行わない。
+根拠と実取得・検証結果は`bench/issue109/results.md`を参照。
+reviewもcollect/prepと同じraw媒体停止マーカー・媒体欠落の検査を受ける。
 
 ## 追加収集の測定（Issue #77）
 

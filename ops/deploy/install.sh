@@ -27,7 +27,7 @@ for stage in collect analysis scheduler; do
         condition='ConditionPathIsMountPoint=/mnt/data/derived'
     fi
     case "$stage" in
-        collect) command="-m colorstats.queue --handler collect=colorstats.collect.bias --stop-file /var/lib/colorstats/pilot/collect.stop" ;;
+        collect) command="-m colorstats.queue --handler collect=colorstats.collect.bias --handler review=colorstats.collect.quality --stop-file /var/lib/colorstats/pilot/collect.stop" ;;
         analysis) command="-m colorstats.queue --handler prep=colorstats.analyze.prep --handler color=colorstats.analyze.color --storage-path prep=/mnt/data/derived --storage-path color=/mnt/data/derived --stop-file /var/lib/colorstats/pilot/analysis.stop" ;;
         scheduler) command="ops/deploy/pilot.py --root $release --state /var/lib/colorstats/pilot --version $(basename "$release") --analysis-version $analysis_version --run" ;;
     esac

@@ -1,0 +1,22 @@
+{
+  "input": "bench/issue90/existing100/comparison.json",
+  "sha256": "5ffe717a00d62d635ddbd6b97f0de0bb7e0fdadb3015f28e5385dbd394d3039d",
+  "policy": {
+    "min_long_edge": 1280,
+    "dominant_oklab_mean_max": 0.02,
+    "major_agreement_min": 0.85,
+    "original_review_flags": [
+      "watermark_suspected",
+      "blur_suspected",
+      "collage_suspected"
+    ]
+  },
+  "evaluated": 98,
+  "unevaluated": 2,
+  "dominant_oklab_mean": 0.015432534620013913,
+  "major_agreement": 0.8693846259302518,
+  "intersection": 32341934,
+  "union": 37200950,
+  "violations": [],
+  "status": "passed"
+}

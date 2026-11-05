@@ -111,6 +111,7 @@ class CommonsAdapter(HttpClient):
             }
             if request.download_mode == "thumbnail":
                 metadata_parameters["iiurlwidth"] = 1280
+                metadata_parameters["iiurlheight"] = 1280
                 metadata_parameters["iiprop"] += "|thumbmime"
             response = self._get(ENDPOINT + "?" + urlencode(metadata_parameters))
             pages = response.get("query", {}).get("pages", [])
@@ -207,10 +208,10 @@ class CommonsAdapter(HttpClient):
             if request.download_mode == "thumbnail":
                 download_url = info.get("thumburl")
                 rendition.update(
-                    requested_width=1280, width=info.get("thumbwidth"),
+                    requested_width=1280, requested_height=1280, width=info.get("thumbwidth"),
                     height=info.get("thumbheight"), mime=info.get("thumbmime"),
                 )
-                if info["width"] <= 1280:
+                if max(info["width"], info["height"]) <= 1280:
                     rendition_reason = "thumbnail_not_smaller"
                 elif not download_url or not all(
                     rendition.get(key) for key in ("width", "height", "mime")
