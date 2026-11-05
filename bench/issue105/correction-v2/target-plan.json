@@ -1,0 +1,139 @@
+{
+  "snapshot_id": "a8384373192d930df952190433d5d346393549b87c941ef157ea93380c714864",
+  "basis": "既存の意図層画像数を5枚単位で切上げ、残枠を主要役割の30支持不足率で配分",
+  "limits_unchanged": true,
+  "layers": [
+    {
+      "id": "japanese-castle",
+      "old_images": 800,
+      "images": 905,
+      "priority": 1,
+      "gap": {
+        "subjects_to_30": 20,
+        "n_eff_to_30": 20.0,
+        "unvalidated_pairs": 665
+      }
+    },
+    {
+      "id": "gothic-temple",
+      "old_images": 700,
+      "images": 680,
+      "priority": 3,
+      "gap": {
+        "subjects_to_30": 0,
+        "n_eff_to_30": 0,
+        "unvalidated_pairs": 665
+      }
+    },
+    {
+      "id": "forest-autumn-day",
+      "old_images": 1100,
+      "images": 755,
+      "priority": 1,
+      "gap": {
+        "subjects_to_30": 16,
+        "n_eff_to_30": 16.0,
+        "unvalidated_pairs": 66
+      }
+    },
+    {
+      "id": "modern-house",
+      "old_images": 700,
+      "images": 680,
+      "priority": 2,
+      "gap": {
+        "subjects_to_30": 5,
+        "n_eff_to_30": 5.0,
+        "unvalidated_pairs": 665
+      }
+    },
+    {
+      "id": "medieval-house",
+      "old_images": 700,
+      "images": 680,
+      "priority": 3,
+      "gap": {
+        "subjects_to_30": 0,
+        "n_eff_to_30": 0,
+        "unvalidated_pairs": 665
+      }
+    },
+    {
+      "id": "japanese-temple",
+      "old_images": 800,
+      "images": 895,
+      "priority": 1,
+      "gap": {
+        "subjects_to_30": 19,
+        "n_eff_to_30": 19.0,
+        "unvalidated_pairs": 665
+      }
+    },
+    {
+      "id": "islamic-temple",
+      "old_images": 700,
+      "images": 770,
+      "priority": 1,
+      "gap": {
+        "subjects_to_30": 20,
+        "n_eff_to_30": 20.0,
+        "unvalidated_pairs": 665
+      }
+    },
+    {
+      "id": "chinese-house",
+      "old_images": 1000,
+      "images": 955,
+      "priority": 1,
+      "gap": {
+        "subjects_to_30": 29,
+        "n_eff_to_30": 29.0,
+        "unvalidated_pairs": 665
+      }
+    },
+    {
+      "id": "mountains-summer-day",
+      "old_images": 900,
+      "images": 925,
+      "priority": 1,
+      "gap": {
+        "subjects_to_30": 22,
+        "n_eff_to_30": 22.0,
+        "unvalidated_pairs": 66
+      }
+    },
+    {
+      "id": "plains-summer-day",
+      "old_images": 900,
+      "images": 885,
+      "priority": 1,
+      "gap": {
+        "subjects_to_30": 23,
+        "n_eff_to_30": 23.0,
+        "unvalidated_pairs": 66
+      }
+    },
+    {
+      "id": "desert-summer-day",
+      "old_images": 800,
+      "images": 935,
+      "priority": 1,
+      "gap": {
+        "subjects_to_30": 23,
+        "n_eff_to_30": 23.0,
+        "unvalidated_pairs": 66
+      }
+    },
+    {
+      "id": "snowy-winter-day",
+      "old_images": 900,
+      "images": 935,
+      "priority": 1,
+      "gap": {
+        "subjects_to_30": 23,
+        "n_eff_to_30": 23.0,
+        "unvalidated_pairs": 66
+      }
+    }
+  ]
+}

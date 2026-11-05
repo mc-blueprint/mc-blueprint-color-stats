@@ -1,0 +1,269 @@
+{
+  "seed": "issue105-category-audit-v2:",
+  "input_sha256": "0455e9a2027d8a49725d4080617f12220e2ba1c0afb1fa306ea6a253cafcf988",
+  "sampling": "旧#105のカテゴリ起因150画像からSHA重複を除きseed+SHAのhash順で50件",
+  "checks": [
+    "実景写真か",
+    "カテゴリが描写対象に適用されるか",
+    "季節・時間帯と可視情報の明白な矛盾がないか",
+    "保存説明・EXIFと整合するか"
+  ],
+  "sample_size": 50,
+  "confirmed_errors": 3,
+  "error_rate": 0.06,
+  "uncertain": 2,
+  "visually_consistent": 45,
+  "interpretation": "目視で確認した誤り3/50=6%。保留2件を正解として扱わない。母集団精度の保証ではない",
+  "rows": [
+    {
+      "index": 1,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 2,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 3,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 4,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 5,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 6,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 7,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 8,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 9,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 10,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 11,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 12,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 13,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 14,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 15,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 16,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 17,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 18,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 19,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 20,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 21,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 22,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 23,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 24,
+      "status": "uncertain",
+      "reason": "青い空の薄明とnightの境界。UTC根拠なし"
+    },
+    {
+      "index": 25,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 26,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 27,
+      "status": "error",
+      "reason": "実景ではなく冬景色の絵画"
+    },
+    {
+      "index": 28,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 29,
+      "status": "error",
+      "reason": "橋の画像は昼明かり・GPS太陽高度もnight外"
+    },
+    {
+      "index": 30,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 31,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 32,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 33,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 34,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 35,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 36,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 37,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 38,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 39,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 40,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 41,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 42,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 43,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 44,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 45,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 46,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 47,
+      "status": "uncertain",
+      "reason": "青い空の薄明とnightの境界。UTC・GPS根拠なし"
+    },
+    {
+      "index": 48,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    },
+    {
+      "index": 49,
+      "status": "error",
+      "reason": "実景ではなく秋の森林の絵画"
+    },
+    {
+      "index": 50,
+      "status": "consistent",
+      "reason": "描写・保存情報に明白な矛盾なし"
+    }
+  ]
+}
