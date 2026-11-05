@@ -1,0 +1,16 @@
+{
+  "data": [{
+    "id": "123",
+    "creator": {"id": "u1"},
+    "sequence": "s1",
+    "captured_at": 1700000000000,
+    "width": 2048,
+    "height": 1536,
+    "thumb_1024_url": "https://scontent.example.fbcdn.net/image.jpg?access_token=secret&oh=signature",
+    "detections": {"data": []}
+  }],
+  "paging": {
+    "next": "https://graph.mapillary.com/images?access_token=secret&after=cursor-1",
+    "cursors": {"after": "cursor-1"}
+  }
+}

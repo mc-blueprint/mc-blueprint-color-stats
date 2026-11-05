@@ -434,3 +434,59 @@ source.policyは初回の共有情報を保持する。後日のlicense/根拠�
 `rights.analysis_review_reasons(policy, now=None)`は不足・停止・失効の理由文字列リストを返す。
 `stats.licenses.exclusion_reasons(asset, source, runs)`は元権利一致、二経路、全run・全モデルを検査する。
 未確認のrestrictedからanalysis_onlyへ落とすフォールバックはない。
+## Mapillary（Issue #94）
+
+`mapillary`は登録アプリの公開Images APIだけに接続する解析専用アダプターです。
+2026-11-05、graph.mapillary.comのrobots.txtが`User-agent: * / Disallow: /`を返しました。
+ユーザー決定（2026-11-05）に従い、robotsと規約§5・§11の関係をMapillaryへ確認し、
+回答まで`source_policy.yaml`では無効です。Openverse経由を含む全Mapillary hostへの通信を止めます。
+実行環境の現行policyは`COLORSTATS_SOURCE_POLICY`、未指定時はcwdの`configs/source_policy.yaml`です。
+prepare開始時と各HTTP要求・redirectの送信直前に読み直し、保存済み`enabled: true`より優先します。
+現行ファイルの欠落・無効・確認不能時は通信しません。長時間待機後の送信にも停止を適用します。
+API文書はログイン画面のため、フィールドと認証は公式Python SDKの実装も参照しています。
+Terms of Use（2024-02-15発効）の全文確認はIssue #94のユーザー確認コメントを根拠とします。
+§3(b)・5・11・12に従い公開API以外の自動取得、過負荷、再配布、画像配信、
+再識別・ぼかし解除は行いません。大量本収集の許可・歩留まりはこの少量確認で保証しません。
+
+認証は収集unitの`LoadCredential=mapillary-client-token:/etc/colorstats/credentials/mapillary-client-token`
+で渡します。root専用ファイルを直接読む実装や別認証へのフォールバックはありません。
+実行時の`CREDENTIALS_DIRECTORY`からだけ読み、欠落なら通信せず停止します。
+`STATE_DIRECTORY`には非公開の専用状態ディレクトリを指定してください。
+再開状態はその配下の`mapillary/`に0600で保存します。unit例は`ops/collect/mapillary.conf.example`です。
+この例の配置・サービス変更は行っていません。
+
+検索語は任意の文字列検索ではなく、policyの`searches`のキーです。
+`kyoto-street-buildings`は京都の小bboxによる道路沿い建築候補の固定意図で、建築の存在・分類は未確認です。
+本収集では#105の不足目標に合わせて検索意図とbboxをレビューしてください。
+targetsの各層に`mapillary_searches: [kyoto-street-buildings]`を明示した場合だけ先頭ページを生成します。
+後続は記録された`next_offset`を使います。cursorを整数へ変換せず、固定条件・limit別に対応を保存し、
+未確認offsetと無作為な後続ページは拒否します。状態保存は単一ownerで実行してください。
+順位は`request.start + index`であり、API側の時点間ランキングの不変性は保証しません。
+
+候補の`original_url`は署名URLの恒久化を避けるため`https://graph.mapillary.com/<native ID>`という
+画像エンティティ識別子です。原本ファイルのダウンロードURLではありません。
+公式`thumb_1024_url`だけを取得し、原本へフォールバックしません。
+署名付きURLは同じアダプターのメモリ内だけに保持し、候補には全queryを除いたURLを記録します。
+失効時は失敗を記録し、同じoffsetを再検索してURLを更新します。
+APIへのAuthorizationはHTTPS・標準ポート・graph.mapillary.com・`/images`の完全一致に限定します。
+画像CDNと別hostへのredirectにAuthorizationを転送しません。例外にAPI本文や署名queryを含めません。
+
+作者・native ID・sequence・撮影日時・寸法・許可CDNが欠ける候補、人物検出あり、
+検出結果未確認・検出結果に継続ありを画像取得前に除外します。
+同じ検索条件のページ内・前ページと同sequenceの連写も除外し、subjectは未確定のままです。
+作者ID・地域とnative ID/安定URL/受信SHAは既存bias予約・重複契約へ渡します。
+pHashは既存prepの補助情報として扱い、独立subjectの自動確定には使いません。
+人物検出ゼロはプライバシー確認済みを意味しません。共通の内部確認・人物maskゲートを通す必要があります。
+
+CC BY-SA 4.0の原表記・帰属を保存し、#87の`analysis_only`だけを使います。
+30日保持、不採用7日、削除受付時に停止し7日以内、backup残留30日という#88の契約を再利用します。
+原画像・縮小画像・CVAT・精密位置は公開せず、配布は既存の非表現的統計ゲートに限定します。
+レートはAPI・CDN各同時1、通信終了後2秒、API30要求/60秒、画像5 MB/10秒です。
+これは公開上限の断定ではなく、少量検証用の保守的な自主枠です。
+公開レート本文は未確認で、2026-11-05のユーザー決定により自主上限で進めます。
+CDNのbyte台帳には実hostとrate_groupを記録し、再起動後も別subdomainの同じ共有枠を復元します。
+401/403は理由をjobへ記録し、spawnされたworker経由でも1試行でfailedとし自動再試行しません。
+429/503はRetry-Afterと60秒以上のbackoffを守ってHTTP内では再試行せず停止します。
+通常の負荷制限はキューの既存試行枠に従い、401/403の再試行禁止とは区別します。
+
+実測・未完了条件は`bench/issue94/results.md`を参照してください。
