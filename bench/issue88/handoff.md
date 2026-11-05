@@ -30,7 +30,7 @@ primary、並行担当のcollect/http.py・measurement.py・source_policy.yaml�
 ## 最終検証
 
 - WSL Ubuntu-24.04、Python 3.12.3、PostgreSQL 16.15を同一環境で実行。
-- 全pytest：830 passed / 1 skipped。skipは明示重み・CUDAが必要な既存GPUテストのみ。
+- 全pytest：834 passed / 1 skipped。skipは明示重み・CUDAが必要な既存GPUテストのみ。
 - 時間依存テストの断続失敗なし。単独再実行による救済なし。
 - ruff check .、sdist/wheel build、git diff --check成功。
 - 中間で検出したワーカープロトコル、ロック順、照会増加、台帳fixtureの隔離、空DB再作成を修正済み。
@@ -75,9 +75,9 @@ primary、並行担当のcollect/http.py・measurement.py・source_policy.yaml�
 ## 反証指摘の追加修正
 
 前提commit：bd7e29bb608219ee4b46544c8ee883a6304bc81f。owner継続、再委譲なし。
-確認済みP1×4・P2×2を修正した。追加回帰はtests/test_retention_cvat.pyの10ケース。
+確認済みP1×4・P2×2を修正した。再確認後の混在拒否を含め、回帰はtests/test_retention_cvat.pyの14ケース。
 
-- P1誤削除：旧画像が混在する共有ZIP/manifest/draftは台帳へ登録しない。画像固有maskだけを該当新規assetへ登録する。
+- P1誤削除：新旧混在を受理して部分登録する方式は廃止し、生成・取込みを出力前に拒否する。新規だけなら共有物・固有maskを台帳へ登録し、旧画像だけなら従来どおり台帳へ登録しない。
   前版で登録済みの共有物もJobなし旧run・所有者不明runの参照で保護する。削除しない側へ倒す。
 - P1削除不能：run.output_paths.masksと相対mask_pathを同じ表現へ揃えて参照解除し、自身の参照による保護判定を解消する。
 - P1 CVATゲート：prepare_draftはDB必須で、XML読取り前に停止・期限を確認する。新規画像だけの生成XML/JSONは保持登録する。
@@ -86,10 +86,25 @@ primary、並行担当のcollect/http.py・measurement.py・source_policy.yaml�
 - P2停止範囲：取得前の画像照会は同じ原画像URLに限定する。source全体停止は従来どおり維持する。
 - P2権限：CVAT draft/maskをos.openの作成時mode 0600で開き、書込み後chmodへ依存しない。
 
-全pytest：830 passed / 1 skipped。ruff・sdist/wheel・diff check成功。
+全pytest：834 passed / 1 skipped。ruff・sdist/wheel・diff check成功。
 DB必須化による既存単体テストの呼出しを依存注入へ変更し、アプリの停止ゲートは緩めていない。
 実環境のACL・NFS・CVAT認可、運用復元、M4実接続は未検証。本番操作なし。
 docs/retention.mdと指定公開文面3ファイルを更新した。push・PRは行わない。
 
 追加差分：src/colorstats/{cvat.py,retention.py,collect/stage.py}、docs/retention.md、
 tests/{test_retention_cvat.py,test_retention.py,test_cvat.py,test_cvat_db.py,test_collect.py,test_openverse.py,test_analysis_rights_db.py}、本引継ぎ。
+
+## 再確認P1：CVAT新旧混在の拒否
+
+前提commit：a7fefcbc91e211e9114cc52c5c8dacf5db3394d4。owner継続、再委譲なし。
+新旧混在を部分登録で受理すると新規画像の共有ZIP・draftが期限後も残るため、
+prepare_draftとimport_cvatは同じ保持区分検査を取引ロック内・書込み前に実行する。
+混在時はValueErrorでCVATタスク・出力の分割実行を案内し、出力・run・Region・台帳を増やさない。
+新規だけのXML/JSON/ZIP/manifest/生成draft/maskは登録し、旧画像だけの従来動作は維持する。
+既存共有物の削除保護は維持し、誤削除を避ける。
+共有契約：DB必須の公開APIシグネチャは変更なし。混在入力を新たにValueErrorで拒否する。
+回帰6ケース：混在拒否4（生成／取込み×open／analysis_only）、単一区分成功2（新規／旧）。
+全pytest：834 passed / 1 skipped。WSL ruff・sdist/wheel・diff check成功。
+変更：src/colorstats/cvat.py、tests/test_retention_cvat.py、docs/retention.md、本引継ぎ。
+指定公開文面3ファイルをUTF-8 BOMなしで更新。#89担当ファイルの変更なし。push・PRなし。
+実環境のACL・NFS・CVAT認可、運用復元、M4実接続は未検証のまま。

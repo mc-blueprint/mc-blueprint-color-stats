@@ -40,7 +40,7 @@ def prepare_draft(manifest: Path, output: Path, taxonomy_dir: Path,
                   *, database_url=None, host=None):
     """停止・画像期限をDBで確認し、内部CVAT下書きと共有依存を同じ取引で登録する。
 
-    database_urlまたはDATABASE_URLは必須。旧画像を含む共有出力は期限削除に登録しない。
+    database_urlまたはDATABASE_URLは必須。保持期限付き画像と旧画像の混在は拒否する。
     出力先は未使用パスとする。DB・I/O失敗時は今回の生成物だけを清掃する。
     """
     database_url = database_url or os.environ.get("DATABASE_URL")
@@ -54,11 +54,12 @@ def prepare_draft(manifest: Path, output: Path, taxonomy_dir: Path,
     try:
         with Session(engine) as session, session.begin():
             retention.lock(session)
+            managed = _check_retention_group(session, ids)
             for asset_id in ids:
                 retention.assert_usable(session, asset_id, images=True)
             _write_draft(manifest, output, taxonomy_dir)
             created = True
-            _register_shared(session, ids, host or socket.gethostname(), paths)
+            _register_shared(session, managed, host or socket.gethostname(), paths)
     except BaseException:
         if created:
             for path in paths:
@@ -68,15 +69,21 @@ def prepare_draft(manifest: Path, output: Path, taxonomy_dir: Path,
         engine.dispose()
 
 
-def _register_shared(session, asset_ids, host, paths):
+def _check_retention_group(session, asset_ids):
     managed = set(session.scalars(select(retention.Retention.asset_id).where(
         retention.Retention.asset_id.in_(asset_ids),
     )))
-    if managed == set(asset_ids):
-        for asset_id in managed:
-            for path in paths:
-                retention.register_file(session, asset_id, host, path, "cvat")
+    if managed and managed != set(asset_ids):
+        raise ValueError(
+            "保持期限付き画像と旧画像は混在できません。CVATタスク・出力を分けて実行してください"
+        )
     return managed
+
+
+def _register_shared(session, managed, host, paths):
+    for asset_id in managed:
+        for path in paths:
+            retention.register_file(session, asset_id, host, path, "cvat")
 
 
 def _write_draft(manifest: Path, output: Path, taxonomy_dir: Path):
@@ -387,6 +394,7 @@ def import_cvat(
     archiveは画像を含むCVAT for images 1.1 ZIP、draftはprepare_draftのJSON。
     mask_dirに原画像座標polygonとmodel下書きのコピーを保存する。
     形式・照合不一致や同一ZIPの再取込みはValueError。
+    保持期限付き画像と旧画像の混在も、ファイル・DBへの書込み前にValueErrorで拒否する。
     DB/I/O失敗は呼出し元へ伝播し、この取込みのDB変更と作成ファイルを戻す。
     PostgreSQLのREAD COMMITTEDで、ZIPのSHAごとに取引単位の排他を行う。
     """
@@ -424,6 +432,7 @@ def import_cvat(
                         f"エクスポートとassetの画像寸法が異なります: {row['filename']}"
                     )
                 db_assets[row["filename"]] = asset
+            managed = _check_retention_group(session, {asset.id for asset in db_assets.values()})
             output_paths = {
                 "masks": str(mask_dir.resolve()), "archive": str(archive.resolve()),
                 "manifest": str(manifest.resolve()), "input_draft": str(draft.resolve()),
@@ -462,9 +471,7 @@ def import_cvat(
                 run_ids[license_class] = run.id
             session.flush()
             shared_paths = [archive, manifest, draft, *files]
-            managed = _register_shared(
-                session, {asset.id for asset in db_assets.values()}, host, shared_paths,
-            )
+            _register_shared(session, managed, host, shared_paths)
             for filename, shapes in polygons.items():
                 row = assets[filename]
                 asset = db_assets[filename]
