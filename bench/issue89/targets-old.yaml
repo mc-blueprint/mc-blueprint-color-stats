@@ -1,0 +1,36 @@
+taxonomy_version: 0.1.0
+subject_aliases: {}
+image_budget: 15
+limits:
+  subject_images: 3
+  subject_share: 0.003
+  author_share: 0.05
+  source_share: 0.8
+  region_share: 0.4
+search:
+  providers: [wikimedia_commons]
+  pages: 1
+  limit: 10
+  max_offset: 500
+strata:
+  - id: japanese-castle
+    attributes:
+      domain: real_building
+      style: japanese
+      building_type: castle
+      region: japan
+      era: early_modern
+    subjects: 100
+    images: 15
+    queries:
+      ja: [日本 城 天守]
+      en: [Japanese castle exterior]
+    commons_categories: [Himeji Castle]
+measurement:
+  id: issue89-old-v2
+  api_requests_per_stratum: 35
+  http_requests_per_stratum: 50
+  providers:
+    wikimedia_commons:
+      api_requests: 35
+      http_requests: 50

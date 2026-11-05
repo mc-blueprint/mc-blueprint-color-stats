@@ -51,8 +51,9 @@ def test_検索と元ページと原本が共通のRetryAfterで待機する(cli
     result = adapter.get("https://example.test/first", **kwargs)
     adapter.get("https://example.test/next")
     adapter.finish()
-    assert [time for _, time in calls] == [0, 12, 13]
-    assert adapter.clock() == 14
+    wait = 0.5 if client[0] == "wikimedia_commons" and mode == "file" else 1.0
+    assert [time for _, time in calls] == [0, 12, 12 + wait]
+    assert adapter.clock() == 12 + (3 if wait == 0.5 else 2) * wait
     if mode == "file":
         assert result is None and (tmp_path / "image").read_bytes() == b'{}'
 
@@ -168,6 +169,18 @@ def test_計測へ送るURLから秘密クエリを除く(client):
     adapter.observer = lambda event, value: values.append(value)
     adapter.observe("candidate", {"url": "https://example.test/image?token=secret&page=2"})
     assert values == [{"url": "https://example.test/image?page=2"}]
+
+
+def test_Wikimedia_archive_pathを通信前に拒否する(tmp_path):
+    adapter, calls = make_client(
+        ("wikimedia_commons", CommonsAdapter), [Response(b"should not be requested")]
+    )
+    with pytest.raises(ValueError, match="禁止されたpath"):
+        adapter.get(
+            "https://upload.wikimedia.org/wikipedia/commons/archive/a/image.jpg",
+            target=tmp_path / "image.jpg",
+        )
+    assert calls == []
 
 
 def test_画像の10秒帯域枠をfixture応答で守る(client, tmp_path):

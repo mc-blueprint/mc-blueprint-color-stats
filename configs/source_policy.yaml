@@ -12,7 +12,8 @@ sources:
     media_bytes_per_10_seconds: 25000000
     hosts:
       commons.wikimedia.org: {kind: api}
-      upload.wikimedia.org: {kind: media}
+      upload.wikimedia.org: {kind: media, disallow_paths: [/archive/]}
+      www.wikidata.org: {kind: api}
     maxlag: 5
     retries: 2
     backoff: 5.0
@@ -49,7 +50,7 @@ sources:
       openverse.org: {kind: page}
       flickr.com: {kind: page}
       staticflickr.com: {kind: media}
-      upload.wikimedia.org: {kind: media}
+      upload.wikimedia.org: {kind: media, disallow_paths: [/archive/]}
       wikimedia.org: {kind: page}
       loc.gov: {kind: page}
       images.mapillary.com: {kind: media}

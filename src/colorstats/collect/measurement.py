@@ -2,6 +2,7 @@
 
 import uuid
 from collections import Counter
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from time import monotonic
 
@@ -24,12 +25,17 @@ class Meter:
 
         self.queue, self.claim = queue, claim
         self.started = monotonic()
+        self.database_timing = {
+            "lock_wait_seconds": 0.0,
+            "processing_seconds": 0.0,
+            "commit_seconds": 0.0,
+        }
         payload = claim.payload
         self.settings = payload["bias"]["measurement"]
         self.stratum = payload["request"]["stratum"]
-        with queue._transaction() as session:
+        with self._transaction() as session:
             queue._owned(session, claim)
-            session.execute(LOCK_SQL)
+            self._lock(session, LOCK_SQL)
             if session.scalar(
                 select(Job.id)
                 .where(
@@ -96,11 +102,7 @@ class Meter:
                         ),
                         0,
                     ),
-                    "database_timing": {
-                        "lock_wait_seconds": 0.0,
-                        "processing_seconds": None,
-                        "commit_seconds": None,
-                    },
+                    "database_timing": dict(self.database_timing),
                     "baseline_subject_ids": (
                         previous[0].parameters["baseline_subject_ids"]
                         if previous
@@ -123,18 +125,45 @@ class Meter:
             session.flush()
             self.id = run.id
 
+    @contextmanager
+    def _transaction(self):
+        started = monotonic()
+        self._current_lock_wait = 0.0
+        commit_started = None
+        try:
+            with self.queue._transaction() as session:
+                yield session
+                session.flush()
+                commit_started = monotonic()
+        except BaseException:
+            self.database_timing["lock_wait_seconds"] += self._current_lock_wait
+            self.database_timing["processing_seconds"] += max(
+                0.0, monotonic() - started - self._current_lock_wait
+            )
+            raise
+        elapsed = monotonic()
+        self.database_timing["lock_wait_seconds"] += self._current_lock_wait
+        self.database_timing["processing_seconds"] += max(
+            0.0, commit_started - started - self._current_lock_wait
+        )
+        self.database_timing["commit_seconds"] += elapsed - commit_started
+
+    def _lock(self, session, lock_sql):
+        started = monotonic()
+        session.execute(lock_sql)
+        self._current_lock_wait += monotonic() - started
+
     def observe(self, event, value=1):
         from colorstats.collect.bias import LOCK_SQL
 
-        with self.queue._transaction() as session:
+        with self._transaction() as session:
             self.queue._owned(session, self.claim)
-            lock_started = monotonic()
-            session.execute(LOCK_SQL)
-            lock_wait = monotonic() - lock_started
+            self._lock(session, LOCK_SQL)
             run = session.get(ProcessingRun, self.id)
             counts = Counter(run.parameters["counts"])
             database_timing = dict(run.parameters["database_timing"])
-            database_timing["lock_wait_seconds"] += lock_wait
+            database_timing.update(self.database_timing)
+            database_timing["lock_wait_seconds"] += self._current_lock_wait
             if event in ("search", "candidate", "exclusion"):
                 search = dict(run.parameters.get("search", {}))
                 if event == "search":
@@ -191,16 +220,28 @@ class Meter:
             }
 
     def finish(self, state, *, parameters=None, error=None):
-        with self.queue._transaction() as session:
+        from colorstats.collect.bias import LOCK_SQL
+
+        with self._transaction() as session:
             self.queue._owned(session, self.claim)
+            self._lock(session, LOCK_SQL)
             run = session.get(ProcessingRun, self.id)
             run.parameters = {**run.parameters, **(parameters or {}), "state": state}
-            run.parameters = {
-                **run.parameters,
-                "elapsed_seconds": max(0.0, monotonic() - self.started),
-            }
+            database_timing = dict(self.database_timing)
+            database_timing["lock_wait_seconds"] += self._current_lock_wait
+            run.parameters = {**run.parameters, "database_timing": database_timing}
             run.failure_reason = type(error).__name__ if error else None
             run.finished_at = session.scalar(select(func.clock_timestamp()))
+        elapsed = max(0.0, monotonic() - self.started)
+        with self._transaction() as session:
+            self.queue._owned(session, self.claim)
+            self._lock(session, LOCK_SQL)
+            run = session.get(ProcessingRun, self.id)
+            run.parameters = {
+                **run.parameters,
+                "elapsed_seconds": elapsed,
+                "database_timing": dict(self.database_timing),
+            }
 
 
 def record(session, run, data, known):

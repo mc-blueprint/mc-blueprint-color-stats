@@ -98,13 +98,22 @@ Wikimedia mediaは同時接続1、要求間0.5秒以上、10秒窓25,000,000 byt
 Openverse匿名APIはrolling 5/hour・100/day枠を適用する。APIとmediaの待機時計は分離し、
 各接続hostのinterval/backoffはredirect後の実接続先で再評価する。ジョブ末尾にも残りの待機を
 完了してから次のspawnへ進む。これらの枠は単一HttpClient内で管理し、複数プロセス間の
-共有予約にはならないため、運用時は同一providerを並行稼働させない。
+共有予約にはならないため、#91がDB共有予約を実装するまでは同一providerを並行稼働させない。
 GET・JSON、非対話用`maxlag=5`、連絡先付きBot User-Agentを使用する。
 HTTP 429/503とAPI maxlag/ratelimited/cirrussearch-too-busy-errorは
 Retry-After（秒数・HTTP日時）と5秒からの指数待機の
 長い方を守って最大2回再試行する。最終試行でも待機してから失敗し、キュー側の最大3試行へ返す。
 それ以外のHTTP/APIエラー、通信失敗はそのまま試行を失敗させる。
 Content-Lengthがある原本は受信サイズを照合し、途中で切れた応答を成功にしない。
+
+2026-11-05のユーザー決定により、Commons Action APIは[Robot policy](https://wikitech.wikimedia.org/wiki/Robot_policy)
+のAction API rules（未認証は同時1、5 req/s未満、1秒超の応答後5秒待機、batch推奨）と
+[Rate limits](https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits)の識別User-Agent枠
+（200 req/min）に従って利用する。`robots.txt`の`Disallow: /w/`は動的ページを巡回する
+クローラー向けと解釈し、Action API利用を継続する。[Commons robots.txt](https://commons.wikimedia.org/robots.txt)
+および確認日は`bench/issue89/results.md`に記録する。HTMLの動的ページは巡回せず、
+`upload.wikimedia.org`では`/archive/`を巡回しない。source_policyの`disallow_paths`により、
+直接URLとredirect先のどちらも通信前に拒否する。
 
 2026-11-01に確認した一次情報:
 
@@ -195,7 +204,7 @@ DBテストはTEST_DATABASE_URLの専用schemaを使用し、実通信なしで�
 
 ## Openverse
 
-`OpenverseAdapter` は匿名の Openverse Images API v1 を使用し、認証キーは導入しない。Openverseは認証時に標準・拡張など異なるスロットリング階層を設けている。Commons・Openverseは`collect/http.py`で検索・元ページ・原本を直列取得する。各測定runはAPI/page/mediaの応答時間、通常待機、backoff、media帯域待機、受信byteを記録する。DB advisory lock取得時間は実測するが、DB処理・commit時間は記録せず`null`で示す。`elapsed_seconds`はrun開始からMeterの最終DB更新直前までのmonotonic時間で、最終commitは含まない。未測定のDB時間を推定で加算しない。
+`OpenverseAdapter` は匿名の Openverse Images API v1 を使用し、認証キーは導入しない。Openverseは認証時に標準・拡張など異なるスロットリング階層を設けている。Commons・Openverseは`collect/http.py`で検索・元ページ・原本を直列取得する。各測定runはAPI/page/mediaの応答時間、通常待機、backoff、media帯域待機、受信byteを記録する。`database_timing`はadvisory lock取得、Meter内トランザクション処理、flush後のcommit完了までの各実時間を分けて記録する。`elapsed_seconds`はrun開始から最終計測更新までのmonotonic時間。自己計測の再帰を避けるため、最後の計測値を書き込むトランザクション自体は集計外とする。
 
 検索結果の `foreign_landing_url` を `source_url` として保存する。Openverse は第三者サイト上のライセンス情報を保証しないため、元ページのJSON-LDにあるSchema.orgのImageObjectで対象原本URLと一致する`contentUrl`（未指定時は`url`）を探し、その画像の`creator`（未指定時は`author`）と`license`を照合する。作者名は前後空白・大文字小文字を除いて完全一致、ライセンスはAPIの識別子・版から決まるCreative Commons URLとAPI・元ページの両URLの完全一致を必要とする。HTTP/HTTPSと末尾スラッシュだけを同一視し、CC0はpublicdomain/zero、PDMはpublicdomain/markを使う。
 

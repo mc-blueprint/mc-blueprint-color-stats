@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
 from time import monotonic, sleep
 from urllib.error import HTTPError, URLError
-from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlunsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from colorstats.collect.policy import check_policy
@@ -135,6 +135,11 @@ class HttpClient:
         for suffix, config in self.policy.get("hosts", {}).items():
             suffix = suffix.lower().lstrip(".")
             if host == suffix or host.endswith("." + suffix):
+                path = unquote(parts.path).casefold()
+                if any(
+                    blocked.casefold() in path for blocked in config.get("disallow_paths", [])
+                ):
+                    raise ValueError("source_policyで禁止されたpathです")
                 return config
         raise ValueError("source_policy未登録の接続先です")
 
