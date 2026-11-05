@@ -127,3 +127,32 @@ def test_painting_category_is_not_capture_season():
     result, states = scene_attributes(image, RULES, {})
     assert "season" not in result
     assert states["season"]["reason"] == "nonphotographic_content"
+
+
+@pytest.mark.parametrize("current", ["autumn", "winter", None, "unknown"])
+def test_owned_history_does_not_overwrite_corrected_value(current):
+    from colorstats.stats.supplement import METHOD
+
+    image = asset(attrs={"season": current})
+    image.quality["scene_inference"] = {
+        "method": METHOD, "owned_attributes": ["season"],
+        "attributes": {"season": {"state": "inferred", "value": "summer"}},
+        "previous": {"method": METHOD,
+                     "attributes": {"season": {"state": "inferred", "value": current}}},
+    }
+    result, states = scene_attributes(image, RULES, {})
+    assert result["season"] == current
+    assert states["season"]["state"] == "preserved"
+
+
+def test_owned_unknown_can_be_recomputed_when_current_value_matches():
+    from colorstats.stats.supplement import METHOD
+
+    image = asset()
+    image.quality["scene_inference"] = {
+        "method": METHOD, "owned_attributes": ["season"],
+        "attributes": {"season": {"state": "unknown", "value": None}},
+    }
+    result, states = scene_attributes(image, RULES, {})
+    assert result["season"] == "summer"
+    assert states["season"]["state"] == "inferred"

@@ -123,11 +123,18 @@ def scene_attributes(asset, rules, exif, *, mutable=()):
     blocked = {}
     mutable = set(mutable)
     prior = (asset.quality or {}).get("scene_inference", {})
+    checked = set()
+    protected = set()
     while prior.get("method") == METHOD:
-        mutable.update(prior.get("owned_attributes", []))
-        mutable.update(k for k, s in prior.get("attributes", {}).items()
-                       if s["state"] == "inferred"
-                       and s.get("value") == asset.scene_attributes.get(k))
+        for key, state in prior.get("attributes", {}).items():
+            if key not in checked and (
+                state["state"] == "inferred" or key in prior.get("owned_attributes", [])
+            ):
+                if state.get("value") == asset.scene_attributes.get(key):
+                    mutable.add(key)
+                else:
+                    protected.add(key)
+            checked.add(key)
         prior = prior.get("previous") or {}
     patterns = {
         "season": {s: [*p, rf"\b(?:in|during) {s}$"]
@@ -206,7 +213,7 @@ def scene_attributes(asset, rules, exif, *, mutable=()):
         found = {e["value"] for e in evidence[key]}
         current = result.get(key)
         value = next(iter(found)) if len(found) == 1 and key not in blocked else None
-        if current not in UNKNOWN and key not in mutable:
+        if key not in mutable and (current not in UNKNOWN or key in protected):
             state, value = "preserved", current
         elif value:
             state = "inferred"

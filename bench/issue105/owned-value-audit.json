@@ -1,0 +1,15 @@
+{
+  "checked_at_utc": "2026-11-05T11:28:18Z",
+  "host": "ubuntu-2",
+  "readonly": true,
+  "scope": "成功済みIssue105 scene run 3件の保存計画と現在のscene_inference履歴",
+  "checked_runs": 3,
+  "checked_current_assets": 2523,
+  "checked_owned_attributes": 740,
+  "current_manual_or_foreign_attributes": 0,
+  "overwritten_manual_or_foreign_attributes": 0,
+  "method": "現在値を所有runのafterと比較。連続するIssue105履歴では後続runのbeforeと先行runのafterの差を調べ、その属性を後続runが変更したか照合。個別値・出典は出力しない。",
+  "limitation": "保存計画と現在履歴に残らない一時的な手動変更の有無は証明しない。",
+  "command_log": "20261105T112818Z-ff027eeed55f4715a85fc0df86d534f6.jsonl",
+  "writes": 0
+}
