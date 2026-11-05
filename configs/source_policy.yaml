@@ -127,6 +127,9 @@ sources:
       - https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia
   openverse:
     enabled: true
+    auth_mode: anonymous
+    credentials: [openverse-client-id, openverse-client-secret]
+    standard_api_windows: [{seconds: 60, limit: 100}, {seconds: 86400, limit: 10000}]
     user_agent: "mc-blueprint-color-stats-bot/0.1 (https://github.com/mc-blueprint/mc-blueprint-color-stats; https://github.com/mc-blueprint)"
     min_interval: 1.0
     api_windows:

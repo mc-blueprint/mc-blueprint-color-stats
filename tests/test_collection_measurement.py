@@ -7,6 +7,7 @@ import threading
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import replace
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import HTTPHandler
@@ -765,6 +766,98 @@ def test_Openverse長周期枠は別jobとworker再生成後もDB台帳で復元
 
 
 @DB
+@pytest.mark.parametrize("seconds,limit", [(60, 100), (86400, 10000)])
+def test_standard分日枠を別jobへ復元し境界ちょうどで解除する(
+    queue, measured, tmp_path, monkeypatch, seconds, limit
+):
+    now = datetime(2026, 11, 5, tzinfo=UTC)
+
+    class Time(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return now
+
+    payload, _ = payload_for(tmp_path)
+    payload["bias"] = copy.deepcopy(measured)
+    payload["request"].update(provider="openverse", stratum=request().stratum)
+    payload["policy"] = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
+    payload["policy"]["auth_mode"] = "standard"
+    windows = payload["policy"]["standard_api_windows"]
+    queue.enqueue("collect", None, "a" * 64, payload)
+    first = queue.claim(["collect"])
+    meter = Meter(queue, first)
+    with Session(queue.engine) as session, session.begin():
+        run = session.get(ProcessingRun, meter.id)
+        run.parameters = {**run.parameters, "quota_events": [{
+            "host": "api.openverse.org", "kind": "api",
+            "at": (now - timedelta(seconds=seconds - 1)).isoformat(),
+        }] * limit}
+    queue.fail(first, "restart fixture", retryable=False)
+    queue.enqueue("collect", None, "b" * 64, payload)
+    restarted = Meter(queue, queue.claim(["collect"]))
+    monkeypatch.setattr("colorstats.collect.measurement.datetime", Time)
+    assert restarted.reserve_quota("api.openverse.org", "api", windows) == 1
+    now += timedelta(seconds=1)
+    assert restarted.reserve_quota("api.openverse.org", "api", windows) == 0
+
+
+@DB
+def test_RetryAfterの翌日送信を送信時刻で記録し再起動後の10001件目を拒否する(
+    queue, measured, tmp_path, monkeypatch
+):
+    from colorstats.collect.http import _HOST_STATES
+    from colorstats.collect.openverse import ENDPOINT
+
+    clock, sent = Clock(), []
+    epoch = datetime(2026, 11, 5, tzinfo=UTC)
+
+    class Time(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return epoch + timedelta(seconds=clock.now)
+
+    monkeypatch.setattr("colorstats.collect.measurement.datetime", Time)
+    payload, _ = payload_for(tmp_path)
+    payload["bias"] = copy.deepcopy(measured)
+    payload["request"].update(provider="openverse", stratum=request().stratum)
+    payload["policy"] = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
+    payload["policy"]["auth_mode"] = "standard"
+    queue.enqueue("collect", None, "a" * 64, payload)
+    first = queue.claim(["collect"])
+    meter = Meter(queue, first)
+
+    def opener(req, **kwargs):
+        sent.append(Time.now(UTC).isoformat())
+        if len(sent) == 1:
+            raise HTTPError(req.full_url, 429, "busy", {"Retry-After": "86400"}, None)
+        return Response({})
+
+    adapter = OpenverseAdapter(payload["policy"], opener=opener,
+                               clock=clock.clock, wait=clock.wait)
+    adapter._token, adapter._expires = "fixture-token", 1e9
+    adapter.quota_reserve = meter.reserve_quota
+    adapter.get(ENDPOINT)
+    with Session(queue.engine) as session:
+        run = session.get(ProcessingRun, meter.id)
+        assert [event["at"] for event in run.parameters["quota_events"]] == sent
+    clock.now += 0.5
+    with Session(queue.engine) as session, session.begin():
+        run = session.get(ProcessingRun, meter.id)
+        run.parameters = {**run.parameters, "quota_events": [
+            *run.parameters["quota_events"],
+            *[{"host": "api.openverse.org", "kind": "api",
+               "at": (Time.now(UTC) - timedelta(seconds=120)).isoformat()}] * 9999,
+        ]}
+    queue.fail(first, "restart fixture", retryable=False)
+    _HOST_STATES.clear()
+    queue.enqueue("collect", None, "b" * 64, payload)
+    restarted = Meter(queue, queue.claim(["collect"]))
+    assert restarted.reserve_quota(
+        "api.openverse.org", "api", payload["policy"]["standard_api_windows"]
+    ) >= 86280
+
+
+@DB
 def test_stage_observerとmeasurement台帳へ秘密queryを残さない(
     queue, measured, tmp_path, monkeypatch
 ):
@@ -780,3 +873,41 @@ def test_stage_observerとmeasurement台帳へ秘密queryを残さない(
     with Session(queue.engine) as session:
         search = report(session, "fixture-77")["strata"][request().stratum]["history"][0]["search"]
         assert "private" not in json.dumps(search)
+
+
+@DB
+def test_standard認証値をjobとDB試行台帳とrunへ保存しない(
+    queue, measured, tmp_path, monkeypatch, caplog
+):
+    from colorstats.collect.openverse import TOKEN_ENDPOINT
+
+    monkeypatch.setenv("CREDENTIALS_DIRECTORY", str(tmp_path))
+    (tmp_path / "openverse-client-id").write_text("fixture-private-id")
+    (tmp_path / "openverse-client-secret").write_text("fixture-private-secret")
+    policy = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
+    policy["auth_mode"] = "standard"
+    clock = Clock()
+
+    def opener(req, **kwargs):
+        if req.full_url == TOKEN_ENDPOINT:
+            return Response({"access_token": "fixture-private-token", "expires_in": 100})
+        assert req.get_header("Authorization") == "Bearer fixture-private-token"
+        return Response({"results": []})
+
+    adapter = OpenverseAdapter(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+    payload, digest = payload_for(tmp_path)
+    payload["bias"] = measured
+    payload["request"].update(provider="openverse", stratum=request().stratum)
+    payload["policy"] = policy
+    queue.enqueue("collect", None, digest, payload)
+    claim = queue.claim(["collect"])
+    monkeypatch.setenv("DATABASE_URL", queue.engine.url.render_as_string(hide_password=False))
+    monkeypatch.setattr(bias.stage, "OpenverseAdapter", lambda _: adapter)
+    prepared = bias.prepare(claim)
+    with Session(queue.engine) as session:
+        stored = json.dumps([run.parameters for run in session.scalars(select(ProcessingRun))])
+    assert "quota_events" in stored
+    assert prepared.info.parameters["effective"]["authentication"]["mode"] == "standard"
+    stored += json.dumps([payload, prepared.info.parameters]) + caplog.text
+    assert all(secret not in stored for secret in
+               ("fixture-private-id", "fixture-private-secret", "fixture-private-token"))

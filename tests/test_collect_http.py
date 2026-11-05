@@ -232,12 +232,13 @@ def test_redirect_host_policyがapi引数と元hostのkindに優先する():
     ]
 
 
-def test_別hostへのredirectで秘密queryを送らない():
+@pytest.mark.parametrize("target", ["https://api.openverse.org/v1/", "https://example.test/next"])
+def test_同hostと別hostへのredirectで秘密queryを送らない(target):
     policy = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
     policy["hosts"]["example.test"] = {"kind": "page"}
     redirect = HTTPError(
         "https://example.test/start?access_token=private", 302, "redirect",
-        {"Location": "https://api.openverse.org/v1/?token=redirect-secret&page=2"},
+        {"Location": target + "?access_token=redirect-secret&client_secret=secret&page=2"},
         io.BytesIO(),
     )
     responses, urls = iter((redirect, Response(b"{}"))), []
@@ -255,7 +256,7 @@ def test_別hostへのredirectで秘密queryを送らない():
     )
     assert urls == [
         "https://example.test/start?access_token=private",
-        "https://api.openverse.org/v1/?page=2",
+        target + "?page=2",
     ]
 
 

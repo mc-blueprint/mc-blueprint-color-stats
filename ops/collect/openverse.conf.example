@@ -1,0 +1,6 @@
+# credential配置・standard枠確認後、専用の収集unitへ適用する例。
+# ExecStart・DB・Storageは既存unitで指定し、policyのauth_modeをstandardにする。
+[Service]
+LoadCredential=openverse-client-id:/etc/colorstats/credentials/openverse-client-id
+LoadCredential=openverse-client-secret:/etc/colorstats/credentials/openverse-client-secret
+UMask=0077

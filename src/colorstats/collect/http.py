@@ -137,6 +137,7 @@ class HttpClient:
         return (
             key in {
                 "key", "sig", "signature", "credential", "password", "auth", "authorization",
+                "client_id",
             }
             or any(
                 token in key
@@ -250,11 +251,13 @@ class HttpClient:
                 state["api_requests"].append(slot_time)
         return kind, interval, host_name, host_policy, state
 
-    def get(self, url, *, target=None, text=False, read=json.load, api=False):
+    def get(self, url, *, target=None, text=False, read=json.load, api=False,
+            follow_redirects=True):
         """JSON・テキストを返すか、取得用targetへ保存する。
 
         要求区分と枠は実際の接続先hostのsource_policyで決め、redirect後も再判定する。
         apiは呼出元の互換引数で、hostのpolicyを上書きしない。
+        follow_redirects=Falseは認証用endpointなどの転送を通信前に拒否する。
         """
         check_policy(self.policy)
         for attempt in range(self.policy["retries"] + 1):
@@ -262,20 +265,24 @@ class HttpClient:
             while True:
                 check_policy(self.policy)
                 kind, interval, host_name, host_policy, state = self._wait_for_slot(current)
-                self.observe("api_request" if kind == "api" else "request")
-                if kind == "api" and self.quota_reserve is not None:
-                    windows = host_policy.get(
-                        "api_windows", self.policy.get("api_windows", [])
-                    )
-                    while delay := self.quota_reserve(host_name, kind, windows):
-                        self._observe_wait("normal_wait_seconds", delay)
-                        self.wait(delay)
                 state["semaphore"].acquire()
                 acquired = True
                 counted = None
                 network_seconds = 0.0
                 try:
+                    if kind == "api" and self.quota_reserve is not None:
+                        windows = host_policy.get(
+                            "api_windows", self.policy.get("api_windows", [])
+                        )
+                        if delay := self.quota_reserve(host_name, kind, windows):
+                            state["semaphore"].release()
+                            acquired = False
+                            self._observe_wait("normal_wait_seconds", delay)
+                            self.wait(delay)
+                            continue
+                    self.observe("api_request" if kind == "api" else "request")
                     request = Request(current, headers={"User-Agent": self.policy["user_agent"]})
+                    request.colorstats_redirected = redirects > 0
                     self._check_current_url(current)
                     open_started = self.clock()
                     try:
@@ -310,13 +317,16 @@ class HttpClient:
                             "Cloudflare challengeを検出したため、再試行せず停止します"
                         ) from error
                     if error.code in (301, 302, 303, 307, 308):
+                        if not follow_redirects:
+                            error.close()
+                            raise NonRetryableError(
+                                "認証endpointのredirectを拒否しました"
+                            ) from None
                         try:
                             self._error_bytes(counted)
-                            target_url = urljoin(current, error.headers.get("Location", ""))
-                            source_host = (urlsplit(current).hostname or "").casefold()
-                            target_host = (urlsplit(target_url).hostname or "").casefold()
-                            if target_host != source_host:
-                                target_url = self._without_secret_query(target_url)
+                            target_url = self._without_secret_query(
+                                urljoin(current, error.headers.get("Location", ""))
+                            )
                         finally:
                             error.close()
                         redirects += 1
