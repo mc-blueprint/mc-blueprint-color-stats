@@ -6,7 +6,7 @@ from urllib.parse import urlsplit
 import pytest
 
 from colorstats.collect.commons import CommonsAdapter
-from colorstats.collect.http import HttpClient
+from colorstats.collect.http import HttpClient, NonRetryableMeasurementLimit
 from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import load_policy
 from tests.test_collect import ROOT, Clock, Response
@@ -108,6 +108,16 @@ def test_恒久エラーを再試行しない(client):
         adapter.get("https://example.test")
     adapter.finish()
     assert len(calls) == 1 and adapter.clock() == 1
+
+
+def test_cloudflare_challengeは全adapterで即停止して再試行しない(client):
+    error = HTTPError(
+        "https://example.test", 403, "Forbidden", {"Cf-Mitigated": "challenge"}, None
+    )
+    adapter, calls = make_client(client, [error])
+    with pytest.raises(NonRetryableMeasurementLimit, match="Cloudflare challenge"):
+        adapter.get("https://example.test")
+    assert len(calls) == 1
 
 
 def test_途中終了した原本を受理しない(client, tmp_path):
