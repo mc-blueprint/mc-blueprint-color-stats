@@ -3,6 +3,7 @@
 import json
 import sys
 from collections import deque
+from contextlib import nullcontext
 from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
 from threading import BoundedSemaphore, Lock
@@ -257,19 +258,6 @@ class HttpClient:
         with state["schedule_lock"]:
             now = self.clock()
             normal_due = state["next_request"]
-            if kind == "api":
-                windows = host_policy.get("api_windows", self.policy.get("api_windows", []))
-                for window in windows:
-                    recent = [
-                        timestamp for timestamp in state["api_requests"]
-                        if timestamp > now - window["seconds"]
-                    ]
-                    if len(recent) >= window["limit"]:
-                        normal_due = max(normal_due, recent[0] + window["seconds"])
-                if windows:
-                    oldest = now - max(window["seconds"] for window in windows)
-                    while state["api_requests"] and state["api_requests"][0] <= oldest:
-                        state["api_requests"].popleft()
             backoff_due = state["backoff_until"]
             total_delay = max(0.0, max(normal_due, backoff_due) - now)
             backoff_delay = min(total_delay, max(0.0, backoff_due - now))
@@ -311,22 +299,39 @@ class HttpClient:
                             self._observe_wait("normal_wait_seconds", delay)
                             self.wait(delay)
                             continue
-                    if kind == "api" and self.quota_reserve is not None:
-                        windows = host_policy.get(
-                            "api_windows", self.policy.get("api_windows", [])
-                        )
-                        if delay := self.quota_reserve(host_name, kind, windows):
-                            state["semaphore"].release()
-                            acquired = False
+                    with state["schedule_lock"] if kind == "api" else nullcontext():
+                        if kind == "api" and self.shared_limits is None:
+                            now = self.clock()
+                            due = now
+                            for window in windows:
+                                recent = [
+                                    timestamp for timestamp in state["api_requests"]
+                                    if timestamp > now - window["seconds"]
+                                ]
+                                if len(recent) >= window["limit"]:
+                                    due = max(due, recent[-window["limit"]] + window["seconds"])
+                            delay = max(0.0, due - now)
                             self._observe_wait("normal_wait_seconds", delay)
-                            self.wait(delay)
-                            continue
-                    request = Request(current, headers={"User-Agent": self.policy["user_agent"]})
-                    request.colorstats_redirected = redirects > 0
-                    self._check_current_url(current)
-                    self.observe("api_request" if kind == "api" else "request")
-                    if kind == "api":
-                        with state["schedule_lock"]:
+                            if delay:
+                                self.wait(delay)
+                        if kind == "api" and windows:
+                            oldest = self.clock() - max(w["seconds"] for w in windows)
+                            while state["api_requests"] and state["api_requests"][0] <= oldest:
+                                state["api_requests"].popleft()
+                        if kind == "api" and self.quota_reserve is not None:
+                            if delay := self.quota_reserve(host_name, kind, windows):
+                                state["semaphore"].release()
+                                acquired = False
+                                self._observe_wait("normal_wait_seconds", delay)
+                                self.wait(delay)
+                                continue
+                        request = Request(
+                            current, headers={"User-Agent": self.policy["user_agent"]}
+                        )
+                        request.colorstats_redirected = redirects > 0
+                        self._check_current_url(current)
+                        self.observe("api_request" if kind == "api" else "request")
+                        if kind == "api":
                             state["api_requests"].append(self.clock())
                     open_started = self.clock()
                     try:

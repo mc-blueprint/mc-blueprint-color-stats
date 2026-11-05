@@ -100,3 +100,16 @@ API/byte台帳を消去せず、旧接続の終了と待機期限を確認して
   公開文面はRefs #91を維持する。全検証processと一時PostgreSQLは終了済み。
 
 最終コマンド記録：`C:\Users\ryuma\.codex\logs\commands\20261105T152658Z-3de426bfecf84f9b958bff81ed3c5daf.jsonl`。
+
+## 追加反証：共有予約なしのAPI枠
+
+- 同一process内でAPI60秒1回の2呼出しを並行実行し、最初の呼出しの計数前に
+  もう一方が履歴を確認できる状態を作った。修正前は両要求が0.5秒時点に送信されることを再現した。
+- API窓の確認・待機・履歴追加を送信直前の同じロック内に移し、送信間隔60秒以上を確認した。
+  observer・予約処理が待機して送信しない場合は履歴を増やさない。実際の通信中はロックを保持しない。
+- 最終差分で外部通信不能なWSL Ubuntu-24.04のネットワーク名前空間と隔離PostgreSQL16を使い、
+  ruff・全pytest 1052 passed/1 skipped（既存GPU）・offline sdist/wheel build・差分検査が成功した。
+- 検証processと一時PostgreSQLは終了済み。外部通信・SSH・本番DB操作・push・PR作成は行っていない。
+  以前の同一応答条件での実測比較は未達のままで、公開文面はRefs #91を維持する。
+
+最終コマンド記録：`C:\Users\ryuma\.codex\logs\commands\20261105T154212Z-b95e465eda91450fa478fc9ec8648a30.jsonl`。
