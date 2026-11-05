@@ -1,15 +1,21 @@
 """Openverse API を使う画像検索アダプター。"""
 
 import json
+import os
+from copy import deepcopy
 from html.parser import HTMLParser
+from math import isfinite
 from pathlib import Path
+from urllib.error import HTTPError
 from urllib.parse import urlencode, urlsplit
 
 from colorstats.collect import Candidate, SearchResult
 from colorstats.collect.http import HttpClient, MeasurementLimit
 from colorstats.collect.policy import license_class
+from colorstats.queue.core import NonRetryableError
 
 ENDPOINT = "https://api.openverse.org/v1/images/"
+TOKEN_ENDPOINT = "https://api.openverse.org/v1/auth_tokens/token/"
 MIME_TYPES = {
     "jpg": "image/jpeg",
     "jpeg": "image/jpeg",
@@ -115,7 +121,105 @@ def _verify_source(page, item):
 
 
 class OpenverseAdapter(HttpClient):
-    """匿名 Openverse API で検索し、元サイトのページを照合してから取得する。"""
+    """policyのanonymous/standardで検索し、元ページを完全照合する。
+
+    standardはsystemd credential必須。tokenはメモリ内のみで期限前に再取得し、
+    認証失敗時は停止する。元ページ・原画像・redirectに認証を渡さない。
+    """
+
+    def __init__(self, policy, **kwargs):
+        policy = deepcopy(policy)
+        self.auth_mode = policy.get("auth_mode", "anonymous")
+        if self.auth_mode not in ("anonymous", "standard"):
+            raise ValueError("Openverse auth_modeはanonymousまたはstandardです")
+        if self.auth_mode == "standard":
+            policy["hosts"]["api.openverse.org"]["api_windows"] = policy[
+                "standard_api_windows"
+            ]
+        super().__init__(policy, **kwargs)
+        self._token = None
+        self._expires = 0
+        self._auth_failed = False
+        opener = self.opener
+
+        def authorized(request, **options):
+            parts = urlsplit(request.full_url)
+            if (parts.hostname or "").lower().rstrip(".") == "api.openverse.org":
+                if self.auth_mode == "standard" and request.colorstats_redirected:
+                    raise NonRetryableError("Openverse登録APIへのredirectを拒否しました")
+                if parts.scheme != "https" or parts.port not in (None, 443):
+                    raise NonRetryableError("Openverse APIはHTTPSの標準ポートだけを使用します")
+                if (self.auth_mode == "standard" and not request.colorstats_redirected
+                        and parts.path not in ("/v1/images/", "/v1/auth_tokens/token/")):
+                    raise NonRetryableError("Openverseの未対応endpointへの要求を拒否しました")
+            if (self.auth_mode == "standard" and request.full_url == TOKEN_ENDPOINT
+                    and not request.colorstats_redirected):
+                directory = os.environ.get("CREDENTIALS_DIRECTORY")
+                try:
+                    if not directory:
+                        raise OSError
+                    client_id = (Path(directory) / "openverse-client-id").read_text().strip()
+                    secret = (Path(directory) / "openverse-client-secret").read_text().strip()
+                    if not client_id or not secret:
+                        raise OSError
+                except OSError:
+                    raise NonRetryableError("Openverse credentialがないため停止します") from None
+                request.data = urlencode({"grant_type": "client_credentials",
+                                          "client_id": client_id,
+                                          "client_secret": secret}).encode()
+                request.add_header("Content-Type", "application/x-www-form-urlencoded")
+            elif (self.auth_mode == "standard"
+                  and (request.full_url == ENDPOINT or request.full_url.startswith(ENDPOINT + "?"))
+                  and not request.colorstats_redirected):
+                request.add_header("Authorization", "Bearer " + self._token)
+            return opener(request, **options)
+
+        self.opener = authorized
+
+    def _wait_for_slot(self, url):
+        if self._auth_failed:
+            raise NonRetryableError("Openverse認証失敗後の通信を停止します")
+        slot = super()._wait_for_slot(url)
+        if self.auth_mode == "standard" and (url == ENDPOINT or url.startswith(ENDPOINT + "?")):
+            if not self._token or self.clock() >= self._expires:
+                try:
+                    data = super().get(TOKEN_ENDPOINT, follow_redirects=False)
+                    token, lifetime = data["access_token"], float(data["expires_in"])
+                    if (not isinstance(token, str) or not token or not isfinite(lifetime)
+                            or lifetime <= 0
+                            or any(c.isspace() for c in token)
+                            or data.get("token_type", "Bearer").casefold() != "bearer"):
+                        raise ValueError
+                except MeasurementLimit:
+                    raise
+                except Exception:
+                    self._auth_failed = True
+                    self._token = None
+                    raise NonRetryableError("Openverse token取得に失敗したため停止します") from None
+                self._token = token
+                self._expires = self.clock() + lifetime * 0.9
+                slot = super()._wait_for_slot(url)
+                if self.clock() >= self._expires:
+                    self._token = None
+                    raise NonRetryableError(
+                        "Openverse tokenの有効時間が取得間隔より短いため停止します"
+                    )
+        return slot
+
+    def get(self, url, **kwargs):
+        if self.auth_mode == "standard" and (url == ENDPOINT or url.startswith(ENDPOINT + "?")):
+            kwargs["follow_redirects"] = False
+        try:
+            return super().get(url, **kwargs)
+        except HTTPError as error:
+            code = error.code
+            error.close()
+            if url.startswith(ENDPOINT) and code in (401, 403):
+                self._auth_failed = True
+                self._token = None
+                raise NonRetryableError(f"Openverse認証・アクセス拒否: HTTP {code}") from None
+            raise HTTPError(self._without_secret_query(url), code,
+                            "Openverse HTTP error", {}, None) from None
 
     def search(self, request):
         if request.provider != "openverse":
@@ -138,6 +242,10 @@ class OpenverseAdapter(HttpClient):
                 "calculation": "request.start + index",
             },
             "page_basis": {"base": 0, "value": request.start, "api_value": api_page},
+        }
+        effective["authentication"] = {
+            "mode": self.auth_mode, "tier": self.auth_mode,
+            "api_windows": self.policy["hosts"]["api.openverse.org"]["api_windows"],
         }
         self.observe("search", {"effective": effective})
         data = self.get(ENDPOINT + "?" + urlencode(params), api=True)

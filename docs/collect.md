@@ -477,6 +477,44 @@ source.policyは初回の共有情報を保持する。後日のlicense/根拠�
 `rights.analysis_review_reasons(policy, now=None)`は不足・停止・失効の理由文字列リストを返す。
 `stats.licenses.exclusion_reasons(asset, source, runs)`は元権利一致、二経路、全run・全モデルを検査する。
 未確認のrestrictedからanalysis_onlyへ落とすフォールバックはない。
+## Openverse 登録クライアント（Issue #93）
+
+既定は`auth_mode: anonymous`で、5要求/3600秒・100要求/86400秒を維持します。
+credentialの存在でモードを自動変更しません。登録クライアントを使う場合は、
+専用policyの`auth_mode`を`standard`にして新しいjobを投入してください。
+`standard_api_windows`（100要求/60秒・10,000要求/86400秒）がAPI hostへ適用されます。
+policyのモード・credential参照名・上限はpayload/hashへ固定し、既存jobは書き換えません。
+enhanced・exemptは選択できません。元ページと画像の照合・禁止hostの停止は共通実装を使います。
+Commons画像の縮小既定（#109）も変更しません。
+
+認証は`ops/collect/openverse.conf.example`の2つの`LoadCredential=`で注入します。
+実行中は`CREDENTIALS_DIRECTORY/openverse-client-id`と`openverse-client-secret`だけを読みます。
+値を環境変数・引数へ入れず、root専用ファイルを直接読んだりコピーしたりしません。
+未配置時は匿名設定を維持してください。standardを明示したjobは欠落時に通信前停止します。
+このunit例の配置・サービス変更は本変更で実施していません。
+
+標準urllibと既存HttpClientを再利用し、token endpointにだけclient_credentialsをPOSTします。
+tokenはメモリ内のみで、有効期限の90%に達すると再取得します。DB枠待機後も再判定します。
+BearerはHTTPSのOpenverse images endpointへの直接要求だけに付けます。
+登録APIとtoken endpointのredirectは追従せず停止し、登録枠で匿名要求を送りません。
+元ページ・画像のredirectでは同hostでも秘密queryを除去します。
+401/403・不正token・取得失敗では匿名切替せず停止します。
+429/503は共通Retry-After待機を使い、短いbackoffだけで長周期枠を反復消費しません。
+
+standardの本収集は、既存bias収集の`Meter`付き経路に限定します。
+台帳のない通常collectは通信前に停止します。同じ運用者のworkerは同じDBを使い、
+単一収集unit・同時1で運用してください。token要求も保守的に同じAPI枠へ数えます。
+分・日枠は全測定・失敗jobをまたいで同じAPI hostのDB台帳から復元し、
+匿名の過去要求も除外しません。上限変更には新job・新測定を使います。
+台帳予約はRetry-After・host枠・同時実行枠の待機後、送信直前に行います。
+DB枠待機が必要なら予約せず待機し、host枠とtoken期限を再判定します。
+観測値にはモード・tier・有効枠だけを加え、client ID/secret/tokenは保存しません。
+
+2026-11-05に[公式認証資料](https://docs.openverse.org/api/reference/authentication_and_throttling.html)と
+[公式レート既定](https://github.com/WordPress/openverse/blob/main/api/conf/settings/rest_framework.py)
+を確認しました。上記数値は公式コードの既定値で、本番の保証値ではありません。
+登録時の提示枠と実応答の確認は認証情報の配置後に必要です。
+
 ## Mapillary（Issue #94）
 
 `mapillary`は登録アプリの公開Images APIだけに接続する解析専用アダプターです。
