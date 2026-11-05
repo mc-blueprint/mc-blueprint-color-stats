@@ -154,11 +154,13 @@ def _summary(pixels):
     }
 
 
-def observations(image: Image.Image, corrected: np.ndarray, regions: list[dict]) -> list[dict]:
+def observations(image: Image.Image, corrected: np.ndarray, regions: list[dict],
+                 *, person_mask=None) -> list[dict]:
     """各領域の同じ有効画素から観測色・推定色を集約する。
 
     1領域1観測でarea_ratio=1。confidenceは元マスクに対する有効画素率で、
     材質色が正しい確率ではない。有効画素なしの領域は結果を作らず欠測として扱う。
+    person_maskの非ゼロ人物画素は集計と部位面積から除く。
     """
     rgba = np.asarray(image.convert("RGBA"))
     rgb = rgba[:, :, :3]
@@ -169,6 +171,8 @@ def observations(image: Image.Image, corrected: np.ndarray, regions: list[dict])
     records = []
     for row in regions:
         mask = color._region_mask(row, image.size)
+        if person_mask is not None:
+            mask &= ~person_mask
         selected = mask & valid
         if not selected.any():
             continue
@@ -196,9 +200,18 @@ def prepare(claim: Claim) -> Prepared:
         raise ValueError("regionsは重複のないID順で指定してください")
     model = parameters.get("model")
     with Image.open(payload["input_path"]) as image:
+        people = None
+        if payload.get("person_mask"):
+            with Image.open(payload["person_mask"]) as person:
+                people = np.asarray(person.convert("L")) != 0
+            if people.shape != (image.height, image.width):
+                raise ValueError("人物maskは解析画像と同寸で指定してください")
+            pixels = np.array(image.convert("RGBA"))
+            pixels[people, 3] = 0
+            image = Image.fromarray(pixels)
         corrected = correct(image, payload["method"], model_path=payload.get("model_path"),
                             weights_hash=_digest(model) if model else None)
-        regions = observations(image, corrected, payload["regions"])
+        regions = observations(image, corrected, payload["regions"], person_mask=people)
     data = {
         "asset_id": str(claim.asset_id), "input_run_id": payload.get("input_run_id"),
         "region_run_id": payload["region_run_id"], "regions": regions,

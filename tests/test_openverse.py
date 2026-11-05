@@ -15,6 +15,7 @@ from colorstats.collect.policy import load_policy
 from colorstats.collect.stage import enqueue_collect, prepare, register
 from colorstats.schema.models import Asset, ProcessingRun, Source
 from tests.test_collect import Clock, claim_for, payload_for
+from tests.test_collect import isolated_acquisition_check as isolated_acquisition_check
 from tests.test_queue import database, queue  # noqa: F401
 
 FIXTURE = Path(__file__).parent / "fixtures" / "openverse.json"

@@ -12,6 +12,7 @@ from colorstats.queue.core import Claim, RunInfo
 from colorstats.queue.worker import Prepared
 from colorstats.rights import combine_license
 from colorstats.schema.models import Asset, AssetDuplicate, Source, SubjectCandidate
+from colorstats.store import temporary_path
 
 MAX_SIZE = (512, 512)
 PHASH_DISTANCE = 6
@@ -66,8 +67,7 @@ def prepare(claim: Claim) -> Prepared:
     target = Path(claim.payload["derived_path"])
     result = _inspect(source)
     image = result.pop("resized")
-    temporary = target.with_name(f".{target.name}.{claim.token}.tmp")
-    temporary.parent.mkdir(parents=True, exist_ok=True)
+    temporary = temporary_path(target, str(claim.token))
     image.save(temporary, format="JPEG", quality=90, optimize=True)
     data = {"asset_id": str(claim.asset_id), "target": str(target), **result}
     return Prepared(
