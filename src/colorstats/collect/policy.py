@@ -40,7 +40,7 @@ def check_current_url(url: str) -> None:
 def host_rate_group(host: str, hosts: dict) -> str:
     """実hostを、HTTP接続先policyと同じsuffix規則で共有枠へ対応付ける。"""
     host = host.lower().rstrip(".")
-    for suffix, policy in hosts.items():
+    for suffix, policy in sorted(hosts.items(), key=lambda item: len(item[0]), reverse=True):
         suffix = suffix.lower().lstrip(".")
         if host == suffix or host.endswith("." + suffix):
             return policy.get("rate_group", host)

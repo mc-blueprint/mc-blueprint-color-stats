@@ -1,6 +1,7 @@
 """収集先に共通する直列HTTP取得と負荷待機。"""
 
 import json
+import sys
 from collections import deque
 from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
@@ -10,8 +11,10 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlunsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from sqlalchemy.exc import SQLAlchemyError
+
 from colorstats.collect.policy import check_current_url, check_policy
-from colorstats.queue.core import NonRetryableError
+from colorstats.queue.core import LeaseLost, NonRetryableError
 
 _HOST_STATES = {}
 _HOST_STATES_LOCK = Lock()
@@ -65,14 +68,34 @@ class _CountingResponse:
         if self.media:
             client, state, host_policy, host_name = self.media
             with state["media_lock"]:
-                size = min(size, client._media_chunk_size(state, host_policy, host_name))
+                is_media = host_policy["kind"] == "media"
+                if is_media:
+                    size = min(size, client._media_chunk_size(state, host_policy, host_name))
+                group = host_policy.get("rate_group", host_name)
+                if client.shared_limits is not None:
+                    limit = host_policy.get(
+                        "media_bytes_per_10_seconds",
+                        client.policy.get("media_bytes_per_10_seconds"),
+                    ) if is_media else None
+                    while True:
+                        size, delay = client.shared_limits.chunk(group, size, limit)
+                        if not delay:
+                            break
+                        delay = min(delay, 1.0)
+                        client._observe_wait("bandwidth_wait_seconds", delay)
+                        client.wait(delay)
+                        size = min(64 * 1024, limit)
                 started = self.clock()
                 try:
-                    data = self.response.read(size)
+                    reader = getattr(self.response, "read1", self.response.read)
+                    data = reader(size)
                 finally:
                     self.network_seconds += max(0.0, self.clock() - started)
+                if client.shared_limits is not None:
+                    client.shared_limits.received(group)
                 self.bytes += len(data)
-                client._record_media(len(data), state)
+                if is_media:
+                    client._record_media(len(data), state)
                 return data
         started = self.clock()
         try:
@@ -100,6 +123,7 @@ class HttpClient:
         self.observer = None
         self.quota_reserve = None
         self.media_history = None
+        self.shared_limits = None
         self.hosts_used = set()
 
     def observe(self, event, value=1):
@@ -191,7 +215,9 @@ class HttpClient:
         if parts.username or parts.password:
             raise ValueError("URL埋め込み認証を拒否しました")
         host = (parts.hostname or "").lower().rstrip(".")
-        for suffix, config in self.policy.get("hosts", {}).items():
+        for suffix, config in sorted(
+            self.policy.get("hosts", {}).items(), key=lambda item: len(item[0]), reverse=True
+        ):
             suffix = suffix.lower().lstrip(".")
             if host == suffix or host.endswith("." + suffix):
                 path = unquote(parts.path).casefold()
@@ -269,7 +295,17 @@ class HttpClient:
                 acquired = True
                 counted = None
                 network_seconds = 0.0
+                group = host_policy.get("rate_group", host_name)
                 try:
+                    windows = host_policy.get("api_windows", self.policy.get("api_windows", []))
+                    if self.shared_limits is not None:
+                        if delay := self.shared_limits.reserve(
+                            group, kind, host_policy, interval, windows
+                        ):
+                            delay = min(delay, 1.0)
+                            self._observe_wait("normal_wait_seconds", delay)
+                            self.wait(delay)
+                            continue
                     if kind == "api" and self.quota_reserve is not None:
                         windows = host_policy.get(
                             "api_windows", self.policy.get("api_windows", [])
@@ -291,7 +327,9 @@ class HttpClient:
                         network_seconds += max(0.0, self.clock() - open_started)
                     with response_context as response:
                         self.observe("responses")
-                        media = (self, state, host_policy, host_name) if kind == "media" else None
+                        media = (self, state, host_policy, host_name) if (
+                            kind == "media" or self.shared_limits is not None
+                        ) else None
                         counted = response = _CountingResponse(response, self.clock, media)
                         if target is not None:
                             with target.open("wb") as output:
@@ -305,7 +343,9 @@ class HttpClient:
                             return response.read().decode("utf-8", errors="replace")
                         return read(response)
                 except HTTPError as error:
-                    media = (self, state, host_policy, host_name) if kind == "media" else None
+                    media = (self, state, host_policy, host_name) if (
+                        kind == "media" or self.shared_limits is not None
+                    ) else None
                     counted = _CountingResponse(error, self.clock, media)
                     self.observe("responses")
                     if error.code == 403 and (
@@ -338,8 +378,8 @@ class HttpClient:
                     if error.code not in (429, 503):
                         self._error_bytes(counted)
                         raise
-                    self._error_bytes(counted)
                     self._delay(error.headers, attempt, current)
+                    self._error_bytes(counted)
                     error.close()
                     break
                 except RetryResponse as error:
@@ -350,22 +390,30 @@ class HttpClient:
                         self.observe("timeouts")
                     raise
                 finally:
-                    if counted is not None:
-                        self.observe("bytes", counted.bytes)
-                        network_seconds += counted.network_seconds
-                        if kind == "media" and counted.bytes:
-                            self.observe("media_transfer", {
-                                "host": host_name, "bytes": counted.bytes,
-                                "rate_group": host_policy.get("rate_group", host_name),
-                            })
-                    self.observe(f"network_{kind}_seconds", network_seconds)
-                    cooldown = host_policy.get(
-                        f"{kind}_slow_seconds", self.policy.get(f"{kind}_slow_seconds", 0)
-                    )
-                    delay = cooldown if kind == "api" and network_seconds > 1.0 else interval
-                    state["next_request"] = max(state["next_request"], self.clock() + delay)
-                    if acquired:
-                        state["semaphore"].release()
+                    try:
+                        if counted is not None:
+                            self.observe("bytes", counted.bytes)
+                            network_seconds += counted.network_seconds
+                            if kind == "media" and counted.bytes:
+                                self.observe("media_transfer", {
+                                    "host": host_name, "bytes": counted.bytes,
+                                    "rate_group": host_policy.get("rate_group", host_name),
+                                })
+                        self.observe(f"network_{kind}_seconds", network_seconds)
+                        cooldown = host_policy.get(
+                            f"{kind}_slow_seconds", self.policy.get(f"{kind}_slow_seconds", 0)
+                        )
+                        delay = cooldown if kind == "api" and network_seconds > 1.0 else interval
+                        state["next_request"] = max(state["next_request"], self.clock() + delay)
+                        if self.shared_limits is not None and not isinstance(
+                            sys.exception(), (SQLAlchemyError, LeaseLost)
+                        ):
+                            self.shared_limits.finish(
+                                group, delay, max(0, state["backoff_until"] - self.clock())
+                            )
+                    finally:
+                        if acquired:
+                            state["semaphore"].release()
 
         self.finish()
         raise RuntimeError("負荷制限により取得を中断しました")
