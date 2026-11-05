@@ -11,6 +11,7 @@ from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlun
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from colorstats.collect.policy import check_current_url, check_policy
+from colorstats.queue.core import NonRetryableError
 
 _HOST_STATES = {}
 _HOST_STATES_LOCK = Lock()
@@ -36,6 +37,10 @@ def _host_state(host, max_concurrency=1):
 
 class MeasurementLimit(RuntimeError):
     """事前固定した通信枠を使い切った。追加の通信は行わない。"""
+
+
+class NonRetryableMeasurementLimit(MeasurementLimit, NonRetryableError):
+    """source policyまたはCloudflare challengeによる非再試行の通信停止。"""
 
 
 class _NoRedirect(HTTPRedirectHandler):
@@ -167,8 +172,20 @@ class HttpClient:
         if delay > 0:
             self.observe(event, delay)
 
+    @staticmethod
+    def _check_current_url(url):
+        try:
+            check_current_url(url)
+        except NonRetryableError as error:
+            host = (urlsplit(url).hostname or "").lower().rstrip(".")
+            if host == "loc.gov" or host.endswith(".loc.gov"):
+                raise NonRetryableMeasurementLimit(
+                    "LoC source policyが無効のため通信を停止します"
+                ) from error
+            raise
+
     def _host_policy(self, url):
-        check_current_url(url)
+        self._check_current_url(url)
         parts = urlsplit(url)
         if parts.username or parts.password:
             raise ValueError("URL埋め込み認証を拒否しました")
@@ -259,7 +276,7 @@ class HttpClient:
                 network_seconds = 0.0
                 try:
                     request = Request(current, headers={"User-Agent": self.policy["user_agent"]})
-                    check_current_url(current)
+                    self._check_current_url(current)
                     open_started = self.clock()
                     try:
                         response_context = self.opener(request, timeout=60)
@@ -284,6 +301,14 @@ class HttpClient:
                     media = (self, state, host_policy, host_name) if kind == "media" else None
                     counted = _CountingResponse(error, self.clock, media)
                     self.observe("responses")
+                    if error.code == 403 and (
+                        error.headers.get("Cf-Mitigated", "").casefold() == "challenge"
+                    ):
+                        self._error_bytes(counted)
+                        error.close()
+                        raise NonRetryableMeasurementLimit(
+                            "Cloudflare challengeを検出したため、再試行せず停止します"
+                        ) from error
                     if error.code in (301, 302, 303, 307, 308):
                         try:
                             self._error_bytes(counted)
