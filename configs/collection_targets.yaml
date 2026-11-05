@@ -1,6 +1,13 @@
 # 全体1万枚のうちCommonsは80%の8,000枚まで。既存画像を含む。
 taxonomy_version: 0.1.0
 image_budget: 10000
+# subjectsは統計の目標比率、imagesは既存を含む収集上限。集中枠は維持する。
+gap_plan:
+  issue: 105
+  evidence: bench/issue105/correction-v2/results.md
+  deficits: bench/issue105/correction-v2/deficits-after.json
+  priority_order: ascending
+  provider_issues: {library_of_congress: 92, mapillary: 94}
 limits:
   subject_images: 3
   subject_share: 0.003
@@ -14,6 +21,10 @@ search:
   max_offset: 500
 strata:
   - id: japanese-castle
+    priority: 1
+    support_gap: {n_eff_to_30: 20.0, subjects_to_30: 20, unvalidated_pairs: 665}
+    collection_sources: [wikimedia_commons, mapillary]
+    focus_parts: [wall, roof, window_frame, window_glass, door]
     attributes:
       domain: real_building
       style: japanese
@@ -21,11 +32,15 @@ strata:
       region: japan
       era: early_modern
     subjects: 100
-    images: 835
+    images: 905
     queries:
       ja: [日本 城 天守, 日本 城 石垣, 城郭 櫓, 山城 城跡]
       en: [Japanese castle exterior, Japanese castle walls, Japanese castle keep, Japanese castle gate]
   - id: gothic-temple
+    priority: 3
+    support_gap: {n_eff_to_30: 0, subjects_to_30: 0, unvalidated_pairs: 665}
+    collection_sources: [wikimedia_commons, mapillary]
+    focus_parts: [wall, roof, window_frame, window_glass, door]
     attributes:
       domain: real_building
       style: gothic
@@ -33,24 +48,32 @@ strata:
       region: europe
       era: medieval
     subjects: 100
-    images: 835
+    images: 680
     queries:
       en: [gothic church exterior, gothic cathedral facade, Gothic church portal, Gothic cathedral tower]
       de: [gotische Kirche Außenansicht, gotische Kathedrale Fassade, gotische Kirche Westfassade]
       fr: [cathédrale gothique façade, église gothique extérieur]
   - id: forest-autumn-day
+    priority: 1
+    support_gap: {n_eff_to_30: 16.0, subjects_to_30: 16, unvalidated_pairs: 66}
+    collection_sources: [wikimedia_commons, mapillary]
+    focus_parts: [tree]
     attributes:
       domain: real_terrain
       biome_like: forest
       season: autumn
       time_of_day: day
     subjects: 100
-    images: 835
+    images: 755
     queries:
       ja: [秋 森 風景, 紅葉 森林, 紅葉 渓谷, 秋 ブナ林]
       en: [autumn forest landscape, fall woodland landscape, autumn birch forest, autumn deciduous forest]
       de: [Herbst Wald Landschaft, Buchenwald Herbst]
   - id: modern-house
+    priority: 2
+    support_gap: {n_eff_to_30: 5.0, subjects_to_30: 5, unvalidated_pairs: 665}
+    collection_sources: [library_of_congress, mapillary, wikimedia_commons]
+    focus_parts: [wall, roof, window_frame, window_glass, door]
     attributes:
       domain: real_building
       style: modern
@@ -58,13 +81,17 @@ strata:
       region: north_america
       era: modern
     subjects: 100
-    images: 835
+    images: 680
     queries:
       en: ['"Modernist houses" "United States"', '"mid-century modern" house California', '"modern house" Canada', '"modern house" Mexico', 'Usonian house exterior', '"Case Study House"']
       fr: ['maison "Frank Lloyd Wright"', 'maison "Richard Neutra"', '"Habitat 67" Montréal']
       es: ['casa "Luis Barragán"', 'casa "Richard Neutra"', 'casa "Frank Lloyd Wright"']
       de: ['Haus "Frank Lloyd Wright"', 'Wohnhaus "Richard Neutra"', 'Haus Kalifornien modern']
   - id: medieval-house
+    priority: 3
+    support_gap: {n_eff_to_30: 0, subjects_to_30: 0, unvalidated_pairs: 665}
+    collection_sources: [wikimedia_commons, mapillary]
+    focus_parts: [wall, roof, window_frame, window_glass, door]
     attributes:
       domain: real_building
       style: medieval
@@ -72,12 +99,16 @@ strata:
       region: europe
       era: medieval
     subjects: 100
-    images: 835
+    images: 680
     queries:
       en: [medieval timber framed house, medieval house exterior, medieval stone house, medieval town houses]
       de: [Fachwerkhaus Altstadt, mittelalterliches Wohnhaus, Fachwerkhäuser Fassade]
       fr: [maison médiévale façade, maison à colombages]
   - id: japanese-temple
+    priority: 1
+    support_gap: {n_eff_to_30: 19.0, subjects_to_30: 19, unvalidated_pairs: 665}
+    collection_sources: [wikimedia_commons, mapillary]
+    focus_parts: [wall, roof, window_frame, window_glass, door]
     attributes:
       domain: real_building
       style: japanese
@@ -85,12 +116,16 @@ strata:
       region: japan
       era: early_modern
     subjects: 100
-    images: 835
+    images: 895
     queries:
       ja: [日本 寺 本堂, 日本 神社 社殿, 寺院 山門, 寺院 多宝塔, 神社 拝殿]
       en: [Japanese Buddhist temple exterior, Japanese temple gate, Japanese shrine buildings]
       de: [buddhistischer Tempel Japan, Shinto Schrein Japan]
   - id: islamic-temple
+    priority: 1
+    support_gap: {n_eff_to_30: 20.0, subjects_to_30: 20, unvalidated_pairs: 665}
+    collection_sources: [wikimedia_commons, mapillary]
+    focus_parts: [wall, roof, window_frame, window_glass, door]
     attributes:
       domain: real_building
       style: islamic
@@ -98,12 +133,16 @@ strata:
       region: west_asia
       era: early_modern
     subjects: 100
-    images: 835
+    images: 770
     queries:
       en: [Ottoman mosque exterior, Persian mosque facade, Ottoman mosque courtyard, Safavid mosque exterior]
       tr: [cami dış görünüm, Osmanlı cami avlu, cami cephe]
       fa: [مسجد صفوی, نمای مسجد ایران]
   - id: chinese-house
+    priority: 1
+    support_gap: {n_eff_to_30: 29.0, subjects_to_30: 29, unvalidated_pairs: 665}
+    collection_sources: [wikimedia_commons, mapillary]
+    focus_parts: [wall, roof, window_frame, window_glass, door]
     attributes:
       domain: real_building
       style: chinese
@@ -111,55 +150,71 @@ strata:
       region: east_asia
       era: early_modern
     subjects: 100
-    images: 835
+    images: 955
     queries:
       en: [traditional Chinese courtyard house, Chinese vernacular house, Fujian tulou, Beijing hutong courtyard]
       zh: [中国 传统 民居, 四合院, 福建 土楼, 徽州 民居, 山西 民居]
       ja: [中国 四合院, 中国 伝統 民家]
   - id: mountains-summer-day
+    priority: 1
+    support_gap: {n_eff_to_30: 22.0, subjects_to_30: 22, unvalidated_pairs: 66}
+    collection_sources: [wikimedia_commons]
+    focus_parts: [rock_face, rock_scree, tree]
     attributes:
       domain: real_terrain
       biome_like: mountains
       season: summer
       time_of_day: day
     subjects: 100
-    images: 830
+    images: 925
     queries:
       en: [rocky mountain landscape summer, Andes mountain landscape, Alps summer landscape, Himalaya summer landscape]
       es: [paisaje montañas Andes, montañas verano paisaje, cordillera Andes verano]
       de: [Alpen Sommer Landschaft, Gebirge Sommer]
   - id: plains-summer-day
+    priority: 1
+    support_gap: {n_eff_to_30: 23.0, subjects_to_30: 23, unvalidated_pairs: 66}
+    collection_sources: [wikimedia_commons, mapillary]
+    focus_parts: [ground_grass, tree]
     attributes:
       domain: real_terrain
       biome_like: plains
       season: summer
       time_of_day: day
     subjects: 100
-    images: 830
+    images: 885
     queries:
       en: [prairie grassland landscape, steppe grassland landscape, pampas landscape summer, savanna grassland landscape]
       fr: [prairie paysage été, steppe paysage, prairie naturelle été]
       es: [pradera paisaje verano, pampa paisaje]
   - id: desert-summer-day
+    priority: 1
+    support_gap: {n_eff_to_30: 23.0, subjects_to_30: 23, unvalidated_pairs: 66}
+    collection_sources: [wikimedia_commons]
+    focus_parts: [sand, rock_face, rock_scree]
     attributes:
       domain: real_terrain
       biome_like: desert
       season: summer
       time_of_day: day
     subjects: 100
-    images: 830
+    images: 935
     queries:
       en: [Sahara sand dunes landscape, Australian desert landscape, Namib desert dunes, Arabian desert landscape]
       ar: [الصحراء كثبان رملية, الصحراء الكبرى, الربع الخالي كثبان]
       fr: [dunes Sahara paysage, désert Namib dunes]
   - id: snowy-winter-day
+    priority: 1
+    support_gap: {n_eff_to_30: 23.0, subjects_to_30: 23, unvalidated_pairs: 66}
+    collection_sources: [wikimedia_commons, mapillary]
+    focus_parts: [snow_ice, tree]
     attributes:
       domain: real_terrain
       biome_like: snowy
       season: winter
       time_of_day: day
     subjects: 100
-    images: 830
+    images: 935
     queries:
       en: [snow covered landscape winter, arctic tundra snow landscape, snowy forest winter landscape, winter frozen lake landscape]
       ja: [雪原 冬 風景, 冬 雪 森林, 凍結 湖 冬]

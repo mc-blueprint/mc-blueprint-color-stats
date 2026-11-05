@@ -18,6 +18,7 @@ from colorstats.schema.models import ProcessingRun, ProcessingRunInput, RuleStat
 from colorstats.stats import distributions, weights
 from colorstats.stats.snapshot import canonical, digest, verify
 from colorstats.stats.subject_attributes import METHOD as ATTRIBUTE_METHOD
+from colorstats.stats.supplement import METHOD as SUPPLEMENT_METHOD
 
 CODE_VERSION = "aggregate-v2"
 
@@ -218,6 +219,9 @@ def aggregate(snapshot, expected_hash, settings):
                     inputs.add(parent)
                     pending.append(parent)
         input_runs = [all_runs[rid] for rid in sorted(inputs)]
+        attribute_runs.update(record["id"] for record in input_runs
+                              if record["stage"] == "subject"
+                              and record["data"]["parameters"].get("method") == SUPPLEMENT_METHOD)
     for domain, conditions in condition_sets.items():
         pairs = list(combinations(sorted(supported[domain], key=rank.__getitem__), 2))
         for condition in conditions:
@@ -393,7 +397,8 @@ def register(session, run, data):
             expected = record["data"]
             attribute = (record["id"] in attribute_ids and source is not None
                          and source.stage == "subject"
-                         and source.parameters.get("method") == ATTRIBUTE_METHOD)
+                          and source.parameters.get("method")
+                          in (ATTRIBUTE_METHOD, SUPPLEMENT_METHOD))
             if (source is None or source.finished_at is None or source.failure_reason is not None
                     or source.taxonomy_version != run.taxonomy_version
                     or source.config_hash != expected["config_hash"]
