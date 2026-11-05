@@ -16,6 +16,7 @@ def main():
     parser.add_argument("--handler", action="append", required=True, metavar="STAGE=MODULE")
     parser.add_argument("--stop-file", type=Path, required=True)
     parser.add_argument("--once", action="store_true")
+    parser.add_argument("--provider", help="collect専用workerの収集元")
     parser.add_argument(
         "--storage-path", action="append", default=[], metavar="STAGE=PATH",
         help="stageが使う保存先root。欠落・readonly中は取得を保留（複数指定可）",
@@ -27,6 +28,10 @@ def main():
         if stage not in STAGES or not separator or not module or stage in handlers:
             parser.error("handlerは重複しないSTAGE=MODULEで指定してください")
         handlers[stage] = module
+    if "collect" in handlers and (not args.provider or len(handlers) != 1):
+        parser.error("collectは--provider付きの専用workerで起動してください")
+    if args.provider and "collect" not in handlers:
+        parser.error("--providerはcollect専用workerで指定してください")
     storage_paths = {}
     for entry in args.storage_path:
         stage, separator, path = entry.partition("=")
@@ -38,6 +43,7 @@ def main():
         Worker(
             Queue(engine), handlers, args.stop_file,
             storage_paths={stage: tuple(paths) for stage, paths in storage_paths.items()},
+            provider=args.provider,
         ).run(once=args.once)
     finally:
         engine.dispose()

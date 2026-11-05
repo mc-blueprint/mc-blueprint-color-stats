@@ -161,11 +161,11 @@ class Meter:
             return 0.0
         from colorstats.collect.bias import LOCK_SQL
 
-        now = datetime.now(UTC)
         delay = 0.0
         with self._transaction() as session:
             self.queue._owned(session, self.claim)
             self._lock(session, LOCK_SQL)
+            now = session.scalar(select(func.clock_timestamp())).astimezone(UTC)
             rows = session.scalars(
                 select(ProcessingRun).where(ProcessingRun.parameters.has_key("quota_events"))
             )
@@ -198,10 +198,10 @@ class Meter:
         return delay
 
     def media_history(self, host):
-        now = datetime.now(UTC)
         hosts = self.claim.payload["policy"].get("hosts", {})
         group = host_rate_group(host, hosts)
         with self.queue._transaction() as session:
+            now = session.scalar(select(func.clock_timestamp()))
             rows = session.scalars(
                 select(ProcessingRun).where(
                     ProcessingRun.parameters.has_key("quota_events")
@@ -239,7 +239,9 @@ class Meter:
                          "rate_group": value.get("rate_group", host_rate_group(
                              value["host"], self.claim.payload["policy"].get("hosts", {})
                          )),
-                         "at": datetime.now(UTC).isoformat(), "bytes": value["bytes"]},
+                         "at": session.scalar(select(func.clock_timestamp())).astimezone(UTC)
+                         .isoformat(),
+                         "bytes": value["bytes"]},
                     ],
                     "database_timing": database_timing,
                 }

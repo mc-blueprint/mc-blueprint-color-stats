@@ -56,7 +56,9 @@ def database():
 @pytest.fixture
 def queue(database):
     with database.begin() as connection:
-        connection.execute(text("TRUNCATE job, processing_run, source, asset CASCADE"))
+        connection.execute(text(
+            "TRUNCATE job, processing_run, source, asset, collection_limit CASCADE"
+        ))
     return Queue(database)
 
 

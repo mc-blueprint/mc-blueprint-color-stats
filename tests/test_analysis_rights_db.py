@@ -234,7 +234,7 @@ def test_全CHECKと列長を確認し解析行があれば巻戻しを拒否す
         command.downgrade(config, "0005")
     with database.begin() as connection:
         version = connection.execute(text("SELECT version_num FROM alembic_version")).scalar()
-        assert version == "0007"
+        assert version == "0008"
         connection.execute(text("DELETE FROM source WHERE url='https://migration.test'"))
     command.downgrade(config, "0005")
     command.upgrade(config, "head")

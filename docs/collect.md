@@ -39,7 +39,7 @@ Wikimedia原本URLの追跡query違いも同じ元画像として扱う。登録
 公式[移行告知](https://meta.wikimedia.org/wiki/Tech/News/2026/36)に従い
 `thumb.wikimedia.org`もmediaとして登録する。`rate_group: upload.wikimedia.org`によって
 原本hostと同じ同時枠・待機・25Mbps/10秒帯域窓を共有し、計測台帳復元でも両hostを合算する。
-イベントのhostは実接続先を保持する。同時process間の原子的な共有予約は#91の担当。
+イベントのhostは実接続先を保持する。同時process間もDBの共有通信予約を使う。
 UA、既定の画像間隔1秒、license_rules/rights_reviewは変更しない。
 
 比較手順・固定100枠・失敗/未評価を含む分母は`bench/issue90/results.md`とJSONを参照。
@@ -183,13 +183,23 @@ HTMLを含む作者・説明はテキスト化し、元のimageinfoもasset.qual
 Commons Action APIは同時接続1、1秒未満の応答後は0.5秒以上、1秒を超える応答後は5秒待つ。
 policyのAPI rolling枠は1分199要求未満、`maxlag`・429/503・Retry-Afterと指数待機を適用する。
 Wikimedia mediaは実host `upload.wikimedia.org` ごとに同時接続2、要求間1秒以上、
-10秒窓31,250,000 byteまでに制限する。Openverse匿名APIは実host `api.openverse.org` の
+単独HTTPでは10秒窓31,250,000 byte、DB共有収集では25,000,000 byte（20Mbps）までに制限する。
+Openverse匿名APIは実host `api.openverse.org` の
 rolling 5/hour・100/day枠を適用し、計測DBの直近request ledgerから再起動後も消費を復元する。
-短周期interval・backoffは同一プロセス内のhost stateを共有する。media byte窓は
+collectの短周期interval・backoff・同時数・送信前byte予約は`collection_limit`で共有する。media byte窓は
 measurement runごとにhost・byte・取得時刻をDB台帳へ記録し、spawnされた次のjobが直近10秒分を復元する。
 同じprocess内でもhost stateを共有する。API/mediaの
 区分と枠はproviderや呼出し側の指定よりredirect後の実host policyを優先する。ジョブ末尾にも
-残りの待機を完了してから次のspawnへ進む。短周期interval・backoffの複数process間共有は#91のDB共有予約まで行わない。
+残りの待機を完了してから次のspawnへ進む。JSONB復元後も最長host suffixを優先し、
+APIやmediaが親ドメインのpage設定に隠れないようにする。
+通信制限の時刻は、共有予約・API/mediaの計測台帳・復元時の窓判定ともに
+PostgreSQLの`clock_timestamp()`を使う。worker間の時計差による枠の早期解放を防ぐため、
+ロック取得後の実時刻で判定し、イベントはUTCで保存する。ローカルのmonotonic時計は
+待機秒数と処理時間だけに使う。過去のUTCイベントを推測した時計差で書き換えない。
+共有収集のHTTP日時形式Retry-AfterもDB時計と比較する。429/503の停止期限はヘッダーを
+受けた直後、本文・observerの処理前に共有DBへ反映し、空いている同時枠からの送信も止める。
+共有予約が成立しない待機ではプロセス内API履歴を増やさず、実送信直前にだけ加算する。
+共有予約なしの並行API呼出しでも、窓の確認・待機・履歴追加を送信直前の同一ロック内で行う。
 GET・JSON、非対話用`maxlag=5`、連絡先付きBot User-Agentを使用する。
 HTTP 429/503とAPI maxlag/ratelimited/cirrussearch-too-busy-errorは
 Retry-After（秒数・HTTP日時）と5秒からの指数待機の
@@ -210,7 +220,7 @@ Robot policyとRate limitsは2026-11-05に取得し、両URLのHTTP 200を確認
 `upload.wikimedia.org`では`/archive/`を巡回しない。source_policyの`disallow_paths`により、
 直接URLとredirect先のどちらも通信前に拒否する。
 
-`upload.wikimedia.org`にはproviderではなく接続先hostの制限を適用する。Wikimediaの25 Mbps/10秒窓は31,250,000 byte/10秒、同時要求2、要求間隔1秒として設定し、`/archive/`は取得対象外とする。帯域窓と長周期API枠は計測台帳から復元する。短周期interval・backoffの複数process間共有は#91の対象とする。
+`upload.wikimedia.org`にはproviderではなく接続先hostの制限を適用する。単独HTTPの25 Mbps/10秒窓は31,250,000 byte/10秒、同時要求2、要求間隔1秒として設定し、DB共有収集では20Mbpsへ抑える。`/archive/`は取得対象外とする。帯域窓と長周期API枠は初回共有予約時に既存の計測台帳から復元する。
 
 2026-11-01に確認した一次情報:
 

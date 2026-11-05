@@ -3,6 +3,7 @@
 import errno
 import importlib
 import multiprocessing
+import socket
 import threading
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -70,6 +71,7 @@ class Worker:
         poll_interval: float = 0.2,
         *,
         storage_paths: dict[str, tuple[Path, ...]] | None = None,
+        provider: str | None = None,
     ):
         if poll_interval <= 0:
             raise ValueError("ポーリング間隔は正の値が必要です")
@@ -78,6 +80,8 @@ class Worker:
         self.stop_file = stop_file
         self.poll_interval = poll_interval
         self.storage_paths = storage_paths or {}
+        self.provider = provider
+        self._provider_lease = None
         self._process = None
         self._connection = None
         self._prepared_count = 0
@@ -88,9 +92,19 @@ class Worker:
     def run(self, *, once: bool = False) -> None:
         """停止ファイル存在時に取得・計算を止める。onceは最大1件を処理して戻る。"""
         try:
+            if self.provider is not None:
+                from colorstats.collect.limits import ProviderLease
+
+                if socket.gethostname() != "ubuntu-1":
+                    raise ValueError("provider別collectは保存契約確認済みのubuntu-1専用です")
+                self._provider_lease = ProviderLease(self.queue, self.provider)
+                self._provider_lease.acquire()
             while not self.stop_file.exists():
+                if self._provider_lease is not None:
+                    self._provider_lease.renew()
                 stages = tuple(stage for stage in self.handlers if self._available(stage))
-                claim = self.queue.claim(stages) if stages else None
+                options = {"provider": self.provider} if self.provider is not None else {}
+                claim = self.queue.claim(stages, **options) if stages else None
                 if claim is None:
                     if once:
                         return
@@ -101,6 +115,9 @@ class Worker:
                     return
         finally:
             self._stop_prepare()
+            if self._provider_lease is not None:
+                self._provider_lease.release()
+                self._provider_lease = None
 
     def _start_prepare(self):
         if self._process is not None and self._process.is_alive():
@@ -150,6 +167,8 @@ class Worker:
         discard_process = False
         preparing = False
         try:
+            if self.provider is not None and claim.payload["host"] != socket.gethostname():
+                raise NonRetryableError("collectの保存先hostが実行hostと一致しません")
             if not self._available(claim.stage):
                 self.queue.defer(claim, "保存先の復旧待ち")
                 return
@@ -219,6 +238,8 @@ class Worker:
                     )
                     return
                 if monotonic() >= renew_at:
+                    if self._provider_lease is not None:
+                        self._provider_lease.renew()
                     self.queue.renew(claim)
                     renew_at = monotonic() + self.queue.lease.total_seconds() / 3
         except LeaseLost:
