@@ -1,5 +1,50 @@
 # 収集契約
 
+## 原本とAPI縮小の比較（Issue #90）
+
+既定は原本のまま。Commonsだけが次の明示指定に対応する。
+
+```python
+from colorstats.collect import SearchRequest
+
+request = SearchRequest("wikimedia_commons", "castle", download_mode="thumbnail")
+```
+
+`enqueue_collect`の設定ハッシュは取得モードを含む。Candidate末尾の省略可能な
+`download_url`と`rendition`以外は原本契約を維持する。原本URLを縮小URLで置き換えない。
+Commonsは`imageinfo`へ標準幅1280と`thumbmime`を要求し、返されたURL・実寸・MIMEを使う。
+1280は長辺ではない。縦長は高さ1280を超え得る。小原本は`thumbnail_not_smaller`、
+URL/寸法/MIME欠落は`thumbnail_missing`、版欠落は`thumbnail_revision_missing`で除外する。
+原本への暗黙fallback、任意サイズURLの生成、archive取得は行わない。
+
+`rendition`は`provider/native_id/revision/variant`、要求幅、原本のURL・実寸・MIME・API SHA-1を持つ。
+API SHA-1と受信SHA-256は別物で、縮小から原本SHA-256を推測しない。
+`Asset.sha256`と`quality.received.sha256`は受信SHA-256、`quality.rendition.original`は原本の情報。
+縮小だけPillowで受信寸法・MIMEを検査し、原本の寸法・MIMEは従来どおりAPI値を使う。
+原本を取得した場合だけ原本SHA-256が既知になる。API SHA-1がある原本は受信物と照合し、
+不一致なら`original_sha1_mismatch`で候補だけを除外して予約を解放し、バッチを継続する。
+不一致でも取得件数・byteは計上する。SHA-1欠落の原本は従来どおり扱う。
+取得URLと日時もrenditionへ残す。prepはvariantとRGB/LANCZOS/JPEG品質90の変換条件をrunへ記録する。
+
+取得前に既存原本URL・出典URL・provider/native ID＋revisionを照合し、bias予約にはvariantも含める。
+Wikimedia原本URLの追跡query違いも同じ元画像として扱う。登録時も排他して再照合し、
+縮小を含む同じ原画像の組や同じnative ID＋revision＋variantの再投入は、
+既存assetを参照して`rendition_reused`へ記録する。
+別variantのSHA一致や確定subjectは捏造せず、pHashも従来どおり候補だけに使う。
+この収集経路から解像度違いの独立asset支持を増やさず、既存asset/raw/runを更新しない。
+計測のSHA重複・新規判定には受信SHAを使い、再利用した既存assetのSHAへ置き換えない。
+
+公式[移行告知](https://meta.wikimedia.org/wiki/Tech/News/2026/36)に従い
+`thumb.wikimedia.org`もmediaとして登録する。`rate_group: upload.wikimedia.org`によって
+原本hostと同じ同時枠・待機・25Mbps/10秒帯域窓を共有し、計測台帳復元でも両hostを合算する。
+イベントのhostは実接続先を保持する。同時process間の原子的な共有予約は#91の担当。
+UA、既定の画像間隔1秒、license_rules/rights_reviewは変更しない。
+
+比較手順・固定100枠・失敗/未評価を含む分母は`bench/issue90/results.md`とJSONを参照。
+原本・縮小のSHA不一致を「重複なし」としない。色距離、主要/細部分割の一致度、
+品質フラグ反転は観測値であり採用閾値ではない。人手正解がない入力のIoUは未評価とする。
+品質許容差、最低実解像度、既定切替は本Issueでは確定しない。
+
 ## 追加収集の測定（Issue #77）
 
 `bench/issue77/plan.md` と `targets.yaml` が測定前に固定した条件。

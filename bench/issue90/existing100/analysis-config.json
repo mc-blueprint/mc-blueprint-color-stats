@@ -1,0 +1,95 @@
+{
+  "payload": {
+    "input_path": "/mnt/data/derived/issue90-20261105/existing100/analysis-000-original/prep.jpg",
+    "output_path": "/mnt/data/derived/issue90-20261105/existing100/analysis-000-original/segment.json",
+    "method": "sam2-dino",
+    "model_paths": {
+      "sam2": "/mnt/data/derived/issue66-workers-20261104/models/sam2",
+      "dino": "/mnt/data/derived/issue66-workers-20261104/models/dino"
+    },
+    "prompts": {
+      "wall_main": "building wall",
+      "roof_surface": "roof",
+      "window_frame": "window frame",
+      "column": "column",
+      "cornice": "cornice",
+      "relief": "carved relief",
+      "rock_face": "rock",
+      "water": "water",
+      "vegetation_low": "vegetation",
+      "ground_soil": "ground"
+    },
+    "threshold": 0.35,
+    "text_threshold": 0.25,
+    "license_class": "open",
+    "taxonomy_version": "0.1.0",
+    "rendition": {
+      "provider": "wikimedia_commons",
+      "native_id": "70639381",
+      "revision": "2018-07-07T10:02:24Z",
+      "variant": "original",
+      "original": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/9/93/Walls_-_Morioka_Castle_-_Iwate%2C_Japan_-_DSC03895.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "width": 5472,
+        "height": 3648,
+        "mime": "image/jpeg",
+        "sha1": "ad710120d5c7b7a6ddc7709f376e81e71f59f3e7",
+        "sha256": "43080a742ea661110890edc3bffbb95c2aabf56cee70a43228266ea673ba9269"
+      }
+    }
+  },
+  "models": {
+    "dino": {
+      "repository": "IDEA-Research/grounding-dino-tiny",
+      "license_class": "open",
+      "files": {
+        "added_tokens.json": "909e96cb32d92ce728a01bc99850cbba26196d74115c17ebeb019275412588f2",
+        "config.json": "eec82c5ab66e16df12a9a212e68ac011779927c2536cf9078658e35d85f0c67a",
+        "model.safetensors": "1a2412ef99bd74bcd3c2a246fa1e48581f8889a1300c9051974741314fc042f3",
+        "preprocessor_config.json": "8454179ba95e2ad22947835aad7b45862a601fc0055ab88bf1ee70892d3aea60",
+        "source.json": "53f3336c67751b1becc189603249b8060f680d10bd900780db87c24127e57098",
+        "special_tokens_map.json": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+        "tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+        "tokenizer_config.json": "d40ab645b68211910b9170d22433d43186a6ec8ee6fd10ba170524b25bf4fb56",
+        "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+      }
+    },
+    "sam2": {
+      "repository": "facebook/sam2.1-hiera-tiny",
+      "license_class": "open",
+      "files": {
+        "config.json": "860aff9751b139d83a4ad7df1e5535416fded533e0ead02625edbefcb9953cce",
+        "model.safetensors": "48c14467e5cf9e51870511feb72c89688e82dd74523142c0538b663e193ac2a7",
+        "preprocessor_config.json": "6ebf229ee259368ce4a8d4f2fe893a72b053023710853e257253939e601f583d",
+        "processor_config.json": "f8a68e865cfad115c1c2763f3d93eca7b1c622da06da2a9273eb437fb2389b6d",
+        "source.json": "d85e211d9c15a306f07c719ffee7c799a073873839f565dd93d9d8314265a72b",
+        "video_preprocessor_config.json": "9fccfe5f464ec38c2f236d0e6a68e95511c80c22132fc2fa4b9f7b65f24fad95"
+      }
+    }
+  },
+  "threshold": 0.35,
+  "text_threshold": 0.25,
+  "seed": 0,
+  "precision": "bfloat16",
+  "batch_size": 1,
+  "box_batch_size": 1,
+  "code_version": "issue-66-v1",
+  "input_sha256": "512bb27cbd6b383ab132fcfab0b561c4de25db63fb09d720d021b827afde4e73",
+  "taxonomy_hash": "9ec4a7771da6e1d15ee7ebb9b74159ee4f33bc3552e2b4d233401073ea21fcb5",
+  "metrics": {
+    "load_seconds": 3.003710429999046,
+    "inference_seconds": 4.014621459995396,
+    "peak_allocated_bytes": 2184890880,
+    "peak_reserved_bytes": 2650800128,
+    "gpu": "NVIDIA GeForce RTX 4060",
+    "torch_version": "2.11.0+cu130",
+    "cuda_version": "13.0",
+    "batch_size": 1,
+    "mask_bytes": 16415,
+    "cvat_bytes": 30847,
+    "prepare_seconds": 10.169552509032656,
+    "width": 512,
+    "height": 341,
+    "regions": 12
+  }
+}
