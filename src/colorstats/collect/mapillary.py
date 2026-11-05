@@ -11,6 +11,7 @@ from urllib.parse import urlencode, urlsplit, urlunsplit
 from colorstats.collect import Candidate, SearchResult
 from colorstats.collect.http import HttpClient
 from colorstats.collect.policy import license_class
+from colorstats.queue.core import NonRetryableError
 from colorstats.store import temporary_path
 
 ENDPOINT = "https://graph.mapillary.com/images"
@@ -61,6 +62,8 @@ class MapillaryAdapter(HttpClient):
         except HTTPError as error:
             code = error.code
             error.close()
+            if code in (401, 403):
+                raise NonRetryableError(f"Mapillary認証・アクセス拒否: HTTP {code}") from None
             parts = urlsplit(url)
             safe_url = urlunsplit((parts.scheme, parts.netloc, parts.path, "", ""))
             raise HTTPError(safe_url, code,

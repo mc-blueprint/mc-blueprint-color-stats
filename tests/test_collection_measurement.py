@@ -35,6 +35,7 @@ from tests.test_collection_bias import (
     subjects,
 )
 from tests.test_collection_bias import config as config
+from tests.test_mapillary import setup  # noqa: F401
 from tests.test_openverse import FIXTURE, source_page
 from tests.test_queue import database, expire  # noqa: F401
 from tests.test_queue import queue as queue
@@ -108,6 +109,41 @@ def test_spawn子job間でmedia帯域窓をDB台帳から復元する(queue, mea
 
     assert elapsed[0] == 0
     assert elapsed[1] >= 5
+
+
+@DB
+@pytest.mark.parametrize("legacy", [False, True])
+def test_fbcdnの別subdomainでも再起動後は共有枠台帳のbyteを復元する(
+    queue, measured, tmp_path, setup, legacy,  # noqa: F811
+):
+    from colorstats.collect.http import _HOST_STATES, HttpClient
+
+    payload, _ = payload_for(tmp_path)
+    payload.update(policy=setup, bias=measured)
+    payload["request"].update(provider="mapillary", stratum=request().stratum)
+    queue.enqueue("collect", None, "a" * 64, payload)
+    first = queue.claim(["collect"])
+    meter = Meter(queue, first)
+    meter.observe("media_transfer", {"host": "a.fbcdn.net", "bytes": 4_000_000})
+    with Session(queue.engine) as session, session.begin():
+        run = session.get(ProcessingRun, meter.id)
+        event = run.parameters["quota_events"][0]
+        assert event["rate_group"] == "mapillary-media"
+        if legacy:
+            event.pop("rate_group")
+            run.parameters = {**run.parameters, "quota_events": [event]}
+    queue.fail(first, "fixture restart")
+    second = queue.claim(["collect"])
+    meter = Meter(queue, second)
+    _HOST_STATES.clear()
+    clock = Clock()
+    adapter = HttpClient(setup, opener=lambda *args, **kwargs: Response(b"x" * 2_000_000),
+                         clock=clock.clock, wait=clock.wait)
+    adapter.media_history = meter.media_history
+    adapter.observer = meter.observe
+    adapter.get("https://b.fbcdn.net/image.jpg", target=tmp_path / "image.jpg")
+    assert clock.now >= 9
+    assert meter.media_history("c.fbcdn.net")
 
 
 @pytest.mark.parametrize(

@@ -23,6 +23,10 @@ class LeaseLost(RuntimeError):
     """期限切れまたは別試行への移譲により書込み権を失った。"""
 
 
+class NonRetryableError(RuntimeError):
+    """認証拒否や現行policyによる停止。自動再試行せずjobを失敗として確定する。"""
+
+
 @dataclass(frozen=True)
 class Claim:
     id: uuid.UUID
@@ -166,11 +170,11 @@ class Queue:
                 retention.assert_usable(session, job.asset_id, images=True)
             job.lease_until = session.scalar(select(func.clock_timestamp())) + self.lease
 
-    def fail(self, claim: Claim, reason: str) -> None:
-        """失敗理由を保存し、3試行未満はpendingへ戻す。期限切れはLeaseLost。"""
+    def fail(self, claim: Claim, reason: str, *, retryable: bool = True) -> None:
+        """再試行可能で3試行未満だけpendingへ戻す。期限切れはLeaseLost。"""
         with self._transaction() as session:
             job = self._owned(session, claim)
-            job.status = "failed" if job.attempts >= 3 else "pending"
+            job.status = "failed" if not retryable or job.attempts >= 3 else "pending"
             job.failure_reason = reason
             job.lease_token = job.lease_until = None
 

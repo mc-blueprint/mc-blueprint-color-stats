@@ -22,7 +22,7 @@ from colorstats.collect.commons import CommonsAdapter, check_commons_policy
 from colorstats.collect.http import HttpClient, MeasurementLimit
 from colorstats.collect.mapillary import MapillaryAdapter
 from colorstats.collect.openverse import OpenverseAdapter
-from colorstats.collect.policy import license_class, load_policy
+from colorstats.collect.policy import check_current_source, license_class, load_policy
 from colorstats.queue import RunInfo
 from colorstats.queue.worker import Prepared
 from colorstats.rights import combine_license
@@ -138,6 +138,7 @@ def prepare(
         raise ValueError("投入後に保存先設定が変更されました")
     storage = Storage(config)
     request = SearchRequest(**payload["request"])
+    check_current_source(request.provider)
     adapter = adapter_for(request.provider, payload["policy"])
     files, records, skipped = [], [], []
     parameters = {
