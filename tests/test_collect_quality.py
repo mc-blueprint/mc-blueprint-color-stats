@@ -11,7 +11,7 @@ from PIL import Image
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from colorstats.collect import SearchRequest, quality, stage
+from colorstats.collect import Candidate, SearchRequest, quality, stage
 from colorstats.schema.models import Asset, Job, ProcessingRun
 from tests.test_collect import (
     Response,
@@ -36,7 +36,7 @@ def test_既定はCommons縮小で他ソースは既存の取得方式():
 
 @pytest.mark.parametrize("mode", ["original", "thumbnail"])
 @pytest.mark.parametrize("edge", [1, 1279, 1280])
-def test_縮小の実寸と原本のAPI寸法へ最低解像度を適用する(
+def test_原本と縮小の受信実寸へ最低解像度を適用する(
     policy, tmp_path, monkeypatch, mode, edge,  # noqa: F811
 ):
     image = io.BytesIO()
@@ -72,6 +72,72 @@ def test_縦長も幅と高さを1280以内でAPIへ要求する(policy):  # noq
     assert candidate.exclusion_reason is None
 
 
+@pytest.mark.parametrize("case,reason", [
+    ("small_mismatch", "original_dimensions_mismatch"),
+    ("large_mismatch", "original_dimensions_mismatch"),
+    ("small", "below_min_resolution"),
+    ("image_limit", "received_header_image_limit"),
+    ("unreadable", "received_header_unreadable"),
+])
+def test_原本ヘッダーだけで候補を除外し先行取得を保持して次へ進む(
+    policy, tmp_path, monkeypatch, case, reason,  # noqa: F811
+):
+    from dataclasses import asdict
+
+    def content(size):
+        image = io.BytesIO()
+        Image.new("RGB", size, "blue").save(image, "PNG")
+        return image.getvalue()
+
+    good = content((1600, 1000))
+    size = {
+        "small_mismatch": (800, 600), "large_mismatch": (1600, 1000),
+        "small": (800, 600), "image_limit": (2400, 1600), "unreadable": (3000, 2000),
+    }[case]
+    bad = b"not an image" if case == "unreadable" else content(size)
+    recorded = recorded_thumbnail()
+    adapter, _ = adapter_for(policy, [Response(r) for r in recorded])
+    result = adapter.search(SearchRequest("wikimedia_commons", "castle", download_mode="original"))
+    base = asdict(result.candidates[0])
+    candidates = []
+    for rank, data in enumerate((good, bad, good)):
+        width, height = size if rank == 1 else (1600, 1000)
+        if rank == 1 and case.endswith("mismatch"):
+            width, height = 3000, 2000
+        candidates.append(Candidate(**{
+            **base, "rank": rank, "source_url": base["source_url"] + f"/{rank}",
+            "original_url": base["original_url"].partition("?")[0] + f"?rank={rank}",
+            "width": width, "height": height,
+            "rendition": {**base["rendition"], "native_id": str(rank), "original": {
+                **base["rendition"]["original"], "width": width, "height": height,
+                "sha1": hashlib.sha1(data).hexdigest(),
+            }},
+        }))
+    monkeypatch.setattr(adapter, "search", lambda request: replace(result, candidates=candidates))
+    monkeypatch.setattr(adapter, "download", lambda candidate, path: path.write_bytes(
+        (good, bad, good)[candidate.rank],
+    ))
+    monkeypatch.setattr(stage, "CommonsAdapter", lambda policy: adapter)
+    monkeypatch.setattr(stage, "existing_rendition", lambda *args: None)
+    Image.init()
+    monkeypatch.setattr(Image, "MAX_IMAGE_PIXELS", 1_600_000)
+    monkeypatch.setattr(Image.Image, "load", lambda *args, **kwargs: pytest.fail("画素展開は禁止"))
+    payload, digest = payload_for(tmp_path)
+    payload["quality_policy"] = quality.QUALITY_POLICY
+    discarded, events = [], []
+    prepared = stage.prepare(
+        claim_for(payload, digest), discard=lambda request, candidate: discarded.append(candidate),
+        observer=lambda event, value: events.append((event, value)),
+    )
+    assert [record["candidate"]["rank"] for record in prepared.data["records"]] == [0, 2]
+    assert discarded == [candidates[1]]
+    assert prepared.info.parameters["skipped"][0]["reason"] == reason
+    assert [entry["rank"] for entry in prepared.info.parameters["skipped"]] == [1]
+    assert sum(value for event, value in events if event == "downloads") == 3
+    assert {path for path, _ in prepared.files} == set((tmp_path / "raw").rglob("*.tmp"))
+    assert all(path.read_bytes() == good for path, _ in prepared.files)
+
+
 @pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason="隔離PostgreSQL")
 @pytest.mark.parametrize("resolved", [False, True])
 def test_フラグ原本jobの取得と再判定は既存assetとrunを変更しない(
@@ -89,7 +155,8 @@ def test_フラグ原本jobの取得と再判定は既存assetとrunを変更し
             0, 256, (1600, 1280, 3), dtype=np.uint8,
         )).save(original, "PNG")
         original_content = original.getvalue()
-    recorded = recorded_thumbnail(width=3000, height=2000)
+    recorded = recorded_thumbnail(width=1280 if resolved else 1600,
+                                  height=1600 if resolved else 1000)
     recorded[1]["query"]["pages"][0]["imageinfo"][0]["sha1"] = hashlib.sha1(
         original_content,
     ).hexdigest()
@@ -222,7 +289,7 @@ def test_原本再判定も既存の測定通信枠を消費し枠超過では�
     assert prepared.info.parameters["stop_reason"] == "http_limit"
 
 
-def test_原本再判定のPillow上限は理由付き未評価として一時ファイルを除外する(
+def test_原本再判定のヘッダー上限は理由付き未評価として一時ファイルを除外する(
     policy, tmp_path, monkeypatch,  # noqa: F811
 ):
     from dataclasses import asdict
@@ -244,7 +311,7 @@ def test_原本再判定のPillow上限は理由付き未評価として一時�
                    quality_policy=quality.QUALITY_POLICY)
     prepared = quality.prepare(claim_for(payload, digest))
     assert len(calls) == 1 and not prepared.files and not prepared.data["records"]
-    assert prepared.info.parameters["skipped"][0]["reason"] == "original_quality_image_limit"
+    assert prepared.info.parameters["skipped"][0]["reason"] == "received_header_image_limit"
     assert not list((tmp_path / "raw").rglob("*.tmp"))
 
 

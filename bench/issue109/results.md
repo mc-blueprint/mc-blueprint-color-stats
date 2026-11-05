@@ -3,8 +3,8 @@
 ## 変更と完成条件
 
 - 新規Commons収集はAPI縮小が既定。幅・高さとも1280を要求し、原本は明示指定できる。
-- 新規jobへ品質設定を固定し、縮小の受信実寸・原本のAPI寸法で長辺1280未満を理由付き除外する。
-  通常原本のPillow検査は行わず、#90の巨大原本・候補単位除外の契約を維持する。
+- 新規jobへ品質設定を固定し、原本・縮小とも受信ヘッダーの実寸で長辺1280未満を理由付き除外する。
+  通常原本の画素展開は行わず、API寸法不一致・Pillow上限・読取り不能も候補単位で除外して継続する。
 - prepの既存品質検査を再利用し、縮小版の透かし・ぼけ・コラージュ疑いから原本review jobを予約する。
   理由、元variant、asset、収集run、原本revisionを記録し、原本のSHA-1を照合する。
   原本でも対象フラグが残る場合はrejected、消えればaccepted、取得不能ならunevaluated。
@@ -57,8 +57,8 @@ ubuntu-1の隔離PostgreSQL 16と新規保存先
 
 指定WSL Ubuntu-24.04のext4一時コピーと、新規の隔離PostgreSQL 16で実行する。
 再現手順は`bash bench/issue109/verify.sh`（Windowsの担当worktreeをコピーする端末専用手順）。
-反証修正後の全pytestは992成功・1スキップ（GPUモデル未指定のsmoke）、ruff全体とsdist/wheelも成功した。
-全件検証先は`/tmp/colorstats-issue109-5Kcaki/`。
+受信ヘッダーの実寸判定を含む全pytestは994成功・1スキップ（GPUモデル未指定のsmoke）。
+全件検証先は`/tmp/colorstats-issue109-DBHxpX/`。ruff全体とsdist/wheelも同じ最終差分で確認した。
 初回実装の要求高さの記録・worker設定の接続差分は、関連135テスト、ruff全体、
 sdist/wheelとLinux改行での`bash -n`が成功した（`/tmp/colorstats-issue109-RH029X/`）。
 両方の隔離PostgreSQLは停止済み。buildとログは各一時ディレクトリに保全した。
@@ -71,9 +71,14 @@ sdist/wheelとLinux改行での`bash -n`が成功した（`/tmp/colorstats-issue
 
 ## 反証指摘の修正
 
-通常collectは原本へPillow検査を適用せず、原本の寸法・MIMEをAPI値のまま扱う#90の契約へ戻した。
-`quality_policy`あり・なし双方でPillow上限を超える入力、SHA-1の欠落・一致・不一致を再現し、
-同じバッチの取得済み候補を失わず、不一致候補だけを除外・予約解放することを確認した。
+新規jobの通常原本も画素を展開せず受信ヘッダーの実寸法で判定する。
+APIが3000×2000でも受信が800×600の場合、および受信が1600×1000の場合は
+`original_dimensions_mismatch`で候補除外する。APIと受信が同じ800×600でも
+`below_min_resolution`で除外する。Pillow上限は`received_header_image_limit`、
+復号不能なヘッダーは`received_header_unreadable`として候補単位で予約解放し、バッチは継続する。
+先行正常候補・除外候補・後続正常候補を並べ、画素展開を禁止した5ケースの回帰で
+同じバッチの取得済み候補を失わないことと、取得件数・byteの計上を確認した。
+旧payloadのSHA-1欠落・一致・不一致の回帰も保持している。
 専用原本再判定でのPillow上限は`original_quality_image_limit`、復号不能は
 `original_quality_unreadable`の理由付き未評価とし、一時ファイルだけを除外する。
 
