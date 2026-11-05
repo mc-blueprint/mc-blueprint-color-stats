@@ -1,5 +1,8 @@
 # Issue #105 本番補完・不足診断
 
+本書は初回版の記録。現行の訂正・全組合せ不足・収集枠は
+[correction-v2/results.md](correction-v2/results.md) を参照する。初回snapshot・run・JSONは保持した。
+
 2026-11-05。起点 `9c0011f5950d40cb347ce42527558aa1af4984d3`、
 `feature/issue-105`。#104 の適格7,607画像を同じ解析runで比較した。
 新規収集・Wikidata照会・再分割・色job・pilot再開・サービス変更は行っていない。

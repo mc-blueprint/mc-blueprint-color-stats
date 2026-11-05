@@ -28,7 +28,7 @@ def test_readonly_apply_preservation_and_retry(queue, asset, tmp_path):
         row.scene_attributes = {"time_of_day": "night"}
         row.collected_location = "35,139"
         row.quality = {"marker": "保持", "metadata": {"extmetadata": {
-            "DateTimeOriginal": {"value": "2020-07-01 12:00:00"}}}}
+            "DateTimeOriginal": {"value": "2020-07-01 12:00:00", "source": "exif"}}}}
 
     statements = []
 
@@ -82,3 +82,49 @@ def test_terrain_attributes_reuse_claim_rules(queue, asset, rules, tmp_path):
                                domains=("real_building", "real_terrain"))
     assert result["counts"]["region"] == {"confirmed": 1, "unknown": 0}
     assert result["counts"]["era"] == {"confirmed": 1, "unknown": 0}
+
+
+def test_correction_is_owned_atomic_and_idempotent(queue, asset, tmp_path):
+    with Session(queue.engine) as session, session.begin():
+        row = session.get(Asset, asset)
+        row.collected_location = "35,0"
+        row.scene_attributes = {"weather": "clear"}
+        row.quality = {"metadata": {"extmetadata": {"DateTimeOriginal": {
+            "value": "2020-07-01 12:00:00", "source": "exif"}}}}
+    dry = execute(queue.engine, RULES, tmp_path / "initial-dry.json", code_version="test")
+    initial = execute(queue.engine, RULES, tmp_path / "initial.json", code_version="test",
+                      dry_run=False, expected_hash=dry["plan_hash"])
+    references = [initial["run_id"]]
+    evidence = {"a" * 64: {"date": "2020:12:01 12:00:00"}}
+    corrected = execute(queue.engine, RULES, tmp_path / "correct-dry.json", code_version="test",
+                        correction_runs=references, image_evidence=evidence)
+    assert corrected["withdrawn_attributes"] == {"season": 1}
+    assert corrected["changes"] == 1
+    with Session(queue.engine) as session:
+        assert session.get(Asset, asset).scene_attributes["season"] == "summer"
+    execute(queue.engine, RULES, tmp_path / "correct.json", code_version="test", dry_run=False,
+            expected_hash=corrected["plan_hash"], correction_runs=references,
+            image_evidence=evidence)
+    retry = execute(queue.engine, RULES, tmp_path / "repeat.json", code_version="test",
+                    correction_runs=references, image_evidence=evidence)
+    assert retry["changes"] == 0
+    with Session(queue.engine) as session, session.begin():
+        row = session.get(Asset, asset)
+        assert row.scene_attributes == {"weather": "clear"}
+        row.scene_attributes = dict(row.scene_attributes, season="spring")
+        row.quality = dict(row.quality, scene_inference={"method": "other", "run_id": "other"})
+    protected = execute(queue.engine, RULES, tmp_path / "protected.json", code_version="test",
+                        correction_runs=references, image_evidence=evidence)
+    assert protected["changes"] == 0
+
+
+def test_painting_does_not_gain_terrain_attributes(queue, asset, tmp_path):
+    with Session(queue.engine) as session, session.begin():
+        row = session.get(Asset, asset)
+        row.domain = "real_terrain"
+        row.quality = {"metadata": {"categories": [
+            {"title": "Category:Forests in Norway in autumn"},
+            {"title": "Category:Paintings of forests"}]}}
+    result = execute(queue.engine, RULES, tmp_path / "painting.json", code_version="test")
+    assert result["changes"] == 0
+    assert result["assets"][0]["after"] == {}
