@@ -43,16 +43,34 @@ class _NoRedirect(HTTPRedirectHandler):
 
 
 class _CountingResponse:
-    def __init__(self, response, clock):
+    def __init__(self, response, clock, media=None):
         self.response = response
         self.clock = clock
+        self.media = media
         self.bytes = 0
         self.network_seconds = 0.0
 
-    def read(self, *args):
+    def read(self, size=-1):
+        if self.media and size < 0:
+            chunks = []
+            while chunk := self.read(64 * 1024):
+                chunks.append(chunk)
+            return b"".join(chunks)
+        if self.media:
+            client, state, host_policy = self.media
+            with state["media_lock"]:
+                size = min(size, client._media_chunk_size(state, host_policy))
+                started = self.clock()
+                try:
+                    data = self.response.read(size)
+                finally:
+                    self.network_seconds += max(0.0, self.clock() - started)
+                self.bytes += len(data)
+                client._record_media(len(data), state)
+                return data
         started = self.clock()
         try:
-            data = self.response.read(*args)
+            data = self.response.read(size)
         finally:
             self.network_seconds += max(0.0, self.clock() - started)
         self.bytes += len(data)
@@ -163,16 +181,10 @@ class HttpClient:
                 return config
         raise ValueError("source_policy未登録の接続先です")
 
-    def _error_bytes(self, error, *, media=False, state=None, host_policy=None):
-        if error.fp is None:
+    def _error_bytes(self, response):
+        if response.response.fp is None:
             return 0
-        if not media:
-            return len(error.read())
-        total = 0
-        while chunk := self._read_media(error, state, host_policy):
-            total += len(chunk)
-            self._record_media(len(chunk), state)
-        return total
+        return len(response.read())
 
     def _wait_for_slot(self, url):
         host_policy = self._host_policy(url)
@@ -218,9 +230,10 @@ class HttpClient:
         return kind, interval, host_name, host_policy, state
 
     def get(self, url, *, target=None, text=False, read=json.load, api=False):
-        """JSON・テキストを返すか、試行専用targetへ原本を書き込む。
+        """JSON・テキストを返すか、取得用targetへ保存する。
 
-        api=Trueは追従先と再試行もAPI枠へ計上する。openerはリダイレクトを追従しないもの。
+        要求区分と枠は実際の接続先hostのsource_policyで決め、redirect後も再判定する。
+        apiは呼出元の互換引数で、hostのpolicyを上書きしない。
         """
         check_policy(self.policy)
         for attempt in range(self.policy["retries"] + 1):
@@ -239,18 +252,21 @@ class HttpClient:
                 state["semaphore"].acquire()
                 acquired = True
                 counted = None
-                started = self.clock()
                 network_seconds = 0.0
                 try:
                     request = Request(current, headers={"User-Agent": self.policy["user_agent"]})
                     open_started = self.clock()
-                    with self.opener(request, timeout=60) as response:
+                    try:
+                        response_context = self.opener(request, timeout=60)
+                    finally:
                         network_seconds += max(0.0, self.clock() - open_started)
+                    with response_context as response:
                         self.observe("responses")
-                        counted = response = _CountingResponse(response, self.clock)
+                        media = (self, state, host_policy) if kind == "media" else None
+                        counted = response = _CountingResponse(response, self.clock, media)
                         if target is not None:
                             with target.open("wb") as output:
-                                while chunk := self._read_media(response, state, host_policy):
+                                while chunk := response.read(64 * 1024):
                                     output.write(chunk)
                             length = response.headers.get("Content-Length")
                             if length is not None and target.stat().st_size != int(length):
@@ -260,14 +276,12 @@ class HttpClient:
                             return response.read().decode("utf-8", errors="replace")
                         return read(response)
                 except HTTPError as error:
-                    network_seconds += max(0.0, self.clock() - started)
+                    media = (self, state, host_policy) if kind == "media" else None
+                    counted = _CountingResponse(error, self.clock, media)
                     self.observe("responses")
                     if error.code in (301, 302, 303, 307, 308):
                         try:
-                            received = self._error_bytes(
-                                error, media=kind == "media", state=state, host_policy=host_policy
-                            )
-                            self.observe("bytes", received)
+                            self._error_bytes(counted)
                             target_url = urljoin(current, error.headers.get("Location", ""))
                             source_host = (urlsplit(current).hostname or "").casefold()
                             target_host = (urlsplit(target_url).hostname or "").casefold()
@@ -282,13 +296,9 @@ class HttpClient:
                         current = target_url
                         continue
                     if error.code not in (429, 503):
-                        self.observe("bytes", self._error_bytes(
-                            error, media=kind == "media", state=state, host_policy=host_policy
-                        ))
+                        self._error_bytes(counted)
                         raise
-                    self.observe("bytes", self._error_bytes(
-                        error, media=kind == "media", state=state, host_policy=host_policy
-                    ))
+                    self._error_bytes(counted)
                     self._delay(error.headers, attempt, current)
                     error.close()
                     break
@@ -300,12 +310,9 @@ class HttpClient:
                         self.observe("timeouts")
                     raise
                 finally:
-                    elapsed = max(0.0, self.clock() - started)
                     if counted is not None:
                         self.observe("bytes", counted.bytes)
                         network_seconds += counted.network_seconds
-                    else:
-                        network_seconds = max(network_seconds, elapsed)
                     self.observe(f"network_{kind}_seconds", network_seconds)
                     cooldown = host_policy.get(
                         f"{kind}_slow_seconds", self.policy.get(f"{kind}_slow_seconds", 0)
@@ -345,15 +352,8 @@ class HttpClient:
         state["media_window"].append((now, size))
         state["media_bytes"] += size
 
-    def _read_media(self, response, state, host_policy):
-        with state["media_lock"]:
-            chunk = response.read(self._media_chunk_size(state, host_policy))
-            if chunk:
-                self._record_media(len(chunk), state)
-            return chunk
-
     def finish(self):
-        """別プロセスの次ジョブにも待機を引き継ぐため、残りの待機を済ませる。"""
+        """同一process内の後続jobにもhostごとの待機を引き継ぐ。"""
         now = self.clock()
         states = [_host_state(host) for host in self.hosts_used]
         normal_due = max((state["next_request"] for state in states), default=0.0)
