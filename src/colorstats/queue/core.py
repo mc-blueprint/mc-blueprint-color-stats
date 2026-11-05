@@ -106,9 +106,10 @@ class Queue:
             return job.id
 
     def claim(
-        self, stages: Sequence[str], *, job_ids: Sequence[uuid.UUID] | None = None
+        self, stages: Sequence[str], *, job_ids: Sequence[uuid.UUID] | None = None,
+        provider: str | None = None,
     ) -> Claim | None:
-        """指定stageから1件取得する。job_ids指定時はその集合に限定する。
+        """指定stageから1件取得する。job_ids・provider指定時はSQLで対象を限定する。
 
         期限切れも1失敗と数え、3試行で打ち切る。空集合では取得しない。
         """
@@ -119,6 +120,8 @@ class Queue:
                     .where(
                         Job.stage.in_(stages),
                         Job.id.in_(job_ids) if job_ids is not None else True,
+                        Job.payload["request"]["provider"].astext == provider
+                        if provider is not None else True,
                         or_(
                             (Job.status == "pending")
                             & (Job.available_at <= func.clock_timestamp()),

@@ -37,6 +37,7 @@ def isolated_acquisition_check(request, monkeypatch):
         monkeypatch.setenv("DATABASE_URL", "sqlite://")
         monkeypatch.setattr("colorstats.collect.stage.retention.check_acquisition",
                             lambda *args: None)
+        monkeypatch.setattr("colorstats.collect.limits.SharedLimits", lambda *args: None)
 
 
 class Response(io.BytesIO):

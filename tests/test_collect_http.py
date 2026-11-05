@@ -1,4 +1,6 @@
 import io
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from urllib.error import HTTPError
 from urllib.parse import urlsplit
@@ -176,6 +178,67 @@ def test_Openverse匿名APIの時枠と日枠(client):
     for _ in range(4):
         (first if _ < 2 else second).get("https://api.openverse.org/v1/images/")
     assert calls == [0, 1, 3600, 86400]
+
+
+def test_共有予約なしの並行API呼出しでも60秒1回を原子的に守る():
+    policy = load_policy(ROOT / "configs/source_policy.yaml", "wikimedia_commons")
+    policy["hosts"]["commons.wikimedia.org"]["api_windows"] = [{"seconds": 60, "limit": 1}]
+    clock, sends = Clock(), []
+    first_waiting, release, second_checked = threading.Event(), threading.Event(), threading.Event()
+    second_entered = threading.Event()
+
+    def opener(*args, **kwargs):
+        sends.append(clock.now)
+        return Response({})
+
+    first = HttpClient(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+    second = HttpClient(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+
+    def quota(*args):
+        first_waiting.set()
+        assert release.wait(5)
+        return 0
+
+    first.quota_reserve = quota
+    original = second._wait_for_slot
+
+    def checked(url):
+        second_entered.set()
+        result = original(url)
+        second_checked.set()
+        return result
+
+    second._wait_for_slot = checked
+    with ThreadPoolExecutor(2) as pool:
+        first_result = pool.submit(first.get, "https://commons.wikimedia.org/w/api.php")
+        try:
+            assert first_waiting.wait(5)
+            second_result = pool.submit(second.get, "https://commons.wikimedia.org/w/api.php")
+            assert second_entered.wait(5)
+            second_checked.wait(0.2)
+        finally:
+            release.set()
+        assert first_result.result(timeout=5) == second_result.result(timeout=5) == {}
+    assert len(sends) == 2 and sends[1] - sends[0] >= 60
+
+
+def test_共有予約なしでも未送信の予約待ちをAPI履歴へ加算しない():
+    from colorstats.collect.http import _host_state
+
+    policy = load_policy(ROOT / "configs/source_policy.yaml", "wikimedia_commons")
+    policy["hosts"]["commons.wikimedia.org"]["api_windows"] = [{"seconds": 60, "limit": 1}]
+    clock, sends = Clock(), []
+
+    def opener(*args, **kwargs):
+        sends.append(clock.now)
+        return Response({})
+
+    client = HttpClient(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+    reservations = iter((1, 1, 0))
+    client.quota_reserve = lambda *args: next(reservations)
+    assert client.get("https://commons.wikimedia.org/w/api.php") == {}
+    assert len(sends) == 1 and sends[0] < 60
+    assert list(_host_state("commons.wikimedia.org")["api_requests"]) == sends
 
 
 def test_別providerのclient間で同じmedia_hostの帯域窓を共有する(tmp_path):
