@@ -205,7 +205,10 @@ def test_URL予約の競合と失効回収と再発見を抑止する(queue, mea
 
 
 @DB
-def test_SHA重複と権利と取得件数を分け検索履歴を保存する(queue, measured, tmp_path, monkeypatch):
+@pytest.mark.parametrize("analysis", [False, True])
+def test_SHA重複と権利と取得件数を分け検索履歴を保存する(
+    queue, measured, tmp_path, monkeypatch, analysis,
+):
     subjects(queue)
     items = [replace(candidate(i), attribution="fixture") for i in range(3)]
     items[2] = replace(items[2], license="cc-by-sa-4.0")
@@ -214,6 +217,8 @@ def test_SHA重複と権利と取得件数を分け検索履歴を保存する(q
         b"same" if item.rank < 2 else b"share-alike"
     )
     claim = prepared_job(queue, measured, tmp_path, monkeypatch, adapter)
+    if not analysis:
+        claim.payload["policy"]["license_rules"].pop("analysis_only")
     prepared = bias.prepare(claim)
     run_id = queue.complete(
         claim, prepared.info, lambda s, r: bias.register(s, r, prepared.data), prepared.files
@@ -222,10 +227,10 @@ def test_SHA重複と権利と取得件数を分け検索履歴を保存する(q
         layer = report(session, "fixture-77")["strata"][request().stratum]
         counts = layer["counts"]
         assert counts["downloads"] == counts["registered"] == 3
-        assert counts["new_sha"] == 2 and counts["eligible_new_sha"] == 1
+        assert counts["new_sha"] == 2 and counts["eligible_new_sha"] == (2 if analysis else 1)
         assert counts["duplicate_sha"] == 1
         assert counts["confirmed_subjects"] == 0
-        assert layer["d15_exclusions"]["license_conditions"] == 1
+        assert layer["d15_exclusions"].get("license_conditions", 0) == (0 if analysis else 1)
         assert layer["eligible_new_sha_per_api_request"] is None
         history = layer["history"][0]
         assert history["search"]["next_offset"] == 30
@@ -253,7 +258,8 @@ def test_SHA重複と権利と取得件数を分け検索履歴を保存する(q
     )
     with Session(queue.engine) as session:
         counts = report(session, "fixture-77")["strata"][request().stratum]["counts"]
-        assert counts["duplicate_sha"] == 2 and counts["eligible_new_sha"] == 1
+        assert counts["duplicate_sha"] == 2
+        assert counts["eligible_new_sha"] == (2 if analysis else 1)
 
 
 @DB
