@@ -20,6 +20,7 @@ from colorstats import retention
 from colorstats.collect import Candidate, SearchRequest
 from colorstats.collect.commons import CommonsAdapter, check_commons_policy
 from colorstats.collect.http import HttpClient, MeasurementLimit
+from colorstats.collect.loc import LoCAdapter
 from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import license_class, load_policy
 from colorstats.queue import RunInfo
@@ -71,6 +72,8 @@ def adapter_for(provider, policy):
         return CommonsAdapter(policy)
     if provider == "openverse":
         return OpenverseAdapter(policy)
+    if provider == "loc":
+        return LoCAdapter(policy)
     raise ValueError("未登録の収集アダプターです")
 
 
