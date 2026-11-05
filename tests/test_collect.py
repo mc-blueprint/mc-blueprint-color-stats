@@ -118,7 +118,7 @@ def test_記録レスポンスからメタデータと選ばれ方を保持す�
     assert [time for _, time in requests] == [0, 0.5, 0.5]
     assert all(r.get_header("User-agent") == policy["user_agent"] for r, _ in requests)
     adapter.finish()
-    assert adapter.clock() == 1
+    assert adapter.clock() == 1.5
 
 
 def test_共通ポリシーはmaxlagを要求せずCommonsは通信前に検証する(policy):

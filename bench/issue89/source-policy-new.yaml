@@ -9,11 +9,22 @@ sources:
     api_windows:
       - {seconds: 60, limit: 199}
     media_min_interval: 0.5
-    media_bytes_per_10_seconds: 25000000
+    media_bytes_per_10_seconds: 31250000
     hosts:
-      commons.wikimedia.org: {kind: api}
-      upload.wikimedia.org: {kind: media, disallow_paths: [/archive/]}
-      www.wikidata.org: {kind: api}
+      commons.wikimedia.org:
+        kind: api
+        min_interval: 0.5
+        api_windows: [{seconds: 60, limit: 199}]
+      upload.wikimedia.org:
+        kind: media
+        min_interval: 0.5
+        max_concurrency: 2
+        media_bytes_per_10_seconds: 31250000
+        disallow_paths: [/archive/]
+      www.wikidata.org:
+        kind: api
+        min_interval: 0.5
+        api_windows: [{seconds: 60, limit: 199}]
     maxlag: 5
     retries: 2
     backoff: 5.0
@@ -46,11 +57,19 @@ sources:
       - {seconds: 3600, limit: 5}
       - {seconds: 86400, limit: 100}
     hosts:
-      api.openverse.org: {kind: api}
+      api.openverse.org:
+        kind: api
+        min_interval: 1.0
+        api_windows: [{seconds: 3600, limit: 5}, {seconds: 86400, limit: 100}]
       openverse.org: {kind: page}
       flickr.com: {kind: page}
       staticflickr.com: {kind: media}
-      upload.wikimedia.org: {kind: media, disallow_paths: [/archive/]}
+      upload.wikimedia.org:
+        kind: media
+        min_interval: 0.5
+        max_concurrency: 2
+        media_bytes_per_10_seconds: 31250000
+        disallow_paths: [/archive/]
       wikimedia.org: {kind: page}
       loc.gov: {kind: page}
       images.mapillary.com: {kind: media}

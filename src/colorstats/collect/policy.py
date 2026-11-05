@@ -28,6 +28,16 @@ def check_policy(policy: dict | None) -> None:
     for host, config in policy.get("hosts", {}).items():
         if not host or config.get("kind") not in ("api", "page", "media"):
             raise ValueError("source_policyの接続先区分が不正です")
+        if config.get("min_interval", 1) <= 0:
+            raise ValueError("host interval must be positive")
+        if config.get("max_concurrency", 1) <= 0:
+            raise ValueError("host concurrency must be positive")
+        for window in config.get("api_windows", []):
+            if window["seconds"] <= 0 or window["limit"] <= 0:
+                raise ValueError("host API windows must be positive")
+        limit = config.get("media_bytes_per_10_seconds")
+        if limit is not None and (type(limit) is not int or limit < 0):
+            raise ValueError("host media byte limit must be a non-negative integer")
     for window in policy.get("api_windows", []):
         if window["seconds"] <= 0 or window["limit"] <= 0:
             raise ValueError("API rolling枠には正の秒数と要求数が必要です")

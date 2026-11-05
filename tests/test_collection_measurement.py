@@ -55,7 +55,9 @@ def measured(config):
 def test_HTTP再試行とtimeoutも要求の分母へ含む(failure):
     from colorstats.collect.commons import CommonsAdapter
 
-    adapter, calls = make_client(("wikimedia_commons", CommonsAdapter), [failure, Response(b"{}")])
+    adapter, calls = make_client(
+        ("wikimedia_commons", CommonsAdapter), [failure, Response(b"{}")], example_kind="api"
+    )
     counts = Counter()
     adapter.observer = lambda event, value: counts.update({event: value})
     if isinstance(failure, TimeoutError):
@@ -72,6 +74,31 @@ def test_HTTP再試行とtimeoutも要求の分母へ含む(failure):
             "backoff_seconds": 5.0,
         }
     assert counts["api_request"] == len(calls)
+
+
+def test_body_read_timeoutもAPI応答時間に含め5秒cooldownを守る():
+    from colorstats.collect.commons import CommonsAdapter
+
+    clock = Clock()
+
+    class SlowTimeout(Response):
+        def read(self, *args):
+            clock.now += 2
+            raise TimeoutError
+
+    adapter, calls = make_client(
+        ("wikimedia_commons", CommonsAdapter),
+        [SlowTimeout(b""), Response(b"{}")],
+        clock=clock,
+        example_kind="api",
+    )
+    observed = []
+    adapter.observer = lambda event, value: observed.append((event, value))
+    with pytest.raises(TimeoutError):
+        adapter.get("https://example.test")
+    adapter.get("https://example.test")
+    assert calls == [("https://example.test", 0), ("https://example.test", 7)]
+    assert ("network_api_seconds", 2) in observed
 
 
 @DB
@@ -597,3 +624,56 @@ def test_Commonsが供給元枠を使い切ってもOpenverse枠を残す(queue,
             report(session, "fixture-77")["strata"][request().stratum]["counts"]["api_requests"]
             == 2
         )
+
+
+@DB
+def test_Openverse長周期枠は別jobとworker再生成後もDB台帳で復元する(
+    queue, measured, tmp_path
+):
+    from colorstats.collect.policy import load_policy
+
+    measured["measurement"]["id"] = "fixture-openverse-1"
+    payload, _ = payload_for(tmp_path)
+    payload["bias"] = copy.deepcopy(measured)
+    payload["request"].update(provider="openverse", stratum=request().stratum)
+    payload["policy"] = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
+    host_policy = payload["policy"]["hosts"]["api.openverse.org"]
+    queue.enqueue("collect", None, "e" * 64, payload)
+    first = queue.claim(["collect"])
+    first_meter = Meter(queue, first)
+    for _ in range(host_policy["api_windows"][0]["limit"]):
+        assert first_meter.reserve_quota(
+            "api.openverse.org", "api", host_policy["api_windows"]
+        ) == 0
+    with Session(queue.engine) as session:
+        assert any(
+            event["host"] == "api.openverse.org"
+            for run in session.scalars(select(ProcessingRun))
+            for event in run.parameters.get("quota_events", [])
+        )
+    queue.fail(first, "restart fixture")
+
+    queue.enqueue("collect", None, "f" * 64, payload)
+    restarted_worker_claim = queue.claim(["collect"])
+    next_meter = Meter(queue, restarted_worker_claim)
+    assert next_meter.reserve_quota(
+        "api.openverse.org", "api", host_policy["api_windows"]
+    ) >= 3599
+
+
+@DB
+def test_stage_observerとmeasurement台帳へ秘密queryを残さない(
+    queue, measured, tmp_path, monkeypatch
+):
+    data = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    item = data["results"][0]
+    item["foreign_landing_url"] = "https://openverse.org/page?access_token=private"
+    item["url"] = "https://upload.wikimedia.org/image?signature=private"
+    claim, _ = openverse_job(
+        queue, measured, tmp_path, monkeypatch, [Response(data), Response(b"unverified")]
+    )
+    prepared = bias.prepare(claim)
+    assert "private" not in json.dumps(prepared.info.parameters)
+    with Session(queue.engine) as session:
+        search = report(session, "fixture-77")["strata"][request().stratum]["history"][0]["search"]
+        assert "private" not in json.dumps(search)

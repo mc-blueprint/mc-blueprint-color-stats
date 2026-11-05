@@ -3,7 +3,7 @@
 import uuid
 from collections import Counter
 from contextlib import contextmanager
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from time import monotonic
 
 from sqlalchemy import func, select
@@ -152,6 +152,49 @@ class Meter:
         started = monotonic()
         session.execute(lock_sql)
         self._current_lock_wait += monotonic() - started
+
+    def reserve_quota(self, host, kind, windows):
+        if kind != "api":
+            return 0.0
+        if not windows:
+            return 0.0
+        from colorstats.collect.bias import LOCK_SQL
+
+        now = datetime.now(UTC)
+        delay = 0.0
+        with self._transaction() as session:
+            self.queue._owned(session, self.claim)
+            self._lock(session, LOCK_SQL)
+            rows = session.scalars(
+                select(ProcessingRun).where(ProcessingRun.parameters.has_key("quota_events"))
+            )
+            timestamps = sorted(
+                datetime.fromisoformat(event["at"])
+                for row in rows
+                for event in row.parameters["quota_events"]
+                if event["host"] == host and event["kind"] == kind
+            )
+            for window in windows:
+                recent = [
+                    timestamp for timestamp in timestamps
+                    if timestamp > now - timedelta(seconds=window["seconds"])
+                ]
+                if len(recent) >= window["limit"]:
+                    delay = max(
+                        delay,
+                        (recent[-window["limit"]] + timedelta(seconds=window["seconds"]) - now)
+                        .total_seconds(),
+                    )
+            if delay <= 0:
+                run = session.get(ProcessingRun, self.id)
+                events = run.parameters.get("quota_events", [])
+                run.parameters = {
+                    **run.parameters,
+                    "quota_events": [
+                        *events, {"host": host, "kind": kind, "at": now.isoformat()}
+                    ],
+                }
+        return delay
 
     def observe(self, event, value=1):
         from colorstats.collect.bias import LOCK_SQL
