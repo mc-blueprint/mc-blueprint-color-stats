@@ -1,6 +1,7 @@
 import copy
 import io
 import json
+import multiprocessing
 import socket
 import threading
 from collections import Counter
@@ -39,6 +40,33 @@ from tests.test_queue import database, expire  # noqa: F401
 from tests.test_queue import queue as queue
 
 
+def _spawn_media_ledger(database_url, job_id, result):
+    import uuid
+
+    from sqlalchemy import create_engine
+
+    from colorstats.queue import Queue
+
+    engine = create_engine(database_url)
+    queue = Queue(engine)
+    claim = queue.claim(["collect"], job_ids=[uuid.UUID(job_id)])
+    meter = Meter(queue, claim)
+    from colorstats.collect.commons import CommonsAdapter
+
+    policy = claim.payload["policy"]
+    now = [0.0]
+    adapter = CommonsAdapter(
+        policy, opener=lambda *args, **kwargs: io.BytesIO(b"x" * 20_000_000),
+        clock=lambda: now[0], wait=lambda delay: now.__setitem__(0, now[0] + delay),
+    )
+    adapter.observer = meter.observe
+    adapter.media_history = meter.media_history
+    adapter.get("https://upload.wikimedia.org/file", read=lambda response: response.read())
+    result.send(now[0])
+    queue.fail(claim, "spawn fixture")
+    engine.dispose()
+
+
 @pytest.fixture
 def measured(config):
     config["measurement"] = {
@@ -47,6 +75,37 @@ def measured(config):
         "http_requests_per_stratum": 40,
     }
     return config
+
+
+@DB
+def test_spawn子job間でmedia帯域窓をDB台帳から復元する(queue, measured, tmp_path):
+    from colorstats.collect.policy import load_policy
+
+    jobs = []
+    for index in range(2):
+        payload, _ = payload_for(tmp_path)
+        payload["bias"] = copy.deepcopy(measured)
+        payload["request"]["stratum"] = request().stratum
+        payload["policy"] = load_policy(ROOT / "configs/source_policy.yaml", "wikimedia_commons")
+        jobs.append(queue.enqueue("collect", None, f"{index + 1:064x}", payload))
+
+    context = multiprocessing.get_context("spawn")
+    elapsed = []
+    for job_id in jobs:
+        parent, child = context.Pipe(duplex=False)
+        process = context.Process(
+            target=_spawn_media_ledger,
+            args=(queue.engine.url.render_as_string(hide_password=False), str(job_id), child),
+        )
+        process.start()
+        child.close()
+        elapsed.append(parent.recv())
+        process.join()
+        assert process.exitcode == 0
+        parent.close()
+
+    assert elapsed[0] == 0
+    assert elapsed[1] >= 5
 
 
 @pytest.mark.parametrize(

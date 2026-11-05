@@ -196,6 +196,23 @@ class Meter:
                 }
         return delay
 
+    def media_history(self, host):
+        now = datetime.now(UTC)
+        with self.queue._transaction() as session:
+            rows = session.scalars(
+                select(ProcessingRun).where(
+                    ProcessingRun.parameters.has_key("quota_events")
+                )
+            )
+            return [
+                (max(0.0, (now - datetime.fromisoformat(event["at"])).total_seconds()),
+                 event["bytes"])
+                for row in rows
+                for event in row.parameters["quota_events"]
+                if event["host"] == host and event["kind"] == "media"
+                and datetime.fromisoformat(event["at"]) > now - timedelta(seconds=10)
+            ]
+
     def observe(self, event, value=1):
         from colorstats.collect.bias import LOCK_SQL
 
@@ -207,6 +224,17 @@ class Meter:
             database_timing = dict(run.parameters["database_timing"])
             database_timing.update(self.database_timing)
             database_timing["lock_wait_seconds"] += self._current_lock_wait
+            if event == "media_transfer":
+                run.parameters = {
+                    **run.parameters,
+                    "quota_events": [
+                        *run.parameters.get("quota_events", []),
+                        {"host": value["host"], "kind": "media",
+                         "at": datetime.now(UTC).isoformat(), "bytes": value["bytes"]},
+                    ],
+                    "database_timing": database_timing,
+                }
+                return
             if event in ("search", "candidate", "exclusion"):
                 search = dict(run.parameters.get("search", {}))
                 if event == "search":

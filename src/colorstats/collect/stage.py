@@ -137,6 +137,7 @@ def prepare(
         meter = getattr(observer, "__self__", None)
         if meter is not None and hasattr(meter, "reserve_quota"):
             adapter.quota_reserve = meter.reserve_quota
+            adapter.media_history = meter.media_history
     temporary = None
     engine = create_engine(database_url)
     try:

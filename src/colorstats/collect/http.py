@@ -26,6 +26,7 @@ def _host_state(host, max_concurrency=1):
                 "api_requests": deque(),
                 "media_window": deque(),
                 "media_bytes": 0,
+                "media_loaded": False,
                 "media_lock": Lock(),
                 "schedule_lock": Lock(),
                 "semaphore": BoundedSemaphore(max_concurrency),
@@ -57,9 +58,9 @@ class _CountingResponse:
                 chunks.append(chunk)
             return b"".join(chunks)
         if self.media:
-            client, state, host_policy = self.media
+            client, state, host_policy, host_name = self.media
             with state["media_lock"]:
-                size = min(size, client._media_chunk_size(state, host_policy))
+                size = min(size, client._media_chunk_size(state, host_policy, host_name))
                 started = self.clock()
                 try:
                     data = self.response.read(size)
@@ -93,6 +94,7 @@ class HttpClient:
         self.opener = opener if opener is not None else build_opener(_NoRedirect()).open
         self.observer = None
         self.quota_reserve = None
+        self.media_history = None
         self.hosts_used = set()
 
     def observe(self, event, value=1):
@@ -262,7 +264,7 @@ class HttpClient:
                         network_seconds += max(0.0, self.clock() - open_started)
                     with response_context as response:
                         self.observe("responses")
-                        media = (self, state, host_policy) if kind == "media" else None
+                        media = (self, state, host_policy, host_name) if kind == "media" else None
                         counted = response = _CountingResponse(response, self.clock, media)
                         if target is not None:
                             with target.open("wb") as output:
@@ -276,7 +278,7 @@ class HttpClient:
                             return response.read().decode("utf-8", errors="replace")
                         return read(response)
                 except HTTPError as error:
-                    media = (self, state, host_policy) if kind == "media" else None
+                    media = (self, state, host_policy, host_name) if kind == "media" else None
                     counted = _CountingResponse(error, self.clock, media)
                     self.observe("responses")
                     if error.code in (301, 302, 303, 307, 308):
@@ -313,6 +315,10 @@ class HttpClient:
                     if counted is not None:
                         self.observe("bytes", counted.bytes)
                         network_seconds += counted.network_seconds
+                        if kind == "media" and counted.bytes:
+                            self.observe("media_transfer", {
+                                "host": host_name, "bytes": counted.bytes,
+                            })
                     self.observe(f"network_{kind}_seconds", network_seconds)
                     cooldown = host_policy.get(
                         f"{kind}_slow_seconds", self.policy.get(f"{kind}_slow_seconds", 0)
@@ -325,13 +331,19 @@ class HttpClient:
         self.finish()
         raise RuntimeError("負荷制限により取得を中断しました")
 
-    def _media_chunk_size(self, state, host_policy):
+    def _media_chunk_size(self, state, host_policy, host_name):
         limit = host_policy.get(
             "media_bytes_per_10_seconds", self.policy.get("media_bytes_per_10_seconds")
         )
         if not limit:
             return 64 * 1024
         now = self.clock()
+        if not state["media_loaded"]:
+            if self.media_history is not None:
+                for age, size in self.media_history(host_name):
+                    state["media_window"].append((now - age, size))
+                    state["media_bytes"] += size
+            state["media_loaded"] = True
         while state["media_window"] and state["media_window"][0][0] <= now - 10:
             _, old_size = state["media_window"].popleft()
             state["media_bytes"] -= old_size

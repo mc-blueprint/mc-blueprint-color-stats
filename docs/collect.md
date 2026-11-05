@@ -95,11 +95,13 @@ HTMLを含む作者・説明はテキスト化し、元のimageinfoもasset.qual
 Commons Action APIは同時接続1、1秒未満の応答後は0.5秒以上、1秒を超える応答後は5秒待つ。
 policyのAPI rolling枠は1分199要求未満、`maxlag`・429/503・Retry-Afterと指数待機を適用する。
 Wikimedia mediaは実host `upload.wikimedia.org` ごとに同時接続2、要求間1秒以上、
-10秒窓25,000,000 byteまでに制限する。Openverse匿名APIは実host `api.openverse.org` の
+10秒窓31,250,000 byteまでに制限する。Openverse匿名APIは実host `api.openverse.org` の
 rolling 5/hour・100/day枠を適用し、計測DBの直近request ledgerから再起動後も消費を復元する。
-短周期interval・backoff・media byte窓は同一プロセス内のhost stateを共有する。API/mediaの
+短周期interval・backoffは同一プロセス内のhost stateを共有する。media byte窓は
+measurement runごとにhost・byte・取得時刻をDB台帳へ記録し、spawnされた次のjobが直近10秒分を復元する。
+同じprocess内でもhost stateを共有する。API/mediaの
 区分と枠はproviderや呼出し側の指定よりredirect後の実host policyを優先する。ジョブ末尾にも
-残りの待機を完了してから次のspawnへ進む。プロセス間の短周期共有は#91のDB共有予約まで行わない。
+残りの待機を完了してから次のspawnへ進む。短周期interval・backoffの複数process間共有は#91のDB共有予約まで行わない。
 GET・JSON、非対話用`maxlag=5`、連絡先付きBot User-Agentを使用する。
 HTTP 429/503とAPI maxlag/ratelimited/cirrussearch-too-busy-errorは
 Retry-After（秒数・HTTP日時）と5秒からの指数待機の
@@ -116,7 +118,7 @@ Content-Lengthがある原本は受信サイズを照合し、途中で切れた
 `upload.wikimedia.org`では`/archive/`を巡回しない。source_policyの`disallow_paths`により、
 直接URLとredirect先のどちらも通信前に拒否する。
 
-`upload.wikimedia.org`にはproviderではなく接続先hostの制限を適用する。Wikimediaの25 Mbps/10秒窓は31,250,000 byte/10秒、同時要求2、要求間隔1秒として設定し、`/archive/`は取得対象外とする。同一process内のhost枠はclient間で共有し、長周期API枠は計測台帳から復元する。短周期枠の複数process間共有は#91の対象とする。
+`upload.wikimedia.org`にはproviderではなく接続先hostの制限を適用する。Wikimediaの25 Mbps/10秒窓は31,250,000 byte/10秒、同時要求2、要求間隔1秒として設定し、`/archive/`は取得対象外とする。帯域窓と長周期API枠は計測台帳から復元する。短周期interval・backoffの複数process間共有は#91の対象とする。
 
 2026-11-01に確認した一次情報:
 
