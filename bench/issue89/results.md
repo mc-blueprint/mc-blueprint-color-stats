@@ -18,3 +18,7 @@
 | `issue89-new-v1` | `8974f7ab-bf8a-4d81-b0e1-4b5509c4a8a9` / `541b5f477c21b69c90a9c4a667bc6e1803d3a7f2ad3a1cbf1b33383c3e163473`; `3c8df545-f5e0-49d7-a448-2110876dc1b0` / `1439bb0b73f7e48e90a91e69504eaf924ff5e53899a83a52b0b7d48d123f8a15`; `6c6b3fb8-18e8-47bd-b6cd-33e4df567dff` / `b135e6dd681970aebfbcb5ad59587ea637429a39214fac60d0dbb027d9470a8b` | 29.342秒 | 10.080秒 | 14.962秒 | 0.209秒 | 3.030秒 | 0.510秒 |
 
 新条件は総elapsedが17.471秒（37.3%）、API networkが0.984秒（8.9%）、通常waitが16.526秒（52.5%）短縮。DB処理・commit時間はほぼ同じ、lock wait差+0.005秒。API待機の短縮のみ既定に採用し、media要求間隔は未測定のため旧値1秒に戻す。画像が取得されずmedia間隔の効果・新規SHAの改善は未測定とし、media速度の比較は#90で行う。
+
+## media帯域窓のspawn間復元
+
+2つのspawn子processを順に起動し、各々upload.wikimedia.orgからfixtureの20,000,000 byteを取得。1つ目の完了時に実host・byte・時刻を計測台帳へ記録し、2つ目は別processから直近10秒分を復元して待機した（fixtureのclock待機7.7秒、process起動・DB処理中に経過した時間を含む）。同一processのstate共有だけに依存せず、25 Mbps/10秒窓31,250,000 byteを超えないことを回帰テストで確認した。複数processの同時予約は#91の対象。
