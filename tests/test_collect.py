@@ -231,7 +231,7 @@ def test_ライセンス候補カテゴリは継続応答も保持する(policy)
         ("cc0", "open"),
         ("pd", "open"),
         ("CC-BY-4.0", "open"),
-        ("cc-by-sa-4.0", "open"),
+        ("cc-by-sa-4.0", "analysis_only"),
         ("cc-by-nd-4.0", "restricted"),
         ("cc-by-nc-4.0", "restricted"),
         ("unknown", "restricted"),
@@ -655,7 +655,7 @@ def test_キュー完了と同時に出典画像と確定原本の参照を登�
         asset = session.scalars(select(Asset)).one()
         run = session.get(ProcessingRun, run_id)
         assert session.get(Job, job_id).status == "succeeded"
-        assert source.author == "Martin Falbisoner" and source.license_class == "open"
+        assert source.author == "Martin Falbisoner" and source.license_class == "analysis_only"
         assert source.policy == payload["policy"] and "creativecommons.org" in source.attribution
         assert source.attribution == asset.quality["attribution"]
         assert source.attribution.startswith(specified or "Martin Falbisoner | Own work")

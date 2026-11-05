@@ -1,0 +1,13 @@
+{
+  "tests_passed": 845,
+  "tests_skipped": 1,
+  "junit_sha256": "232cb421af83efe446512ddb102d44803bcac3e9ca2225bcc9cfea7196594b82",
+  "tested_files_byte_equal": 150,
+  "ruff": "passed",
+  "build": [
+    "sdist",
+    "wheel"
+  ],
+  "postgresql": "pg_ctl (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+  "postgresql_stopped": true
+}
