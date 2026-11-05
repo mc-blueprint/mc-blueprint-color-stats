@@ -10,7 +10,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlunsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-from colorstats.collect.policy import check_policy
+from colorstats.collect.policy import check_current_url, check_policy
 
 _HOST_STATES = {}
 _HOST_STATES_LOCK = Lock()
@@ -168,6 +168,7 @@ class HttpClient:
             self.observe(event, delay)
 
     def _host_policy(self, url):
+        check_current_url(url)
         parts = urlsplit(url)
         if parts.username or parts.password:
             raise ValueError("URL埋め込み認証を拒否しました")
@@ -258,6 +259,7 @@ class HttpClient:
                 network_seconds = 0.0
                 try:
                     request = Request(current, headers={"User-Agent": self.policy["user_agent"]})
+                    check_current_url(current)
                     open_started = self.clock()
                     try:
                         response_context = self.opener(request, timeout=60)
@@ -319,6 +321,7 @@ class HttpClient:
                         if kind == "media" and counted.bytes:
                             self.observe("media_transfer", {
                                 "host": host_name, "bytes": counted.bytes,
+                                "rate_group": host_policy.get("rate_group", host_name),
                             })
                     self.observe(f"network_{kind}_seconds", network_seconds)
                     cooldown = host_policy.get(

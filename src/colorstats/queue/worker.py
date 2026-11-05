@@ -10,7 +10,7 @@ from time import monotonic, sleep
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from colorstats.queue.core import Claim, LeaseLost, Queue, RunInfo
+from colorstats.queue.core import Claim, LeaseLost, NonRetryableError, Queue, RunInfo
 from colorstats.queue.storage import storage_available
 
 MAX_PREPARES = 256
@@ -47,6 +47,7 @@ def _prepare(connection):
                     (
                         f"{type(error).__name__}: {error}",
                         error.errno if isinstance(error, OSError) else None,
+                        not isinstance(error, NonRetryableError),
                     ),
                 )
             connection.send(result)
@@ -191,9 +192,12 @@ class Worker:
                     preparing = False
                     self._prepared_count += 1
                     if not success:
-                        message, number = result
+                        message, number, retryable = result
                         if number in (errno.EROFS, errno.ENODEV, errno.ESTALE, errno.EIO):
                             self.queue.defer(claim, message)
+                            return
+                        if not retryable:
+                            self.queue.fail(claim, message, retryable=False)
                             return
                         raise RuntimeError(message)
                     if not self._available(claim.stage):
@@ -228,7 +232,8 @@ class Worker:
                 ):
                     self.queue.defer(claim, "保存先の復旧待ち")
                 else:
-                    self.queue.fail(claim, f"{type(error).__name__}: {error}")
+                    self.queue.fail(claim, f"{type(error).__name__}: {error}",
+                                    retryable=not isinstance(error, NonRetryableError))
             except LeaseLost:
                 pass
         except BaseException:
