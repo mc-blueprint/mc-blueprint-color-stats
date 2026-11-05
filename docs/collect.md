@@ -21,7 +21,8 @@ URL/寸法/MIME欠落は`thumbnail_missing`、版欠落は`thumbnail_revision_mi
 `rendition`は`provider/native_id/revision/variant`、要求幅、原本のURL・実寸・MIME・API SHA-1を持つ。
 API SHA-1と受信SHA-256は別物で、縮小から原本SHA-256を推測しない。
 `Asset.sha256`と`quality.received.sha256`は受信SHA-256、`quality.rendition.original`は原本の情報。
-Pillowによる受信寸法・MIME検査は縮小のみ。原本は#90どおりAPI寸法・MIMEを保つ。
+新規jobは原本・縮小とも画像ヘッダーから受信寸法・MIMEを検査する。
+通常原本の画素展開は行わず、API値はrendition.originalへ分離して保持する。
 原本を取得した場合だけ原本SHA-256が既知になる。API SHA-1がある原本は受信物と照合し、
 不一致なら`original_sha1_mismatch`で候補だけを除外して予約を解放し、バッチを継続する。
 不一致でも取得件数・byteは計上する。SHA-1欠落の原本は従来どおり扱う。
@@ -50,9 +51,11 @@ UA、既定の画像間隔1秒、license_rules/rights_reviewは変更しない�
 
 2026-11-05のユーザー決定に従い、新規jobの`quality_policy`へ次を固定する。
 主色OKLab距離の平均は0.02以下、主要部位一致は0.85以上、最低実解像度は長辺1280px。
-縮小の受信実寸または原本のAPI寸法が最低値未満なら`below_min_resolution`として除外し、
-候補順位・URLとともに記録して同じバッチを継続する。通常の原本取得はPillowへ渡さず、
-巨大原本でも同バッチの先行取得を失わない。既存job・asset・raw・runの一括更新はしない。
+原本・縮小とも受信実寸が最低値未満なら`below_min_resolution`として除外する。
+原本の受信寸法とAPI寸法が一致しなければ`original_dimensions_mismatch`を優先して記録する。
+ヘッダー検査のPillow上限は`received_header_image_limit`、読取り不能は
+`received_header_unreadable`として候補単位で除外・予約解放し、同バッチの先行取得を保持して続行する。
+通常の原本取得では画素を展開しない。既存job・asset・raw・runの一括更新はしない。
 APIの幅・高さ1280は要求値であり、CDNのサイズ段階により受信長辺が1280を超える場合がある。
 採用可否と解析はAPIの表示寸法と区別した受信実寸で記録する。
 Openverse・LoC・Mapillaryは各ソースの既存方式を保つ（縮小APIを共通に仮定しない）。

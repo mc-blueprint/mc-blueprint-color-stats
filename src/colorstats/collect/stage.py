@@ -303,29 +303,43 @@ def prepare(
                 "width": candidate.width, "height": candidate.height, "mime": candidate.mime,
             }
             quality = {}
-            if candidate.rendition.get("variant") == "thumbnail":
+            thumbnail = candidate.rendition.get("variant") == "thumbnail"
+            reason = None
+            if thumbnail or payload.get("quality_policy"):
                 from colorstats.analyze.prep import _inspect, _quality
 
-                with Image.open(temporary) as image:
-                    received = {"width": image.width, "height": image.height,
-                                "mime": Image.MIME[image.format]}
-                extension = MIME_EXTENSIONS[received["mime"]]
+                try:
+                    with Image.open(temporary) as image:
+                        received = {"width": image.width, "height": image.height,
+                                    "mime": Image.MIME[image.format]}
+                except Image.DecompressionBombError:
+                    reason = "received_header_image_limit"
+                except OSError:
+                    reason = "received_header_unreadable"
             if payload.get("quality_policy"):
-                if max(received["width"], received["height"]) < payload["quality_policy"][
-                    "min_long_edge"
-                ]:
-                    temporary.unlink()
-                    temporary = None
-                    if discard is not None:
-                        discard(request, candidate)
-                    skipped.append({
-                        "source_url": candidate.source_url,
-                        "original_url": candidate.original_url,
-                        "rank": candidate.rank, "reason": "below_min_resolution",
-                    })
-                    observe("exclusion", skipped[-1])
-                    continue
-                if candidate.rendition.get("variant") == "thumbnail":
+                if not reason and not thumbnail and (
+                    received["width"], received["height"]
+                ) != (candidate.width, candidate.height):
+                    reason = "original_dimensions_mismatch"
+                if not reason and max(received["width"], received["height"]) < (
+                    payload["quality_policy"]["min_long_edge"]
+                ):
+                    reason = "below_min_resolution"
+            if reason:
+                temporary.unlink()
+                temporary = None
+                if discard is not None:
+                    discard(request, candidate)
+                skipped.append({
+                    "source_url": candidate.source_url,
+                    "original_url": candidate.original_url,
+                    "rank": candidate.rank, "reason": reason,
+                })
+                observe("exclusion", skipped[-1])
+                continue
+            if thumbnail or payload.get("quality_policy"):
+                extension = MIME_EXTENSIONS[received["mime"]]
+                if thumbnail and payload.get("quality_policy"):
                     quality = _quality(_inspect(temporary))
             logical = f"raw/{digest[:2]}/{digest}.{extension}"
             target = storage.resolve(logical).local_path(payload["host"])
