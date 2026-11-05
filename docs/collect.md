@@ -396,6 +396,14 @@ ubuntu-1から3層を各1回、同じ条件で直列に送った。japanese-cast
 - 歩留まり：応答した2層の計4件で、照合成功は1件（25%）。除外はすべて元ページとの作者・ライセンスの不一致による。
 - 対処：Openverseは応答が不安定なため、補助ソースにとどめ、Commonsを主にする。Openverseを使う場合は、取得間隔を空けたうえで、タイムアウトした層を後で再試行する。作者表記の揺れ（末尾のピリオドなど）を照合で許容するかは、M3の収集方針で決める。
 
+## Library of Congress
+
+`LoCAdapter` は `https://www.loc.gov/collections/john-margolies-roadside-america/` のJSON結果を使う。item URLと権利記述を候補metadataへそのまま保持し、`No known restrictions` は `loc-analysis-only` として扱い、public domainやCreative Commonsへ変換しない。権利記述欠落・不明、アクセス制限、非写真／図面、画像なし、白黒画像は原画像の取得前に除外する。API応答の画像URLだけを使い、URLを組み立てない。
+
+このcollectionはJohn Margolies個人による米国沿道商業建築（1969〜2008年）の写真に偏る。[LoCのResearch Guide](https://guides.loc.gov/roadside-america-photographs)は11,710点のカラー35mmスライドと説明している。建築・地形全般の代表標本とはせず、検索語とitem IDを測定記録へ残す。
+
+現行の [LoC JSON API仕様](https://www.loc.gov/apis/json-and-yaml/requests/) はcollection endpointと `fo=json` を文書化している。API制限はJSON 20/min・image 150/minだが、[Legal](https://www.loc.gov/legal/) はアプリへの全機械合計10 req/min以下を推奨するため、APIと画像を同じhost rate groupにまとめて6秒以上の間隔とする。[robots.txt](https://www.loc.gov/robots.txt) は `/search` と `/pictures/search` を禁止し `Crawl-Delay: 5`。確認時の `tile.loc.gov/robots.txt` は404、`cdn.loc.gov/robots.txt` は `/service` と `/master` を禁止し10秒遅延だった。
+
 証跡は`%USERPROFILE%/.codex/logs/commands/20261102T140104Z-4b7cca7011f04279801936e0012e2053.jsonl`に記録した。
 
 ## 解析専用入力（Issue #87）
