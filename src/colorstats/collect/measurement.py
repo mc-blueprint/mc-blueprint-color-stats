@@ -2,7 +2,9 @@
 
 import uuid
 from collections import Counter
-from datetime import UTC, datetime
+from contextlib import contextmanager
+from datetime import UTC, datetime, timedelta
+from time import monotonic
 
 from sqlalchemy import func, select
 
@@ -22,12 +24,18 @@ class Meter:
         from colorstats.collect.bias import LOCK_SQL
 
         self.queue, self.claim = queue, claim
+        self.started = monotonic()
+        self.database_timing = {
+            "lock_wait_seconds": 0.0,
+            "processing_seconds": 0.0,
+            "commit_seconds": 0.0,
+        }
         payload = claim.payload
         self.settings = payload["bias"]["measurement"]
         self.stratum = payload["request"]["stratum"]
-        with queue._transaction() as session:
+        with self._transaction() as session:
             queue._owned(session, claim)
-            session.execute(LOCK_SQL)
+            self._lock(session, LOCK_SQL)
             if session.scalar(
                 select(Job.id)
                 .where(
@@ -85,9 +93,16 @@ class Meter:
                             "new_sha",
                             "eligible_new_sha",
                             "duplicate_sha",
+                            "network_api_seconds",
+                            "network_page_seconds",
+                            "network_media_seconds",
+                            "normal_wait_seconds",
+                            "backoff_seconds",
+                            "bandwidth_wait_seconds",
                         ),
                         0,
                     ),
+                    "database_timing": dict(self.database_timing),
                     "baseline_subject_ids": (
                         previous[0].parameters["baseline_subject_ids"]
                         if previous
@@ -110,14 +125,116 @@ class Meter:
             session.flush()
             self.id = run.id
 
+    @contextmanager
+    def _transaction(self):
+        started = monotonic()
+        self._current_lock_wait = 0.0
+        commit_started = None
+        try:
+            with self.queue._transaction() as session:
+                yield session
+                session.flush()
+                commit_started = monotonic()
+        except BaseException:
+            self.database_timing["lock_wait_seconds"] += self._current_lock_wait
+            self.database_timing["processing_seconds"] += max(
+                0.0, monotonic() - started - self._current_lock_wait
+            )
+            raise
+        elapsed = monotonic()
+        self.database_timing["lock_wait_seconds"] += self._current_lock_wait
+        self.database_timing["processing_seconds"] += max(
+            0.0, commit_started - started - self._current_lock_wait
+        )
+        self.database_timing["commit_seconds"] += elapsed - commit_started
+
+    def _lock(self, session, lock_sql):
+        started = monotonic()
+        session.execute(lock_sql)
+        self._current_lock_wait += monotonic() - started
+
+    def reserve_quota(self, host, kind, windows):
+        if kind != "api":
+            return 0.0
+        if not windows:
+            return 0.0
+        from colorstats.collect.bias import LOCK_SQL
+
+        now = datetime.now(UTC)
+        delay = 0.0
+        with self._transaction() as session:
+            self.queue._owned(session, self.claim)
+            self._lock(session, LOCK_SQL)
+            rows = session.scalars(
+                select(ProcessingRun).where(ProcessingRun.parameters.has_key("quota_events"))
+            )
+            timestamps = sorted(
+                datetime.fromisoformat(event["at"])
+                for row in rows
+                for event in row.parameters["quota_events"]
+                if event["host"] == host and event["kind"] == kind
+            )
+            for window in windows:
+                recent = [
+                    timestamp for timestamp in timestamps
+                    if timestamp > now - timedelta(seconds=window["seconds"])
+                ]
+                if len(recent) >= window["limit"]:
+                    delay = max(
+                        delay,
+                        (recent[-window["limit"]] + timedelta(seconds=window["seconds"]) - now)
+                        .total_seconds(),
+                    )
+            if delay <= 0:
+                run = session.get(ProcessingRun, self.id)
+                events = run.parameters.get("quota_events", [])
+                run.parameters = {
+                    **run.parameters,
+                    "quota_events": [
+                        *events, {"host": host, "kind": kind, "at": now.isoformat()}
+                    ],
+                }
+        return delay
+
+    def media_history(self, host):
+        now = datetime.now(UTC)
+        with self.queue._transaction() as session:
+            rows = session.scalars(
+                select(ProcessingRun).where(
+                    ProcessingRun.parameters.has_key("quota_events")
+                )
+            )
+            return [
+                (max(0.0, (now - datetime.fromisoformat(event["at"])).total_seconds()),
+                 event["bytes"])
+                for row in rows
+                for event in row.parameters["quota_events"]
+                if event["host"] == host and event["kind"] == "media"
+                and datetime.fromisoformat(event["at"]) > now - timedelta(seconds=10)
+            ]
+
     def observe(self, event, value=1):
         from colorstats.collect.bias import LOCK_SQL
 
-        with self.queue._transaction() as session:
+        with self._transaction() as session:
             self.queue._owned(session, self.claim)
-            session.execute(LOCK_SQL)
+            self._lock(session, LOCK_SQL)
             run = session.get(ProcessingRun, self.id)
             counts = Counter(run.parameters["counts"])
+            database_timing = dict(run.parameters["database_timing"])
+            database_timing.update(self.database_timing)
+            database_timing["lock_wait_seconds"] += self._current_lock_wait
+            if event == "media_transfer":
+                run.parameters = {
+                    **run.parameters,
+                    "quota_events": [
+                        *run.parameters.get("quota_events", []),
+                        {"host": value["host"], "kind": "media",
+                         "at": datetime.now(UTC).isoformat(), "bytes": value["bytes"]},
+                    ],
+                    "database_timing": database_timing,
+                }
+                return
             if event in ("search", "candidate", "exclusion"):
                 search = dict(run.parameters.get("search", {}))
                 if event == "search":
@@ -134,7 +251,10 @@ class Meter:
                         if skipped not in search.get("skipped", []):
                             search["skipped"] = [*search.get("skipped", []), skipped]
                             counts["excluded:" + value["reason"]] += 1
-                run.parameters = {**run.parameters, "search": search, "counts": dict(counts)}
+                run.parameters = {
+                    **run.parameters, "search": search, "counts": dict(counts),
+                    "database_timing": database_timing,
+                }
                 return
             if event in ("api_request", "request"):
                 rows = session.scalars(
@@ -166,15 +286,33 @@ class Meter:
                         raise MeasurementLimit("provider_api_limit")
             else:
                 counts[event] += value
-            run.parameters = {**run.parameters, "counts": dict(counts)}
+            run.parameters = {
+                **run.parameters, "counts": dict(counts), "database_timing": database_timing,
+            }
 
     def finish(self, state, *, parameters=None, error=None):
-        with self.queue._transaction() as session:
+        from colorstats.collect.bias import LOCK_SQL
+
+        with self._transaction() as session:
             self.queue._owned(session, self.claim)
+            self._lock(session, LOCK_SQL)
             run = session.get(ProcessingRun, self.id)
             run.parameters = {**run.parameters, **(parameters or {}), "state": state}
+            database_timing = dict(self.database_timing)
+            database_timing["lock_wait_seconds"] += self._current_lock_wait
+            run.parameters = {**run.parameters, "database_timing": database_timing}
             run.failure_reason = type(error).__name__ if error else None
             run.finished_at = session.scalar(select(func.clock_timestamp()))
+        elapsed = max(0.0, monotonic() - self.started)
+        with self._transaction() as session:
+            self.queue._owned(session, self.claim)
+            self._lock(session, LOCK_SQL)
+            run = session.get(ProcessingRun, self.id)
+            run.parameters = {
+                **run.parameters,
+                "elapsed_seconds": elapsed,
+                "database_timing": dict(self.database_timing),
+            }
 
 
 def record(session, run, data, known):
