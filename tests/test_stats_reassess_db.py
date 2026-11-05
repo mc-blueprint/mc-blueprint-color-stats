@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from colorstats.pack_boundary import validate_public
 from colorstats.schema.models import Asset, Source
-from colorstats.stats.reassess import execute
+from colorstats.stats.reassess import correct_review, execute
 from colorstats.stats.snapshot import verify
 from tests.test_queue import asset as asset
 from tests.test_queue import database as database
@@ -81,3 +81,49 @@ def test_再評価後のsnapshotだけがSAを採用し旧版hashを保持する
     assert new["counts"]["rights_eligible"] == old["counts"]["rights_eligible"] + 1
     assert new["counts"]["representatives"] == old["counts"]["representatives"] + 1
     assert verify(tmp_path / "old", old["snapshot_id"]) == old
+
+
+def test_確認根拠だけを単一取引で訂正し再実行と想定外拒否で元情報を保つ(queue, asset):
+    import json
+
+    policies = yaml.safe_load(Path("configs/source_policy.yaml").read_text(encoding="utf-8"))[
+        "sources"
+    ]
+    previous = json.loads(Path("bench/issue104/rights-review-v1.json").read_text(encoding="utf-8"))
+    corrected = deepcopy(policies["wikimedia_commons"]["rights_review"])
+    policies["wikimedia_commons"]["rights_review"] = previous
+    with Session(queue.engine) as session, session.begin():
+        row = session.get(Asset, asset)
+        source = session.get(Source, row.source_id)
+        source.site = row.search_provider = "wikimedia_commons"
+        source.license = "cc-by-sa-4.0"
+        row.quality = {"license": source.license, "metadata": {"original": "原meta"}}
+    plan = execute(queue.engine, [asset], policies)
+    execute(queue.engine, [asset], policies, apply=True, expected_hash=plan["plan_hash"])
+    with Session(queue.engine) as session:
+        row = session.get(Asset, asset)
+        source = session.get(Source, row.source_id)
+        quality, policy = deepcopy(row.quality), deepcopy(source.policy)
+    dry = correct_review(queue.engine, [asset], previous, corrected)
+    assert dry["changes"] == {"asset": 1, "source": 1}
+    with pytest.raises(ValueError, match="hash"):
+        correct_review(queue.engine, [asset], previous, corrected,
+                       apply=True, expected_hash="wrong")
+    for expected in ({"asset": 1, "source": 1}, {}):
+        result = correct_review(
+            queue.engine, [asset], previous, corrected,
+            apply=True, expected_hash=dry["preserved_hash"],
+        )
+        assert result["changes"] == expected
+        assert result["preserved_hash"] == dry["preserved_hash"]
+    quality["rights"]["rights_review"] = policy["rights_review"] = corrected
+    with Session(queue.engine) as session, session.begin():
+        row = session.get(Asset, asset)
+        source = session.get(Source, row.source_id)
+        assert row.quality == quality and source.policy == policy
+        assert row.license_class == source.license_class == "analysis_only"
+        assert row.quality["license"] == source.license == "cc-by-sa-4.0"
+        source.policy = source.policy | {"rights_review": {"policy_version": "unexpected"}}
+    with pytest.raises(ValueError, match="想定外"):
+        correct_review(queue.engine, [asset], previous, corrected,
+                       apply=True, expected_hash=dry["preserved_hash"])

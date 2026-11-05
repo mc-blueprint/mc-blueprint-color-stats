@@ -109,12 +109,16 @@ Retry-After（秒数・HTTP日時）と5秒からの指数待機の
 それ以外のHTTP/APIエラー、通信失敗はそのまま試行を失敗させる。
 Content-Lengthがある原本は受信サイズを照合し、途中で切れた応答を成功にしない。
 
-2026-11-05のユーザー決定により、Commons Action APIは[Robot policy](https://wikitech.wikimedia.org/wiki/Robot_policy)
-のAction API rules（未認証は同時1、5 req/s未満、1秒超の応答後5秒待機、batch推奨）と
+2026-11-05のユーザー判断により、Commons Action APIは
+[Robot policyのAction API rules節](https://wikitech.wikimedia.org/wiki/Robot_policy#Action_API_rules)と
 [Rate limits](https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits)の識別User-Agent枠
-（200 req/min）に従って利用する。`robots.txt`の`Disallow: /w/`は動的ページを巡回する
-クローラー向けと解釈し、Action API利用を継続する。[Commons robots.txt](https://commons.wikimedia.org/robots.txt)
-および確認日は`bench/issue89/results.md`に記録する。HTMLの動的ページは巡回せず、
+（200 req/min）に従って利用する。Robot policy自身が`/w/api.php`を例示し、未認証では同時1・
+5 req/s未満、1秒を超える要求の後は5秒待機、batch推奨の条件を定めていることを根拠として、
+[Commons robots.txt](https://commons.wikimedia.org/robots.txt)の`Disallow: /w/`を踏まえて
+Action API利用を継続するのが、このユーザー判断である。
+Robot policyとRate limitsは2026-11-05に取得し、両URLのHTTP 200を確認した。
+確認日時・本文hashは`bench/issue104/rights-url-verification.json`に記録し、
+確認記録は`issue104-v2`とする。HTMLの動的ページは巡回せず、
 `upload.wikimedia.org`では`/archive/`を巡回しない。source_policyの`disallow_paths`により、
 直接URLとredirect先のどちらも通信前に拒否する。
 

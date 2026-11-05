@@ -1,1 +1,1 @@
-{"read_seconds":154.99578910303535,"snapshot_id":"fb7bc1af34b036cb111ae9ae6274195931e2c2271d764eb040e96bda55326942","total_seconds":1482.1902155760326,"transaction":{"isolation":"repeatable read","read_only":"on","snapshot":"171445:171445:"}}
+{"read_seconds":154.20252893696306,"snapshot_id":"e60bc14c7076a405b75333d1a0b280d9b088534796bdc4fedec0fbdebe414471","total_seconds":1508.3593648319948,"transaction":{"isolation":"repeatable read","read_only":"on","snapshot":"171453:171453:"}}
