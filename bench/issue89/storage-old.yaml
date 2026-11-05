@@ -1,0 +1,4 @@
+storage:
+  raw:
+    - host: ubuntu-1
+      path: /tmp/colorstats-issue89/raw-old2

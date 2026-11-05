@@ -61,10 +61,16 @@ def test_HTTP再試行とtimeoutも要求の分母へ含む(failure):
     if isinstance(failure, TimeoutError):
         with pytest.raises(TimeoutError):
             adapter.get("https://example.test", api=True)
-        assert counts == {"api_request": 1, "timeouts": 1}
+        assert counts == {"api_request": 1, "timeouts": 1, "network_api_seconds": 0.0}
     else:
         adapter.get("https://example.test", api=True)
-        assert counts == {"api_request": 2, "responses": 2, "bytes": 2}
+        assert counts == {
+            "api_request": 2,
+            "responses": 2,
+            "bytes": 2,
+            "network_api_seconds": 0.0,
+            "backoff_seconds": 5.0,
+        }
     assert counts["api_request"] == len(calls)
 
 
@@ -356,6 +362,7 @@ def test_既定openerのリダイレクトも枠待機と応答byteを計数す�
 
     clock, counts, calls = Clock(), Counter(), []
     policy = load_policy(ROOT / "configs/source_policy.yaml", "openverse")
+    policy["hosts"]["example.test"] = {"kind": "page"}
 
     def forbidden(*args, **kwargs):
         pytest.fail("外部ネットワークへの接続は禁止")
@@ -508,8 +515,8 @@ def test_照合途中の枠停止でも除外URLと受信済み継続位置を�
         search = history["search"]
         assert "network_api_seconds" in history["counts"]
         assert history["database_timing"]["lock_wait_seconds"] >= 0
-        assert history["database_timing"]["processing_seconds"] is None
-        assert history["database_timing"]["commit_seconds"] is None
+        assert history["database_timing"]["processing_seconds"] >= 0
+        assert history["database_timing"]["commit_seconds"] >= 0
         assert history["elapsed_seconds"] >= 0
         assert search["effective"]["api"] == "Openverse API v1"
         assert search["api_next_offset"] == 2 and not search["search_complete"]
