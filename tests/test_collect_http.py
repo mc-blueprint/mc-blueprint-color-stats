@@ -1,6 +1,7 @@
 import io
 from datetime import UTC, datetime
 from urllib.error import HTTPError
+from urllib.parse import urlsplit
 
 import pytest
 
@@ -185,7 +186,7 @@ def test_別providerのclient間で同じmedia_hostの帯域窓を共有する(t
     first.finish()
     second.get("https://upload.wikimedia.org/second", target=tmp_path / "second")
     assert calls == [0, 11]
-    assert clock.now == 21
+    assert clock.now == 20
 
 
 def test_redirect_host_policyがapi引数と元hostのkindに優先する():
@@ -270,8 +271,120 @@ def test_Wikimedia_archive_pathを通信前に拒否する(tmp_path):
 
 def test_画像の10秒帯域枠をfixture応答で守る(client, tmp_path):
     adapter, _ = make_client(client, [Response(b"abcdefghijkl")],
-                             media_bytes_per_10_seconds=8)
+                             example_kind="media", media_bytes_per_10_seconds=8)
     target = tmp_path / "image"
     adapter.get("https://example.test/image", target=target)
     assert target.read_bytes() == b"abcdefghijkl"
     assert adapter.clock() == 10
+
+
+def test_prepare再生成後も同一hostの40MB帯域枠を共有する(tmp_path):
+    policy = load_policy(ROOT / "configs/source_policy.yaml", "wikimedia_commons")
+    clock, calls = Clock(), []
+
+    class TimedResponse(Response):
+        def read(self, size=-1):
+            data = super().read(size)
+            clock.now += 2 * len(data) / 40_000_000
+            return data
+
+    responses = iter((TimedResponse(b"x" * 40_000_000), TimedResponse(b"y" * 40_000_000)))
+
+    def opener(request, **kwargs):
+        calls.append(clock.now)
+        return next(responses)
+
+    def prepare():
+        return CommonsAdapter(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+
+    first = prepare()
+    first.get("https://upload.wikimedia.org/first", target=tmp_path / "first")
+    first.finish()
+    second = prepare()
+    second.get("https://upload.wikimedia.org/second", target=tmp_path / "second")
+
+    assert calls[0] == 0 and calls[1] >= 10
+    assert clock.now >= 20
+
+
+def test_APIからmediaへのredirect後はtargetなしでも40MBを帯域制限する():
+    policy = load_policy(ROOT / "configs/source_policy.yaml", "wikimedia_commons")
+    clock, calls, waits = Clock(), [], []
+    responses = iter((
+        HTTPError(
+            "https://commons.wikimedia.org/w/api.php", 302, "redirect",
+            {"Location": "https://upload.wikimedia.org/file"}, io.BytesIO(),
+        ),
+        Response(b"x" * 40_000_000),
+    ))
+
+    def opener(request, **kwargs):
+        calls.append((request.full_url, clock.now))
+        response = next(responses)
+        if isinstance(response, Exception):
+            raise response
+        return response
+
+    adapter = CommonsAdapter(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+    adapter.observer = lambda event, value: waits.append((event, value))
+    body = adapter.get(
+        "https://commons.wikimedia.org/w/api.php", read=lambda response: response.read()
+    )
+
+    assert len(body) == 40_000_000
+    assert [urlsplit(url).hostname for url, _ in calls] == [
+        "commons.wikimedia.org", "upload.wikimedia.org"
+    ]
+    assert clock.now >= 10
+    assert any(event == "bandwidth_wait_seconds" for event, _ in waits)
+
+
+def test_media_error本文3byteは一度だけ帯域枠へ計上する():
+    policy = load_policy(ROOT / "configs/source_policy.yaml", "wikimedia_commons")
+    clock, calls, waits = Clock(), [], []
+    policy["hosts"]["example.test"] = {
+        "kind": "media", "media_bytes_per_10_seconds": 7,
+    }
+    responses = iter((
+        HTTPError("https://example.test/error", 500, "error", {}, io.BytesIO(b"abc")),
+        Response(b"def"),
+    ))
+
+    def opener(request, **kwargs):
+        calls.append(clock.now)
+        response = next(responses)
+        if isinstance(response, Exception):
+            raise response
+        return response
+
+    adapter = CommonsAdapter(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+    adapter.observer = lambda event, value: waits.append((event, value))
+    with pytest.raises(HTTPError):
+        adapter.get("https://example.test/error", read=lambda response: response.read())
+    assert adapter.get("https://example.test/next", read=lambda response: response.read()) == b"def"
+
+    assert calls == [0, 1.0]
+    assert not any(event == "bandwidth_wait_seconds" for event, _ in waits)
+
+
+def test_HTTP通信1秒とobserver4秒はnetwork時間に1秒だけ記録する():
+    policy = load_policy(ROOT / "configs/source_policy.yaml", "wikimedia_commons")
+    clock, observed = Clock(), []
+
+    def opener(request, **kwargs):
+        clock.now += 1
+        raise HTTPError(request.full_url, 500, "error", {}, None)
+
+    adapter = CommonsAdapter(policy, opener=opener, clock=clock.clock, wait=clock.wait)
+
+    def observer(event, value):
+        if event == "responses":
+            clock.now += 4
+        observed.append((event, value))
+
+    adapter.observer = observer
+    with pytest.raises(HTTPError):
+        adapter.get("https://commons.wikimedia.org/w/api.php")
+
+    assert clock.now == 5
+    assert ("network_api_seconds", 1) in observed
