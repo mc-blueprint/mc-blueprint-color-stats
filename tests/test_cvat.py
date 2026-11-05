@@ -7,9 +7,9 @@ from pathlib import Path
 import pytest
 
 from colorstats.cvat import (
+    _write_draft,
     annotation_diff,
     part_labels,
-    prepare_draft,
     read_cvat_export,
     select_assets,
 )
@@ -130,7 +130,7 @@ def draft_export(tmp_path):
         'rle="0,2500"/></image></annotations>', encoding="utf-8",
     )
     draft = tmp_path / "draft.xml"
-    prepare_draft(manifest, draft, TAXONOMY)
+    _write_draft(manifest, draft, TAXONOMY)
     archive = tmp_path / "export.zip"
     xml = (
         '<annotations><version>1.1</version><image name="front.png" width="100" height="100">'
@@ -180,7 +180,7 @@ def test既存下書きを上書きしない(draft_export):
     archive, manifest, draft = draft_export
     before = draft.read_bytes()
     with pytest.raises(FileExistsError):
-        prepare_draft(manifest, draft.with_suffix(".xml"), TAXONOMY)
+        _write_draft(manifest, draft.with_suffix(".xml"), TAXONOMY)
     assert draft.read_bytes() == before
 
 
@@ -202,7 +202,7 @@ def test不正なRLEを下書きとして受け付けない(draft_export):
     source.write_text(source.read_text().replace('rle="0,2500"', 'rle="0,2501"'))
     output = draft.parent / "invalid.xml"
     with pytest.raises(ValueError, match="RLE"):
-        prepare_draft(manifest, output, TAXONOMY)
+        _write_draft(manifest, output, TAXONOMY)
     assert not output.exists() and not output.with_suffix(".json").exists()
 
 

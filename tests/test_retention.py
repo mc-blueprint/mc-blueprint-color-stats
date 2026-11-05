@@ -72,7 +72,8 @@ def test_受付で再取得とstatsと処理中完了を停止する(queue, mana
                        request_url=ISSUE, reason=reason)
     with Session(queue.engine) as session:
         with pytest.raises(PermissionError):
-            retention.check_acquisition(session, "test", "https://example.test/source", "x")
+            retention.check_acquisition(session, "test", "https://example.test/source",
+                                        "https://example.test/image")
         with pytest.raises(PermissionError):
             retention.check_selection(session, {"assets": [{"asset_id": str(aid)}]})
         record = session.scalar(select(Retention))

@@ -97,7 +97,11 @@ def prepare(
     discardは採用後の原本取得4xx除外時に呼び、次候補の判断前に予約を解放できる。
     測定枠による正常停止では取得成功分を返す。通常の例外は伝播し、一時出力を清掃する。
     observerへ途中経過を渡す。確定ファイル・DBの登録は行わない。
+    database_urlまたはDATABASE_URLは必須。未指定なら通信前に拒否する。
     """
+    database_url = database_url or os.environ.get("DATABASE_URL")
+    if not database_url:
+        raise ValueError("収集には停止台帳を照会するDATABASE_URLが必要です")
     payload = claim.payload
     config = Path(payload["storage_config"])
     if hashlib.sha256(config.read_bytes()).hexdigest() != payload["storage_hash"]:
@@ -129,8 +133,7 @@ def prepare(
     if observer is not None:
         adapter.observer = observe
     temporary = None
-    database_url = database_url or os.environ.get("DATABASE_URL")
-    engine = create_engine(database_url) if database_url else None
+    engine = create_engine(database_url)
     try:
         observe("search", parameters.copy())
         try:
@@ -147,11 +150,10 @@ def prepare(
             candidates = result.candidates
         observe("search", parameters.copy())
         for candidate in candidates:
-            if engine is not None:
-                with Session(engine) as session:
-                    retention.check_acquisition(
-                        session, request.provider, candidate.source_url, candidate.original_url,
-                    )
+            with Session(engine) as session:
+                retention.check_acquisition(
+                    session, request.provider, candidate.source_url, candidate.original_url,
+                )
             category = license_class(payload["policy"], candidate.license)
             extension = MIME_EXTENSIONS.get(candidate.mime)
             reason = (
@@ -271,8 +273,7 @@ def prepare(
         raise
     finally:
         adapter.finish()
-        if engine is not None:
-            engine.dispose()
+        engine.dispose()
 
 
 def register(session, run, data):
