@@ -95,3 +95,18 @@ branch: feature/issue-94。引継ぎ起点: origin/develop cecc325。
   関連回帰64件も成功。専用PostgreSQLはtrapで停止済み。新規回帰は計12件。
 - PR本文はRefs #94へ変更。完成条件1・6未達とMapillary回答待ちを明記。
   push・PRは行わない。変更範囲は指摘のHTTP/policy/stage/台帳・queue伝播と対応テスト・文書だけ。
+
+## probeの残存P2修正（同一owner、2026-11-05）
+
+基準commit: d0d9b3de7c4083310d98894cb20a333e22e3d92d。同じworktreeを継続。
+probeの直接urlopenを廃止し、現行policyのload_policyと共通HttpClientを使用する。
+COLORSTATS_SOURCE_POLICYを優先し、未指定時だけcwd/configs/source_policy.yamlを読む。
+現行policyが無効なら予算ファイル作成・robots取得より前に停止し、
+robots取得でも共通HTTPの送信直前照合・redirect・レート制御・UAを適用する。
+robotsには認証ヘッダーを送らない。API取得は従来どおりMapillaryAdapterを使う。
+
+回帰2件: cwdの有効設定で現行の無効化を迂回できず通信0件であることと、
+cwdに設定がなくても現行設定を読み、robotsを共通HTTPで取得して禁止時にAPI取得前に止まること。
+WSL Ubuntu-24.04で関連33 passed（3.11秒）、ruff・sdist/wheel・diff check成功。
+今回の全pytestは未実行（直前修正の全923件成功は上節）。実通信・SSH・本番DB操作なし。
+検証専用PostgreSQLは停止済み。Mapillary無効・完成条件1/6の回答待ちを維持し、push・PRなし。
