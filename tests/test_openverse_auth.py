@@ -170,6 +170,28 @@ def test_登録APIの同host_redirectは匿名要求を送らず停止する(sta
     assert len(calls) == 2
 
 
+@pytest.mark.parametrize("host", ["api.openverse.org", "api.openverse.org.",
+                                  "API.OPENVERSE.ORG", "API.OPENVERSE.ORG."])
+@pytest.mark.parametrize("path", ["/v1/images/", "/v1/auth_tokens/token/"])
+def test_元ページから登録APIへのredirectはhost表記によらず通信前に拒否する(
+    standard, host, path
+):
+    calls = []
+    url = "https://www.flickr.com/page"
+
+    def opener(request, **kwargs):
+        calls.append(request.full_url)
+        if request.full_url == url:
+            raise HTTPError(url, 302, "redirect", {"Location": f"https://{host}{path}"}, None)
+        pytest.fail("元ページのredirectから登録APIへ匿名要求を送ってはいけません")
+
+    adapter = OpenverseAdapter(standard, opener=opener, wait=lambda _: None)
+    adapter._token, adapter._expires = "fixture-token", float("inf")
+    with pytest.raises(NonRetryableError, match="登録APIへのredirect"):
+        adapter.get(url)
+    assert calls == [url]
+
+
 @pytest.mark.parametrize("data", [
     {}, {"access_token": "fixture-token", "expires_in": 0},
     {"access_token": "fixture-token", "expires_in": "nan"},

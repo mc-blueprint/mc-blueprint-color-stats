@@ -72,3 +72,19 @@ Git操作はユーザー指示によりcommitまで。push・PRは行わない�
   artifact: `/tmp/colorstats-issue93-FaQooz/`。隔離PostgreSQL16は停止済み。
 - 今回は外部通信・SSH・認証配置の再確認・本番DB操作なし。実取得保留、Refs #93を維持する。
   指定の公開文面3ファイルも修正内容・最終検証結果に更新した。
+
+## 残存P2: host表記によるredirect拒否の迂回（2026-11-05）
+
+起点commit: `4ad7351fc191c403f4bdbe13124790f9f131192e`。同一owner・worktreeを継続。
+
+- 既存のAPI拒否判定1箇所を、policy.check_current_urlと同じ小文字化・末尾ドット除去へ合わせた。
+  拒否処理の重複や新しいhelperは追加していない。
+- 有効tokenを持つ登録セッションで、元ページからimages/tokenへredirectする経路を検証。
+  小文字・末尾ドット・大文字・大文字かつ末尾ドットの4表記、2パスの計8ケースで
+  登録APIへの匿名要求を送信前に拒否する回帰を追加した。
+- WSL Ubuntu-24.04・ext4一時コピー・隔離PostgreSQL16の最終全pytestは
+  1031 passed / 1 skipped、170.14秒。ruff全体・sdist/wheel成功。既存警告4件は前節と同じ。
+  ログ: `20261105T134211Z-9e4e41b04eda4b8888c51eaab9339f51.jsonl`。
+  artifact: `/tmp/colorstats-issue93-HriN7Q/`。隔離PostgreSQL16は停止済み。
+- 外部通信・SSH・認証配置の再確認なし。指定の公開文面を更新し、Git操作はcommitまで。
+  実取得保留・Refs #93・push/PR禁止を維持する。
