@@ -199,6 +199,36 @@ def prepare(claim: Claim) -> Prepared:
     if ids != sorted(set(ids)):
         raise ValueError("regionsは重複のないID順で指定してください")
     model = parameters.get("model")
+    if payload.get("region_policy") is not None:
+        from colorstats.analyze.region_policy import load_masks
+
+        masks = load_masks(payload)
+        with Image.open(payload["input_path"]) as image:
+            pixels = np.array(image.convert("RGBA"))
+            effective = np.zeros((image.height, image.width), dtype=bool)
+            for mask in masks.values():
+                effective |= mask
+            pixels[~effective, 3] = 0
+            if effective.any():
+                corrected = correct(Image.fromarray(pixels), payload["method"],
+                                    model_path=payload.get("model_path"),
+                                    weights_hash=_digest(model) if model else None)
+            else:
+                corrected = np.asarray(image.convert("RGB"), dtype=float) / 255
+            roles = color.role_observations(payload, corrected=corrected)
+        data = {"asset_id": str(claim.asset_id), "input_run_id": payload["input_run_id"],
+                "region_run_id": payload["region_run_id"], "regions": [],
+                "observations": [], "relations": [], "roles": roles}
+        target = Path(payload["output_path"])
+        temporary = temporary_path(target, str(claim.token))
+        temporary.write_text(json.dumps(data, ensure_ascii=False, allow_nan=False) + "\n",
+                             encoding="utf-8")
+        return Prepared(RunInfo(
+            license_class=_license(payload["license_class"], "academic_only" if model else "open"),
+            code_version=CODE_VERSION, taxonomy_version=payload["taxonomy_version"],
+            node=socket.gethostname(), model_name=payload["method"], parameters=parameters,
+            weights_hash=_digest(model["weights"]) if model else None,
+        ), data=data, files=[(temporary, target)])
     with Image.open(payload["input_path"]) as image:
         people = None
         if payload.get("person_mask"):

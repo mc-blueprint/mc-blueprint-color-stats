@@ -6,10 +6,93 @@ from pathlib import Path
 
 import numpy as np
 
+from colorstats.queue.core import NonRetryableError
+
 REPOSITORIES = {
     "sam2": "facebook/sam2.1-hiera-tiny",
     "dino": "IDEA-Research/grounding-dino-tiny",
 }
+
+
+def _unload():
+    import gc
+
+    import torch
+
+    _resident.cache_clear()
+    gc.collect()
+    torch.cuda.empty_cache()
+
+
+def predict_regions(image, payload, parameters):
+    """OneFormerを解放してから既存DINO/SAM2候補を生成する。OOMは代替せず送出する。
+
+    batch=1、processor短辺640/長辺2560を固定し、semantic logitsをprep寸法へ復元する。
+    ローカル重みだけを使用する。モデル・processorの実行版と工程別VRAMを返す。
+    """
+    from importlib.metadata import version
+
+    import torch
+
+    from colorstats.analyze.region_policy import OOM_REASON, TRANSFORM, validate_labels
+
+    if not torch.cuda.is_available():
+        raise RuntimeError("OneFormer推論にはCUDAが必要です")
+    versions = {name: version(name) for name in ("torch", "transformers", "Pillow")}
+    if versions["transformers"] != "4.57.6" or versions["torch"].split("+")[0] != "2.11.0":
+        raise RuntimeError("新policyはTransformers 4.57.6 / torch 2.11.0で実行してください")
+    _unload()
+    torch.cuda.reset_peak_memory_stats()
+    started = time.perf_counter()
+    model = processor = inputs = outputs = None
+    try:
+        from transformers import OneFormerForUniversalSegmentation, OneFormerProcessor
+
+        path = payload["model_paths"]["oneformer"]
+        processor = OneFormerProcessor.from_pretrained(
+            path, local_files_only=True, repo_path=str(Path(__file__).parent),
+            class_info_file="oneformer-classes.json",
+        )
+        processor.image_processor.size = {key: TRANSFORM[key]
+                                          for key in ("shortest_edge", "longest_edge")}
+        processor.image_processor._max_size = TRANSFORM["longest_edge"]
+        model = OneFormerForUniversalSegmentation.from_pretrained(
+            path, local_files_only=True, weights_only=True,
+        ).eval().to("cuda")
+        validate_labels({str(k): v for k, v in model.config.id2label.items()})
+        torch.manual_seed(0)
+        with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+            inputs = processor(
+                images=image, task_inputs=["semantic"], return_tensors="pt",
+            ).to("cuda")
+            outputs = model(**inputs)
+            semantic = processor.post_process_semantic_segmentation(
+                outputs, target_sizes=[(image.height, image.width)],
+            )[0].cpu().numpy().astype(np.uint8)
+        torch.cuda.synchronize()
+        metrics = {"oneformer_seconds": time.perf_counter() - started,
+                   "oneformer_peak_allocated_bytes": torch.cuda.max_memory_allocated(),
+                   "oneformer_peak_reserved_bytes": torch.cuda.max_memory_reserved()}
+    except torch.cuda.OutOfMemoryError as error:
+        raise NonRetryableError(OOM_REASON + ": OneFormerのGPU適合を確認してください") from error
+    finally:
+        del outputs, inputs, model, processor
+        _unload()
+    paths = {key: value for key, value in payload["model_paths"].items() if key != "oneformer"}
+    hashes = {key: parameters["models"][key] for key in paths}
+    try:
+        rows, candidate_metrics = predict(
+            image, "sam2-dino", paths, hashes, payload["prompts"],
+            parameters["threshold"], parameters["text_threshold"],
+        )
+    except torch.cuda.OutOfMemoryError as error:
+        raise NonRetryableError(OOM_REASON + ": 部位候補生成のGPU適合を確認してください") from error
+    finally:
+        _unload()
+    metrics.update(candidate_metrics)
+    metrics["versions"] = versions
+    metrics["single_resident_phase"] = "oneformer-then-dino-sam2"
+    return semantic, rows, metrics
 
 
 def predict(image, method, paths, model_hashes, prompts, threshold, text_threshold):
