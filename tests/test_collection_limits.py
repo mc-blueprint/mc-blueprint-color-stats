@@ -14,7 +14,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 
 from colorstats.collect.http import HttpClient, MeasurementLimit
-from colorstats.collect.limits import ProviderLease, SharedLimits, locked
+from colorstats.collect.limits import BatchBudget, ProviderLease, SharedLimits, locked
 from colorstats.queue import LeaseLost, Queue
 from colorstats.queue.core import NonRetryableError
 from colorstats.queue.worker import Worker
@@ -25,6 +25,68 @@ from tests.test_queue import expire
 from tests.test_queue import queue as queue
 
 pytestmark = pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason="PostgreSQL専用")
+
+
+def budget_claim(queue, number):
+    queue.enqueue("collect", None, f"{number:064x}", {
+        "request": {"provider": "wikimedia_commons"},
+        "bias": {"measurement": {"budget": {
+            "id": "batch-fixture", "images": 2, "api_requests": 2,
+            "bytes": 30, "consecutive_errors": 3,
+        }}},
+    })
+    return queue.claim(["collect"], provider="wikimedia_commons")
+
+
+def test_バッチの累計byteを独立接続で競合しても上限を守り再起動で維持する(queue):
+    claims = [budget_claim(queue, number) for number in (8001, 8002)]
+
+    def reserve(claim):
+        with queue._transaction() as session:
+            return BatchBudget(queue, claim).consume(session, "bytes", 20, partial=True)
+
+    with ThreadPoolExecutor(2) as pool:
+        assert sum(pool.map(reserve, claims)) == 30
+    with pytest.raises(MeasurementLimit, match="batch_bytes_limit"):
+        reserve(claims[0])
+    for key in ("images", "api_requests"):
+        for claim in claims:
+            with queue._transaction() as session:
+                BatchBudget(queue, claim).consume(session, key, 1)
+        with pytest.raises(MeasurementLimit, match=f"batch_{key}_limit"):
+            with queue._transaction() as session:
+                BatchBudget(queue, claims[0]).consume(session, key, 1)
+
+
+def test_連続HTTP失敗とchallengeは別workerも送信前に停止する(queue):
+    claim = budget_claim(queue, 8003)
+    budget = BatchBudget(queue, claim)
+    budget.status(503)
+    budget.status(200)
+    budget.status(429)
+    budget.status(500)
+    with pytest.raises(MeasurementLimit, match="consecutive_http_errors"):
+        budget.status(503)
+    with pytest.raises(MeasurementLimit, match="consecutive_http_errors"):
+        SharedLimits(queue, claim).reserve("new-host", "media", {}, 0, [])
+    claim.payload["bias"]["measurement"]["budget"]["id"] = "challenge-fixture"
+    with pytest.raises(MeasurementLimit, match="batch_challenge"):
+        BatchBudget(queue, claim).status(403, challenge=True)
+    with pytest.raises(MeasurementLimit, match="batch_challenge"):
+        SharedLimits(queue, claim).reserve("new-host", "api", {}, 0, [])
+
+
+def test_本文のread前に累計byteを予約して超過readを行わない(queue, policy):
+    claim = budget_claim(queue, 8004)
+    claim.payload["bias"]["measurement"]["budget"]["bytes"] = 7
+    response = Response(b"0123456789")
+    client = HttpClient(policy, opener=lambda *a, **kw: response, wait=lambda _: None)
+    received = []
+    client.observer = lambda event, value: received.append(value) if event == "bytes" else None
+    client.shared_limits = SharedLimits(queue, claim)
+    with pytest.raises(MeasurementLimit, match="batch_bytes_limit"):
+        client.get("https://upload.wikimedia.org/test", read=lambda r: r.read())
+    assert sum(received) == 7
 
 
 def enqueue(queue, provider, number):

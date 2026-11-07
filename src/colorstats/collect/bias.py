@@ -163,6 +163,9 @@ def reserve(queue: Queue, claim, config: dict, request, candidate) -> str | None
         reason = quota_reason(rows, config, subject_id, author, request.provider, region, layer)
         if reason:
             return reason
+        from colorstats.collect.limits import BatchBudget
+
+        BatchBudget(queue, claim).consume(session, "images", 1)
         session.add(
             CollectionReservation(
                 job_id=claim.id,
@@ -264,7 +267,7 @@ def plan(
     job_ids = []
     for _, layer in sorted(layers, key=lambda pair: -pair[0]):
         searches = list(requests(config, layer, rng))
-        if "measurement" in config:
+        if "measurement" in config and config["measurement"].get("first_page_only", True):
             searches = [request for request in searches if request.page == 0]
         for previous, parameters in completed:
             offset = parameters.get("next_offset")

@@ -46,6 +46,21 @@ def subject(session, name):
     return result.id
 
 
+def test_新規cohortのprepは既存assetのsubjectと候補を書き換えない(queue, asset):
+    with Session(queue.engine) as session, session.begin():
+        old = session.get(Asset, asset)
+        old.subject_id = None
+        confirmed = subject(session, "新規の確定建築")
+        new = add_asset(session, old, subject_id=confirmed, sha256="a" * 64)
+        values = data(new.id) | {"preserve_other_assets": True}
+        register(session, None, values)
+        session.flush()
+        assert old.subject_id is None
+        assert new.subject_id == confirmed
+        assert session.get(SubjectCandidate, (old.id, confirmed)) is None
+        assert session.scalar(select(func.count()).select_from(AssetDuplicate)) == 1
+
+
 def test_unidentified_duplicates_remain_null_without_creating_subjects(queue, asset):
     with Session(queue.engine) as session, session.begin():
         original = session.get(Asset, asset)

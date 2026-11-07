@@ -70,6 +70,8 @@ def prepare(claim: Claim) -> Prepared:
     temporary = temporary_path(target, str(claim.token))
     image.save(temporary, format="JPEG", quality=90, optimize=True)
     data = {"asset_id": str(claim.asset_id), "target": str(target), **result}
+    if claim.payload.get("preserve_other_assets"):
+        data["preserve_other_assets"] = True
     return Prepared(
         RunInfo(
             license_class=claim.payload["license_class"],
@@ -111,6 +113,7 @@ def register(session: Session, run, data: dict) -> None:
 
     PostgreSQLのREAD COMMITTEDで呼び出す。完全一致群の確定subjectが一意の
     場合だけ未同定assetへ引き継ぎ、近似一致や確定値の競合では自動同定しない。
+    preserve_other_assets指定時は他assetのsubject・候補を更新しない。
     """
     session.execute(text("SELECT pg_advisory_xact_lock(29, 1)"))
     assets = session.scalars(
@@ -145,6 +148,8 @@ def register(session: Session, run, data: dict) -> None:
     if len(subject_ids) == 1:
         subject_id = next(iter(subject_ids))
         for item in exact:
+            if data.get("preserve_other_assets") and item.id != asset.id:
+                continue
             if item.subject_id is None:
                 item.subject_id = subject_id
     for other, confidence, method in candidates:
@@ -158,6 +163,8 @@ def register(session: Session, run, data: dict) -> None:
             )
         )
         for target, origin in ((asset, other), (other, asset)):
+            if data.get("preserve_other_assets") and target.id != asset.id:
+                continue
             if origin.subject_id is not None:
                 previous = session.get(SubjectCandidate, (target.id, origin.subject_id))
                 if (

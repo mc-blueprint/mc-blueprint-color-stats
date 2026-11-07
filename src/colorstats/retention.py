@@ -26,8 +26,12 @@ def lock(session):
 
 
 def register_file(session, asset_id, host, path, kind):
-    """内部ファイルの依存を登録する。呼出し元がlockを保持しcommitする。"""
-    if kind not in {"raw", "derived", "mask", "cvat", "replica", "cache", "backup"}:
+    """内部ファイルの依存を登録する。呼出し元がlockを保持しcommitする。
+
+    image_bundleは画像束。全構成assetを登録し、いずれかの画像利用失効で束全体を削除対象にする。
+    """
+    if kind not in {"raw", "derived", "mask", "cvat", "replica", "cache", "backup",
+                    "image_bundle"}:
         raise ValueError("未知の保持ファイル種別です")
     candidate = Path(path)
     if candidate.is_symlink() or any(parent.is_symlink() for parent in candidate.parents):
@@ -181,7 +185,8 @@ def stop(session, *, source_url=None, provider=None, native_id=None, url=None,
 def cleanup(session, *, host, now=None):
     """期限到来分を参照解除後に消す。各呼出しをcommitして監査状態を保存する。
 
-    host上の登録済み通常ファイルだけが対象。共有参照と既存画像は保護する。
+    host上の登録済み通常ファイルだけが対象。通常の共有参照と既存画像は保護する。
+    image_bundleは構成画像のいずれかが失効したら全参照を解除する。
     I/O失敗はerrorへ記録し再実行可能。backupは期限到来後に同じ手順で消す。
     """
     lock(session)
@@ -190,10 +195,25 @@ def cleanup(session, *, host, now=None):
     files = session.scalars(select(RetentionFile).where(
         RetentionFile.host == host, RetentionFile.deleted_at.is_(None),
     ).order_by(RetentionFile.path)).all()
+    bundles = {file.path: [] for file in files if file.kind == "image_bundle"}
+    for file in files:
+        if file.path in bundles:
+            bundles[file.path].append(file)
+    invalid_bundles = set()
+    for path, members in bundles.items():
+        for member in members:
+            try:
+                assert_usable(session, member.asset_id, images=True, now=now)
+            except PermissionError:
+                invalid_bundles.add(path)
+                for reference in members:
+                    reference.released_at = reference.released_at or now
+                break
+    session.flush()
     for file in files:
         record = records[file.asset_id]
         expiry = record.backup_until if file.kind == "backup" else record.expires_at
-        if expiry > now:
+        if expiry > now and file.path not in invalid_bundles:
             continue
         # 先に論理参照を外す。失敗なら物理ファイルには触れない。
         asset = session.get(Asset, file.asset_id)
@@ -320,34 +340,49 @@ def rebuild_selection(session, selection):
                                    if item["asset_id"] in allowed]}
 
 
-def review_privacy(session, asset_id, *, reviewer, subject, person_mask=None, host=None):
-    """内部目視確認を記録する。人物・要配慮主体は採用せず、写り込みは除外maskを固定する。
+def review_privacy(session, asset_id, *, reviewer, subject, person_mask=None, host=None,
+                   method="human", decision="accepted", thresholds=None, evidence=None, note=None):
+    """自動判定または目視結果を記録し、以前の確認記録を履歴に残す。
 
-    subjectはbuilding/terrainのみ。maskは解析画像と同寸の人物画素を非ゼロとするPNG。
-    人物がいなければNone。レビュー担当が原画像・縮小画像の両方を確認する。
+    採用時のsubjectはbuilding/terrain。maskは解析画像と同寸の人物画素を非ゼロとするPNG。
+    自動判定は版を含むmethod・thresholds・入力のevidenceを固定し、目視で上書きできる。
+    不採用・目視待ちも記録するが、後続の色処理には使用できない。
     """
     lock(session)
     assert_usable(session, asset_id, images=True)
-    if subject not in {"building", "terrain"} or not reviewer:
-        raise ValueError("人物・要配慮主体は採用できません。内部確認者が必要です")
+    if (not reviewer or decision not in {"accepted", "rejected", "pending"}
+            or (decision == "accepted" and subject not in {"building", "terrain"})):
+        raise ValueError("採用には建物・地形の主体と確認者、妥当な判定が必要です")
+    if method != "human" and (not thresholds or not evidence):
+        raise ValueError("自動判定には閾値と入力根拠が必要です")
     asset = session.get(Asset, asset_id)
     mask = str(Path(person_mask).absolute()) if person_mask else None
-    asset.quality = {**asset.quality, "privacy_review": {
+    history = list(asset.quality.get("privacy_review_history", []))
+    if asset.quality.get("privacy_review"):
+        history.append(asset.quality["privacy_review"])
+    asset.quality = {**asset.quality, "privacy_review_history": history, "privacy_review": {
         "reviewer": reviewer, "subject": subject, "reviewed_at": datetime.now(UTC).isoformat(),
         "person_mask": mask,
         "mask_sha256": hashlib.sha256(Path(mask).read_bytes()).hexdigest() if mask else None,
+        "method": method, "decision": decision, "thresholds": thresholds, "evidence": evidence,
+        "note": note,
     }}
     if mask:
         register_file(session, asset_id, host or socket.gethostname(), mask, "mask")
 
 
 def check_privacy(session, asset_id, payload):
-    """新規収集分の色集計に目視確認と人物除外maskの固定を要求する。"""
+    """新規収集分の色集計に採用判定と人物除外maskの固定を要求する。"""
     if session.scalar(select(Retention.id).where(Retention.asset_id == asset_id)) is None:
         return
     review = session.get(Asset, asset_id).quality.get("privacy_review", {})
     if not review.get("reviewer") or review.get("subject") not in {"building", "terrain"}:
-        raise PermissionError("人物・要配慮情報の内部確認が必要です")
+        raise PermissionError("人物・要配慮情報の採用判定が必要です")
+    if review.get("decision", "accepted") != "accepted":
+        raise PermissionError("不採用・目視待ちの画像は色集計できません")
+    evidence = review.get("evidence") or {}
+    if evidence.get("input_sha256") and payload.get("input_sha256") != evidence["input_sha256"]:
+        raise PermissionError("人物判定の入力hashが解析入力と一致しません")
     if payload.get("person_mask") != review.get("person_mask"):
         raise PermissionError("人物除外maskが確認記録と一致しません")
     if review.get("person_mask") and hashlib.sha256(

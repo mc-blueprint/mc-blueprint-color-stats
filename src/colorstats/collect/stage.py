@@ -226,7 +226,13 @@ def prepare(
                 ):
                     reason = "duplicate_candidate"
             if reason is None and decide is not None:
-                reason = decide(request, candidate)
+                try:
+                    reason = decide(request, candidate)
+                except MeasurementLimit as error:
+                    if observer is None:
+                        raise
+                    parameters.update(stop_reason=str(error), next_offset=None)
+                    break
             if reason is not None:
                 entry = {"source_url": candidate.source_url, "original_url": candidate.original_url,
                          "rank": candidate.rank, "reason": reason}

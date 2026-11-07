@@ -220,6 +220,34 @@ def test_pipeline_restart_registration_and_retry_audit(
     data = json.loads((root / "report1.json").read_text())
     assert data["unclosed_attempts"] == 0
 
+    from colorstats.schema.models import Asset
+
+    person_mask = tmp_path / "people.png"
+    people = Image.new("L", Image.open(path).size, 0)
+    people.putpixel((0, 0), 255)
+    people.save(person_mask)
+    with Session(queue.engine) as session, session.begin():
+        item = session.get(Asset, asset)
+        item.quality = {**item.quality, "privacy_review": {
+            "reviewer": "test", "subject": "building", "person_mask": str(person_mask),
+            "mask_sha256": segment._hash(person_mask),
+        }}
+    reuse = tmp_path / "reuse"
+    reuse.mkdir()
+    (reuse / "outputs").mkdir()
+    m3_analysis.freeze(queue.engine, reuse, [str(asset)], reuse_segments=True)
+    reused_manifest = json.loads((reuse / "manifest.json").read_text())
+    assert reused_manifest["assets"][0]["person_mask"] == str(person_mask)
+    m3_analysis.run_batch(queue.engine, reuse, reused_manifest, models, None)
+    result = m3_analysis.report(queue.engine, reuse, reused_manifest, reuse / "report.json")
+    assert result["completed_assets"] == 1 and not result["violations"]
+    assert seen[4:] == ["shade", "color"]
+    with Session(queue.engine) as session:
+        jobs = session.scalars(select(Job).where(Job.payload["batch"].astext == segment._hash(
+            reuse / "manifest.json"))).all()
+        assert {job.stage for job in jobs} == {"shade", "color"}
+        assert all(job.payload["person_mask"] == str(person_mask) for job in jobs)
+
 
 def test_runner_import_does_not_load_colour_before_transformers():
     import subprocess
@@ -228,6 +256,35 @@ def test_runner_import_does_not_load_colour_before_transformers():
     subprocess.run([sys.executable, "-c",
                     "import sys; import ops.deploy.m3_analysis; "
                     "assert 'colour' not in sys.modules"], check=True)
+
+
+@pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason="隔離PostgreSQL専用")
+def test_新規cohortだけを固定し欠落重複と未完了prepを拒否する(queue, asset, tmp_path):
+    from uuid import uuid4
+
+    from colorstats.queue import RunInfo
+
+    root = tmp_path / "cohort"
+    root.mkdir()
+    queue.enqueue("prep", asset, "b" * 64, {})
+    with pytest.raises(ValueError, match="未完了"):
+        m3_analysis.freeze(queue.engine, root, [str(asset)])
+    with pytest.raises(ValueError, match="重複"):
+        m3_analysis.freeze(queue.engine, root, [str(asset), str(asset)])
+    with pytest.raises(ValueError, match="存在しない"):
+        m3_analysis.freeze(queue.engine, root, [str(uuid4())])
+    temporary, final = tmp_path / "input.tmp", tmp_path / "input.png"
+    Image.new("RGB", (5, 5), "red").save(temporary, format="PNG")
+    input_digest = segment._hash(temporary)
+    claim = queue.claim(["prep"])
+    queue.complete(claim, RunInfo("open", "test", "0.1.0", "test", {}),
+                   lambda *args: None, [(temporary, final)])
+    m3_analysis.freeze(queue.engine, root, [str(asset)])
+    manifest = json.loads((root / "manifest.json").read_text())
+    assert [row["asset_id"] for row in manifest["assets"]] == [str(asset)]
+    assert manifest["assets"][0]["input_sha256"] == input_digest
+    with pytest.raises(FileExistsError):
+        m3_analysis.freeze(queue.engine, root, [str(asset)])
 
 
 @pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason="隔離PostgreSQL専用")

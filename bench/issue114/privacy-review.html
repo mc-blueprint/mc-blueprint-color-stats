@@ -1,0 +1,37 @@
+<!doctype html><html lang="ja"><meta charset="utf-8">
+<title>Issue 114 非公開人物確認</title>
+<style>
+body {font:16px sans-serif;margin:24px}
+article {border-top:1px solid #aaa;padding:16px 0}
+.images {display:flex;gap:12px}
+.images img {width:45%;object-fit:contain;max-height:480px}
+label {margin:10px;display:inline-block}
+input.note {width:80%}
+header {position:sticky;top:0;background:white;padding:12px;z-index:1}
+</style>
+<header><h1>人物自動判定の目視確認（非公開）</h1>
+<p>左は解析画像、右の赤は人物除外maskです。取得画像も確認し、無作為100枚と閾値付近の全項目を記入してください。
+目視待ち一覧も含みます。検出なしは人物不在の保証ではありません。</p>
+<input id="reviewer" placeholder="確認者名">
+<label><input id="confirm" type="checkbox">必要サンプルを確認し、自動判定に誤りなし</label>
+<button onclick="download()">記入結果JSONを保存</button></header>
+__CARDS__
+<script>
+const manifest=__MANIFEST__;
+function download(){
+ const reviewer=document.querySelector('#reviewer').value.trim();
+ if(!reviewer){alert('確認者名を入力してください');return;}
+ const rows=[...document.querySelectorAll('article')]
+ .filter(e=>e.querySelector('.decision').value).map(e=>({
+  asset_id:e.dataset.id,decision:e.querySelector('.decision').value,
+  subject:e.querySelector('.subject').value||null,
+  error_found:e.querySelector('.error').checked,note:e.querySelector('.note').value,
+  mask_filename:e.querySelector('.mask').value.trim()||null
+ }));
+ const data={reviewer,decisions_sha256:manifest.decisions_sha256,rows,
+  confirm_no_errors:document.querySelector('#confirm').checked};
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+ a.download='privacy-review-results.json';a.click();URL.revokeObjectURL(a.href);
+}
+</script></html>
