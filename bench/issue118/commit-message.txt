@@ -1,0 +1,6 @@
+fix: OneFormerのオフライン初期化とGPU解放を修正する
+
+- 固定JSONからprocessorを構成し追加Hub参照を防ぐ
+- 新policyだけでOneFormerとSAM2の位置埋め込みLRU保持を防ぐ
+- 両GPUで固定3件のsmokeと全モデルSHAを照合し集計を記録する
+- 建物の有効領域が全欠測となる未達条件を明示し品質採用を保留する

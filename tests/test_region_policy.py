@@ -260,6 +260,7 @@ def test_oneformer_restores_coordinates_offline_and_unloads_before_candidates(
 ):
     import sys
     from contextlib import nullcontext
+    from functools import lru_cache
     from types import SimpleNamespace
 
     from colorstats.analyze import segment_models
@@ -282,15 +283,22 @@ def test_oneformer_restores_coordinates_offline_and_unloads_before_candidates(
         def to(self, device):
             return self
 
-    class Processor:
-        image_processor = SimpleNamespace(size={}, _max_size=0)
+    class ImageProcessor:
+        def __init__(self, **kwargs):
+            assert Path(kwargs["repo_path"], kwargs["class_info_file"]).is_file()
+            self.size = {}
+            self._max_size = 0
 
+    class Tokenizer:
         @classmethod
         def from_pretrained(cls, path, **kwargs):
-            assert kwargs["local_files_only"]
-            assert Path(kwargs["repo_path"], kwargs["class_info_file"]).is_file()
-            events.append("processor-offline")
+            assert kwargs == {"local_files_only": True}
             return cls()
+
+    class Processor:
+        def __init__(self, image_processor, tokenizer):
+            self.image_processor = image_processor
+            events.append("processor-offline")
 
         def __call__(self, images, task_inputs, return_tensors):
             assert images.size == (8, 6) and task_inputs == ["semantic"]
@@ -302,8 +310,19 @@ def test_oneformer_restores_coordinates_offline_and_unloads_before_candidates(
             events.append("restore")
             return [Tensor()]
 
+    class PositionEmbedding:
+        @lru_cache(maxsize=1)  # noqa: B019 - 公式実装の保持を再現するfixture
+        def forward(self, shape):
+            return shape
+
     class Model:
         config = SimpleNamespace(id2label=labels)
+
+        def __init__(self):
+            self.position = PositionEmbedding()
+
+        def modules(self):
+            return [self, self.position]
 
         @classmethod
         def from_pretrained(cls, path, **kwargs):
@@ -318,6 +337,7 @@ def test_oneformer_restores_coordinates_offline_and_unloads_before_candidates(
             return self
 
         def __call__(self, **kwargs):
+            assert self.position.forward((6, 8)) == (6, 8)
             if fail:
                 raise MemoryError("CUDA out of memory")
             return Tensor()
@@ -336,14 +356,18 @@ def test_oneformer_restores_coordinates_offline_and_unloads_before_candidates(
     monkeypatch.setitem(sys.modules, "torch", torch)
     monkeypatch.setitem(sys.modules, "transformers", SimpleNamespace(
         OneFormerProcessor=Processor, OneFormerForUniversalSegmentation=Model,
+        OneFormerImageProcessor=ImageProcessor, CLIPTokenizer=Tokenizer,
     ))
+    monkeypatch.setitem(sys.modules, "transformers.models.oneformer.modeling_oneformer",
+                        SimpleNamespace(OneFormerSinePositionEmbedding=PositionEmbedding))
     monkeypatch.setattr("importlib.metadata.version", lambda name: {
         "torch": "2.11.0", "transformers": "4.57.6", "Pillow": "12.0.0",
     }[name])
     monkeypatch.setattr(segment_models, "_unload", lambda: events.append("clear-cache"))
 
-    def candidates(*args):
+    def candidates(*args, **kwargs):
         assert not active
+        assert kwargs == {"transient": True}
         events.append("candidates")
         return [], {}
 
@@ -362,3 +386,4 @@ def test_oneformer_restores_coordinates_offline_and_unloads_before_candidates(
             assert events.index("unload") < events.index("candidates")
             assert metrics["oneformer_peak_allocated_bytes"] == 10
     assert not active and "clear-cache" in events
+    assert PositionEmbedding.forward.cache_info().currsize == 0
