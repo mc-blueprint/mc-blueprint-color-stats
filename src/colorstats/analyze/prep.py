@@ -121,7 +121,8 @@ def register(session: Session, run, data: dict) -> None:
     ).all()
     asset = session.get(Asset, data["asset_id"])
     if run is not None:
-        run.parameters = {**run.parameters, "rendition": asset.quality.get("rendition", {})}
+        run.parameters = {**run.parameters, "rendition": asset.quality.get("rendition", {}),
+                          "input_sha256": data["sha256"]}
         source = session.get(Source, asset.source_id)
         run.license_class = combine_license(
             run.license_class, asset.license_class, source.license_class

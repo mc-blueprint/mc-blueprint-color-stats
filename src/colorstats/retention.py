@@ -342,14 +342,19 @@ def rebuild_selection(session, selection):
 
 def review_privacy(session, asset_id, *, reviewer, subject, person_mask=None, host=None,
                    method="human", decision="accepted", thresholds=None, evidence=None, note=None):
-    """自動判定または目視結果を記録し、以前の確認記録を履歴に残す。
+    """旧cohortの自動判定・目視結果を記録し、以前の確認記録を履歴に残す。
 
     採用時のsubjectはbuilding/terrain。maskは解析画像と同寸の人物画素を非ゼロとするPNG。
     自動判定は版を含むmethod・thresholds・入力のevidenceを固定し、目視で上書きできる。
-    不採用・目視待ちも記録するが、後続の色処理には使用できない。
+    Retentionあり、または新しい画像判定・人物reviewへ投入済みの対象は拒否する。
     """
     lock(session)
     assert_usable(session, asset_id, images=True)
+    from colorstats import privacy_review
+
+    if (session.scalar(select(Retention.id).where(Retention.asset_id == asset_id)) is not None
+            or privacy_review.uses_new_contract(session, asset_id)):
+        raise PermissionError("新契約の対象にはprivacy_review.record_holdまたはwriteが必要です")
     if (not reviewer or decision not in {"accepted", "rejected", "pending"}
             or (decision == "accepted" and subject not in {"building", "terrain"})):
         raise ValueError("採用には建物・地形の主体と確認者、妥当な判定が必要です")
@@ -372,20 +377,12 @@ def review_privacy(session, asset_id, *, reviewer, subject, person_mask=None, ho
 
 
 def check_privacy(session, asset_id, payload):
-    """新規収集分の色集計に採用判定と人物除外maskの固定を要求する。"""
-    if session.scalar(select(Retention.id).where(Retention.asset_id == asset_id)) is None:
+    """新規画像と新版項目には明示review runを要求し、旧qualityへ代替しない。"""
+    from colorstats import privacy_review
+
+    if privacy_review.is_new(payload):
+        privacy_review.check_selection(session, asset_id, payload)
         return
-    review = session.get(Asset, asset_id).quality.get("privacy_review", {})
-    if not review.get("reviewer") or review.get("subject") not in {"building", "terrain"}:
-        raise PermissionError("人物・要配慮情報の採用判定が必要です")
-    if review.get("decision", "accepted") != "accepted":
-        raise PermissionError("不採用・目視待ちの画像は色集計できません")
-    evidence = review.get("evidence") or {}
-    if evidence.get("input_sha256") and payload.get("input_sha256") != evidence["input_sha256"]:
-        raise PermissionError("人物判定の入力hashが解析入力と一致しません")
-    if payload.get("person_mask") != review.get("person_mask"):
-        raise PermissionError("人物除外maskが確認記録と一致しません")
-    if review.get("person_mask") and hashlib.sha256(
-        Path(review["person_mask"]).read_bytes(),
-    ).hexdigest() != review["mask_sha256"]:
-        raise PermissionError("人物除外maskが変更されています")
+    if (session.scalar(select(Retention.id).where(Retention.asset_id == asset_id)) is not None
+            or privacy_review.uses_new_contract(session, asset_id)):
+        raise PermissionError("新契約の人物確認runが必要です。旧qualityの承認は使用できません")
