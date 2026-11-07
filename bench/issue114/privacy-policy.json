@@ -1,0 +1,9 @@
+{
+  "method": "person-sam2-dino-v2",
+  "detector_threshold": 0.35,
+  "text_threshold": 0.25,
+  "mask_padding_pixels": 2,
+  "mask_max": 0.01,
+  "subject_min": 0.05,
+  "subject_margin": 0.02
+}

@@ -48,10 +48,14 @@ DB未指定時は収集を開始しません。`prepare-draft`もDATABASE_URL（
 WindowsのACL・既存NFS設定・CVAT認証は変更しません。POSIX modeだけでWindows ACLや
 NFSサーバーの認可を代替できません。画像パスを外部利用者へ返すAPIはありません。
 
-`retention.review_privacy`を内部管理者が呼び、building/terrainと確認者を記録します。
+`retention.review_privacy`で自動判定または目視結果、採否、building/terrainの主体を記録します。
+自動判定は版を含むmethod、閾値、固定入力の根拠とauto:方式名のreviewerを保存します。
+目視による上書きはprivacy_review_historyへ前の記録を保全します。不採用・目視待ちは色処理しません。
 人物画素がある場合は解析画像と同寸の非ゼロ人物PNGを渡し、color payloadの`person_mask`へ
-同じパスを指定します。未確認・不一致・変更済みmaskはcolor処理を拒否します。
+同じパスを指定します。採用判定なし・不一致・変更済みmaskはcolor処理を拒否します。
 shadeにも同じperson_maskを渡し、人物をWB推定・色観測・部位面積から除外します。
+自動判定を使う統計は固定seedの目視サンプル確認後に作成します。
+具体的な判定・非公開HTML・記入結果取込みは[バッチ1人物判定](../bench/issue114/privacy-plan.md)を参照します。
 CVAT・replica・cache・backupを作成する処理は同じ取引ロック内で
 `retention.register_file(session, asset_id, host, absolute_path, kind)`を必ず呼びます。
 新規ファイルを保持期限の外へ複製しないでください。CVATのタスク・ZIPを外部共有しません。
@@ -65,7 +69,12 @@ CVATのdraft・maskは既存ディレクトリの権限やumaskにかかわら�
 
 cleanupは登録された通常ファイルのみを対象にします。未参照ファイル清掃とは別処理です。
 参照解除時刻と物理削除時刻を分け、I/O失敗はerrorへ記録します。途中停止後も再実行できます。
-共有パスの有効な別参照と既存asset参照は保護し、最後の参照解除後に削除します。
+通常の共有パスの有効な別参照と既存asset参照は保護し、最後の参照解除後に削除します。
+複数画像を埋め込む閲覧HTMLとその番号表は`image_bundle`として全構成assetの参照を登録します。
+構成assetのどれかが画像期限切れ・停止・削除受付等で利用不可になった場合、次回cleanupは
+同じhost/pathの全参照を解除して束全体を削除対象にします。ほかの画像のrawや別ページの期限は変えません。
+物理削除の失敗は通常どおりerrorへ記録し再実行できます。新種別は既存のText列で扱い、migrationは不要です。
+生成側とcleanup側はこの種別に対応した版へ揃えて配備してください。既存cache行の種別は自動変更しません。
 旧snapshotは不変のまま内部に保管し、停止台帳で採用を拒否します。
 `rebuild-selection --input <旧selection.json> --output <新版selection.json>`で
 依存索引から停止入力を除外し、既存snapshot CLIで新規出力先にsnapshotを生成して集計します。
