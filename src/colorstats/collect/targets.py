@@ -28,6 +28,13 @@ def load_targets(path: Path, taxonomy: Path = Path("taxonomy")) -> dict:
         measurement = config["measurement"]
         if not isinstance(measurement["id"], str) or not measurement["id"].strip():
             raise ValueError("測定IDが必要です")
+        if "budget" in measurement:
+            budget = measurement["budget"]
+            if not isinstance(budget["id"], str) or not budget["id"].strip():
+                raise ValueError("バッチ予算IDが必要です")
+            for key in ("images", "api_requests", "bytes", "consecutive_errors"):
+                if type(budget[key]) is not int or budget[key] <= 0:
+                    raise ValueError("バッチ予算は正の整数です")
         for key in ("api_requests_per_stratum", "http_requests_per_stratum"):
             if type(measurement[key]) is not int or measurement[key] <= 0:
                 raise ValueError("測定の通信枠は正の整数です")
