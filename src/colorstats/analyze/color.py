@@ -41,6 +41,10 @@ def config_hash(payload: dict) -> str:
     region_run_idとregionsは組で指定する。regionsはregion_inputsの戻り値を使い、
     投入後は画像・マスクを変更しない。読取り失敗は呼出し元へ伝播する。
     """
+    if payload.get("region_policy") is not None:
+        from colorstats.analyze.region_policy import load_masks
+
+        load_masks(payload)
     paths = [payload["input_path"]]
     if payload.get("mask_path"):
         paths.append(payload["mask_path"])
@@ -106,6 +110,52 @@ def region_inputs(session: Session, asset_id, region_run_id) -> list[dict]:
             "region_id": str(region.id), "mask_path": path, "label_source": kind,
             "size": size,
         })
+    return records
+
+
+def region_policy_input(session: Session, asset_id, region_run_id):
+    """同一assetの成功segmentから共有payload用region_policyを解決する。旧runはNone。
+
+    region_inputsと併用し、新policyは省略せずpayloadへ渡す。DB変更は行わない。
+    """
+    from colorstats.analyze.region_policy import reference
+
+    region_inputs(session, asset_id, region_run_id)
+    return reference(session.get(ProcessingRun, region_run_id))
+
+
+def role_observations(payload, *, corrected=None):
+    """有効role maskから直接色を計算する。空roleは観測なし・欠測として返す。
+
+    correctedがある場合は同じ画素の推定材質色を併記する。子Regionをsupportedへ昇格しない。
+    """
+    from colorstats.analyze.region_policy import load_masks
+    from colorstats.analyze.shade import _summary
+
+    masks = load_masks(payload)
+    records = {}
+    with Image.open(payload["input_path"]) as image:
+        rgba = np.asarray(image.convert("RGBA"))
+        rgb = rgba[:, :, :3]
+        valid = ((rgba[:, :, 3] == 255) & ~np.all(rgb <= BLACK_MAX, axis=2)
+                 & ~np.all(rgb >= WHITE_MIN, axis=2))
+        if corrected is not None and (corrected.shape != rgb.shape
+                                      or not np.isfinite(corrected).all()):
+            raise ValueError("補正画像の寸法または画素が不正です")
+        for role, mask in masks.items():
+            selected = mask & valid
+            observations = []
+            if selected.any():
+                observations = extract_colors(image, mask)
+                if corrected is not None:
+                    observations = [{
+                        "observed_oklab": _summary(rgb_to_oklab(rgb[selected] / 255)),
+                        "material_oklab": _summary(rgb_to_oklab(corrected[selected])),
+                        "material_confidence": float(selected.sum() / mask.sum()),
+                        "area_ratio": 1.0,
+                    }]
+            records[role] = {"area_ratio": float(mask.mean()), "area": int(mask.sum()),
+                             "missing": not bool(selected.any()), "observations": observations}
     return records
 
 
@@ -213,6 +263,23 @@ def prepare(claim: Claim) -> Prepared:
     """
     if claim.asset_id is None:
         raise ValueError("color stageにはasset_idが必要です")
+    if claim.payload.get("region_policy") is not None:
+        if config_hash(claim.payload) != claim.config_hash:
+            raise ValueError("colorの設定ハッシュが一致しません")
+        roles = role_observations(claim.payload)
+        target = Path(claim.payload["output_path"])
+        temporary = temporary_path(target, str(claim.token))
+        data = {"asset_id": str(claim.asset_id),
+                "input_run_id": claim.payload["input_run_id"],
+                "region_run_id": claim.payload["region_run_id"],
+                "observations": [], "regions": [], "relations": [], "roles": roles}
+        temporary.write_text(json.dumps(data, ensure_ascii=False, allow_nan=False) + "\n",
+                             encoding="utf-8")
+        return Prepared(RunInfo(
+            license_class=claim.payload["license_class"], code_version=CODE_VERSION,
+            taxonomy_version=claim.payload["taxonomy_version"], node="color",
+            parameters={"payload": claim.payload, "region_policy": claim.payload["region_policy"]},
+        ), data=data, files=[(temporary, target)])
     rows = claim.payload.get("regions", [])
     if ("regions" in claim.payload) != (claim.payload.get("region_run_id") is not None):
         raise ValueError("regionsとregion_run_idは組で指定してください")
@@ -319,6 +386,15 @@ def register(session: Session, run, data: dict) -> None:
         if expected != payload["regions"]:
             raise ValueError("部位入力がDBの確定参照と一致しません")
         source = session.get(ProcessingRun, data["region_run_id"])
+        from colorstats.analyze.region_policy import reference
+
+        expected_policy = reference(source)
+        if expected_policy != payload.get("region_policy"):
+            raise ValueError("region-policyがsegment runの確定参照と一致しません")
+        if expected_policy is not None and (
+            data["observations"] or data["regions"] or data["relations"] or "roles" not in data
+        ):
+            raise ValueError("新policyで旧観測・子Region観測は再利用できません")
         if source.stage == "segment":
             if (payload.get("input_sha256") is not None
                     and source.parameters.get("input_sha256") != payload["input_sha256"]):

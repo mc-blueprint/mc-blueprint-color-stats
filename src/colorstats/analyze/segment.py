@@ -37,10 +37,19 @@ def _digest(value):
 
 
 def _configuration(payload):
+    from colorstats.analyze import region_policy
+
     method = payload["method"]
     components = {"sam2", "dino"}
-    if method != "sam2-dino":
-        raise ValueError("methodはsam2-dinoです")
+    if method == region_policy.METHOD:
+        components.add("oneformer")
+        if not payload.get("input_run_id") or not payload.get("input_sha256"):
+            raise ValueError("新segmentには固定prep runと入力SHAが必要です")
+        with Image.open(payload["input_path"]) as image:
+            if max(image.size) > 2560 or image.getexif().get(274, 1) != 1:
+                raise ValueError("新segmentは長辺2560px以下・向き確定済みprepが必要です")
+    elif method != "sam2-dino":
+        raise ValueError("未対応のsegment methodです")
     if set(payload["model_paths"]) != components:
         raise ValueError("methodに必要なmodel_pathsを指定してください")
     taxonomy = load_taxonomy(Path(payload.get("taxonomy_path", "taxonomy")))
@@ -65,6 +74,9 @@ def _configuration(payload):
     models = {}
     for name in sorted(components):
         path = Path(payload["model_paths"][name])
+        if name == "oneformer":
+            models[name] = region_policy.model_configuration(path)
+            continue
         files = sorted(
             item for item in path.iterdir() if item.is_file() and item.suffix in {
                 ".safetensors", ".json", ".txt", ".model"
@@ -87,6 +99,10 @@ def _configuration(payload):
         "input_sha256": input_hash,
         "taxonomy_hash": _digest(taxonomy),
     }
+    if method == region_policy.METHOD:
+        parameters["region_policy_hash"] = region_policy.policy_hash()
+        parameters["parent_table"] = region_policy.parent_table_reference()
+        parameters["transform"] = region_policy.TRANSFORM
     return parameters
 
 
@@ -124,10 +140,18 @@ def prepare(claim: Claim) -> Prepared:
         raise ValueError("segmentの設定ハッシュが一致しません。入力と重みを確認してください")
     with Image.open(payload["input_path"]) as source:
         image = source.convert("RGB")
-    rows, metrics = predict(
-        image, payload["method"], payload["model_paths"], parameters["models"],
-        payload["prompts"], parameters["threshold"], parameters["text_threshold"],
-    )
+    from colorstats.analyze import region_policy
+
+    semantic = None
+    if payload["method"] == region_policy.METHOD:
+        from colorstats.analyze.segment_models import predict_regions
+
+        semantic, rows, metrics = predict_regions(image, payload, parameters)
+    else:
+        rows, metrics = predict(
+            image, payload["method"], payload["model_paths"], parameters["models"],
+            payload["prompts"], parameters["threshold"], parameters["text_threshold"],
+        )
     target = Path(payload["output_path"])
     files = []
     records = []
@@ -177,6 +201,15 @@ def prepare(claim: Claim) -> Prepared:
     xml_temporary = temporary_path(xml_target, str(claim.token))
     ET.ElementTree(annotations).write(xml_temporary, encoding="utf-8", xml_declaration=True)
     files.append((xml_temporary, xml_target))
+    policy = None
+    if semantic is not None:
+        if semantic.shape != (image.height, image.width):
+            raise ValueError("semantic mapの復元寸法がprepと一致しません")
+        policy, policy_files = region_policy.save_artifacts(
+            target, str(claim.token), semantic, rows, payload["prompts"], parameters,
+        )
+        files.extend(policy_files)
+        parameters["region_policy"] = policy
     metrics.update({
         "mask_bytes": mask_bytes, "cvat_bytes": xml_temporary.stat().st_size,
         "prepare_seconds": time.perf_counter() - started,
@@ -186,6 +219,8 @@ def prepare(claim: Claim) -> Prepared:
         "asset_id": str(claim.asset_id), "input_run_id": payload.get("input_run_id"),
         "regions": records, "metrics": metrics,
     }
+    if policy is not None:
+        data["region_policy"] = policy
     temporary = temporary_path(target, str(claim.token))
     temporary.write_text(
         json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8"
@@ -200,7 +235,7 @@ def prepare(claim: Claim) -> Prepared:
             node=socket.gethostname(), model_name=payload["method"],
             weights_hash=_digest({
                 name: {key: value for key, value in model["files"].items()
-                       if key.endswith(".safetensors")}
+                       if key.endswith((".safetensors", ".bin"))}
                 for name, model in parameters["models"].items()
             }), parameters={**parameters, "metrics": metrics},
         ), data=data, files=files,
