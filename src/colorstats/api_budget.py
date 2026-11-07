@@ -10,7 +10,7 @@ from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 
 from colorstats import retention
 from colorstats.queue.core import NonRetryableError
@@ -85,7 +85,9 @@ def request(endpoint, body, key):
             return None
 
     try:
-        response = build_opener(NoRedirect).open(req, timeout=60)
+        response = build_opener(NoRedirect).open(
+            req, timeout=int(os.environ.get("COLORSTATS_IMAGE_GATE_TIMEOUT", "120")),
+        )
     except HTTPError as error:
         response = error
     with response:
@@ -131,7 +133,7 @@ def usage_cost(usage, *, cache_ttl="30m"):
 
 
 class Ledger:
-    """同じ予算の送信を直列化する。通信中はDB取引を保持しない。
+    """同じ予算の送信枠と予約を共有する。通信中はDB取引を保持しない。
 
     予算は運用者が明示登録し、実行時の自動増額・自動再開は行わない。
     sent/unknownは予約額を維持する。保存応答がないsentを再送しない。
@@ -139,6 +141,44 @@ class Ledger:
 
     def __init__(self, queue, claim, check):
         self.queue, self.claim, self.check = queue, claim, check
+        self.concurrency = int(os.environ.get("COLORSTATS_IMAGE_GATE_CONCURRENCY", "1"))
+        if not 1 <= self.concurrency <= 4:
+            raise ValueError("画像判定APIの同時送信数は1〜4で指定してください")
+        self.policy = {
+            "unknown_streak": int(os.environ.get("COLORSTATS_IMAGE_GATE_UNKNOWN_STREAK", "3")),
+            "unknown_total": int(os.environ.get("COLORSTATS_IMAGE_GATE_UNKNOWN_TOTAL", "30")),
+            "rate_limit_streak": int(os.environ.get("COLORSTATS_IMAGE_GATE_429_STREAK", "2")),
+            "timeout_seconds": int(os.environ.get("COLORSTATS_IMAGE_GATE_TIMEOUT", "120")),
+        }
+        if any(value <= 0 for value in self.policy.values()):
+            raise ValueError("画像判定APIの停止閾値とtimeoutは正の整数で指定してください")
+
+    def _unknown(self, session, budget, call):
+        """予算行ロック内で上限精算する。判定成功だけが連続不明を解除する。"""
+        call.cost_nusd, call.state = call.reserved_nusd, "stopped"
+        call.details = {**call.details, "outcome": "unknown",
+                        "outcome_at": datetime.now(UTC).isoformat(), "stop_policy": self.policy,
+                        "reconciliation": {"basis": "reservation_upper_bound",
+                                           "at": datetime.now(UTC).isoformat(),
+                                           "reason": "課金・完了不明のため予約上限で確定",
+                                           "never_resend": True}}
+        session.flush()
+        total = session.scalar(select(func.count()).select_from(ApiCall).where(
+            ApiCall.budget_key == budget.key,
+            or_(ApiCall.details["outcome"].astext == "unknown",
+                ApiCall.details["reconciliation"]["never_resend"].astext == "true"),
+        ))
+        recent = session.scalars(select(ApiCall.details["outcome"].astext).where(
+            ApiCall.budget_key == budget.key,
+            ApiCall.details["outcome"].astext.in_(["success", "unknown"]),
+        ).order_by(ApiCall.details["outcome_at"].astext.desc()).limit(
+            self.policy["unknown_streak"],
+        )).all()
+        streak = next((index for index, outcome in enumerate(recent) if outcome == "success"),
+                      len(recent))
+        call.details = {**call.details, "unknown_total": total, "unknown_streak": streak}
+        budget.stopped = (budget.stopped or total >= self.policy["unknown_total"]
+                          or streak >= self.policy["unknown_streak"])
 
     def call(self, endpoint, body, reserved, *, key):
         payload = self.claim.payload
@@ -161,24 +201,33 @@ class Ledger:
             if previous and previous.state in {"sent", "settled", "unknown"}:
                 call_id, path = previous.id, Path(previous.response_path)
                 if not path.is_file():
-                    previous.state = "unknown"
-                    budget.stopped = True
+                    if previous.cost_nusd is None:
+                        self._unknown(session, budget, previous)
+                    else:
+                        previous.state = "stopped"
                 recovered = True
             else:
                 if previous and previous.state == "stopped":
                     raise NonRetryableError("API台帳は停止済みです")
-                if previous and previous.details.get("retry_at"):
-                    delay = (datetime.fromisoformat(previous.details["retry_at"])
-                             - datetime.now(UTC)).total_seconds()
-                    if delay > 0:
-                        raise WaitForSend(delay)
                 attempt = previous.attempt + 1 if previous else 1
                 if (budget.stopped or budget.pricing != PRICING or attempt > 3
                         or not 0 < budget.cap_nusd <= 50 * NUSD):
                     raise NonRetryableError("API予算・料金版または試行上限により停止しました")
-                if session.scalar(select(ApiCall.id).where(
+                retry_at = session.scalar(select(func.max(
+                    ApiCall.details["retry_at"].astext,
+                )).where(
+                    ApiCall.budget_key == budget.key, ApiCall.endpoint == endpoint,
+                    func.coalesce(ApiCall.details["requested_model"].astext,
+                                  ApiCall.details["identity"]["input"]["requested_model"].astext
+                                  ) == body.get("model"),
+                ))
+                if retry_at:
+                    delay = (datetime.fromisoformat(retry_at) - datetime.now(UTC)).total_seconds()
+                    if delay > 0:
+                        raise WaitForSend(delay)
+                if session.scalar(select(func.count()).select_from(ApiCall).where(
                     ApiCall.budget_key == budget.key, ApiCall.state == "sent",
-                ).limit(1)):
+                )) >= self.concurrency:
                     raise WaitForSend(30)
                 used = session.scalar(select(func.coalesce(func.sum(func.coalesce(
                     ApiCall.cost_nusd, ApiCall.reserved_nusd,
@@ -196,25 +245,32 @@ class Ledger:
                                     endpoint=endpoint, attempt=attempt,
                                     input_hash=payload["identity_hash"], state="sent",
                                     reserved_nusd=reserved, response_path=str(path),
-                                    details={"identity": identity}))
+                                    details={"identity": identity, "stop_policy": self.policy,
+                                             "requested_model": body.get("model")}))
         if not recovered:
             # 予約のcommit後にだけ送る。中断位置が不明なら次回は保留する。
             with self.queue._transaction() as session:
                 self.queue._owned(session, self.claim)
                 self.check(session)
+            phase = "request"
             try:
                 envelope = request(endpoint, body, key)
+                phase = "save_response"
                 save_private(path, envelope)
-            except Exception:
+            except Exception as error:
                 with self.queue._transaction() as session:
                     budget = session.scalars(select(ApiBudget).where(
                         ApiBudget.key == payload["budget_key"],
                     ).with_for_update()).one()
-                    session.get(ApiCall, call_id).state = "unknown"
-                    budget.stopped = True
-                raise NonRetryableError(
-                    "APIの課金・完了が不明なため自動再送を停止しました",
-                ) from None
+                    call = session.get(ApiCall, call_id)
+                    call.details = {**call.details, "failure_phase": phase,
+                                    "failure_type": type(error).__name__}
+                    if not path.is_file():
+                        self._unknown(session, budget, call)
+                if not path.is_file():
+                    raise NonRetryableError(
+                        "課金不明の要求を予約上限で確定し自動再送を停止しました",
+                    ) from None
         if not path.is_file():
             raise NonRetryableError("保存応答がない送信済み要求は再送できません")
         envelope = json.loads(path.read_text(encoding="utf-8"))
@@ -230,10 +286,11 @@ class Ledger:
             result.get("usage"),
             cache_ttl=(body.get("prompt_cache_options") or {}).get("ttl", "30m"),
         )
-        if endpoint == "responses" and (
+        pricing_mismatch = endpoint == "responses" and status == 200 and (
             result.get("model") != body["model"]
             or result.get("service_tier", "default") != "default"
-        ):
+        )
+        if pricing_mismatch:
             cost = None
         retry = False
         with self.queue._transaction() as session:
@@ -250,28 +307,42 @@ class Ledger:
                                 "usage": result.get("usage"), "status": status,
                                 "response_id": result.get("id"),
                                 "returned_model": result.get("model"),
-                                "returned_effort": (result.get("reasoning") or {}).get("effort")}
+                                "returned_effort": (result.get("reasoning") or {}).get("effort"),
+                                "outcome_at": datetime.now(UTC).isoformat()}
                 if cost is not None and cost > call.reserved_nusd:
                     budget.stopped = True
+                if pricing_mismatch:
+                    budget.stopped = True
+                    call.details = {**call.details, "pricing_mismatch": True,
+                                    "returned_tier": result.get("service_tier", "default")}
                 code = (result.get("error") or {}).get("code")
                 transient = status == 429 or 500 <= status <= 599
                 terminal = status in {401, 403} or code in {
                     "insufficient_quota", "billing_hard_limit_reached", "invalid_api_key",
                 }
                 if status != 200:
-                    budget.failures += 1
+                    budget.failures = budget.failures + 1 if status == 429 else 0
                     retry = transient and not terminal and call.attempt < 3
-                    budget.stopped = budget.stopped or terminal or budget.failures >= 2
+                    budget.stopped = (budget.stopped or terminal
+                                      or budget.failures >= self.policy["rate_limit_streak"])
                     retry = retry and not budget.stopped
                     call.state = "retry" if retry else "stopped"
                     call.details = {**call.details, "retry_at": (
                         datetime.now(UTC) + timedelta(seconds=retry_delay(envelope["retry_after"]))
                     ).isoformat()}
+                    if cost is None:
+                        call.cost_nusd = call.reserved_nusd
+                        call.details = {**call.details, "reconciliation": {
+                            "basis": "reservation_upper_bound", "reason": "HTTP失敗の上限計上",
+                            "at": call.details["outcome_at"],
+                            "never_resend": False}}
                 else:
-                    call.state = "settled" if cost is not None else "unknown"
+                    call.state = "settled"
                     if endpoint == "responses" and cost is not None:
                         budget.failures = 0
-                    budget.stopped = budget.stopped or cost is None
+                        call.details = {**call.details, "outcome": "success"}
+                    if cost is None:
+                        self._unknown(session, budget, call)
         if retry:
             raise RetryLater(retry_delay(envelope["retry_after"]))
         if status != 200 or cost is None or cost > reserved:

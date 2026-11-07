@@ -1,5 +1,10 @@
 # 解析前の画像内容review
 
+同時送信数は`COLORSTATS_IMAGE_GATE_CONCURRENCY`で1〜4を指定でき、既定は1。
+同じ予算を使うworkerは同じ値にそろえる。予算行のロック内で送信中の件数と予約額を確認し、
+設定した本数以内でも共有費用capを超える要求は送らない。
+429/一時5xxのRetry-After、停止閾値、課金不明要求の再送禁止は並列時も同じ。
+
 Issue #117。取得済み画像を `review` stage・`kind=image_gate` で判定する。
 収集取引では通信しない。既存の原本品質review・監査は従来どおり
 `colorstats.collect.quality` のhandlerで扱い、Workerが画像ゲートだけを専用経路へ分岐する。
@@ -37,28 +42,53 @@ Issue #117。取得済み画像を `review` stage・`kind=image_gate` で判定�
 現在の料金版はopenai-standard-2026-11-07-v2。入力100、cache読取10、
 30分書込み125、12時間書込み250、出力500 nano USD/token、
 count要求0。長文割増の閾値以下、Standardの固定endpointのみを使う。
-cacheの内訳（cached_tokens/cache_write_tokens）が欠測・不正・未知の場合、model/tier不一致、
-usage欠測では金額を確定しない。実アカウントで書込み内訳が返らない場合も0と仮定せず停止する。
+cacheの内訳（cached_tokens/cache_write_tokens）が欠測・不正・未知の場合、
+usage欠測では実額を確定せず予約上限で計上する。model/tier不一致は料金前提が崩れるため
+直ちに共有予算を停止する。対応する料金表がないmodel/tierにはStandard単価を流用せず、
+予約上限で記録し、実請求額と区別して運用者による照合まで再開しない。
 予約には書込み上限250を使い、精算にはTTL別の単価を使う。
 cache_write_tokens_detailsが返る場合は30分/12時間の合計と書込みtoken数を照合する。
 内訳省略時は要求TTL（API既定30m）で精算し、未知のTTLを採用しない。
 
 共有予算行をロックし、全ApiCallの `coalesce(cost_nusd, reserved_nusd)` 合計と次の予約が
 cap以内のときだけ送信済み台帳をcommitする。送信中にDB取引は保持しない。
-同じ予算で送信中の要求があれば延期し、初期運用は直列。
+同じ予算の送信中要求が設定した本数に達した場合は延期する。既定の運用は直列。
 共有枠や送信再開時刻の待機は試行数を消費せず、実際のAPI一時失敗だけを失敗に数える。
 count要求も別ApiCallとして要求数と保存応答を記録する。
 
 応答は私有artifactへfsyncしてからDBで精算する。API再試行とqueue再試行を重ねない。
 429/一時5xxだけRetry-After（秒数・HTTP日付）に従って延期する。
-queue・endpointとも最大3試行、連続2障害・auth/quota/billingで予算を停止する。
-countだけの成功では判定要求の連続障害を解除しない。
-タイムアウト・保存失敗・応答消失では予約額を維持して停止し、自動再送しない。
+同じ予算のendpoint・要求modelごとに全jobの再開時刻を共有し、最も遅い時刻まで新規予約を待つ。
+既存の`ApiCall.details.retry_at`を予算行のロック内で照会するため、追加のmigrationは不要。
+保存済み応答の再利用は通信しないので待機対象に含めない。
+queue・endpointとも最大3試行。連続429・auth/quota/billingでは予算を停止する。
+一時5xxはRetry-Afterに従って要求ごとに再試行し、HTTPエラーの実額が不明なら予約上限を計上する。
+タイムアウト・保存失敗・応答消失では当該要求を予約上限で精算して再送禁止にし、そのjobを失敗・保留にする。
+ほかのjobは続け、不明が連続3件または累計30件になった場合だけ予算を停止する。
+連続数は共有予算行のロック内の判定結果順で数え、判定要求の成功でリセットする。
+count成功は連続不明・連続429をリセットしない。過去に手動で上限精算した不明要求も累計に含める。
+設定は全workerでそろえ、各要求の`details.stop_policy`へ記録する。
+
+| 環境変数 | 既定値 |
+| --- | ---: |
+| `COLORSTATS_IMAGE_GATE_UNKNOWN_STREAK` | 3 |
+| `COLORSTATS_IMAGE_GATE_UNKNOWN_TOTAL` | 30 |
+| `COLORSTATS_IMAGE_GATE_429_STREAK` | 2 |
+| `COLORSTATS_IMAGE_GATE_TIMEOUT`（秒、HTTPごと・自動再送なし） | 120 |
+
 保存応答がある場合は、lease切れやDB登録失敗後もその応答から再開する。
 未精算の送信台帳が残るDBのmigration巻戻しは拒否する。
 
 `ApiCall.details` と保存応答を照合せずにstopped解除・cost=0設定・台帳削除をしてはならない。
-課金不明を解消できなければ予約を残す。保持期限経過で応答が消えた要求も再送しない。
+過去の未精算台帳を運用者が解消する場合も、
+元台帳・保存応答・処理状態をprivateへ保全して予算行をロックし、予約額を費用として計上する。
+`details.reconciliation.basis="reservation_upper_bound"`と根拠・時刻を残し、実usageと区別する。
+応答を失った要求はstate=stoppedにして再送を禁止する。保存された一時HTTPエラーの再試行は
+元のRetry-Afterと最大試行数を維持する。未解決のsent/unknown・未精算予約がないことを確認して
+予算停止を手動解除する。保持期限経過で応答が消えた要求も再送しない。
+通信・保存失敗の台帳には`failure_phase`と例外型だけを記録し、例外本文や秘密値は残さない。
+終了時監査は`bench/issue117/production_audit.py`で応答欠損と上限精算を分類し、
+欠損を実usage精算扱いにしたり、1件の欠損で残りの集計を中断したりしない。
 
 ## 入出力と採否
 
