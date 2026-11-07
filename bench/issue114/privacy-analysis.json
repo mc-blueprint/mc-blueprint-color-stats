@@ -1,0 +1,50 @@
+{
+  "at": "2026-11-07T00:59:43.543849+00:00",
+  "hosts": {
+    "ubuntu1": {
+      "completed_assets": 646,
+      "pending_assets": 0,
+      "violations": [],
+      "unclosed_attempts": 0,
+      "stages": {
+        "segment": {"jobs": 646, "status": {"succeeded": 646}, "attempts": 646, "retries": 0, "regions": 17190, "part_observations": 0, "relations": 0},
+        "shade": {"jobs": 646, "status": {"succeeded": 646}, "attempts": 646, "retries": 0, "regions": 0, "part_observations": 17171, "relations": 0},
+        "color": {"jobs": 646, "status": {"succeeded": 646}, "attempts": 646, "retries": 0, "regions": 0, "part_observations": 85844, "relations": 242676}
+      }
+    },
+    "ubuntu2": {
+      "completed_assets": 961,
+      "pending_assets": 0,
+      "violations": [],
+      "unclosed_attempts": 0,
+      "stages": {
+        "segment": {"jobs": 961, "status": {"succeeded": 961}, "attempts": 961, "retries": 0, "regions": 25311, "part_observations": 0, "relations": 0},
+        "shade": {"jobs": 961, "status": {"succeeded": 961}, "attempts": 961, "retries": 0, "regions": 0, "part_observations": 25257, "relations": 0},
+        "color": {"jobs": 961, "status": {"succeeded": 961}, "attempts": 961, "retries": 0, "regions": 0, "part_observations": 126285, "relations": 357301}
+      }
+    }
+  },
+  "original_artifacts": {"checked": 74865, "changed": 0},
+  "preserved": {
+    "assets": {"before": 7626, "changed": []},
+    "runs": {"before": 42314, "changed": []}
+  },
+  "original_rows": {
+    "job": {"count": 5200, "changed": 0},
+    "processing_run": {"count": 5200, "changed": 0}
+  },
+  "new_jobs": [["color", "succeeded", 1607, 328], ["shade", "succeeded", 1607, 328]],
+  "aggregate_jobs": 0,
+  "original_documents": {"count": 4, "changed": 0},
+  "mask_jobs": {"shade": 328, "color": 328},
+  "privacy": {
+    "total": 2600,
+    "decisions": {"accepted": 1607, "pending": 993},
+    "reasons": {"person_not_detected": 1279, "person_masked": 328, "subject_ambiguous": 660, "person_over_limit": 332, "subject_unresolved": 1},
+    "masked_accepted": 328,
+    "person_ratio_quantiles": [0, 0, 0.0943240954829195, 0.48752770330724565, 0.9322753527923354, 1],
+    "policy": {"method": "person-sam2-dino-v2", "detector_threshold": 0.35, "text_threshold": 0.25, "mask_padding_pixels": 2, "mask_max": 0.01, "subject_min": 0.05, "subject_margin": 0.02},
+    "method": "person-sam2-dino-v2"
+  },
+  "review_approved": false
+}

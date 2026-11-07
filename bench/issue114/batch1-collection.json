@@ -1,0 +1,238 @@
+{
+  "reason": "batch_api_requests_limit",
+  "worker_exit": 0,
+  "new_assets": 2600,
+  "ledger": {
+    "bytes": 7459897344,
+    "images": 2600,
+    "settings": {
+      "id": "issue114-batch1",
+      "bytes": 15000000000,
+      "images": 3000,
+      "api_requests": 10000,
+      "consecutive_errors": 3
+    },
+    "last_status": 200,
+    "stop_reason": null,
+    "api_requests": 10000,
+    "consecutive_errors": 0
+  },
+  "totals": {
+    "requests": 12600,
+    "responses": 12600,
+    "api_requests": 10000,
+    "bytes": 1086697405,
+    "download_bytes": 1028068465,
+    "candidates": 8379,
+    "verified": 7415,
+    "downloads": 2600,
+    "registered": 2600,
+    "eligible_new_sha": 2600,
+    "new_sha": 2600,
+    "duplicate_sha": 0,
+    "timeouts": 0
+  },
+  "strata": {
+    "japanese-temple": {
+      "counts": {
+        "requests": 2186,
+        "responses": 2186,
+        "api_requests": 1618,
+        "bytes": 234548236,
+        "download_bytes": 226911095,
+        "candidates": 1438,
+        "verified": 1241,
+        "downloads": 568,
+        "registered": 568,
+        "eligible_new_sha": 568,
+        "new_sha": 568,
+        "duplicate_sha": 0,
+        "timeouts": 0
+      },
+      "attempts": 189,
+      "states": {
+        "committed": 189
+      },
+      "d15_exclusions": {}
+    },
+    "snowy-winter-day": {
+      "counts": {
+        "requests": 1189,
+        "responses": 1189,
+        "api_requests": 969,
+        "bytes": 88492768,
+        "download_bytes": 81972524,
+        "candidates": 774,
+        "verified": 645,
+        "downloads": 220,
+        "registered": 220,
+        "eligible_new_sha": 220,
+        "new_sha": 220,
+        "duplicate_sha": 0,
+        "timeouts": 0
+      },
+      "attempts": 194,
+      "states": {
+        "committed": 187,
+        "failed": 6,
+        "running": 1
+      },
+      "d15_exclusions": {}
+    },
+    "plains-summer-day": {
+      "counts": {
+        "requests": 1125,
+        "responses": 1125,
+        "api_requests": 956,
+        "bytes": 97648353,
+        "download_bytes": 93329664,
+        "candidates": 767,
+        "verified": 714,
+        "downloads": 169,
+        "registered": 169,
+        "eligible_new_sha": 169,
+        "new_sha": 169,
+        "duplicate_sha": 0,
+        "timeouts": 0
+      },
+      "attempts": 189,
+      "states": {
+        "committed": 189
+      },
+      "d15_exclusions": {}
+    },
+    "desert-summer-day": {
+      "counts": {
+        "requests": 1585,
+        "responses": 1585,
+        "api_requests": 1259,
+        "bytes": 102243270,
+        "download_bytes": 95915203,
+        "candidates": 1070,
+        "verified": 953,
+        "downloads": 326,
+        "registered": 326,
+        "eligible_new_sha": 326,
+        "new_sha": 326,
+        "duplicate_sha": 0,
+        "timeouts": 0
+      },
+      "attempts": 189,
+      "states": {
+        "committed": 189
+      },
+      "d15_exclusions": {}
+    },
+    "islamic-temple": {
+      "counts": {
+        "requests": 1079,
+        "responses": 1079,
+        "api_requests": 909,
+        "bytes": 65928148,
+        "download_bytes": 60566627,
+        "candidates": 720,
+        "verified": 637,
+        "downloads": 170,
+        "registered": 170,
+        "eligible_new_sha": 170,
+        "new_sha": 170,
+        "duplicate_sha": 0,
+        "timeouts": 0
+      },
+      "attempts": 189,
+      "states": {
+        "committed": 189
+      },
+      "d15_exclusions": {}
+    },
+    "chinese-house": {
+      "counts": {
+        "requests": 1590,
+        "responses": 1590,
+        "api_requests": 1220,
+        "bytes": 152342044,
+        "download_bytes": 145523949,
+        "candidates": 1039,
+        "verified": 859,
+        "downloads": 370,
+        "registered": 370,
+        "eligible_new_sha": 370,
+        "new_sha": 370,
+        "duplicate_sha": 0,
+        "timeouts": 0
+      },
+      "attempts": 189,
+      "states": {
+        "committed": 189
+      },
+      "d15_exclusions": {}
+    },
+    "mountains-summer-day": {
+      "counts": {
+        "requests": 1145,
+        "responses": 1145,
+        "api_requests": 952,
+        "bytes": 87621435,
+        "download_bytes": 82150846,
+        "candidates": 763,
+        "verified": 738,
+        "downloads": 193,
+        "registered": 193,
+        "eligible_new_sha": 193,
+        "new_sha": 193,
+        "duplicate_sha": 0,
+        "timeouts": 0
+      },
+      "attempts": 189,
+      "states": {
+        "committed": 189
+      },
+      "d15_exclusions": {}
+    },
+    "forest-autumn-day": {
+      "counts": {
+        "requests": 1322,
+        "responses": 1322,
+        "api_requests": 1107,
+        "bytes": 119935953,
+        "download_bytes": 109201000,
+        "candidates": 918,
+        "verified": 835,
+        "downloads": 215,
+        "registered": 215,
+        "eligible_new_sha": 215,
+        "new_sha": 215,
+        "duplicate_sha": 0,
+        "timeouts": 0
+      },
+      "attempts": 189,
+      "states": {
+        "committed": 189
+      },
+      "d15_exclusions": {}
+    },
+    "japanese-castle": {
+      "counts": {
+        "requests": 1379,
+        "responses": 1379,
+        "api_requests": 1010,
+        "bytes": 137937198,
+        "download_bytes": 132497557,
+        "candidates": 890,
+        "verified": 793,
+        "downloads": 369,
+        "registered": 369,
+        "eligible_new_sha": 369,
+        "new_sha": 369,
+        "duplicate_sha": 0,
+        "timeouts": 0
+      },
+      "attempts": 126,
+      "states": {
+        "committed": 126
+      },
+      "d15_exclusions": {}
+    }
+  },
+  "counting": "measurementの全試行を合算。候補・照合は遭遇回数でありdistinctではない。byteはHTTP本文実読取量、ledgerは返却しないread予約量。runningは初回停止時に残った履歴状態で、稼働job数ではない。"
+}

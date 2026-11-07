@@ -1,0 +1,97 @@
+{
+  "repo": "mc-blueprint/mc-blueprint-color-stats",
+  "parent": 114,
+  "milestone_number": 7,
+  "milestone": "収集基盤拡張：解析専用入力と転送最適化",
+  "issues": [
+    {
+      "key": "A",
+      "title": "Luna lowによる解析前の画像内容ゲートとAPI費用上限を実装する",
+      "file": "issues/a-image-gate.md",
+      "labels": [
+        "priority: high",
+        "type: feature"
+      ],
+      "depends_on": [],
+      "number": 117,
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/117"
+    },
+    {
+      "key": "B",
+      "title": "OneFormerの排他領域で部位maskを制約し空・異群の混入を防ぐ",
+      "file": "issues/b-region-policy.md",
+      "labels": [
+        "priority: high",
+        "type: bug"
+      ],
+      "depends_on": [],
+      "number": 118,
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/118"
+    },
+    {
+      "key": "C",
+      "title": "画像判定と画素判定の不一致を保留する人物採用契約を実装する",
+      "file": "issues/c-person-policy.md",
+      "labels": [
+        "priority: high",
+        "type: feature"
+      ],
+      "depends_on": [
+        "A",
+        "B"
+      ],
+      "number": 119,
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/119"
+    },
+    {
+      "key": "E",
+      "title": "非公開の輪郭線HTMLと番号返信による目視確認を整える",
+      "file": "issues/e-mobile-review.md",
+      "labels": [
+        "priority: medium",
+        "type: feature"
+      ],
+      "depends_on": [
+        "A",
+        "B"
+      ],
+      "number": 120,
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/120"
+    },
+    {
+      "key": "D",
+      "title": "全既知画素と新しい目視で画像・領域ゲートの品質を再検証する",
+      "file": "issues/d-quality-evaluation.md",
+      "labels": [
+        "priority: high",
+        "type: test"
+      ],
+      "depends_on": [
+        "A",
+        "B",
+        "C",
+        "E"
+      ],
+      "number": 121,
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/121"
+    },
+    {
+      "key": "G",
+      "title": "固定7607 assetを新方針で再解析し訂正版の比較基準を作る",
+      "file": "issues/g-old-baseline.md",
+      "labels": [
+        "priority: high",
+        "type: bug"
+      ],
+      "depends_on": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ],
+      "number": 122,
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/122"
+    }
+  ]
+}
