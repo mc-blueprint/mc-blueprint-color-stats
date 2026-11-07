@@ -352,7 +352,7 @@ def test_issue120番号返信は新privacy契約を失効させ旧writerを使�
                    "presented_source_sha256": source_sha256,
                    "confirmed_real_people": "absent"}]}
     reply = reply_reviews(mapping, manifest, "a" * 64,
-                          "全1枚確認済み。問題あり：1 確認内容の誤り")
+                          "全1枚確認済み\n1: 確認内容の誤り")
 
     def old_writer(*args, **kwargs):
         raise AssertionError("旧privacy writerを呼び出しました")

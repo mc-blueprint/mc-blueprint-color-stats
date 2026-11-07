@@ -130,90 +130,52 @@ def test_未完了返信や変更された番号表を拒否する(tmp_path):
         reply_reviews(mapping, manifest, "a" * 64, reply)
 
 
-def test_会話返信は全件数と理由付き問題番号を要求する():
-    reply = "全2枚確認済み。問題あり：2 建築部位の判定違い"
-    assert parse_chat_reply(reply, 2)["problems"] == [
-        {"number": 2, "reason": "建築部位の判定違い"},
-    ]
-    assert parse_chat_reply("全2枚確認済み。問題なし", 2)["problems"] == []
-    with pytest.raises(ValueError):
-        parse_chat_reply("全1枚確認済み。問題なし", 2)
-    with pytest.raises(ValueError):
-        parse_chat_reply("全2枚確認済み。問題あり：2", 2)
-
-
-@pytest.mark.parametrize("reply", [
-    "全2枚は未確認。問題なし", "全2枚確認済みではない。問題なし",
-    "前置き全2枚確認済み。問題なし", "全2枚確認済み。問題なし。ただし未確認",
-    "全2枚確認済み。問題あり：1 問題なし", "全2枚確認済み。問題あり：1 未確認",
+@pytest.mark.parametrize("reply,expected", [
+    ("全138枚確認済み\n問題なし", []),
+    ("全１３８枚確認済み。\r\n問題なし\r\n", []),
+    ("\n全138枚確認済み\n\n問題なし\n\n", []),
+    ("全138枚確認済み\n7: 人物が 2 人写っている",
+     [{"number": 7, "reason": "人物が 2 人写っている"}]),
+    ("全138枚確認済み\n7: 人物見落とし。右端に人物がいます",
+     [{"number": 7, "reason": "人物見落とし。右端に人物がいます"}]),
+    ("全138枚確認済み\n7: 人物maskは問題ないが主体が違う",
+     [{"number": 7, "reason": "人物maskは問題ないが主体が違う"}]),
+    ("全138枚確認済み\n７：番号 7、85 を比較。人物は未確認",
+     [{"number": 7, "reason": "番号 7、85 を比較。人物は未確認"}]),
+    ("全138枚確認済み。\r\n７： 人物見落とし。右端に人物がいます\r\n\r\n８５: 主体違い\r\n",
+     [{"number": 7, "reason": "人物見落とし。右端に人物がいます"},
+      {"number": 85, "reason": "主体違い"}]),
 ])
-def test_肯定形でない返信を確認済みとして受け付けない(reply):
-    with pytest.raises(ValueError):
-        parse_chat_reply(reply, 2)
-
-
-def test_全角数字とカンマ区切りの番号を正しく読む():
-    parsed = parse_chat_reply("全２枚確認済み。問題あり：１ 人物見落とし，２ 主体違い", 2)
-    assert [row["number"] for row in parsed["problems"]] == [1, 2]
-    assert [row["reason"] for row in parsed["problems"]] == ["人物見落とし", "主体違い"]
-
-
-@pytest.mark.parametrize("separator", ["、", "。", ",", "\n", " ", "。\n"])
-def test_問題番号を理由へ吸収しない(separator):
-    reply = f"全138枚確認済み。問題あり：7 人物見落とし{separator}85 主体違い"
+def test_定型返信は行頭番号だけを読み理由を保持する(reply, expected):
     parsed = parse_chat_reply(reply, 138)
-    assert parsed["problems"] == [
-        {"number": 7, "reason": "人物見落とし"}, {"number": 85, "reason": "主体違い"},
-    ]
+    assert parsed == {"all_reviewed": True, "reply_text": reply, "problems": expected}
 
 
 @pytest.mark.parametrize("reply", [
-    "全138枚確認済み。問題なし\n", "全138枚確認済み。問題なし。",
-    "全138枚確認済み\n問題なし。\n", "全138枚確認済み問題なし",
-    "全１３８枚確認済み。\n問題なし。\n",
-    "全138枚確認済み。問題あり：７ 人物見落とし。８５ 主体違い。\n",
+    "", "\n\n", "全138枚確認済み", "全138枚確認済み\n\n",
+    "全137枚確認済み\n問題なし", "全138枚未確認\n問題なし",
+    "全138枚確認済みではない\n問題なし", "前置き全138枚確認済み\n問題なし",
+    "全138枚確認済み\n7: 人物\n７：主体", "全138枚確認済み\n0: 人物",
+    "全138枚確認済み\n139: 主体", "全138枚確認済み\n7:",
+    "全138枚確認済み\n7:  \n", "全138枚確認済み\n7 人物",
+    "全138枚確認済み\n番号 7: 人物", "全138枚確認済み\n7: 人物\n右端に人物がいます",
+    "全138枚確認済み\n問題なし\n7: 人物", "全138枚確認済み\n7: 人物\n問題なし",
+    "全138枚確認済み\n問題なし\n問題なし", "全138枚確認済み\n問題なし\n補足",
+    "全138枚確認済み。問題なし", "全138枚確認済み。問題あり：7 人物",
+    "全138枚確認済み\n問題なし。", "全138枚確認済み\n問題あり：7 人物",
 ])
-def test_句点改行全角数字を含む肯定返信を受け付ける(reply):
-    parsed = parse_chat_reply(reply, 138)
-    assert parsed["all_reviewed"]
-    assert [row["number"] for row in parsed["problems"]] == (
-        [7, 85] if "問題あり" in reply else []
-    )
-
-
-@pytest.mark.parametrize("reply", [
-    "全138枚確認済み。問題あり：7 人物見落とし。85",
-    "全138枚確認済み。問題あり：7 人物見落とし 139 主体違い",
-    "全138枚確認済み。問題あり：7 人物見落とし\n７ 主体違い",
-    "全138枚確認済み。問題あり：7 人物見落とし。0 主体違い",
-    "全138枚確認済み。問題あり：7 人物見落とし 85主体違い",
-    "全138枚確認済み。問題あり：7 人物見落とし、主体違い",
-    "全138枚確認済み。問題あり：7 未確認。85 主体違い",
-    "全138枚確認済み。問題あり：7 確認していない",
-    "全137枚確認済み。問題なし。", "全138枚未確認。問題なし。",
-    "全138枚確認済みではない。問題なし。",
-])
-def test_曖昧な番号と未確認返信は拒否する(reply):
+def test_定型に合わない返信や重複範囲外理由なしを拒否する(reply):
     with pytest.raises(ValueError):
         parse_chat_reply(reply, 138)
 
 
-@pytest.mark.parametrize("reply", ["全2枚確認済み。問題なし。\n",
-                                   "全２枚確認済み。問題あり：１ 人物見落とし"])
+@pytest.mark.parametrize("reply", ["全2枚確認済み\n問題なし\n",
+                                   "全２枚確認済み。\r\n１：人物見落とし"])
 def test_正しい返信もmanifest変更時には拒否する(tmp_path, reply):
     manifest, mapping, _ = sample(tmp_path)
     manifest.write_text(manifest.read_text() + "\n")
     with pytest.raises(ValueError, match="固定した閲覧対象"):
         reply_reviews(mapping, manifest, "a" * 64, reply)
-
-
-@pytest.mark.parametrize("reply", [
-    "全2枚確認済み。問題あり：20", "全2枚確認済み。問題あり：3 理由",
-    "全2枚確認済み。問題あり：1 理由、１ 重複理由",
-])
-def test_理由なし範囲外重複番号を拒否する(reply):
-    with pytest.raises(ValueError):
-        parse_chat_reply(reply, 2)
 
 
 def test_複数画像の番号表へ各自のprivacy_runを保持する():
