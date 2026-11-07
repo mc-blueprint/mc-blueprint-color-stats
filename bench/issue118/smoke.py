@@ -63,6 +63,7 @@ def comparisons(prepared, policy, building_labels):
     return {"pixels": int(semantic.size), "sky_pixels": int(sky.sum()),
             "raw_building_pixels": int(raw_building.sum()),
             "effective_building_pixels": int(effective_building.sum()),
+            "effective_terrain_pixels": int(effective_terrain.sum()),
             "sky_building_before": int((raw_building & sky).sum()),
             "sky_building_after": int((effective_building & sky).sum()),
             "building_terrain_before": int((raw_building & raw_terrain).sum()),
@@ -75,13 +76,15 @@ def summarize(records):
     """画像IDや入力SHAを含めず、件数・画素率・実行性能だけを集約する。"""
     successful = [row for row in records if row["status"] == "succeeded"]
     keys = ("pixels", "sky_pixels", "raw_building_pixels", "effective_building_pixels",
+            "effective_terrain_pixels",
             "sky_building_before", "sky_building_after", "building_terrain_before",
             "building_terrain_after", "effective_pixels", "void_pixels")
     counts = {key: sum(row["comparison"][key] for row in successful) for key in keys}
     denominator = counts["pixels"]
     rates = {key + "_image_rate": counts[key] / denominator if denominator else None
              for key in ("sky_building_before", "sky_building_after", "building_terrain_before",
-                         "building_terrain_after", "effective_pixels", "void_pixels")}
+                         "building_terrain_after", "effective_building_pixels",
+                         "effective_terrain_pixels", "effective_pixels", "void_pixels")}
     known = {}
     for name, metric in (("sky_building", "sky_building"),
                          ("overlap_reported", "building_terrain")):
@@ -234,6 +237,8 @@ def main():
                                        "candidate_starts": candidate_events})
     summary = summarize(records)
     summary.update(host=socket.gethostname(), seed=selection["seed"],
+                   parent_table=region_policy.parent_table_reference(),
+                   policy_hash=region_policy.policy_hash(),
                    gpu=torch.cuda.get_device_name(),
                    gpu_total_bytes=torch.cuda.get_device_properties(0).total_memory,
                    max_foreign_gpu_processes=max((sum(pid != os.getpid() for pid, _ in sample[

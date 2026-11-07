@@ -1,61 +1,65 @@
-# Issue #118 引継ぎ（GPU検証後）
+# Issue #118 引継ぎ（親対応表v2）
 
-ownerは同じcomplex_worker。ブランチは`feature/issue-118`、起点は
-`5270a36957e3db4141d29711203e283eb52b904a`。前回実装を先に`43a8b5c`へcommitした。
-今回も再委譲・push・PR作成・merge・Issue closeは行っていない。
+ownerは同じcomplex_worker。`feature/issue-118`で作業し、今回の起点は`922d88b`。
+初回実装は`43a8b5c`、先行の両GPU検証と解放修正は`922d88b`に保全した。
+再委譲・push・PR作成・merge・Issue closeは行っていない。
 
-## 現在の状態
+## 完了した変更・検証
 
-- 固定revisionの8ファイルを両機へ取得し、終了後も全SHA一致を確認。
-- 既存cohortから固定seedで同じ3入力を選び、両GPUの3件連続smokeが成功。
-- OOM・別GPUプロセス混入0。OneFormerと候補工程間のモジュール参照残存0。
-- 実機で見つかったprocessor初期化とOneFormer/SAM2のLRU保持を修正。
-  後者は新policyだけに適用し、旧`sam2-dino`の常駐は維持した。
-- WSL隔離DB込み全pytest **1,138 passed / 1 skipped**、ruff・sdist/wheel build成功。
-- **建物の有効画素は両機とも0**。空混入・交差0を実用的な改善合格とは扱わない。
-  `Refs #118`として未完を維持し、品質採用・全量統計を保留する。
+- 全41部位を[親表v2](../../docs/region-parents-v2.md)へ明示し、版・正規化JSON SHAを固定。
+  建物・地形の粗い親と部位候補の積を取り、sky/personは全て禁止する。
+- 共有payload形式`region-policy-v1`を維持し、`parent_table.version/sha256`を
+  segmentパラメータ・role契約へ追加。policy/config hashにも含め、旧版再利用を拒否。
+- 前回3件と非重複の追加20件を固定seedで選び、ubuntu-2で別々に実行して全23件成功。
+  建物有効率2.4211%・8.8645%、空混入・建物/地形交差0。
+  地形有効率28.4416%・21.3064%、void率69.0670%・67.9523%。
+- 旧3件のraw候補・semantic map 89/89ファイルがSHA一致。旧成果物を上書きしていない。
+- 全pytest **1,160 passed / 1 skipped**、ruff・sdist/wheel build成功。
+  mock/隔離DBで候補外への拡張なし、親表の網羅、旧hash拒否と後続stage統合を検証。
+- OOM・別GPU処理混入・工程間のモジュール参照残存0。
+  GPU・監視thread・隔離テストDBは終了済み。本番DBには接続していない。
 
-集計・完成条件照合・検証根拠は[gpu-results.md](gpu-results.md)、
-機械可読な件数・率は[gpu-summary.json](gpu-summary.json)。
-画像単位の記録、全試行の失敗、入力・出力SHA、mask、確認図はGit外の
-`H:/mc-blueprint/private/issue118-smoke-20261107/`に保全した。
-本番DBには接続していない。GPUプロセス・監視thread・隔離テストDBは全て終了済み。
+今回の結果・完成条件に対応する記録は[parent-v2-results.md](parent-v2-results.md)、
+数値集計は[parent-v2-summary.json](parent-v2-summary.json)。
+画像・画像別記述・入力/出力SHA・全mask・実行ログはGit外の
+`H:/mc-blueprint/private/issue118-parents-v2-20261107/`へ保存した。
+旧親表の全欠測という結果は旧GPU結果ファイルと従来privateに保全した。
 
-## 共有契約・依存先への連絡
+## 共有契約とC/E/Dへの連絡
 
-`segment.method=oneformer-region-v1`。raw Region/CVATとsemantic/有効role maskを分離する。
-後続payloadには`color.region_inputs`と併せて
-`color.region_policy_input(session, asset_id, region_run_id)`の戻り値を
-`region_policy`として必ず渡す。旧policyではNone。
-path/SHA・入力SHA/寸法・revision・policy hashを固定し、省略・差替え・旧観測流用を拒否する。
+後続payloadは引き続き`color.region_inputs`と
+`color.region_policy_input(session, asset_id, region_run_id)`を使う。
+後者の戻り値を`region_policy`としてそのまま渡す。旧`sam2-dino`ではNone。
+粗いbuildingをwallの正解へ変換せず、raw候補の外へ広げない。
+wall/treeの同親和集合と、異roleの未解決交差をvoidにする契約は変更なし。
 
-shade/colorは有効role maskから直接計算してJSONの`roles`へ保存し、
+親表の版は`ade-role-parents-v2`、SHAは
+`9657fe1c90fae5ea3b87eca49b3b84a91d57d1287dae1a81db519cdd76acc21b`。
+現行policy hashは
+`3dad77aa16f42d620dc85cdf2e81586288db93c67154c86a39c68fb1774e65ba`。
+今回の確定commitを後続へ渡し、旧親表の有効mask・色観測を流用しない。
+旧親表の再現は`922d88b`のコードと保存結果を使う。
+
+shade/colorは有効role maskから直接計算し、JSONの`roles`へ保存する。
 snapshotも有効maskからgroupsを作る。親role用の偽Regionや個別supportedは作らない。
-`quality_eligible=false`を維持する。schema・migration・既存採用configは変更なし。
-#117の0009には干渉しない。追加人物maskとの重ね合わせは新runの契約確定が必要。
+schema・migration・既存採用configの変更はなく、#117の0009に干渉しない。
 
-今回のメモリ保持修正はpolicy hashに含む。確定commitをC/E/Dへ渡す際は、
-建物全欠測と未採用状態も必ず伝える。旧runの有効maskや色観測を再利用しない。
-粗いbuilding/houseをwall等へ許容する判断は共有policyの変更になるため、
-勝手に表を緩めず、建物保持と部位誤りを評価してメインが方針を決める必要がある。
+## 後続に残す判断
 
-## 残作業
-
-- 建物全欠測の解消方針を決め、建物を保持した既知失敗例で検証する。
-- 後続Dで独立GT・coverage/recall/IoUを含む品質判定を行う。
-  今回のOneFormer sky参照の0%をprecision合格へ読み替えない。
-- 完成条件を再照合し、未達が解消したときだけ公開文面を`Closes #118`へ更新する。
-- push・PR作成は依頼範囲外。この担当は再委譲禁止。
-  公開が必要になったら、メインが差分と未達条件を確認して公開担当へownerを渡す。
+void率は約68〜69%であり、粗い親の許容は部位精度を保証しない。
+独立GTでのprecision/recall/IoU、専用クラスのないroof/snow、子role競合の採否は後続Dで判断する。
+`quality_eligible=false`と、Dの品質合格前の全量統計保留を維持する。
+実在人物の保留方針や、新しい人物maskを別runへ固定する契約も変更しない。
 
 ## 公開文面の正本3ファイル
 
 - [commit-message.txt](commit-message.txt)
 - [pr-title.txt](pr-title.txt)
-- [pr-body.md](pr-body.md)：`Refs #118`
+- [pr-body.md](pr-body.md)：`Closes #118`
 
 baseはdevelop、headはfeature/issue-118。
-ラベル候補は既存の`type: bug`、`priority: high`。優先度根拠はIssueと同じ入力汚染。
-この引継ぎはPR公開・Issue完了の報告ではない。
+ラベル候補は既存の`type: bug`、`priority: high`（主要統計入力の汚染を修正）。
+今回の依頼はcommitまでであり、公開担当への再委譲・push・PR作成はしていない。
+PR公開・merge・Issue close済みとは扱わない。
 
-新規の外部保存対象となるドメイン知識はない。実装・検証の記録はプロジェクト内に残した。
+新規の外部保存対象となるドメイン知識はない。実装・検証結果はプロジェクト文書に記録した。

@@ -31,6 +31,11 @@ def test_selection_is_fixed_and_keeps_people_and_off_target_out(tmp_path):
     for row in first["assets"]:
         assert digest(tmp_path / "first" / row["file"]) == row["input_sha256"]
     assert all(Path(path).read_bytes() == data for path, data in original.items())
+    extra = select([cohort], known, tmp_path / "extra", previous=tmp_path / "first/selection.json",
+                   seed=11820261108, count=2)
+    assert len(extra["assets"]) == 2
+    assert not ({row["input_sha256"] for row in first["assets"]}
+                & {row["input_sha256"] for row in extra["assets"]})
 
 
 def test_aggregate_reports_void_and_does_not_expose_image_identifiers():
@@ -38,13 +43,16 @@ def test_aggregate_reports_void_and_does_not_expose_image_identifiers():
               "known": {"sky_building": True, "overlap_reported": True}, "seconds": 2,
               "metrics": {"peak_allocated_bytes": 20, "oneformer_peak_allocated_bytes": 10},
               "comparison": {"pixels": 100, "sky_pixels": 40, "raw_building_pixels": 90,
-                             "effective_building_pixels": 20, "sky_building_before": 30,
+                             "effective_building_pixels": 20, "effective_terrain_pixels": 10,
+                             "sky_building_before": 30,
                              "sky_building_after": 0, "building_terrain_before": 10,
                              "building_terrain_after": 0, "effective_pixels": 30,
                              "void_pixels": 70}}
     result = summarize([record])
     assert result["rates"]["sky_building_before_image_rate"] == 0.3
     assert result["rates"]["void_pixels_image_rate"] == 0.7
+    assert result["rates"]["effective_building_pixels_image_rate"] == 0.2
+    assert result["rates"]["effective_terrain_pixels_image_rate"] == 0.1
     assert result["known_cases"]["sky_building"] == {
         "cases": 1, "positive_before": 1, "positive_after": 0,
     }

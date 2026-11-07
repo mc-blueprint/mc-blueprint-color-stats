@@ -5,10 +5,15 @@ OneFormer ADE Swin-Lのsemantic mapで既存DINO/SAM2候補を制約する。
 stage、DBモデル、migration、taxonomy、既存の採用設定は変更しない。
 旧`sam2-dino`と旧snapshotの再現経路は維持する。
 
+現行の親対応表は[ade-role-parents-v2](region-parents-v2.md)。
+外観が粗いbuilding等に分割されることを考慮し、部位候補と粗い親領域の積を取る。
+表の版・SHAをrole契約とpolicy/config hashへ含め、旧版成果物を上書き・流用しない。
+
 ## モデルの取得条件
 
 2026-11-07のユーザー了承により固定8ファイルの取得と両GPUの3件smokeを実施した。
-結果と制約は[GPU検証](../bench/issue118/gpu-results.md)を参照。本番DB更新は行わない。
+旧結果は[GPU検証](../bench/issue118/gpu-results.md)、親対応表v2の結果は
+[3件＋20件検証](../bench/issue118/parent-v2-results.md)を参照。本番DB更新は行わない。
 通常のsegment処理には重みの自動取得を追加しない。
 
 - [著者checkpoint](https://huggingface.co/shi-labs/oneformer_ade20k_swin_large/tree/4a5bac8e64f82681a12db2e151a4c2f4ce6092b2)
@@ -67,10 +72,12 @@ OneFormerのロード前に既存モデルcacheを解放し、OneFormerを解放
 
 ## 排他処理と保存
 
-許容semanticクラス表の正本は`region_policy.ALLOW`。
+許容semanticクラス表の正本は`region-parents-v2.json`（`region_policy.ALLOW`として読み込む）。
 sky/personと対象外クラスは除外し、treeをrock/mountain/snowへ許容しない。
-wall候補はwallだけへclipする。building/house全体をwallへ変換しない。
-専用クラスがないroof・snow等は欠測とし、後続の品質判定でcoverage低下も評価する。
+wall/window/roof等には部位ごとの専用クラスと粗いbuilding/house等を許容する。
+building/house全体をwallへ変換せず、必ずraw部位候補との積だけを採用する。
+roof専用クラスはないため建物・awning/canopyを親とし、snow専用クラスがない雪候補には
+mountain/earth/rock等の地表親を許容する。詳細と根拠は親対応表を参照する。
 
 wallの3子ラベル、treeの樹冠・幹はそれぞれ親roleで和集合にする。
 その他は既存ラベルごとのroleにする。semantic clip後も複数roleに属する画素は全てvoid。
@@ -84,7 +91,7 @@ sky/person maskは候補がない場所も含む全semantic画素を保存する
 `semantic_pixels`はその総数、`excluded_pixels`はraw候補から失った画素数とする。
 画像JSONとrun.parameters.region_policyには以下を固定する。
 
-- policy版・hash、prep SHA・寸法、model/revision・全ファイルSHA・id2label hash
+- policy版・hash、親対応表の版・SHA、prep SHA・寸法、model/revision・全ファイルSHA・id2label hash
 - semantic、有効role、除外理由ごとのpath・SHA
 - raw/effective画素数、coverage、void率、理由別除外画素数、欠測role一覧
 
@@ -125,6 +132,8 @@ snapshotのParquet生成、raw保全、由来、不正再利用のrollbackを検
 
 実GPUの8GB/12GBで各3件smoke、ピークVRAM、重み本体SHA、工程間のモジュール解放を検証済み。
 実OOMは未発生。OOM時停止はmock/隔離DBで検証した。解像度やモデルの暗黙変更はしない。
-ただし両機で建物の有効画素が0になったため、実用的な改善は未達として`Refs #118`で引き継ぐ。
-画素GTに基づく品質合格、建物を保持するpolicyの改善、後続Dの採否判断は残る。
+旧親表で建物の有効画素が0になった診断は[旧GPU結果](../bench/issue118/gpu-results.md)に保全した。
+現行表では粗い建物親の許容を追加し、前回3件と追加20件をubuntu-2の別の隔離出力で検証済み。
+建物有効率はそれぞれ2.4211%・8.8645%、空混入と建物/地形交差は0となった。
+画素GTに基づく品質合格と後続Dの採否判断は別工程とし、smokeの排他性だけで合格にしない。
 全量統計・本番DB更新は実行していない。

@@ -21,18 +21,8 @@ TRANSFORM = {"shortest_edge": 640, "longest_edge": 2560, "batch_size": 1,
              "processor": "fixed-json-local-class-info-CLIPTokenizer",
              "position_embedding_cache": "disabled"}
 
-# ADEのbuildingをwallへ読み替えず、専用クラスがない部位は欠測にする。
-ALLOW = {
-    "wall_main": [0], "wall_secondary": [0], "gable_wall": [0],
-    "column": [42], "window_glass": [8], "window_frame": [8], "door": [14, 58],
-    "plinth": [40], "stairs_entry": [53, 59, 121], "railing": [38, 95],
-    "path": [6, 11, 52], "fence": [32], "vegetation_attached": [17],
-    "light_fixture": [36, 82, 87, 134], "floor_visible": [3],
-    "ground_soil": [13, 94], "ground_grass": [9, 29],
-    "rock_face": [16, 34, 68], "rock_scree": [34], "sand": [46], "snow_ice": [],
-    "water": [21, 26, 60, 113, 128], "vegetation_low": [17, 66],
-    "vegetation_tree_canopy": [4, 72], "tree_trunk": [4, 72], "path_natural": [52, 91],
-}
+PARENT_TABLE = json.loads(Path(__file__).with_name("region-parents-v2.json").read_text("utf-8"))
+ALLOW = PARENT_TABLE["allow"]
 PARENTS = {**dict.fromkeys(("wall_main", "wall_secondary", "gable_wall"), "real_building/wall"),
            **dict.fromkeys(("vegetation_tree_canopy", "tree_trunk"), "real_terrain/tree")}
 TERRAIN = {"ground_soil", "ground_grass", "rock_face", "rock_scree", "sand", "snow_ice",
@@ -41,10 +31,16 @@ TERRAIN = {"ground_soil", "ground_grass", "rock_face", "rock_scree", "sand", "sn
 
 def policy_hash():
     """許容クラス・親役割・座標復元の固定仕様のSHA-256。"""
-    return _digest({"version": VERSION, "allow": ALLOW, "parents": PARENTS,
+    return _digest({"version": VERSION, "parent_table": parent_table_reference(),
+                    "parents": PARENTS,
                     "terrain": sorted(TERRAIN), "transform": TRANSFORM,
                     "class_info_sha256": _hash(Path(__file__).with_name("oneformer-classes.json")),
                     "versions": {"transformers": "4.57.6", "torch": "2.11.0"}})
+
+
+def parent_table_reference():
+    """粗いsemantic親と部位候補の対応表を版とSHAで識別する。"""
+    return {"version": PARENT_TABLE["version"], "sha256": _digest(PARENT_TABLE)}
 
 
 def validate_labels(id2label):
@@ -130,6 +126,7 @@ def save_artifacts(target, token, class_map, rows, labels, parameters):
         return {"path": str(path), "sha256": _hash(temp)}
 
     contract = {"version": VERSION, "policy_hash": policy_hash(),
+                "parent_table": parent_table_reference(),
                 "input_sha256": parameters["input_sha256"],
                 "size": [class_map.shape[1], class_map.shape[0]],
                 "model": parameters["models"]["oneformer"],
@@ -164,6 +161,7 @@ def load_masks(payload):
     if payload.get("mask_path") or payload.get("person_mask"):
         raise ValueError("新policyに別のmaskを重ねず、新segment runへ固定してください")
     if (policy["version"] != VERSION or policy["policy_hash"] != policy_hash()
+            or policy.get("parent_table") != parent_table_reference()
             or policy["run_id"] != str(payload["region_run_id"])
             or policy["input_sha256"] != _hash(payload["input_path"])
             or payload.get("input_sha256") != policy["input_sha256"]):

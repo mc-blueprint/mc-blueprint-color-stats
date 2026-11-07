@@ -38,6 +38,7 @@ def save(path, value):
 def implementation():
     paths = sorted((ROOT / "src/colorstats").rglob("*.py"))
     paths += sorted((ROOT / "src/colorstats/analyze").glob("oneformer-*.json"))
+    paths += sorted((ROOT / "src/colorstats/analyze").glob("region-parents-*.json"))
     paths += [Path(__file__), ROOT / "configs/segment_stats.yaml"]
     return {str(p.relative_to(ROOT)): segment._hash(p) for p in paths}
 
