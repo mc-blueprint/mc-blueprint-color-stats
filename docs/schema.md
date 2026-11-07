@@ -603,14 +603,16 @@ revision `0007`は既存行を登録せず、次の3表を追加する。
 
 - retention：assetごとの画像期限expires_at、停止時刻stopped_at、理由reason、受付Issue URL、
   backup最大残留期限backup_until。画像期限だけでは数値統計を失効させない。
-- retention_file：asset/host/絶対pathを一意な依存参照とし、raw/derived/mask/cvat/replica/cache/backupを
+- retention_file：asset/host/絶対pathを一意な依存参照とし、raw/derived/mask/cvat/replica/cache/backup/image_bundleを
   区別する。released_atは参照解除、deleted_atは物理削除確認、errorは共有保護・削除失敗。
+  image_bundleは構成assetのどれかが利用不可になると束全体を削除対象とする。通常の共有参照とは区別する。
 - retention_stop：provider/source_url/target_urlごとの停止台帳。target_urlの空文字列は出典全体、
   それ以外は対象の原画像URL。detailsは原画像URL・受付時刻・理由・受付Issue。
   asset/sourceの復元より古いbackupでも再取得を拒否できるよう、外部キーを持たず別保管する。
 
 downgradeは保持・停止台帳が残っていれば拒否する。台帳を暗黙削除しない。
-asset.quality.privacy_reviewは目視確認者・建築/地形の主体・確認時刻・人物除外maskとSHA-256。
-新規画像は確認前の色処理を拒否し、maskはcolor設定hashへ含める。
+asset.quality.privacy_reviewは自動判定または目視確認者・方式と版・閾値・採否・建築/地形の主体・
+確認時刻・入力根拠・人物除外maskとSHA-256。上書き前の記録はprivacy_review_historyへ保全する。
+新規画像は採用判定前の色処理を拒否し、maskはcolor設定hashへ含める。
 停止入力を除いた新selectionの生成、復元時の停止台帳先行適用、共有ファイル保護は
 [管理手順](retention.md)に従う。旧snapshotの内容・識別子は変更しない。
