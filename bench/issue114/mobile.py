@@ -253,7 +253,7 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
             continue
         if (selection.get("contract") == "image-review-v1"
                 and (selection.get("region_policy_run_id") != str(run.id)
-                     or selection.get("region_policy_hash") != policy["policy_hash"])):
+                     or selection.get("region_policy_hash") != contract_digest(policy))):
             raise ValueError("image-review-v1とregion-policy-v1の参照が一致しません")
         if require_contracts:
             validate_presentation_run(session, UUID(aid), selection)
@@ -309,7 +309,7 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
         verdict = row.get("image_gate_verdict") or gate.get("observation") or {}
         people = verdict.get("real_people", row.get("real_people", "未記録"))
         details = {"accepted": "採用", "rejected": "除外", "pending": "保留"}
-        gate_decision = (gate.get("result") or {}).get("decision", {})
+        gate_decision = gate.get("result") or {}
         gate_state = details.get(row.get("gate_state", gate_decision.get("decision", "")), "未記録")
         gate_reason = gate_decision.get("reason", "未記録")
         identity = gate.get("identity") or {}
@@ -424,19 +424,20 @@ def parse_chat_reply(text, total):
     if not isinstance(text, str) or not text.strip():
         raise ValueError("全件確認済みの肯定形返信が必要です")
     normalized = text.translate(str.maketrans("０１２３４５６７８９，；", "0123456789,;"))
-    prefix = f"全{total}枚確認済み。"
-    if not normalized.startswith(prefix):
+    normalized = normalized.strip().rstrip("。").rstrip()
+    prefix = re.match(rf"全{total}枚確認済み[。\s]*", normalized)
+    if not prefix:
         raise ValueError("提示件数と一致する全件確認済みの肯定形が必要です")
-    result = normalized[len(prefix):]
+    result = normalized[prefix.end():]
     if result == "問題なし":
         return {"all_reviewed": True, "reply_text": text, "problems": []}
-    match = re.fullmatch(r"問題あり[：:]\s*(.+)", result)
+    match = re.fullmatch(r"問題あり[：:]\s*(.+)", result, re.DOTALL)
     if not match:
         raise ValueError("問題なし、または問題番号と理由を返信してください")
     if any(term in result for term in ("問題なし", "問題ない", "未確認", "確認していない")):
         raise ValueError("問題内容と否定形が混在した返信は受け付けられません")
     problems = []
-    for item in re.split(r"[,、;]", match.group(1)):
+    for item in re.split(r"[,、;。\r\n]+\s*|\s+(?=(?:番号\s*)?[0-9])", match.group(1)):
         found = re.fullmatch(r"\s*(?:番号\s*)?(\d+)(?:\s*[:：]\s*|\s+)(\S(?:.*\S)?)\s*", item)
         if not found or int(found.group(1)) < 1 or int(found.group(1)) > total:
             raise ValueError("問題番号ごとに理由を記載してください")
@@ -495,15 +496,14 @@ def reply_reviews(mapping, manifest, decisions_sha256, reply):
 
 
 def apply_privacy_reply(queue, data):
-    """会話返信を#119のprivacy review runへ記録する。"""
+    """提示の確認を記録する。問題なしでも既存の人物訂正・保留は解除しない。"""
     rows = data["rows"]
     for row in rows:
         if not row.get("privacy_review_run_id") or not row.get("presented_source_sha256"):
             raise ValueError("提示したprivacy review runと原画像SHAが必要です")
         if not row["error_found"] and (
-                not row.get("image_gate_run_id") or not row.get("region_policy_run_id")
-                or row.get("confirmed_real_people") not in {"present", "absent", "uncertain"}):
-            raise ValueError("問題なしの画像にはA/B runと人物確認値が必要です")
+                not row.get("image_gate_run_id") or not row.get("region_policy_run_id")):
+            raise ValueError("問題なしの画像にはA/B runが必要です")
 
     for row in rows:
         if row["error_found"]:
@@ -513,11 +513,16 @@ def apply_privacy_reply(queue, data):
                 presented_source_sha256=row["presented_source_sha256"], note=row["note"],
             )
         else:
+            with queue._transaction() as session:
+                original = session.get(ProcessingRun, UUID(row["privacy_review_run_id"]))
+                if original is None:
+                    raise ValueError("提示したprivacy review runがありません")
+                evidence = original.parameters["evidence"]
             run_id = privacy_review.write(
                 queue, row["asset_id"], row["image_gate_run_id"],
                 row["region_policy_run_id"], code_version="issue120-chat-review-v1",
                 input_run_id=row["privacy_review_run_id"], reviewer=data["reviewer"],
-                real_people=row["confirmed_real_people"],
+                real_people=evidence["real_people"], hold=evidence["human_hold"],
                 presented_source_sha256=row["presented_source_sha256"], note=row["note"],
             )
         row["recorded_privacy_review_run_id"] = str(run_id)

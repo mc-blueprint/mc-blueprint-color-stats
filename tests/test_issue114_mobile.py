@@ -3,6 +3,8 @@ import copy
 import io
 import json
 import re
+from contextlib import nullcontext
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -69,18 +71,25 @@ def test_番号返信はproblemを保留し他画像をprivacy_review_writeで�
         {"asset_id": "flagged", "error_found": True, "note": "人物の見落とし",
          "privacy_review_run_id": "privacy-1", "presented_source_sha256": "a" * 64},
         {"asset_id": "clear", "error_found": False, "note": "問題なし",
-         "privacy_review_run_id": "privacy-2", "presented_source_sha256": "b" * 64,
+         "privacy_review_run_id": "00000000-0000-0000-0000-000000000002",
+         "presented_source_sha256": "b" * 64,
          "image_gate_run_id": "gate-2", "region_policy_run_id": "region-2",
          "confirmed_real_people": "absent"},
     ]}
 
-    result = apply_privacy_reply(object(), data)
+    original = SimpleNamespace(parameters={
+        "evidence": {"real_people": "present", "human_hold": True},
+    })
+    session = SimpleNamespace(get=lambda *args: original)
+    queue = SimpleNamespace(_transaction=lambda: nullcontext(session))
+    result = apply_privacy_reply(queue, data)
 
     assert [call[0] for call in calls] == ["hold", "write"]
     assert calls[0][1][1:3] == ("flagged", "privacy-1")
     assert calls[0][2]["note"] == "人物の見落とし"
     assert calls[1][1][1:4] == ("clear", "gate-2", "region-2")
-    assert calls[1][2]["input_run_id"] == "privacy-2"
+    assert calls[1][2]["input_run_id"] == "00000000-0000-0000-0000-000000000002"
+    assert calls[1][2]["real_people"] == "present" and calls[1][2]["hold"]
     assert [row["recorded_privacy_review_run_id"] for row in result["rows"]] == [
         "held-run", "confirmed-run",
     ]
@@ -147,6 +156,55 @@ def test_全角数字とカンマ区切りの番号を正しく読む():
     parsed = parse_chat_reply("全２枚確認済み。問題あり：１ 人物見落とし，２ 主体違い", 2)
     assert [row["number"] for row in parsed["problems"]] == [1, 2]
     assert [row["reason"] for row in parsed["problems"]] == ["人物見落とし", "主体違い"]
+
+
+@pytest.mark.parametrize("separator", ["、", "。", ",", "\n", " ", "。\n"])
+def test_問題番号を理由へ吸収しない(separator):
+    reply = f"全138枚確認済み。問題あり：7 人物見落とし{separator}85 主体違い"
+    parsed = parse_chat_reply(reply, 138)
+    assert parsed["problems"] == [
+        {"number": 7, "reason": "人物見落とし"}, {"number": 85, "reason": "主体違い"},
+    ]
+
+
+@pytest.mark.parametrize("reply", [
+    "全138枚確認済み。問題なし\n", "全138枚確認済み。問題なし。",
+    "全138枚確認済み\n問題なし。\n", "全138枚確認済み問題なし",
+    "全１３８枚確認済み。\n問題なし。\n",
+    "全138枚確認済み。問題あり：７ 人物見落とし。８５ 主体違い。\n",
+])
+def test_句点改行全角数字を含む肯定返信を受け付ける(reply):
+    parsed = parse_chat_reply(reply, 138)
+    assert parsed["all_reviewed"]
+    assert [row["number"] for row in parsed["problems"]] == (
+        [7, 85] if "問題あり" in reply else []
+    )
+
+
+@pytest.mark.parametrize("reply", [
+    "全138枚確認済み。問題あり：7 人物見落とし。85",
+    "全138枚確認済み。問題あり：7 人物見落とし 139 主体違い",
+    "全138枚確認済み。問題あり：7 人物見落とし\n７ 主体違い",
+    "全138枚確認済み。問題あり：7 人物見落とし。0 主体違い",
+    "全138枚確認済み。問題あり：7 人物見落とし 85主体違い",
+    "全138枚確認済み。問題あり：7 人物見落とし、主体違い",
+    "全138枚確認済み。問題あり：7 未確認。85 主体違い",
+    "全138枚確認済み。問題あり：7 確認していない",
+    "全137枚確認済み。問題なし。", "全138枚未確認。問題なし。",
+    "全138枚確認済みではない。問題なし。",
+])
+def test_曖昧な番号と未確認返信は拒否する(reply):
+    with pytest.raises(ValueError):
+        parse_chat_reply(reply, 138)
+
+
+@pytest.mark.parametrize("reply", ["全2枚確認済み。問題なし。\n",
+                                   "全２枚確認済み。問題あり：１ 人物見落とし"])
+def test_正しい返信もmanifest変更時には拒否する(tmp_path, reply):
+    manifest, mapping, _ = sample(tmp_path)
+    manifest.write_text(manifest.read_text() + "\n")
+    with pytest.raises(ValueError, match="固定した閲覧対象"):
+        reply_reviews(mapping, manifest, "a" * 64, reply)
 
 
 @pytest.mark.parametrize("reply", [
