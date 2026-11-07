@@ -1,0 +1,96 @@
+{
+  "parent_table": {
+    "version": "ade-role-parents-v2",
+    "sha256": "9657fe1c90fae5ea3b87eca49b3b84a91d57d1287dae1a81db519cdd76acc21b"
+  },
+  "policy_hash": "3dad77aa16f42d620dc85cdf2e81586288db93c67154c86a39c68fb1774e65ba",
+  "groups": {
+    "previous_3": {
+      "seed": 11820261107,
+      "attempted": 3,
+      "succeeded": 3,
+      "oom": 0,
+      "failed": 0,
+      "total_seconds": 38.00114534207387,
+      "peak_allocated_bytes": 2107298304,
+      "peak_reserved_bytes": 2596274176,
+      "observed_process_peak_mib": 2406,
+      "unload_checks": 9,
+      "unload_live_module_checks": 0,
+      "candidate_start_checks": 3,
+      "candidate_start_live_module_checks": 0,
+      "max_foreign_gpu_processes": 0,
+      "monitor_errors": 0,
+      "post_gpu_processes": 0,
+      "counts": {
+        "pixels": 568832,
+        "sky_pixels": 138140,
+        "raw_building_pixels": 243626,
+        "effective_building_pixels": 13772,
+        "effective_terrain_pixels": 161785,
+        "sky_building_before": 56282,
+        "sky_building_after": 0,
+        "building_terrain_before": 152720,
+        "building_terrain_after": 0,
+        "effective_pixels": 175957,
+        "void_pixels": 392875
+      },
+      "rates": {
+        "sky_building_before_image_rate": 0.09894309743474347,
+        "sky_building_after_image_rate": 0.0,
+        "building_terrain_before_image_rate": 0.26847997299729975,
+        "building_terrain_after_image_rate": 0.0,
+        "effective_building_pixels_image_rate": 0.02421101485148515,
+        "effective_terrain_pixels_image_rate": 0.2844161369261926,
+        "effective_pixels_image_rate": 0.30933034709720975,
+        "void_pixels_image_rate": 0.6906696529027903
+      }
+    },
+    "additional_20": {
+      "seed": 11820261108,
+      "attempted": 20,
+      "succeeded": 20,
+      "oom": 0,
+      "failed": 0,
+      "total_seconds": 242.15905898087658,
+      "peak_allocated_bytes": 3635303936,
+      "peak_reserved_bytes": 5320474624,
+      "observed_process_peak_mib": 2926,
+      "unload_checks": 60,
+      "unload_live_module_checks": 0,
+      "candidate_start_checks": 20,
+      "candidate_start_live_module_checks": 0,
+      "max_foreign_gpu_processes": 0,
+      "monitor_errors": 0,
+      "post_gpu_processes": 0,
+      "counts": {
+        "pixels": 3586048,
+        "sky_pixels": 428143,
+        "raw_building_pixels": 2141623,
+        "effective_building_pixels": 317886,
+        "effective_terrain_pixels": 764057,
+        "sky_building_before": 68286,
+        "sky_building_after": 0,
+        "building_terrain_before": 1532979,
+        "building_terrain_after": 0,
+        "effective_pixels": 1149245,
+        "void_pixels": 2436803
+      },
+      "rates": {
+        "sky_building_before_image_rate": 0.019042132174471732,
+        "sky_building_after_image_rate": 0.0,
+        "building_terrain_before_image_rate": 0.4274842389170474,
+        "building_terrain_after_image_rate": 0.0,
+        "effective_building_pixels_image_rate": 0.08864521612649914,
+        "effective_terrain_pixels_image_rate": 0.2130637961343518,
+        "effective_pixels_image_rate": 0.32047674766205025,
+        "void_pixels_image_rate": 0.6795232523379497
+      }
+    }
+  },
+  "raw_semantic_compared": 89,
+  "raw_semantic_matched": 89,
+  "previous_inputs_preserved": true,
+  "additional_inputs_nonoverlapping": true,
+  "model_files_verified": 8
+}

@@ -1,0 +1,10 @@
+{
+  "config.json": "27452b656a467dbdebdf879dc413d6f3facd2bfe3643824ae66c32c22884b4bd",
+  "preprocessor_config.json": "49e2c8f207405d063cf7824f97c2814fa864f8f19ea9e02c9e20a9ff539c6d49",
+  "README.md": "987c2f143f6f899d037e24d0110630fbc6eba57ab73b6e0d8c83868597b4c348",
+  "merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+  "vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+  "tokenizer_config.json": "968a6126200b3c8f68fe955d61da20f3537e641a1deb538dc39fdad142248d72",
+  "special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+  "pytorch_model.bin": "c0b2fe11dfecee6f2f1f315f466946e96f4e94813f3f6d660ff3747b83c28cc9"
+}

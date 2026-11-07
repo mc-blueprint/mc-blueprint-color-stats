@@ -22,7 +22,7 @@ from colorstats.rights import LICENSES
 from colorstats.schema.models import Asset
 from colorstats.store import temporary_path
 
-CODE_VERSION = "issue-46-v4"
+CODE_VERSION = "issue-118-shade-v5"
 METHODS = ("none", "gray-world", "intrinsic")
 INTRINSIC_REVISION = "1a93aafaaf7dbe11be7ec86323d9a06e5950966d"
 
@@ -100,6 +100,8 @@ def correct(image: Image.Image, method: str, *, model_path=None, weights_hash=No
 
     Gray-Worldは不透明かつ非白飛び・非黒つぶれ画素の線形RGB平均を中立化する。
     Intrinsicは別途配置した公式v2重みをCUDAで使い、線形hr_albをsRGBに符号化する。
+    推定可能な画素がなければ入力RGBを返し、観測側で欠測にする。
+    Intrinsicでは透明画素のRGBを不透明画素の平均で置換し、除外色の影響を断つ。
     モデル・CUDA・推論の失敗は伝播し、他手法への代替や重み取得は行わない。
     """
     rgb = np.asarray(image.convert("RGB"), dtype=np.float64) / 255
@@ -110,7 +112,7 @@ def correct(image: Image.Image, method: str, *, model_path=None, weights_hash=No
         valid = ((rgba[:, :, 3] == 255) & ~np.all(rgba[:, :, :3] <= color.BLACK_MAX, axis=2)
                  & ~np.all(rgba[:, :, :3] >= color.WHITE_MIN, axis=2))
         if not valid.any():
-            raise ValueError("WBを推定できる有効画素がありません")
+            return rgb
         linear = colour.cctf_decoding(rgb, function="sRGB")
         means = linear[valid].mean(axis=0)
         if np.any(means == 0):
@@ -119,6 +121,10 @@ def correct(image: Image.Image, method: str, *, model_path=None, weights_hash=No
                                     function="sRGB")
     if method != "intrinsic":
         raise ValueError("未知の補正手法です")
+    opaque = np.asarray(image.convert("RGBA"))[:, :, 3] == 255
+    if not opaque.any():
+        return rgb
+    rgb[~opaque] = rgb[opaque].mean(axis=0)
     import torch
     from intrinsic.pipeline import run_pipeline
 
@@ -199,6 +205,36 @@ def prepare(claim: Claim) -> Prepared:
     if ids != sorted(set(ids)):
         raise ValueError("regionsは重複のないID順で指定してください")
     model = parameters.get("model")
+    if payload.get("region_policy") is not None:
+        from colorstats.analyze.region_policy import load_masks
+
+        masks = load_masks(payload)
+        with Image.open(payload["input_path"]) as image:
+            pixels = np.array(image.convert("RGBA"))
+            effective = np.zeros((image.height, image.width), dtype=bool)
+            for mask in masks.values():
+                effective |= mask
+            pixels[~effective, 3] = 0
+            if effective.any():
+                corrected = correct(Image.fromarray(pixels), payload["method"],
+                                    model_path=payload.get("model_path"),
+                                    weights_hash=_digest(model) if model else None)
+            else:
+                corrected = np.asarray(image.convert("RGB"), dtype=float) / 255
+            roles = color.role_observations(payload, corrected=corrected)
+        data = {"asset_id": str(claim.asset_id), "input_run_id": payload["input_run_id"],
+                "region_run_id": payload["region_run_id"], "regions": [],
+                "observations": [], "relations": [], "roles": roles}
+        target = Path(payload["output_path"])
+        temporary = temporary_path(target, str(claim.token))
+        temporary.write_text(json.dumps(data, ensure_ascii=False, allow_nan=False) + "\n",
+                             encoding="utf-8")
+        return Prepared(RunInfo(
+            license_class=_license(payload["license_class"], "academic_only" if model else "open"),
+            code_version=CODE_VERSION, taxonomy_version=payload["taxonomy_version"],
+            node=socket.gethostname(), model_name=payload["method"], parameters=parameters,
+            weights_hash=_digest(model["weights"]) if model else None,
+        ), data=data, files=[(temporary, target)])
     with Image.open(payload["input_path"]) as image:
         people = None
         if payload.get("person_mask"):
