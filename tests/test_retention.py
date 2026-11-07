@@ -43,6 +43,15 @@ def managed(queue, asset, tmp_path):
     return asset, path
 
 
+@pytest.fixture
+def legacy_managed(queue, managed):
+    aid, path = managed
+    with Session(queue.engine) as session, session.begin():
+        session.execute(RetentionFile.__table__.delete().where(RetentionFile.asset_id == aid))
+        session.execute(Retention.__table__.delete().where(Retention.asset_id == aid))
+    return aid, path
+
+
 @DB
 def test_短い期限と画像再利用停止は数値利用と独立(queue, managed):
     aid, path = managed
@@ -195,37 +204,40 @@ def test_新規画像は人物確認なしの色処理を拒否する(queue, man
     with Session(queue.engine) as session, session.begin():
         with pytest.raises(PermissionError):
             retention.check_privacy(session, aid, {})
-        with pytest.raises(ValueError):
+        with pytest.raises(PermissionError, match="新契約"):
             retention.review_privacy(session, aid, reviewer="test", subject="person")
-        retention.review_privacy(session, aid, reviewer="test", subject="building")
-        retention.check_privacy(session, aid, {})
+        with pytest.raises(PermissionError, match="新契約"):
+            retention.review_privacy(session, aid, reviewer="test", subject="building")
+        with pytest.raises(PermissionError, match="新契約"):
+            retention.check_privacy(session, aid, {})
 
 
 @DB
-def test_自動採用は入力hashを固定し目視上書きで保留を拒否する(queue, managed):
+def test_新規画像は旧自動判定と人の上書きでは採用できない(queue, managed):
     aid, _ = managed
     with Session(queue.engine) as session, session.begin():
-        with pytest.raises(ValueError, match="閾値と入力"):
+        with pytest.raises(PermissionError, match="新契約"):
             retention.review_privacy(session, aid, reviewer="auto:v2", subject="building",
                                      method="person-v2")
-        retention.review_privacy(session, aid, reviewer="auto:v2", subject="building",
-                                 method="person-v2", thresholds={"mask_max": .01},
-                                 evidence={"input_sha256": "a" * 64})
-        retention.check_privacy(session, aid, {"input_sha256": "a" * 64})
-        with pytest.raises(PermissionError, match="入力hash"):
-            retention.check_privacy(session, aid, {"input_sha256": "b" * 64})
-        retention.review_privacy(session, aid, reviewer="human", subject="building",
-                                 decision="pending")
-        with pytest.raises(PermissionError, match="目視待ち"):
+        with pytest.raises(PermissionError, match="新契約"):
+            retention.review_privacy(session, aid, reviewer="auto:v2", subject="building",
+                                     method="person-v2", thresholds={"mask_max": .01},
+                                     evidence={"input_sha256": "a" * 64})
+        with pytest.raises(PermissionError, match="新契約"):
+            retention.check_privacy(session, aid, {"input_sha256": "a" * 64})
+        with pytest.raises(PermissionError, match="新契約"):
+            retention.review_privacy(session, aid, reviewer="human", subject="building",
+                                     decision="pending")
+        with pytest.raises(PermissionError, match="新契約"):
             retention.check_privacy(session, aid, {})
-        assert session.get(Asset, aid).quality["privacy_review_history"][0]["method"] == "person-v2"
+        assert "privacy_review" not in session.get(Asset, aid).quality
 
 
 @DB
-def test_目視取込は採用を承認し後日の誤り申告で承認を取り消す(queue, managed, tmp_path):
+def test_旧cohortの目視取込は後日の誤り申告で承認を取り消す(queue, legacy_managed, tmp_path):
     from bench.issue114.privacy import digest, import_reviews, review_state, save
 
-    aid, image = managed
+    aid, image = legacy_managed
     execution = tmp_path / "execution"
     execution.mkdir()
     save(execution / "privacy-decisions.json", [{
@@ -256,15 +268,14 @@ def test_目視取込は採用を承認し後日の誤り申告で承認を取�
     assert not json.loads((execution / "privacy-validation.json").read_text())["approved"]
     assert len(list(execution.glob("privacy-validation-*.json"))) == 2
     with Session(queue.engine) as session:
-        with pytest.raises(PermissionError, match="目視待ち"):
-            retention.check_privacy(session, aid, {})
+        assert session.get(Asset, aid).quality["privacy_review"]["decision"] == "pending"
 
 
 @DB
-def test_分割目視の再取込は別画像の判定変更を承認で見落とさない(queue, managed, tmp_path):
+def test_分割目視の再取込は別画像の判定変更を承認で見落とさない(queue, legacy_managed, tmp_path):
     from bench.issue114.privacy import digest, import_reviews, save
 
-    aid, image = managed
+    aid, image = legacy_managed
     with Session(queue.engine) as session, session.begin():
         source = session.get(Asset, aid)
         extra = Asset(source_id=source.source_id, url="https://example.test/extra",
@@ -273,7 +284,6 @@ def test_分割目視の再取込は別画像の判定変更を承認で見落�
                       taxonomy_version="0.1.0", scene_attributes={}, quality={})
         session.add(extra)
         session.flush()
-        retention.register_asset(session, extra, {}, "test")
         other = extra.id
         for value in (aid, other):
             retention.review_privacy(session, value, reviewer="auto:v2", subject="building",
@@ -307,11 +317,11 @@ def test_分割目視の再取込は別画像の判定変更を承認で見落�
 
 
 @DB
-def test_会話の問題番号は人の履歴を残し統計承認を取り消す(queue, managed, tmp_path):
+def test_会話の問題番号は人の履歴を残し統計承認を取り消す(queue, legacy_managed, tmp_path):
     from bench.issue114.mobile import reply_reviews
     from bench.issue114.privacy import digest, import_reviews, save
 
-    aid, image = managed
+    aid, image = legacy_managed
     execution = tmp_path / "execution"
     execution.mkdir()
     row = {"asset_id": str(aid), "decision": "accepted", "subject": "building",

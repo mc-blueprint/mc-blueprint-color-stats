@@ -188,8 +188,9 @@ class Worker:
                 return
             self.queue.check_input(claim)
             module_name = (
-                "colorstats.image_gate"
-                if claim.stage == "review" and claim.payload.get("kind") == "image_gate"
+                "colorstats." + claim.payload["kind"]
+                if claim.stage == "review" and claim.payload.get("kind") in {
+                    "image_gate", "privacy_review"}
                 else self.handlers[claim.stage]
             )
             self._start_prepare()
