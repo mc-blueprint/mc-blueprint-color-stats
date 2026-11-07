@@ -219,6 +219,8 @@ def test_CVATは解析専用区分を保持する(queue, asset, cvat_export):
 def test_全CHECKと列長を確認し解析行があれば巻戻しを拒否する(database, queue, monkeypatch):
     config = Config("alembic.ini")
     monkeypatch.setenv("DATABASE_URL", database.url.render_as_string(hide_password=False))
+    with database.connect() as connection:
+        previous_version = connection.scalar(text("SELECT version_num FROM alembic_version"))
     for table in ("source", "asset", "processing_run"):
         check = next(c for c in inspect(database).get_check_constraints(table)
                      if c["name"] == f"ck_{table}_license_class")
@@ -234,7 +236,7 @@ def test_全CHECKと列長を確認し解析行があれば巻戻しを拒否す
         command.downgrade(config, "0005")
     with database.begin() as connection:
         version = connection.execute(text("SELECT version_num FROM alembic_version")).scalar()
-        assert version == "0008"
+        assert version == previous_version
         connection.execute(text("DELETE FROM source WHERE url='https://migration.test'"))
     command.downgrade(config, "0005")
     command.upgrade(config, "head")

@@ -113,6 +113,8 @@ def enqueue_audit(queue, comparison_path: Path, output_path: Path, *, code_versi
 def prepare(claim):
     """原本再判定または監査を準備する。通信失敗は伝播し、暗黙の代替取得はしない。"""
     payload = claim.payload
+    if payload.get("kind") not in {None, "original_quality", "quality_audit"}:
+        raise ValueError("取得品質reviewのkindではありません")
     if "comparison_path" in payload:
         content = Path(payload["comparison_path"]).read_bytes()
         if hashlib.sha256(content).hexdigest() != payload["comparison_sha256"]:
