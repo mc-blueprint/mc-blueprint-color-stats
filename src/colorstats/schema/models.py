@@ -4,6 +4,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import (
+    BigInteger,
     CheckConstraint,
     DateTime,
     Enum,
@@ -240,6 +241,40 @@ class CollectionLimit(Base):
 
     key: Mapped[str] = mapped_column(Text, primary_key=True)
     state: Mapped[dict] = mapped_column(JSONB)
+
+
+class ApiBudget(Base):
+    __tablename__ = "api_budget"
+    __table_args__ = (CheckConstraint("cap_nusd > 0", name="cap"),)
+
+    key: Mapped[str] = mapped_column(Text, primary_key=True)
+    cap_nusd: Mapped[int] = mapped_column(BigInteger)
+    pricing: Mapped[dict] = mapped_column(JSONB)
+    stopped: Mapped[bool] = mapped_column(default=False)
+    failures: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class ApiCall(Identity, Base):
+    __tablename__ = "api_call"
+    __table_args__ = (
+        UniqueConstraint("job_id", "endpoint", "attempt"),
+        CheckConstraint("reserved_nusd >= 0 AND (cost_nusd IS NULL OR cost_nusd >= 0)",
+                        name="amount"),
+        CheckConstraint("attempt BETWEEN 1 AND 3", name="attempt"),
+        CheckConstraint("state IN ('sent','settled','unknown','retry','stopped')", name="state"),
+    )
+
+    budget_key: Mapped[str] = mapped_column(ForeignKey("api_budget.key"), index=True)
+    job_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("job.id"), index=True)
+    endpoint: Mapped[str] = mapped_column(Text)
+    attempt: Mapped[int] = mapped_column(Integer)
+    input_hash: Mapped[str] = mapped_column(String(64), index=True)
+    state: Mapped[str] = mapped_column(Text)
+    reserved_nusd: Mapped[int] = mapped_column(BigInteger)
+    cost_nusd: Mapped[int | None] = mapped_column(BigInteger)
+    response_path: Mapped[str] = mapped_column(Text)
+    response_hash: Mapped[str | None] = mapped_column(String(64))
+    details: Mapped[dict] = mapped_column(JSONB, default=dict)
 
 
 class CollectionReservation(Identity, Base):
