@@ -19,8 +19,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from colorstats import retention
-from colorstats.api_budget import digest as contract_digest
 from colorstats.analyze import region_policy as region_policy_contract
+from colorstats.api_budget import digest as contract_digest
 from colorstats.schema.models import ProcessingRun, Region
 
 LIMIT = 25_000_000
@@ -89,7 +89,8 @@ content="default-src 'none'; img-src data:; style-src 'unsafe-inline'">
 <title>#114 目視確認 {first}–{last}</title><style>{STYLE}</style>
 <h1>#114 目視確認 {first}–{last}／全{total}枚</h1>
 <p>対象母数：{counts.get('population', total)}枚。固定無作為群：{counts.get('random', 0)}枚、
-目的抽出challenge群：{counts.get('challenge', 0)}枚（重複除外済み）。群を混ぜて率を計算しません。</p>
+目的抽出challenge群：{counts.get('challenge', 0)}枚（重複除外済み）。
+群を混ぜて率を計算しません。</p>
 <p>全ファイルの全番号を確認してください。人物の見落とし、maskの不足、
 主体・有効領域・自動判定の誤りがあれば、
 チャットへ「問題あり：番号と理由」を返信してください。
@@ -287,7 +288,8 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
                   f"理由code：{html.escape('・'.join(verdict.get('reason_codes') or ['未記録']))}",
                   f"image-review：{html.escape(str(image_review_version))}",
                   f"schema：{html.escape(str(identity.get('schema_version', '未記録')))}",
-                  f"領域policy：{html.escape(str(row.get('region_policy_version', 'raw候補のみ')))}"]
+                  f"領域policy：{html.escape(str(row.get('region_policy_version', 'raw候補のみ')))}"
+                  ]
         parts = [f'''<figure><figcaption>人物mask単独表示（実線輪郭）</figcaption>
 <img class="mask" alt="番号{number} 人物mask"
 src="{mask_uri(person_mask, input_size)}"></figure>
