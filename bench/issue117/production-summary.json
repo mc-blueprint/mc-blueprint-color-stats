@@ -1,0 +1,153 @@
+{
+  "at": "2026-11-07T14:37:51.145065+00:00",
+  "complete": true,
+  "target_assets": 10226,
+  "original_started_at": "2026-11-07T09:25:20.582150+00:00",
+  "last_restarted_at": "2026-11-07T13:00:18.611530+00:00",
+  "finished_at": "2026-11-07T14:34:21.859602+00:00",
+  "cohorts": {
+    "old": {
+      "succeeded": 7621,
+      "failed": 2,
+      "enqueue_held": 3
+    },
+    "new": {
+      "succeeded": 2600
+    }
+  },
+  "jobs": {
+    "succeeded": 10221,
+    "failed": 2
+  },
+  "enqueue_failures": {
+    "UnidentifiedImageError": 1,
+    "DecompressionBombError": 2
+  },
+  "decisions": {
+    "rejected": 1652,
+    "accepted": 5947,
+    "pending": 2622
+  },
+  "decision_reasons": {
+    "black_and_white": 579,
+    "accepted": 5947,
+    "real_people": 1897,
+    "non_target": 1073,
+    "dark_or_unknown": 214,
+    "subject_unresolved": 457,
+    "uncertain": 46,
+    "subject_conflict": 8
+  },
+  "accepted_domains": {
+    "real_building": 3397,
+    "real_terrain": 2550
+  },
+  "held_total": 2627,
+  "failed_reasons": {
+    "api_unknown_no_resend": 2
+  },
+  "distributions": {
+    "target": {
+      "True": 8640,
+      "False": 1581,
+      "unavailable": 5
+    },
+    "subject": {
+      "terrain": 3341,
+      "building": 5057,
+      "other": 1156,
+      "mixed": 666,
+      "unknown": 1,
+      "unavailable": 5
+    },
+    "real_people": {
+      "absent": 8324,
+      "present": 1593,
+      "uncertain": 304,
+      "unavailable": 5
+    },
+    "interior": {
+      "False": 9138,
+      "None": 406,
+      "True": 677,
+      "unavailable": 5
+    },
+    "black_and_white": {
+      "True": 790,
+      "False": 9414,
+      "None": 17,
+      "unavailable": 5
+    },
+    "dark": {
+      "False": 9906,
+      "True": 315,
+      "unavailable": 5
+    },
+    "building_detail": {
+      "False": 8333,
+      "True": 1888,
+      "unavailable": 5
+    }
+  },
+  "accounting": {
+    "usage_calls": 20444,
+    "usage_nusd": 1732581440,
+    "upper_bound_calls": 3,
+    "upper_bound_nusd": 3847000
+  },
+  "booked_nusd": 1736428440,
+  "cap_nusd": 50000000000,
+  "unsettled_reserved_nusd": 0,
+  "usage": {
+    "input_tokens": 12399861,
+    "output_tokens": 1041138,
+    "total_tokens": 13440999,
+    "cached_tokens": 2776389,
+    "cache_write_tokens": 8876054,
+    "reasoning_tokens": 559732
+  },
+  "api_states": {
+    "settled": 20444,
+    "stopped": 2,
+    "retry": 1
+  },
+  "http_statuses": {
+    "200": 20444,
+    "unavailable": 2,
+    "520": 1
+  },
+  "unknown_total": 2,
+  "unknown_types": {
+    "not_recorded": 1,
+    "TimeoutError": 1
+  },
+  "returned_models": {
+    "gpt-6-luna": 10221
+  },
+  "returned_efforts": {
+    "low": 10221
+  },
+  "unknown_resent": 0,
+  "audit_errors": {},
+  "old_data": {
+    "asset": {
+      "baseline_rows": 10226,
+      "changed_or_missing": 0,
+      "baseline_sha256": "5d25d9d2222a303c832ec23e6598c960357a2b8d3802be27f7dba964501799f7",
+      "after_baseline_sha256": "5d25d9d2222a303c832ec23e6598c960357a2b8d3802be27f7dba964501799f7"
+    },
+    "processing_run": {
+      "baseline_rows": 54007,
+      "changed_or_missing": 0,
+      "baseline_sha256": "ff2eb049b818739d65adf50e79945631891670832882d39528b85a4728fc9c4a",
+      "after_baseline_sha256": "ff2eb049b818739d65adf50e79945631891670832882d39528b85a4728fc9c4a"
+    }
+  },
+  "stop_policy": {
+    "unknown_streak": 3,
+    "unknown_total": 30,
+    "rate_limit_streak": 2,
+    "timeout_seconds": 120
+  },
+  "runtime_commit": "341847c6f59e7ab9c923df02f61bc67d3856e159"
+}

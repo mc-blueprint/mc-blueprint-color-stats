@@ -9,7 +9,43 @@ import pytest
 from PIL import Image, PngImagePlugin
 
 from colorstats import image_gate as gate
-from colorstats.api_budget import retry_delay, usage_cost
+from colorstats.api_budget import Ledger, retry_delay, usage_cost
+
+
+@pytest.mark.parametrize("value", ["0", "5", "invalid"])
+def test_同時送信数の範囲外設定を拒否する(monkeypatch, value):
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_CONCURRENCY", value)
+    with pytest.raises(ValueError):
+        Ledger(None, None, None)
+
+
+def test_停止閾値とtimeoutの既定値および設定値を確認する(monkeypatch):
+    assert Ledger(None, None, None).policy == {
+        "unknown_streak": 3, "unknown_total": 30, "rate_limit_streak": 2, "timeout_seconds": 120,
+    }
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_UNKNOWN_STREAK", "4")
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_UNKNOWN_TOTAL", "40")
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_TIMEOUT", "180")
+    assert Ledger(None, None, None).policy["unknown_total"] == 40
+    assert Ledger(None, None, None).policy["unknown_streak"] == 4
+    assert Ledger(None, None, None).policy["timeout_seconds"] == 180
+
+
+@pytest.mark.parametrize("seconds", [120, 180])
+def test_HTTP要求は設定timeoutで一度だけ送る(monkeypatch, seconds):
+    from unittest.mock import MagicMock, Mock
+
+    from colorstats import api_budget
+
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_TIMEOUT", str(seconds))
+    response = MagicMock(code=200, headers={})
+    response.read.return_value = b"{}"
+    opener = Mock()
+    opener.open.return_value = response
+    monkeypatch.setattr(api_budget, "build_opener", lambda *args: opener)
+    assert api_budget.request("responses", {}, "fixture")["status"] == 200
+    assert opener.open.call_count == 1
+    assert opener.open.call_args.kwargs["timeout"] == seconds
 
 
 def verdict(**changes):
