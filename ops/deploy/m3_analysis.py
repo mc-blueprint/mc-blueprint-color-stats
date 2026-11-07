@@ -41,11 +41,26 @@ def implementation():
     return {str(p.relative_to(ROOT)): segment._hash(p) for p in paths}
 
 
-def freeze(engine, root):
-    """全 asset と各 asset の最新成功 prep、失敗理由・入力hashを新規固定する。"""
+def freeze(engine, root, asset_ids=None, *, reuse_segments=False):
+    """指定assetの完了prepと入力hashを新規固定する。省略時は#66固定全量を検査する。
+
+    asset_idsは重複のないUUID一覧。欠落・未完了prep・既存manifestは拒否する。
+    DBは読取り専用で、成功prep出力を後続GPU処理の不変入力とする。
+    reuse_segmentsは同じprepと画像hashの成功segmentを固定し、後続だけを新規実行する。
+    人物判定があればそのSHAとperson_maskも固定する。
+    """
+    if asset_ids is not None:
+        identifiers = [UUID(value) for value in asset_ids]
+        if not identifiers or len(set(identifiers)) != len(identifiers):
+            raise ValueError("cohortは空でない重複なしのasset ID一覧が必要です")
     with Session(engine) as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY"))
-        assets = session.scalars(select(Asset).order_by(Asset.id)).all()
+        query = select(Asset).order_by(Asset.id)
+        if asset_ids is not None:
+            query = query.where(Asset.id.in_(identifiers))
+        assets = session.scalars(query).all()
+        if asset_ids is not None and len(assets) != len(identifiers):
+            raise ValueError("cohortに存在しないasset IDがあります")
         rows = []
         for asset in assets:
             job = session.scalar(select(Job).where(
@@ -56,6 +71,10 @@ def freeze(engine, root):
             row = {"asset_id": str(asset.id), "sha256": asset.sha256,
                    "license_class": asset.license_class, "taxonomy_version": asset.taxonomy_version,
                    "prep_status": job.status, "prep_reason": job.failure_reason}
+            review = asset.quality.get("privacy_review")
+            if review:
+                row.update(person_mask=review.get("person_mask"),
+                           privacy_review_sha256=segment._digest(review))
             if job.status == "succeeded":
                 run = session.get(ProcessingRun, job.run_id)
                 if run.finished_at is None or run.failure_reason or run.stage != "prep":
@@ -66,11 +85,25 @@ def freeze(engine, root):
                 row.update(input_run_id=str(run.id), input_path=paths[0],
                            input_sha256=segment._hash(paths[0]),
                            input_bytes=Path(paths[0]).stat().st_size)
+                if reuse_segments:
+                    previous = session.scalar(select(Job).where(
+                        Job.asset_id == asset.id, Job.stage == "segment", Job.status == "succeeded",
+                        Job.payload["input_run_id"].astext == str(run.id),
+                        Job.payload["input_sha256"].astext == row["input_sha256"],
+                    ).order_by(Job.created_at.desc()).limit(1))
+                    if previous is None:
+                        raise ValueError("再利用できる成功segmentがありません")
+                    source = session.get(ProcessingRun, previous.run_id)
+                    if source.finished_at is None or source.failure_reason:
+                        raise ValueError("再利用segmentのrunが未確定です")
+                    row["segment_run_id"] = str(source.id)
             elif job.status != "failed":
                 raise ValueError("prep が未完了です")
             rows.append(row)
     settings = yaml.safe_load((ROOT / "configs/segment_stats.yaml").read_text(encoding="utf-8"))
-    if len(rows) != 7607 or sum(r["prep_status"] == "succeeded" for r in rows) != 7603:
+    if asset_ids is None and (
+        len(rows) != 7607 or sum(r["prep_status"] == "succeeded" for r in rows) != 7603
+    ):
         raise ValueError("固定7,607件・成功prep7,603件のコホートと一致しません")
     manifest = {"created_at": datetime.now(UTC).isoformat(), "assets": rows,
                 "settings": settings, "implementation": implementation()}
@@ -180,8 +213,17 @@ def run_batch(engine, root, manifest, models, limit):
                     "license_class", "taxonomy_version",
                 )}
                 base["batch"] = batch
-                region_run = None
+                if "person_mask" in row:
+                    base["person_mask"] = row["person_mask"]
+                if row.get("privacy_review_sha256"):
+                    with Session(engine) as session:
+                        review = session.get(Asset, UUID(row["asset_id"])).quality["privacy_review"]
+                        if segment._digest(review) != row["privacy_review_sha256"]:
+                            raise ValueError("固定後に人物判定が変わっています")
+                region_run = UUID(row["segment_run_id"]) if row.get("segment_run_id") else None
                 for stage in STAGES:
+                    if stage == "segment" and row.get("segment_run_id"):
+                        continue
                     if stop.exists():
                         break
                     payload = {**base, "output_path": str(root / "outputs" /
@@ -262,6 +304,12 @@ def report(engine, root, manifest, output):
     with Session(engine) as session:
         session.execute(text("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY"))
         jobs = session.scalars(select(Job).where(Job.payload["batch"].astext == batch)).all()
+        reused = [UUID(row["segment_run_id"]) for row in assets.values()
+                  if row.get("segment_run_id")]
+        if reused:
+            jobs.extend(session.scalars(select(Job).where(
+                Job.stage == "segment", Job.status == "succeeded", Job.run_id.in_(reused),
+            )).all())
         for stage in STAGES:
             selected = [j for j in jobs if j.stage == stage]
             successful = [j for j in selected if j.status == "succeeded"]
@@ -414,6 +462,10 @@ def main(engine=None):
     parser.add_argument("--models", type=Path, default=Path("/mnt/data/work/issue-40/models"))
     parser.add_argument("--limit", type=int)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--asset-ids", type=Path,
+                        help="freeze対象のUUID一覧JSON。省略は#66固定全量")
+    parser.add_argument("--reuse-segments", action="store_true",
+                        help="freeze時に同じprep入力の成功segmentを固定して再利用")
     args = parser.parse_args()
     root = args.root.resolve()
     root.mkdir(parents=True, exist_ok=True)
@@ -422,7 +474,8 @@ def main(engine=None):
         engine = create_engine(os.environ["DATABASE_URL"], echo=False, hide_parameters=True)
     try:
         if args.action == "freeze":
-            freeze(engine, root)
+            freeze(engine, root, json.loads(args.asset_ids.read_text()) if args.asset_ids else None,
+                   reuse_segments=args.reuse_segments)
         else:
             manifest = json.loads((root / "manifest.json").read_text())
             if args.action == "run":

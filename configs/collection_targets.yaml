@@ -1,6 +1,6 @@
-# 全体1万枚のうちCommonsは80%の8,000枚まで。既存画像を含む。
+# 全体3万枚のうち同一providerは80%の24,000枚まで。既存画像を含む。
 taxonomy_version: 0.1.0
-image_budget: 10000
+image_budget: 30000
 # subjectsは統計の目標比率、imagesは既存を含む収集上限。集中枠は維持する。
 gap_plan:
   issue: 105
@@ -31,8 +31,8 @@ strata:
       building_type: castle
       region: japan
       era: early_modern
-    subjects: 100
-    images: 905
+    subjects: 300
+    images: 2715
     queries:
       ja: [日本 城 天守, 日本 城 石垣, 城郭 櫓, 山城 城跡]
       en: [Japanese castle exterior, Japanese castle walls, Japanese castle keep, Japanese castle gate]
@@ -47,8 +47,8 @@ strata:
       building_type: temple
       region: europe
       era: medieval
-    subjects: 100
-    images: 680
+    subjects: 300
+    images: 2040
     queries:
       en: [gothic church exterior, gothic cathedral facade, Gothic church portal, Gothic cathedral tower]
       de: [gotische Kirche Außenansicht, gotische Kathedrale Fassade, gotische Kirche Westfassade]
@@ -63,8 +63,8 @@ strata:
       biome_like: forest
       season: autumn
       time_of_day: day
-    subjects: 100
-    images: 755
+    subjects: 300
+    images: 2265
     queries:
       ja: [秋 森 風景, 紅葉 森林, 紅葉 渓谷, 秋 ブナ林]
       en: [autumn forest landscape, fall woodland landscape, autumn birch forest, autumn deciduous forest]
@@ -80,8 +80,8 @@ strata:
       building_type: house
       region: north_america
       era: modern
-    subjects: 100
-    images: 680
+    subjects: 300
+    images: 2040
     queries:
       en: ['"Modernist houses" "United States"', '"mid-century modern" house California', '"modern house" Canada', '"modern house" Mexico', 'Usonian house exterior', '"Case Study House"']
       fr: ['maison "Frank Lloyd Wright"', 'maison "Richard Neutra"', '"Habitat 67" Montréal']
@@ -98,8 +98,8 @@ strata:
       building_type: house
       region: europe
       era: medieval
-    subjects: 100
-    images: 680
+    subjects: 300
+    images: 2040
     queries:
       en: [medieval timber framed house, medieval house exterior, medieval stone house, medieval town houses]
       de: [Fachwerkhaus Altstadt, mittelalterliches Wohnhaus, Fachwerkhäuser Fassade]
@@ -115,8 +115,8 @@ strata:
       building_type: temple
       region: japan
       era: early_modern
-    subjects: 100
-    images: 895
+    subjects: 300
+    images: 2685
     queries:
       ja: [日本 寺 本堂, 日本 神社 社殿, 寺院 山門, 寺院 多宝塔, 神社 拝殿]
       en: [Japanese Buddhist temple exterior, Japanese temple gate, Japanese shrine buildings]
@@ -132,8 +132,8 @@ strata:
       building_type: temple
       region: west_asia
       era: early_modern
-    subjects: 100
-    images: 770
+    subjects: 300
+    images: 2310
     queries:
       en: [Ottoman mosque exterior, Persian mosque facade, Ottoman mosque courtyard, Safavid mosque exterior]
       tr: [cami dış görünüm, Osmanlı cami avlu, cami cephe]
@@ -149,8 +149,8 @@ strata:
       building_type: house
       region: east_asia
       era: early_modern
-    subjects: 100
-    images: 955
+    subjects: 300
+    images: 2865
     queries:
       en: [traditional Chinese courtyard house, Chinese vernacular house, Fujian tulou, Beijing hutong courtyard]
       zh: [中国 传统 民居, 四合院, 福建 土楼, 徽州 民居, 山西 民居]
@@ -165,8 +165,8 @@ strata:
       biome_like: mountains
       season: summer
       time_of_day: day
-    subjects: 100
-    images: 925
+    subjects: 300
+    images: 2775
     queries:
       en: [rocky mountain landscape summer, Andes mountain landscape, Alps summer landscape, Himalaya summer landscape]
       es: [paisaje montañas Andes, montañas verano paisaje, cordillera Andes verano]
@@ -181,8 +181,8 @@ strata:
       biome_like: plains
       season: summer
       time_of_day: day
-    subjects: 100
-    images: 885
+    subjects: 300
+    images: 2655
     queries:
       en: [prairie grassland landscape, steppe grassland landscape, pampas landscape summer, savanna grassland landscape]
       fr: [prairie paysage été, steppe paysage, prairie naturelle été]
@@ -197,8 +197,8 @@ strata:
       biome_like: desert
       season: summer
       time_of_day: day
-    subjects: 100
-    images: 935
+    subjects: 300
+    images: 2805
     queries:
       en: [Sahara sand dunes landscape, Australian desert landscape, Namib desert dunes, Arabian desert landscape]
       ar: [الصحراء كثبان رملية, الصحراء الكبرى, الربع الخالي كثبان]
@@ -213,8 +213,8 @@ strata:
       biome_like: snowy
       season: winter
       time_of_day: day
-    subjects: 100
-    images: 935
+    subjects: 300
+    images: 2805
     queries:
       en: [snow covered landscape winter, arctic tundra snow landscape, snowy forest winter landscape, winter frozen lake landscape]
       ja: [雪原 冬 風景, 冬 雪 森林, 凍結 湖 冬]

@@ -1,4 +1,5 @@
 import copy
+import json
 import os
 import uuid
 from datetime import UTC, datetime, timedelta
@@ -198,6 +199,182 @@ def test_新規画像は人物確認なしの色処理を拒否する(queue, man
             retention.review_privacy(session, aid, reviewer="test", subject="person")
         retention.review_privacy(session, aid, reviewer="test", subject="building")
         retention.check_privacy(session, aid, {})
+
+
+@DB
+def test_自動採用は入力hashを固定し目視上書きで保留を拒否する(queue, managed):
+    aid, _ = managed
+    with Session(queue.engine) as session, session.begin():
+        with pytest.raises(ValueError, match="閾値と入力"):
+            retention.review_privacy(session, aid, reviewer="auto:v2", subject="building",
+                                     method="person-v2")
+        retention.review_privacy(session, aid, reviewer="auto:v2", subject="building",
+                                 method="person-v2", thresholds={"mask_max": .01},
+                                 evidence={"input_sha256": "a" * 64})
+        retention.check_privacy(session, aid, {"input_sha256": "a" * 64})
+        with pytest.raises(PermissionError, match="入力hash"):
+            retention.check_privacy(session, aid, {"input_sha256": "b" * 64})
+        retention.review_privacy(session, aid, reviewer="human", subject="building",
+                                 decision="pending")
+        with pytest.raises(PermissionError, match="目視待ち"):
+            retention.check_privacy(session, aid, {})
+        assert session.get(Asset, aid).quality["privacy_review_history"][0]["method"] == "person-v2"
+
+
+@DB
+def test_目視取込は採用を承認し後日の誤り申告で承認を取り消す(queue, managed, tmp_path):
+    from bench.issue114.privacy import digest, import_reviews, review_state, save
+
+    aid, image = managed
+    execution = tmp_path / "execution"
+    execution.mkdir()
+    save(execution / "privacy-decisions.json", [{
+        "asset_id": str(aid), "decision": "accepted", "subject": "building",
+        "input_path": str(image), "person_ratio": 0,
+    }])
+    save(execution / "review-manifest.json", {
+        "required_ids": [str(aid)], "rows": [{"asset_id": str(aid)}],
+    })
+    with Session(queue.engine) as session, session.begin():
+        retention.review_privacy(session, aid, reviewer="auto:v2", subject="building",
+                                 method="person-v2", thresholds={"mask_max": .01},
+                                 evidence={"input_sha256": digest(image)})
+    result = {"reviewer": "目視者", "confirm_no_errors": True,
+              "decisions_sha256": digest(execution / "privacy-decisions.json"), "rows": [{
+                  "asset_id": str(aid), "decision": "same", "subject": "building",
+                  "error_found": False, "note": "確認済み",
+              }]}
+    source = tmp_path / "review.json"
+    source.write_text(json.dumps(result))
+    import_reviews(queue.engine, execution, source)
+    approval = json.loads((execution / "privacy-validation.json").read_text())
+    assert approval["approved"]
+    assert approval["review_state_sha256"] == review_state(queue.engine, [str(aid)])
+    result["rows"][0].update(decision="pending", error_found=True)
+    source.write_text(json.dumps(result))
+    import_reviews(queue.engine, execution, source)
+    assert not json.loads((execution / "privacy-validation.json").read_text())["approved"]
+    assert len(list(execution.glob("privacy-validation-*.json"))) == 2
+    with Session(queue.engine) as session:
+        with pytest.raises(PermissionError, match="目視待ち"):
+            retention.check_privacy(session, aid, {})
+
+
+@DB
+def test_分割目視の再取込は別画像の判定変更を承認で見落とさない(queue, managed, tmp_path):
+    from bench.issue114.privacy import digest, import_reviews, save
+
+    aid, image = managed
+    with Session(queue.engine) as session, session.begin():
+        source = session.get(Asset, aid)
+        extra = Asset(source_id=source.source_id, url="https://example.test/extra",
+                      sha256="b" * 64, storage_path=str(image), domain="real_building",
+                      license_class="open", retrieved_at=datetime.now(UTC),
+                      taxonomy_version="0.1.0", scene_attributes={}, quality={})
+        session.add(extra)
+        session.flush()
+        retention.register_asset(session, extra, {}, "test")
+        other = extra.id
+        for value in (aid, other):
+            retention.review_privacy(session, value, reviewer="auto:v2", subject="building",
+                                     method="person-v2", thresholds={"mask_max": .01},
+                                     evidence={"input_sha256": digest(image)})
+    execution = tmp_path / "execution"
+    execution.mkdir()
+    save(execution / "privacy-decisions.json", [
+        {"asset_id": str(value), "decision": "accepted", "subject": "building", "person_ratio": 0}
+        for value in (aid, other)
+    ])
+    save(execution / "review-manifest.json", {
+        "required_ids": [str(aid)], "rows": [{"asset_id": str(value)} for value in (aid, other)],
+    })
+    result = {"reviewer": "目視者", "confirm_no_errors": False,
+              "decisions_sha256": digest(execution / "privacy-decisions.json"), "rows": [{
+                  "asset_id": str(other), "decision": "pending", "subject": "building",
+                  "error_found": True, "note": "保留",
+              }]}
+    source = tmp_path / "review.json"
+    source.write_text(json.dumps(result))
+    import_reviews(queue.engine, execution, source)
+    result.update(confirm_no_errors=True, rows=[{
+        "asset_id": str(aid), "decision": "same", "subject": "building",
+        "error_found": False, "note": "確認済み",
+    }])
+    source.write_text(json.dumps(result))
+    import_reviews(queue.engine, execution, source)
+    validation = json.loads((execution / "privacy-validation.json").read_text())
+    assert not validation["approved"] and validation["requires_reanalysis"]
+
+
+@DB
+def test_会話の問題番号は人の履歴を残し統計承認を取り消す(queue, managed, tmp_path):
+    from bench.issue114.mobile import reply_reviews
+    from bench.issue114.privacy import digest, import_reviews, save
+
+    aid, image = managed
+    execution = tmp_path / "execution"
+    execution.mkdir()
+    row = {"asset_id": str(aid), "decision": "accepted", "subject": "building",
+           "input_path": str(image), "person_ratio": 0}
+    save(execution / "privacy-decisions.json", [row])
+    manifest = execution / "review-manifest.json"
+    save(manifest, {"required_ids": [str(aid)], "rows": [{
+        "asset_id": str(aid), "decision": "accepted", "subject": "building"}]})
+    mapping = {"format": "issue114-mobile-v1", "review_manifest_sha256": digest(manifest),
+               "decisions_sha256": digest(execution / "privacy-decisions.json"),
+               "rows": [row | {"number": 1}]}
+    with Session(queue.engine) as session, session.begin():
+        retention.review_privacy(session, aid, reviewer="auto:v2", subject="building",
+                                 method="person-v2", thresholds={"mask_max": .01},
+                                 evidence={"input_sha256": digest(image)})
+    reply = {"all_reviewed": True, "reply_text": "全1枚確認、問題なし", "problems": []}
+    source = tmp_path / "chat-review.json"
+    for problems in ([], [{"number": 1, "reason": "人物の見落とし"}]):
+        reply.update(problems=problems, reply_text="全1枚確認済み。" + str(problems))
+        source.write_text(json.dumps(reply_reviews(
+            mapping, manifest, mapping["decisions_sha256"], reply)))
+        import_reviews(queue.engine, execution, source)
+        approval = json.loads((execution / "privacy-validation.json").read_text())
+        assert approval["approved"] == (not problems)
+    with Session(queue.engine) as session:
+        quality = session.get(Asset, aid).quality
+        assert quality["privacy_review"]["reviewer"] == "ユーザー"
+        assert quality["privacy_review"]["decision"] == "pending"
+        assert quality["privacy_review"]["note"] == "人物の見落とし"
+        assert len(quality["privacy_review_history"]) == 2
+
+
+@DB
+def test_目視HTMLの画像複製は非公開modeと保持台帳を固定する(queue, managed, tmp_path):
+    import stat
+
+    from bench.issue114.privacy import digest, review_bundle, save
+
+    aid, image = managed
+    execution, output = tmp_path / "execution", tmp_path / "review"
+    execution.mkdir()
+    mask = tmp_path / "people.png"
+    Image.new("L", (8, 8), 0).save(mask)
+    save(execution / "policy.json", {"mask_max": .01})
+    save(execution / "privacy-decisions.json", [{
+        "asset_id": str(aid), "decision": "accepted", "subject": "building",
+        "reason": "person_not_detected", "person_ratio": 0, "mask_ratio": 0,
+        "input_path": str(image), "mask_path": str(mask),
+    }])
+    with Session(queue.engine) as session, session.begin():
+        record = session.get(Asset, aid)
+        record.sha256 = digest(image)
+        record.storage_path = str(tmp_path / "unmounted-original.jpg")
+    review_bundle(queue.engine, execution, output,
+                  {str(aid): {"path": str(image), "sha256": digest(image)}})
+    assert stat.S_IMODE(output.stat().st_mode) == 0o700
+    assert all(stat.S_IMODE(path.stat().st_mode) == 0o600 for path in output.rglob('*')
+               if path.is_file())
+    with Session(queue.engine) as session:
+        records = session.scalars(select(RetentionFile).where(
+            RetentionFile.path.like(str(output) + '/%'))).all()
+        assert len(records) == 5 and all(record.kind == "cache" for record in records)
+    assert json.loads((output / "manifest.json").read_text())["random_ids"] == [str(aid)]
 
 
 @DB

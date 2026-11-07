@@ -1,0 +1,1871 @@
+{
+  "captured_at": "2026-11-05T16:02:54.602+00:00",
+  "transaction_read_only": "on",
+  "isolation": "repeatable read",
+  "asset_count": 7626,
+  "pending_count": 0,
+  "groups": [
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 373
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "winter",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "season": "winter",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 2
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "season": "winter",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 33
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "biome_like": "plains",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 567
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "building_type": "bridge"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "winter",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 16
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 400
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 12
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 362
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "autumn",
+        "biome_like": "desert",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 12
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "season": "autumn",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 18
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "snowy",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 31
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "weather": "fog",
+        "biome_like": "forest",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 4
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "spring",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 2
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "forest",
+        "time_of_day": "dusk"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 6
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "season": "spring",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 11
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "season": "autumn",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 5
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "summer",
+        "time_of_day": "dawn",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "season": "summer",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 22
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "season": "summer",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 5
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "snowy",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 584
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "winter",
+        "time_of_day": "night",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 6
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "autumn",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 31
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "desert",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 22
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "winter",
+        "time_of_day": "day",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 4
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "biome_like": "mountains",
+        "time_of_day": "night"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 3
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "spring",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 15
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "winter",
+        "time_of_day": "dusk",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "spring",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 59
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "winter",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 16
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "summer",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 18
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "autumn",
+        "biome_like": "forest",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 523
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "winter",
+        "time_of_day": "dusk",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "autumn",
+        "biome_like": "forest",
+        "time_of_day": "day",
+        "building_type": "bridge"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 9
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "season": "winter",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 10
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "summer",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 32
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "mountains",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 11
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "season": "spring",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 44
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "winter",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 12
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "season": "autumn",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 21
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "biome_like": "desert",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 592
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "spring",
+        "time_of_day": "day",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 13
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 447
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "season": "winter",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "autumn",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 18
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "time_of_day": "day",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 10
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "weather": "fog",
+        "biome_like": "mountains",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "season": "summer",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 10
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "forest",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "season": "spring",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 26
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "biome_like": "mountains",
+        "time_of_day": "night",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 8
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 393
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "autumn",
+        "time_of_day": "night",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "season": "autumn",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 33
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "season": "winter",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 13
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "autumn",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 28
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "autumn",
+        "biome_like": "mountains",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 11
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "autumn",
+        "time_of_day": "day",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 3
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 5
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "winter",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 63
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "biome_like": "mountains",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 9
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "biome_like": "forest",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 6
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 3
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "autumn",
+        "weather": "fog",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 2
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "spring",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 68
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "summer",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 21
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "summer",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 12
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "winter",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 41
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "autumn",
+        "weather": "fog",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "winter",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 3
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "summer",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 72
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "plains",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 27
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "spring",
+        "time_of_day": "night",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "desert",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 38
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "snowy",
+        "time_of_day": "dawn",
+        "building_type": "bridge"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 4
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "season": "summer",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 7
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "season": "summer",
+        "time_of_day": "night",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "mountains",
+        "time_of_day": "day",
+        "building_type": "bridge"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "season": "autumn",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 9
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "season": "summer",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 13
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "season": "autumn",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 49
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "summer",
+        "time_of_day": "day",
+        "building_type": "bridge"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "summer",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 56
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "season": "spring",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 5
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "weather": "fog",
+        "biome_like": "snowy",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 467
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "time_of_day": "night",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 6
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "autumn",
+        "building_type": "tower"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 2
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "season": "spring",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 51
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "autumn",
+        "biome_like": "plains",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 5
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "summer",
+        "time_of_day": "day",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 9
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "spring",
+        "time_of_day": "dusk",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "autumn",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 75
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "time_of_day": "night",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 3
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "snowy",
+        "time_of_day": "day",
+        "building_type": "bridge"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "season": "winter",
+        "time_of_day": "night",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "autumn",
+        "time_of_day": "night",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 21
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "plains",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 11
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "season": "summer",
+        "time_of_day": "night",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 2
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "spring",
+        "time_of_day": "night",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 15
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "forest",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 32
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "spring",
+        "building_type": "castle"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 43
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "autumn",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 19
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 501
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "autumn",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 15
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "spring",
+        "time_of_day": "day",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 27
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "autumn",
+        "time_of_day": "night",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 9
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "snowy",
+        "time_of_day": "dawn"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 8
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "summer",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 73
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "season": "spring",
+        "time_of_day": "day",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 10
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "biome_like": "mountains",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 644
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "snowy",
+        "time_of_day": "night"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 1
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "mountains",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 5
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "season": "summer",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 51
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "autumn",
+        "weather": "fog",
+        "biome_like": "forest",
+        "time_of_day": "day"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 24
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "season": "spring",
+        "building_type": "house"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 10
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "time_of_day": "night",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 3
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "season": "autumn",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 19
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "season": "winter",
+        "building_type": "temple"
+      },
+      "source": "wikimedia_commons",
+      "pending": false,
+      "count": 28
+    }
+  ],
+  "subjects": [
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "autumn",
+        "biome_like": "desert",
+        "time_of_day": "day"
+      },
+      "subjects": 1
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "autumn",
+        "biome_like": "forest",
+        "time_of_day": "day"
+      },
+      "subjects": 5
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "autumn",
+        "biome_like": "mountains",
+        "time_of_day": "day"
+      },
+      "subjects": 2
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "autumn",
+        "biome_like": "plains",
+        "time_of_day": "day"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "desert",
+        "time_of_day": "day"
+      },
+      "subjects": 1
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "forest",
+        "time_of_day": "day"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "mountains",
+        "time_of_day": "day"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "plains",
+        "time_of_day": "day"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "snowy",
+        "time_of_day": "day"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "spring",
+        "biome_like": "snowy",
+        "time_of_day": "night"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "biome_like": "desert",
+        "time_of_day": "day"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "biome_like": "forest",
+        "time_of_day": "day"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "biome_like": "mountains",
+        "time_of_day": "day"
+      },
+      "subjects": 6
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "biome_like": "mountains",
+        "time_of_day": "night"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "summer",
+        "biome_like": "plains",
+        "time_of_day": "day"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "desert",
+        "time_of_day": "day"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "forest",
+        "time_of_day": "day"
+      },
+      "subjects": 1
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "forest",
+        "time_of_day": "dusk"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "mountains",
+        "time_of_day": "day"
+      },
+      "subjects": 1
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "plains",
+        "time_of_day": "day"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "snowy",
+        "time_of_day": "dawn"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "domain": "real_terrain",
+        "season": "winter",
+        "biome_like": "snowy",
+        "time_of_day": "day"
+      },
+      "subjects": 2
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "building_type": "bridge"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "chinese",
+        "domain": "real_building",
+        "region": "east_asia",
+        "building_type": "house"
+      },
+      "subjects": 4
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "islamic",
+        "domain": "real_building",
+        "region": "west_asia",
+        "building_type": "temple"
+      },
+      "subjects": 12
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "building_type": "bridge"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "building_type": "castle"
+      },
+      "subjects": 4
+    },
+    {
+      "attributes": {
+        "era": "early_modern",
+        "style": "japanese",
+        "domain": "real_building",
+        "region": "japan",
+        "building_type": "temple"
+      },
+      "subjects": 14
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "building_type": "temple"
+      },
+      "subjects": 49
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "gothic",
+        "domain": "real_building",
+        "region": "europe",
+        "building_type": "tower"
+      },
+      "subjects": 0
+    },
+    {
+      "attributes": {
+        "era": "medieval",
+        "style": "medieval",
+        "domain": "real_building",
+        "region": "europe",
+        "building_type": "house"
+      },
+      "subjects": 41
+    },
+    {
+      "attributes": {
+        "era": "modern",
+        "style": "modern",
+        "domain": "real_building",
+        "region": "north_america",
+        "building_type": "house"
+      },
+      "subjects": 13
+    }
+  ],
+  "regions": {
+    "east_asia": 393,
+    "japan": 859,
+    "north_america": 456,
+    "west_asia": 333,
+    "europe": 645
+  },
+  "max_region_images": 859,
+  "origin_sites": {
+    "wikimedia_commons": 7626
+  },
+  "max_author_images": 212,
+  "collect_jobs": {
+    "failed": 6,
+    "succeeded": 4177
+  },
+  "alembic": "0007"
+}

@@ -339,6 +339,8 @@ class HttpClient:
                     finally:
                         network_seconds += max(0.0, self.clock() - open_started)
                     with response_context as response:
+                        if self.shared_limits is not None:
+                            self.shared_limits.status(getattr(response, "status", 200))
                         self.observe("responses")
                         media = (self, state, host_policy, host_name) if (
                             kind == "media" or self.shared_limits is not None
@@ -362,6 +364,16 @@ class HttpClient:
                     counted = _CountingResponse(error, self.clock, media)
                     if error.code in (429, 503):
                         self._delay(error.headers, attempt, current)
+                    if self.shared_limits is not None:
+                        try:
+                            self.shared_limits.status(error.code, challenge=(
+                                error.code == 403 and error.headers.get(
+                                    "Cf-Mitigated", ""
+                                ).casefold() == "challenge"
+                            ))
+                        except BaseException:
+                            error.close()
+                            raise
                     self.observe("responses")
                     if error.code == 403 and (
                         error.headers.get("Cf-Mitigated", "").casefold() == "challenge"
