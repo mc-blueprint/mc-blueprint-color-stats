@@ -177,6 +177,11 @@ def _inputs(run_id, asset_id, taxonomy, records, jobs, seen, active):
         if (job is None or job["asset_id"] != asset_id or job["status"] != "succeeded"
                 or job["stage"] != row["stage"]):
             raise ValueError("入力runのassetまたは成功jobが一致しません")
+    elif row["stage"] == "review":
+        job = jobs.get(run_id)
+        if (job is None or job["asset_id"] != asset_id or job["status"] != "succeeded"
+                or row["parameters"].get("kind") not in {"privacy_review", "image_gate"}):
+            raise ValueError("画像reviewの由来が一致しません")
     elif row["stage"] != "subject":
         raise ValueError("対応しない解析stageです")
     for parent in row["input_run_ids"]:
@@ -571,6 +576,18 @@ def execute(engine, selection, output, *, quality, code_version, dry_run=False):
                 records = _read(connection, selection, directory)
         with Session(engine) as session:
             check_selection(session, selection)
+            from colorstats import privacy_review
+
+            run_records = {run["id"]: run for run in records["runs"]}
+            for item in selection["assets"]:
+                color_id = item.get("color_run_id")
+                color_run = run_records.get(uuid.UUID(color_id)) if color_id else None
+                payload = color_run["parameters"].get("payload", {}) if color_run else {}
+                if privacy_review.is_new(item) or privacy_review.is_new(payload):
+                    privacy_review.check_selection(session, item["asset_id"], item)
+                    privacy_review.check_selection(session, item["asset_id"], payload)
+                    if any(item.get(k) != payload.get(k) for k in privacy_review.FIELDS):
+                        raise PermissionError("選択と色解析の人物承認が一致しません")
         read_seconds = monotonic() - started
         with duckdb.connect(str(directory / "work.duckdb"), config={"threads": 1}) as db:
             db.execute("BEGIN")
