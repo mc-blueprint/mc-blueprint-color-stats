@@ -13,14 +13,15 @@ from pathlib import Path
 from uuid import UUID
 
 import numpy as np
-from bench.issue114.privacy import digest, import_reviews, save
+from bench.issue114.privacy import digest, save
 from PIL import Image, ImageFilter
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from colorstats import retention
+from colorstats import privacy_review, retention
 from colorstats.analyze import region_policy as region_policy_contract
 from colorstats.api_budget import digest as contract_digest
+from colorstats.queue import Queue
 from colorstats.schema.models import ProcessingRun, Region
 
 LIMIT = 25_000_000
@@ -198,7 +199,9 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
             gate_views[aid] = {"result": run.parameters.get("verdict"),
                                "observation": saved.get("result"),
                                "identity": run.parameters.get("identity"),
-                               "identity_hash": run.parameters.get("identity_hash")}
+                               "identity_hash": run.parameters.get("identity_hash"),
+                               "run_id": str(run.id),
+                               "source_sha256": run.parameters.get("source_sha256")}
             if (selection.get("contract") == "image-review-v1"
                     and (selection.get("image_gate_hash") != contract_digest(run.parameters)
                          or selection.get("image_gate_input_sha256")
@@ -221,6 +224,8 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
                 and (selection.get("region_policy_run_id") != str(run.id)
                      or selection.get("region_policy_hash") != policy["policy_hash"])):
             raise ValueError("image-review-v1とregion-policy-v1の参照が一致しません")
+        if require_contracts:
+            privacy_review.check_selection(session, UUID(aid), selection)
         payload = {"region_policy": policy, "region_run_id": str(run.id),
                    "input_path": row["input_path"], "input_sha256": row["input_sha256"]}
         role_masks = region_policy_contract.load_masks(payload)
@@ -355,6 +360,11 @@ src="{outline_uri(union, input_size, pattern='dash' if index % 2 else 'solid')}"
                                                 "person_ratio", "mask_ratio")},
                      "image_review_version": row.get("image_review_version"),
                      "image_gate_identity_hash": gate.get("identity_hash"),
+                     "image_gate_run_id": gate.get("run_id"),
+                     "region_policy_run_id": region_run_ids.get(aid),
+                     "privacy_review_run_id": selection.get("privacy_review_run_id"),
+                     "presented_source_sha256": gate.get("source_sha256"),
+                     "confirmed_real_people": people,
                      "image_gate_decision": gate_decision.get("decision"),
                      "image_gate_reason": gate_reason,
                      "image_gate_subject": verdict.get("subject"),
@@ -441,8 +451,42 @@ def reply_reviews(mapping, manifest, decisions_sha256, reply):
             "rows": [{"asset_id": row["asset_id"],
                       "decision": "pending" if row["number"] in problems else "same",
                       "subject": row["subject"], "error_found": row["number"] in problems,
-                      "note": problems.get(row["number"], "会話で提示画像の確認済み・問題なし")}
+                      "note": problems.get(row["number"], "会話で提示画像の確認済み・問題なし"),
+                      **{key: row.get(key) for key in (
+                          "image_gate_run_id", "region_policy_run_id", "privacy_review_run_id",
+                          "presented_source_sha256", "confirmed_real_people",
+                      )}}
                      for row in rows]}
+
+
+def apply_privacy_reply(queue, data):
+    """会話返信を#119のprivacy review runへ記録する。"""
+    rows = data["rows"]
+    for row in rows:
+        if not row.get("privacy_review_run_id") or not row.get("presented_source_sha256"):
+            raise ValueError("提示したprivacy review runと原画像SHAが必要です")
+        if not row["error_found"] and (
+                not row.get("image_gate_run_id") or not row.get("region_policy_run_id")
+                or row.get("confirmed_real_people") not in {"present", "absent", "uncertain"}):
+            raise ValueError("問題なしの画像にはA/B runと人物確認値が必要です")
+
+    for row in rows:
+        if row["error_found"]:
+            run_id = privacy_review.record_hold(
+                queue, row["asset_id"], row["privacy_review_run_id"],
+                code_version="issue120-chat-review-v1", reviewer=data["reviewer"],
+                presented_source_sha256=row["presented_source_sha256"], note=row["note"],
+            )
+        else:
+            run_id = privacy_review.write(
+                queue, row["asset_id"], row["image_gate_run_id"],
+                row["region_policy_run_id"], code_version="issue120-chat-review-v1",
+                input_run_id=row["privacy_review_run_id"], reviewer=data["reviewer"],
+                real_people=row["confirmed_real_people"],
+                presented_source_sha256=row["presented_source_sha256"], note=row["note"],
+            )
+        row["recorded_privacy_review_run_id"] = str(run_id)
+    return data
 
 
 def main():
@@ -463,18 +507,26 @@ def main():
                              args.execution / "review-manifest.json",
                              digest(args.execution / "privacy-decisions.json"),
                              args.input.read_text(encoding="utf-8"))
-        save(args.output, data)
         if not args.apply:
+            save(args.output, data)
             print("番号返信を変換しました。DB接続・書込みなし。")
             return
+        from bench.issue105.production import engine
+
+        db = engine(False)
+        try:
+            apply_privacy_reply(Queue(db), data)
+            save(args.output, data)
+        finally:
+            db.dispose()
+        print("番号返信をprivacy review runへ記録しました。")
+        return
+
     from bench.issue105.production import engine
 
     db = engine(False)
     try:
-        if args.action == "build":
-            build(db, args.bundle, args.execution, args.output, args.taxonomy, host=args.host)
-        else:
-            import_reviews(db, args.execution, args.output)
+        build(db, args.bundle, args.execution, args.output, args.taxonomy, host=args.host)
     finally:
         db.dispose()
 

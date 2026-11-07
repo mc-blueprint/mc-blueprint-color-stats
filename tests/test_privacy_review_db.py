@@ -329,6 +329,46 @@ def test_番号返信の保留は別runに保存され全承認と新版runを�
         assert privacy.selection(session, asset, cleared)
 
 
+def test_issue120番号返信は新privacy契約を失効させ旧writerを使わない(
+    queue, asset, review_source, monkeypatch, tmp_path,
+):
+    from bench.issue114.mobile import apply_privacy_reply, reply_reviews
+    from bench.issue114.privacy import digest
+
+    source, gate_id, source_sha256 = review_source
+    original = privacy.write(
+        queue, asset, gate_id, source["region_run_id"], code_version="test",
+    )
+    review_rows = [{"asset_id": str(asset), "decision": "accepted", "subject": "building",
+                    "reason": "person_not_detected", "person_ratio": 0.0, "mask_ratio": 0.0}]
+    manifest = tmp_path / "review-manifest.json"
+    manifest.write_text(json.dumps({"required_ids": [str(asset)], "rows": review_rows}))
+    mapping = {"format": "issue114-mobile-v1", "decisions_sha256": "a" * 64,
+               "review_manifest_sha256": digest(manifest),
+               "rows": [review_rows[0] | {"number": 1,
+                   "image_gate_run_id": str(gate_id),
+                   "region_policy_run_id": str(source["region_run_id"]),
+                   "privacy_review_run_id": str(original),
+                   "presented_source_sha256": source_sha256,
+                   "confirmed_real_people": "absent"}]}
+    reply = reply_reviews(mapping, manifest, "a" * 64,
+                          "全1枚確認済み。問題あり：1 確認内容の誤り")
+
+    def old_writer(*args, **kwargs):
+        raise AssertionError("旧privacy writerを呼び出しました")
+
+    monkeypatch.setattr(retention, "review_privacy", old_writer)
+    reply["reviewer"] = "確認者"
+    applied = apply_privacy_reply(queue, reply)
+    held_id = applied["rows"][0]["recorded_privacy_review_run_id"]
+
+    with Session(queue.engine) as session:
+        with pytest.raises(PermissionError, match="失効"):
+            privacy.selection(session, asset, original)
+        held = session.get(ProcessingRun, held_id)
+        assert held.parameters["verdict"] == {"decision": "pending", "reason": "human_hold"}
+
+
 def test_訂正前に準備したjobも完了時に承認を迂回できない(
     queue, asset, review_source, monkeypatch,
 ):
