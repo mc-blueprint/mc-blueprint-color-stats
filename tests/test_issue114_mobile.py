@@ -32,8 +32,19 @@ def sample(tmp_path):
     mapping = {"format": "issue114-mobile-v1", "decisions_sha256": "a" * 64,
                "review_manifest_sha256": digest(manifest),
                "rows": [row | {"number": i} for i, row in enumerate(rows, 1)]}
-    reply = {"all_reviewed": True, "reply_text": "全2枚確認済み、問題なし", "problems": []}
+    reply = "全2枚確認済み\n問題なし"
     return manifest, mapping, reply
+
+
+@pytest.mark.parametrize("reply", [
+    {"all_reviewed": True, "reply_text": "未確認", "problems": []},
+    {"all_reviewed": True, "reply_text": "全2枚確認済み\n問題なし", "problems": []},
+    {"all_reviewed": True, "reply_text": "全2枚確認済み\n1: 人物", "problems": []},
+])
+def test_辞書入力では定型解析を迂回できない(tmp_path, reply):
+    manifest, mapping, _ = sample(tmp_path)
+    with pytest.raises(ValueError, match="肯定形返信"):
+        reply_reviews(mapping, manifest, "a" * 64, reply)
 
 
 def test_会話確認は問題番号を保留にし既存保留を採用へ昇格しない(tmp_path):
@@ -42,8 +53,7 @@ def test_会話確認は問題番号を保留にし既存保留を採用へ昇�
     assert data["reviewer"] == "ユーザー" and data["confirm_no_errors"]
     assert [row["decision"] for row in data["rows"]] == ["same", "same"]
     assert data["rows"][1]["subject"] is None
-    reply.update(reply_text="全2枚確認済み。1は人物見落とし",
-                 problems=[{"number": 1, "reason": "人物見落とし"}])
+    reply = "全2枚確認済み\n1: 人物見落とし"
     data = reply_reviews(mapping, manifest, "a" * 64, reply)
     assert not data["confirm_no_errors"]
     assert data["rows"][0]["decision"] == "pending" and data["rows"][0]["error_found"]
@@ -96,23 +106,19 @@ def test_番号返信はproblemを保留し他画像をprivacy_review_writeで�
     assert not hasattr(mobile, "import_reviews")
 
 
-@pytest.mark.parametrize("problems", [
-    [{"number": 0, "reason": "人物"}], [{"number": 3, "reason": "人物"}],
-    [{"number": 1, "reason": " "}], [{"number": True, "reason": "人物"}],
-    [{"number": 1, "reason": "人物"}, {"number": 1, "reason": "主体"}],
-    [{"number": 1, "reason": None}],
-    [None],
+@pytest.mark.parametrize("body", [
+    "0: 人物", "3: 人物", "1: ", "True: 人物", "1: 人物\n1: 主体", "1", "人物",
 ])
-def test_番号や理由の不備は拒否する(tmp_path, problems):
-    manifest, mapping, reply = sample(tmp_path)
+def test_番号や理由の不備は拒否する(tmp_path, body):
+    manifest, mapping, _ = sample(tmp_path)
     with pytest.raises(ValueError):
-        reply_reviews(mapping, manifest, "a" * 64, reply | {"problems": problems})
+        reply_reviews(mapping, manifest, "a" * 64, "全2枚確認済み\n" + body)
 
 
 def test_未完了返信や変更された番号表を拒否する(tmp_path):
     manifest, mapping, reply = sample(tmp_path)
     with pytest.raises(ValueError, match="確認済み"):
-        reply_reviews(mapping, manifest, "a" * 64, reply | {"all_reviewed": False})
+        reply_reviews(mapping, manifest, "a" * 64, "全2枚未確認\n問題なし")
     altered = copy.deepcopy(mapping)
     altered["rows"][0]["subject"] = "terrain"
     with pytest.raises(ValueError, match="自動判定"):

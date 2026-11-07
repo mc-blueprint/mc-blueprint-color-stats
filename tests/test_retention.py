@@ -337,15 +337,14 @@ def test_会話の問題番号は人の履歴を残し統計承認を取り消�
         retention.review_privacy(session, aid, reviewer="auto:v2", subject="building",
                                  method="person-v2", thresholds={"mask_max": .01},
                                  evidence={"input_sha256": digest(image)})
-    reply = {"all_reviewed": True, "reply_text": "全1枚確認、問題なし", "problems": []}
     source = tmp_path / "chat-review.json"
-    for problems in ([], [{"number": 1, "reason": "人物の見落とし"}]):
-        reply.update(problems=problems, reply_text="全1枚確認済み。" + str(problems))
+    for body in ("問題なし", "1: 人物の見落とし"):
+        reply = "全1枚確認済み\n" + body
         source.write_text(json.dumps(reply_reviews(
             mapping, manifest, mapping["decisions_sha256"], reply)))
         import_reviews(queue.engine, execution, source)
         approval = json.loads((execution / "privacy-validation.json").read_text())
-        assert approval["approved"] == (not problems)
+        assert approval["approved"] == (body == "問題なし")
     with Session(queue.engine) as session:
         quality = session.get(Asset, aid).quality
         assert quality["privacy_review"]["reviewer"] == "ユーザー"
