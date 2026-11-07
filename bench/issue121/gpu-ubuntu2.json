@@ -1,0 +1,157 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4070",
+  "images": 3,
+  "input_manifest_sha256": "8ce1f7e8f85ddb6e00bf70d66419513fe525696f0fb05180f6d8c5791d5a09d7",
+  "total_seconds": 17.37987801595591,
+  "peak_allocated_bytes": 2659068416,
+  "peak_reserved_bytes": 3772776448,
+  "records": [
+    {
+      "seconds": 8.19310255907476,
+      "runtime": {
+        "oneformer_seconds": 3.3328977200435475,
+        "oneformer_peak_allocated_bytes": 2191341056,
+        "oneformer_peak_reserved_bytes": 3024093184,
+        "load_seconds": 0.9328827889403328,
+        "inference_seconds": 2.4538883779896423,
+        "peak_allocated_bytes": 2102766080,
+        "peak_reserved_bytes": 2287992832,
+        "gpu": "NVIDIA GeForce RTX 4070",
+        "torch_version": "2.11.0+cu128",
+        "cuda_version": "12.8",
+        "batch_size": 1,
+        "versions": {
+          "torch": "2.11.0+cu128",
+          "transformers": "4.57.6",
+          "Pillow": "12.3.0"
+        },
+        "single_resident_phase": "oneformer-then-dino-sam2"
+      },
+      "policy": {
+        "pixels": 138752,
+        "raw_pixels": 126281,
+        "effective_pixels": 62,
+        "coverage": 0.00044684040590405906,
+        "void_rate": 0.999553159594096,
+        "excluded_pixels": {
+          "sky": 15,
+          "person": 154,
+          "conflict": 125101,
+          "semantic_mismatch": 949
+        },
+        "semantic_pixels": {
+          "sky": 6132,
+          "person": 1351
+        },
+        "void_pixels": 138690,
+        "missing_roles": [
+          "real_building/accent_other",
+          "real_building/band_course",
+          "real_building/relief",
+          "real_building/shutter",
+          "real_building/window_frame",
+          "real_building/window_glass"
+        ]
+      }
+    },
+    {
+      "seconds": 4.322141665965319,
+      "runtime": {
+        "oneformer_seconds": 0.7344297299860045,
+        "oneformer_peak_allocated_bytes": 2659068416,
+        "oneformer_peak_reserved_bytes": 3772776448,
+        "load_seconds": 0.4682422810001299,
+        "inference_seconds": 2.6924062550533563,
+        "peak_allocated_bytes": 1769891840,
+        "peak_reserved_bytes": 1923088384,
+        "gpu": "NVIDIA GeForce RTX 4070",
+        "torch_version": "2.11.0+cu128",
+        "cuda_version": "12.8",
+        "batch_size": 1,
+        "versions": {
+          "torch": "2.11.0+cu128",
+          "transformers": "4.57.6",
+          "Pillow": "12.3.0"
+        },
+        "single_resident_phase": "oneformer-then-dino-sam2"
+      },
+      "policy": {
+        "pixels": 101888,
+        "raw_pixels": 92278,
+        "effective_pixels": 109,
+        "coverage": 0.001069802135678392,
+        "void_rate": 0.9989301978643216,
+        "excluded_pixels": {
+          "sky": 429,
+          "person": 7,
+          "conflict": 91660,
+          "semantic_mismatch": 73
+        },
+        "semantic_pixels": {
+          "sky": 3868,
+          "person": 928
+        },
+        "void_pixels": 101779,
+        "missing_roles": [
+          "real_building/accent_other",
+          "real_building/band_course",
+          "real_building/column",
+          "real_building/relief",
+          "real_building/shutter",
+          "real_building/window_frame",
+          "real_building/window_glass"
+        ]
+      }
+    },
+    {
+      "seconds": 4.864633790915832,
+      "runtime": {
+        "oneformer_seconds": 0.6935481959953904,
+        "oneformer_peak_allocated_bytes": 2454318592,
+        "oneformer_peak_reserved_bytes": 3447717888,
+        "load_seconds": 0.45644150290172547,
+        "inference_seconds": 3.2812613240676,
+        "peak_allocated_bytes": 1891126784,
+        "peak_reserved_bytes": 2321547264,
+        "gpu": "NVIDIA GeForce RTX 4070",
+        "torch_version": "2.11.0+cu128",
+        "cuda_version": "12.8",
+        "batch_size": 1,
+        "versions": {
+          "torch": "2.11.0+cu128",
+          "transformers": "4.57.6",
+          "Pillow": "12.3.0"
+        },
+        "single_resident_phase": "oneformer-then-dino-sam2"
+      },
+      "policy": {
+        "pixels": 115200,
+        "raw_pixels": 100794,
+        "effective_pixels": 412,
+        "coverage": 0.003576388888888889,
+        "void_rate": 0.9964236111111111,
+        "excluded_pixels": {
+          "sky": 197,
+          "person": 1,
+          "conflict": 98359,
+          "semantic_mismatch": 1825
+        },
+        "semantic_pixels": {
+          "sky": 4065,
+          "person": 151
+        },
+        "void_pixels": 114788,
+        "missing_roles": [
+          "real_building/accent_other",
+          "real_building/band_course",
+          "real_building/column",
+          "real_building/window_frame",
+          "real_building/window_glass"
+        ]
+      }
+    }
+  ],
+  "policy_hash": "3dad77aa16f42d620dc85cdf2e81586288db93c67154c86a39c68fb1774e65ba",
+  "quality_eligible": false,
+  "limitation": "公開3枚の両GPU適合・性能。全件の8GB適合や品質の保証ではない。"
+}
