@@ -6,7 +6,9 @@ import re
 
 import numpy as np
 import pytest
+from bench.issue114 import mobile
 from bench.issue114.mobile import (
+    apply_privacy_reply,
     jpeg,
     mask_uri,
     outline_uri,
@@ -16,6 +18,8 @@ from bench.issue114.mobile import (
 )
 from bench.issue114.privacy import digest
 from PIL import Image
+
+from colorstats import privacy_review, retention
 
 
 def sample(tmp_path):
@@ -42,6 +46,45 @@ def test_会話確認は問題番号を保留にし既存保留を採用へ昇�
     assert not data["confirm_no_errors"]
     assert data["rows"][0]["decision"] == "pending" and data["rows"][0]["error_found"]
     assert data["rows"][0]["note"] == "人物見落とし"
+
+
+def test_番号返信はproblemを保留し他画像をprivacy_review_writeで確認する(monkeypatch):
+    calls = []
+
+    def record_hold(*args, **kwargs):
+        calls.append(("hold", args, kwargs))
+        return "held-run"
+
+    def write(*args, **kwargs):
+        calls.append(("write", args, kwargs))
+        return "confirmed-run"
+
+    def old_writer(*args, **kwargs):
+        raise AssertionError("旧privacy writerを呼び出しました")
+
+    monkeypatch.setattr(privacy_review, "record_hold", record_hold)
+    monkeypatch.setattr(privacy_review, "write", write)
+    monkeypatch.setattr(retention, "review_privacy", old_writer)
+    data = {"reviewer": "ユーザー", "rows": [
+        {"asset_id": "flagged", "error_found": True, "note": "人物の見落とし",
+         "privacy_review_run_id": "privacy-1", "presented_source_sha256": "a" * 64},
+        {"asset_id": "clear", "error_found": False, "note": "問題なし",
+         "privacy_review_run_id": "privacy-2", "presented_source_sha256": "b" * 64,
+         "image_gate_run_id": "gate-2", "region_policy_run_id": "region-2",
+         "confirmed_real_people": "absent"},
+    ]}
+
+    result = apply_privacy_reply(object(), data)
+
+    assert [call[0] for call in calls] == ["hold", "write"]
+    assert calls[0][1][1:3] == ("flagged", "privacy-1")
+    assert calls[0][2]["note"] == "人物の見落とし"
+    assert calls[1][1][1:4] == ("clear", "gate-2", "region-2")
+    assert calls[1][2]["input_run_id"] == "privacy-2"
+    assert [row["recorded_privacy_review_run_id"] for row in result["rows"]] == [
+        "held-run", "confirmed-run",
+    ]
+    assert not hasattr(mobile, "import_reviews")
 
 
 @pytest.mark.parametrize("problems", [
