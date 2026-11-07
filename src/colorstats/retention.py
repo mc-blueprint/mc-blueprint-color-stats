@@ -373,6 +373,11 @@ def review_privacy(session, asset_id, *, reviewer, subject, person_mask=None, ho
 
 def check_privacy(session, asset_id, payload):
     """新規収集分の色集計に採用判定と人物除外maskの固定を要求する。"""
+    from colorstats import privacy_review
+
+    if privacy_review.is_new(payload):
+        privacy_review.check_selection(session, asset_id, payload)
+        return
     if session.scalar(select(Retention.id).where(Retention.asset_id == asset_id)) is None:
         return
     review = session.get(Asset, asset_id).quality.get("privacy_review", {})

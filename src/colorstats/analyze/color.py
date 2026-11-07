@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import uuid
 from itertools import combinations
 from pathlib import Path
 
@@ -369,6 +370,8 @@ def register(session: Session, run, data: dict) -> None:
     check_privacy(session, asset.id, payload)
     licenses = [run.license_class, asset.license_class]
     inputs = set()
+    if payload.get("privacy_review_run_id"):
+        inputs.add(uuid.UUID(payload["privacy_review_run_id"]))
     if data["input_run_id"] is not None:
         previous = session.get(ProcessingRun, data["input_run_id"])
         job = session.scalar(select(Job).where(
