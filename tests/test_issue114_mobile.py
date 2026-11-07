@@ -4,8 +4,16 @@ import io
 import json
 import re
 
+import numpy as np
 import pytest
-from bench.issue114.mobile import jpeg, overlay, reply_reviews, write_pages
+from bench.issue114.mobile import (
+    jpeg,
+    mask_uri,
+    outline_uri,
+    parse_chat_reply,
+    reply_reviews,
+    write_pages,
+)
 from bench.issue114.privacy import digest
 from PIL import Image
 
@@ -22,7 +30,7 @@ def sample(tmp_path):
     return manifest, mapping, reply
 
 
-def test_会話確認は提示画像だけに限定し保留を採用へ昇格しない(tmp_path):
+def test_会話確認は問題番号を保留にし既存保留を採用へ昇格しない(tmp_path):
     manifest, mapping, reply = sample(tmp_path)
     data = reply_reviews(mapping, manifest, "a" * 64, reply)
     assert data["reviewer"] == "ユーザー" and data["confirm_no_errors"]
@@ -40,8 +48,10 @@ def test_会話確認は提示画像だけに限定し保留を採用へ昇格�
     [{"number": 0, "reason": "人物"}], [{"number": 3, "reason": "人物"}],
     [{"number": 1, "reason": " "}], [{"number": True, "reason": "人物"}],
     [{"number": 1, "reason": "人物"}, {"number": 1, "reason": "主体"}],
+    [{"number": 1, "reason": None}],
+    [None],
 ])
-def test_番号や理由の不備は確認記録へ変換しない(tmp_path, problems):
+def test_番号や理由の不備は拒否する(tmp_path, problems):
     manifest, mapping, reply = sample(tmp_path)
     with pytest.raises(ValueError):
         reply_reviews(mapping, manifest, "a" * 64, reply | {"problems": problems})
@@ -63,38 +73,56 @@ def test_未完了返信や変更された番号表を拒否する(tmp_path):
         reply_reviews(altered, manifest, "a" * 64, reply)
     with pytest.raises(ValueError, match="一致"):
         reply_reviews(mapping, manifest, "b" * 64, reply)
+    manifest.write_text(manifest.read_text() + " ")
+    with pytest.raises(ValueError, match="固定した閲覧対象"):
+        reply_reviews(mapping, manifest, "a" * 64, reply)
 
 
-def test_JPEGは端末向け寸法と人物主体の色を保つ(tmp_path):
+def test_会話返信は全件数と理由付き問題番号を要求する():
+    reply = "全2枚確認済み。問題あり：2 建築部位の判定違い"
+    assert parse_chat_reply(reply, 2)["problems"] == [
+        {"number": 2, "reason": "建築部位の判定違い"},
+    ]
+    assert parse_chat_reply("全2枚確認済み。問題なし", 2)["problems"] == []
+    with pytest.raises(ValueError):
+        parse_chat_reply("全1枚確認済み。問題なし", 2)
+    with pytest.raises(ValueError):
+        parse_chat_reply("全2枚確認済み。問題あり：2", 2)
+
+
+def test_画像とmaskは別表示で元座標を保つ():
     image = Image.new("RGB", (1600, 1000), "white")
-    person = tmp_path / "person.png"
-    subject = tmp_path / "building.png"
-    mask = Image.new("L", image.size)
-    mask.paste(255, (0, 0, 800, 1000))
-    mask.save(subject)
-    mask = Image.new("L", image.size)
-    mask.paste(255, (0, 0, 100, 100))
-    mask.save(person)
-    result = overlay(image, [("wall", subject)], person, {"wall"}, set())
-    assert result.getpixel((50, 50))[0] > result.getpixel((50, 50))[1]
-    assert result.getpixel((500, 500))[1] > result.getpixel((500, 500))[0]
-    assert result.getpixel((1200, 500)) == (255, 255, 255)
-    with Image.open(io.BytesIO(base64.b64decode(jpeg(result).split(",")[1]))) as decoded:
+    mask = np.zeros((1000, 1600), dtype=bool)
+    mask[:100, :100] = True
+    mask_data = mask_uri(mask, image.size)
+    outline_data = outline_uri(mask, image.size, pattern="dash")
+    with Image.open(io.BytesIO(base64.b64decode(jpeg(image).split(",")[1]))) as decoded:
         assert decoded.format == "JPEG" and decoded.size == (800, 500)
+    with Image.open(io.BytesIO(base64.b64decode(mask_data.split(",")[1]))) as decoded:
+        assert decoded.format == "PNG" and decoded.size == image.size
+        assert decoded.getpixel((50, 50)) == 255 and decoded.getpixel((500, 500)) == 0
+    with Image.open(io.BytesIO(base64.b64decode(outline_data.split(",")[1]))) as decoded:
+        assert decoded.format == "PNG" and decoded.size == image.size
 
 
-def test_HTML分割は実byte上限と連番を守り外部参照を含まない(tmp_path):
+def test_HTML容量と連番を守り外部画像を参照しない(tmp_path):
     cards = [f'<article id="n{i}">番号{i}<img src="{jpeg(Image.new("RGB", (20, 20)))}"></article>'
              for i in range(1, 7)]
-    files = write_pages(cards, tmp_path, limit=3500)
+    files = write_pages(cards, tmp_path, limit=3500,
+                        group_counts={"population": 20, "random": 4, "challenge": 2})
     assert len(files) == 2 and abs(files[0]["bytes"] - files[1]["bytes"]) < 100
     numbers = []
     for item in files:
         path = tmp_path / item["file"]
         assert path.stat().st_size <= 3500
         content = path.read_text()
+        assert "対象母数：20枚" in content and "固定無作為群：4枚" in content
         numbers.extend(map(int, re.findall(r'id="n(\d+)"', content)))
         assert "http:" not in content and "https:" not in content
-        assert all(src.startswith("data:image/jpeg;base64,")
-                   for src in re.findall('src="([^"]+)"', content))
+        sources = re.findall('src="([^"]+)"', content)
+        assert all(src.startswith("data:image/jpeg;base64,") for src in sources)
+        for source in sources:
+            data = base64.b64decode(source.split(",", 1)[1], validate=True)
+            with Image.open(io.BytesIO(data)) as decoded:
+                decoded.verify()
     assert numbers == list(range(1, 7))
