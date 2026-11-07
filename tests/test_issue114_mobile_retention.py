@@ -45,6 +45,13 @@ def inputs(tmp_path, managed):
     return bundle, execution, tmp_path / "mobile"
 
 
+def test_A_B契約のない既存判定では本番用HTMLを生成しない(queue, managed, tmp_path):
+    bundle, execution, output = inputs(tmp_path, managed)
+    with pytest.raises(ValueError, match="image-review-v1"):
+        build(queue.engine, bundle, execution, output, ROOT / "taxonomy")
+    assert not output.exists()
+
+
 @pytest.mark.parametrize("state", ["stopped", "expired"])
 def test_停止または期限切れ画像はモバイルHTMLを生成しない(queue, managed, tmp_path, state):
     bundle, execution, output = inputs(tmp_path, managed)
@@ -61,7 +68,7 @@ def test_停止または期限切れ画像はモバイルHTMLを生成しない(
 
 def test_HTMLと番号表は保持台帳へ登録され期限後の管理対象となる(queue, managed, tmp_path):
     bundle, execution, output = inputs(tmp_path, managed)
-    build(queue.engine, bundle, execution, output, ROOT / "taxonomy")
+    build(queue.engine, bundle, execution, output, ROOT / "taxonomy", require_contracts=False)
     with Session(queue.engine) as session, session.begin():
         files = session.scalars(select(RetentionFile).where(
             RetentionFile.path.in_([str(p.resolve()) for p in output.iterdir()]),
@@ -111,7 +118,8 @@ def test_画像束は構成画像一件の失効で全体を削除し通常の�
     queue, managed, shared_mobile, tmp_path, state,
 ):
     bundle, execution, output, other_id, raw = shared_mobile
-    build(queue.engine, bundle, execution, output, ROOT / "taxonomy", host="review-test")
+    build(queue.engine, bundle, execution, output, ROOT / "taxonomy", host="review-test",
+          require_contracts=False)
     shared = tmp_path / "ordinary-cache.bin"
     shared.write_bytes(b"shared")
     with Session(queue.engine) as session, session.begin():
@@ -139,30 +147,20 @@ def test_画像束は構成画像一件の失効で全体を削除し通常の�
     assert shared.exists() and raw.exists()
 
 
-def test_失効画像を含まない別ページと原画像は削除しない(
-    queue, managed, shared_mobile, monkeypatch,
+def test_単一HTMLは構成画像の一件失効で削除し原画像は保持する(
+    queue, managed, shared_mobile,
 ):
-    from bench.issue114 import mobile
-
     bundle, execution, output, other_id, raw = shared_mobile
-    write_pages = mobile.write_pages
-
-    def split(cards, directory):
-        limit = max(len(mobile.page([card], 1, 1, len(cards)).encode()) for card in cards)
-        return write_pages(cards, directory, limit=limit)
-
-    monkeypatch.setattr(mobile, "write_pages", split)
-    build(queue.engine, bundle, execution, output, ROOT / "taxonomy", host="review-test")
+    build(queue.engine, bundle, execution, output, ROOT / "taxonomy", host="review-test",
+          require_contracts=False)
     mapping = json.loads((output / "number-map.json").read_text())
-    assert len(mapping["files"]) == 2
+    assert len(mapping["files"]) == 1
     with Session(queue.engine) as session, session.begin():
         session.scalar(select(Retention).where(
             Retention.asset_id == managed[0],
         )).expires_at = datetime.now(UTC) - timedelta(seconds=1)
     with Session(queue.engine) as session, session.begin():
         retention.cleanup(session, host="review-test")
-    for item in mapping["files"]:
-        members = mapping["rows"][item["first"] - 1:item["last"]]
-        assert (output / item["file"]).exists() == (str(other_id) == members[0]["asset_id"])
+    assert not (output / mapping["files"][0]["file"]).exists()
     assert not (output / "number-map.json").exists()
     assert raw.exists()
