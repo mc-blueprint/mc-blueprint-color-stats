@@ -1,0 +1,140 @@
+{
+  "hosts": {
+    "ubuntu1": {
+      "completed_assets": 0,
+      "pending_assets": 1040,
+      "violations": [],
+      "unclosed_attempts": 0,
+      "telemetry": {
+        "samples": 12848,
+        "gpu_utilization_mean_percent": 49.72781755915317,
+        "gpu_memory_max_mib": 6106
+      },
+      "assets": 1040,
+      "stages": {
+        "segment": {
+          "jobs": 1040,
+          "status": {
+            "succeeded": 1040
+          },
+          "attempts": 1040,
+          "retries": 0,
+          "successful_run_seconds": 10873.60626500001,
+          "input_bytes": 69059400,
+          "output_bytes": 147301045,
+          "regions": 27938,
+          "part_observations": 0,
+          "relations": 0
+        },
+        "shade": {
+          "jobs": 1040,
+          "status": {
+            "failed": 1040
+          },
+          "attempts": 3120,
+          "retries": 2080,
+          "successful_run_seconds": 0,
+          "input_bytes": 0,
+          "output_bytes": 0,
+          "regions": 0,
+          "part_observations": 0,
+          "relations": 0
+        },
+        "color": {
+          "jobs": 0,
+          "status": {},
+          "attempts": 0,
+          "retries": 0,
+          "successful_run_seconds": 0,
+          "input_bytes": 0,
+          "output_bytes": 0,
+          "regions": 0,
+          "part_observations": 0,
+          "relations": 0
+        }
+      },
+      "failure_reasons": {
+        "PermissionError: 人物・要配慮情報の内部確認が必要です": 1040
+      }
+    },
+    "ubuntu2": {
+      "completed_assets": 0,
+      "pending_assets": 1560,
+      "violations": [],
+      "unclosed_attempts": 0,
+      "telemetry": {
+        "samples": 12041,
+        "gpu_utilization_mean_percent": 39.52445810148659,
+        "gpu_memory_max_mib": 5429
+      },
+      "assets": 1560,
+      "stages": {
+        "segment": {
+          "jobs": 1560,
+          "status": {
+            "succeeded": 1560
+          },
+          "attempts": 1560,
+          "retries": 0,
+          "successful_run_seconds": 9577.399567999993,
+          "input_bytes": 102788560,
+          "output_bytes": 221720103,
+          "regions": 41727,
+          "part_observations": 0,
+          "relations": 0
+        },
+        "shade": {
+          "jobs": 1560,
+          "status": {
+            "failed": 1560
+          },
+          "attempts": 4680,
+          "retries": 3120,
+          "successful_run_seconds": 0,
+          "input_bytes": 0,
+          "output_bytes": 0,
+          "regions": 0,
+          "part_observations": 0,
+          "relations": 0
+        },
+        "color": {
+          "jobs": 0,
+          "status": {},
+          "attempts": 0,
+          "retries": 0,
+          "successful_run_seconds": 0,
+          "input_bytes": 0,
+          "output_bytes": 0,
+          "regions": 0,
+          "part_observations": 0,
+          "relations": 0
+        }
+      },
+      "failure_reasons": {
+        "PermissionError: 人物・要配慮情報の内部確認が必要です": 1560
+      }
+    }
+  },
+  "preserved": {
+    "assets": {
+      "before": 7626,
+      "changed": []
+    },
+    "runs": {
+      "before": 42314,
+      "changed": []
+    }
+  },
+  "privacy_reviewed": 0,
+  "aggregate_jobs": [],
+  "revision": "0008",
+  "sources": {
+    "wikimedia_commons": 10226
+  },
+  "partial_statistics": {
+    "manifest": false,
+    "comparison": false,
+    "report": false,
+    "files": 3
+  }
+}

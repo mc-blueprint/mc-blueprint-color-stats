@@ -1,0 +1,33 @@
+{
+  "total": 2600,
+  "decisions": {
+    "accepted": 1607,
+    "pending": 993
+  },
+  "reasons": {
+    "person_not_detected": 1279,
+    "person_masked": 328,
+    "subject_ambiguous": 660,
+    "person_over_limit": 332,
+    "subject_unresolved": 1
+  },
+  "masked_accepted": 328,
+  "person_ratio_quantiles": [
+    0,
+    0,
+    0.0943240954829195,
+    0.48752770330724565,
+    0.9322753527923354,
+    1
+  ],
+  "policy": {
+    "method": "person-sam2-dino-v2",
+    "detector_threshold": 0.35,
+    "text_threshold": 0.25,
+    "mask_padding_pixels": 2,
+    "mask_max": 0.01,
+    "subject_min": 0.05,
+    "subject_margin": 0.02
+  },
+  "method": "person-sam2-dino-v2"
+}

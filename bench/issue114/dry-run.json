@@ -1,0 +1,234 @@
+{
+  "captured_at": "2026-11-05T16:02:54.602+00:00",
+  "image_budget": 30000,
+  "current_sources": {
+    "wikimedia_commons": 7626
+  },
+  "remaining_images": 22374,
+  "unassigned_images": 243,
+  "pending_images": 0,
+  "limits": {
+    "subject_images": 3,
+    "subject_share": 0.003,
+    "author_share": 0.05,
+    "source_share": 0.8,
+    "region_share": 0.4
+  },
+  "provider_cap": 24000,
+  "author_cap": 1500,
+  "region_cap": 12000,
+  "subject_cap": 3,
+  "single_provider_additional_upper_bounds": {
+    "wikimedia_commons": 16374,
+    "openverse": 22374
+  },
+  "minimum_other_images_for_30000": 6000,
+  "layers": [
+    {
+      "stratum": "japanese-castle",
+      "priority": 1,
+      "target_images": 2715,
+      "current_images": 668,
+      "current_subjects": 4,
+      "target_subjects": 300,
+      "remaining_images": 2047,
+      "provider_cap": 2172,
+      "author_cap": 135,
+      "commons_additional": 1504,
+      "openverse_additional": 2047
+    },
+    {
+      "stratum": "gothic-temple",
+      "priority": 3,
+      "target_images": 2040,
+      "current_images": 667,
+      "current_subjects": 49,
+      "target_subjects": 300,
+      "remaining_images": 1373,
+      "provider_cap": 1632,
+      "author_cap": 102,
+      "commons_additional": 965,
+      "openverse_additional": 1373
+    },
+    {
+      "stratum": "forest-autumn-day",
+      "priority": 1,
+      "target_images": 2265,
+      "current_images": 556,
+      "current_subjects": 5,
+      "target_subjects": 300,
+      "remaining_images": 1709,
+      "provider_cap": 1812,
+      "author_cap": 113,
+      "commons_additional": 1256,
+      "openverse_additional": 1709
+    },
+    {
+      "stratum": "modern-house",
+      "priority": 2,
+      "target_images": 2040,
+      "current_images": 617,
+      "current_subjects": 13,
+      "target_subjects": 300,
+      "remaining_images": 1423,
+      "provider_cap": 1632,
+      "author_cap": 102,
+      "commons_additional": 1015,
+      "openverse_additional": 1423
+    },
+    {
+      "stratum": "medieval-house",
+      "priority": 3,
+      "target_images": 2040,
+      "current_images": 668,
+      "current_subjects": 41,
+      "target_subjects": 300,
+      "remaining_images": 1372,
+      "provider_cap": 1632,
+      "author_cap": 102,
+      "commons_additional": 964,
+      "openverse_additional": 1372
+    },
+    {
+      "stratum": "japanese-temple",
+      "priority": 1,
+      "target_images": 2685,
+      "current_images": 668,
+      "current_subjects": 14,
+      "target_subjects": 300,
+      "remaining_images": 2017,
+      "provider_cap": 2148,
+      "author_cap": 134,
+      "commons_additional": 1480,
+      "openverse_additional": 2017
+    },
+    {
+      "stratum": "islamic-temple",
+      "priority": 1,
+      "target_images": 2310,
+      "current_images": 536,
+      "current_subjects": 12,
+      "target_subjects": 300,
+      "remaining_images": 1774,
+      "provider_cap": 1848,
+      "author_cap": 115,
+      "commons_additional": 1312,
+      "openverse_additional": 1774
+    },
+    {
+      "stratum": "chinese-house",
+      "priority": 1,
+      "target_images": 2865,
+      "current_images": 613,
+      "current_subjects": 4,
+      "target_subjects": 300,
+      "remaining_images": 2252,
+      "provider_cap": 2292,
+      "author_cap": 143,
+      "commons_additional": 1679,
+      "openverse_additional": 2252
+    },
+    {
+      "stratum": "mountains-summer-day",
+      "priority": 1,
+      "target_images": 2775,
+      "current_images": 645,
+      "current_subjects": 6,
+      "target_subjects": 300,
+      "remaining_images": 2130,
+      "provider_cap": 2220,
+      "author_cap": 138,
+      "commons_additional": 1575,
+      "openverse_additional": 2130
+    },
+    {
+      "stratum": "plains-summer-day",
+      "priority": 1,
+      "target_images": 2655,
+      "current_images": 567,
+      "current_subjects": 0,
+      "target_subjects": 300,
+      "remaining_images": 2088,
+      "provider_cap": 2124,
+      "author_cap": 132,
+      "commons_additional": 1557,
+      "openverse_additional": 2088
+    },
+    {
+      "stratum": "desert-summer-day",
+      "priority": 1,
+      "target_images": 2805,
+      "current_images": 592,
+      "current_subjects": 0,
+      "target_subjects": 300,
+      "remaining_images": 2213,
+      "provider_cap": 2244,
+      "author_cap": 140,
+      "commons_additional": 1652,
+      "openverse_additional": 2213
+    },
+    {
+      "stratum": "snowy-winter-day",
+      "priority": 1,
+      "target_images": 2805,
+      "current_images": 586,
+      "current_subjects": 2,
+      "target_subjects": 300,
+      "remaining_images": 2219,
+      "provider_cap": 2244,
+      "author_cap": 140,
+      "commons_additional": 1658,
+      "openverse_additional": 2219
+    }
+  ],
+  "rate_estimates": [
+    {
+      "openverse_additional": 6000,
+      "assumed_yield": 1,
+      "search_requests": 600,
+      "anonymous_daily_quota_days": 6,
+      "standard_api_requests_with_token_per_job": 1200,
+      "standard_daily_quota_days": 1
+    },
+    {
+      "openverse_additional": 22374,
+      "assumed_yield": 1,
+      "search_requests": 2238,
+      "anonymous_daily_quota_days": 23,
+      "standard_api_requests_with_token_per_job": 4476,
+      "standard_daily_quota_days": 1
+    },
+    {
+      "openverse_additional": 6000,
+      "assumed_yield": 0.1,
+      "search_requests": 6000,
+      "anonymous_daily_quota_days": 60,
+      "standard_api_requests_with_token_per_job": 12000,
+      "standard_daily_quota_days": 2
+    },
+    {
+      "openverse_additional": 22374,
+      "assumed_yield": 0.1,
+      "search_requests": 22374,
+      "anonymous_daily_quota_days": 224,
+      "standard_api_requests_with_token_per_job": 44748,
+      "standard_daily_quota_days": 5
+    },
+    {
+      "openverse_additional": 6000,
+      "assumed_yield": 0.01,
+      "search_requests": 60000,
+      "anonymous_daily_quota_days": 600,
+      "standard_api_requests_with_token_per_job": 120000,
+      "standard_daily_quota_days": 12
+    },
+    {
+      "openverse_additional": 22374,
+      "assumed_yield": 0.01,
+      "search_requests": 223740,
+      "anonymous_daily_quota_days": 2238,
+      "standard_api_requests_with_token_per_job": 447480,
+      "standard_daily_quota_days": 45
+    }
+  ]
+}
