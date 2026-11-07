@@ -133,6 +133,52 @@ def test_会話返信は全件数と理由付き問題番号を要求する():
         parse_chat_reply("全2枚確認済み。問題あり：2", 2)
 
 
+@pytest.mark.parametrize("reply", [
+    "全2枚は未確認。問題なし", "全2枚確認済みではない。問題なし",
+    "前置き全2枚確認済み。問題なし", "全2枚確認済み。問題なし。ただし未確認",
+    "全2枚確認済み。問題あり：1 問題なし", "全2枚確認済み。問題あり：1 未確認",
+])
+def test_肯定形でない返信を確認済みとして受け付けない(reply):
+    with pytest.raises(ValueError):
+        parse_chat_reply(reply, 2)
+
+
+def test_全角数字とカンマ区切りの番号を正しく読む():
+    parsed = parse_chat_reply("全２枚確認済み。問題あり：１ 人物見落とし，２ 主体違い", 2)
+    assert [row["number"] for row in parsed["problems"]] == [1, 2]
+    assert [row["reason"] for row in parsed["problems"]] == ["人物見落とし", "主体違い"]
+
+
+@pytest.mark.parametrize("reply", [
+    "全2枚確認済み。問題あり：20", "全2枚確認済み。問題あり：3 理由",
+    "全2枚確認済み。問題あり：1 理由、１ 重複理由",
+])
+def test_理由なし範囲外重複番号を拒否する(reply):
+    with pytest.raises(ValueError):
+        parse_chat_reply(reply, 2)
+
+
+def test_複数画像の番号表へ各自のprivacy_runを保持する():
+    decisions = {
+        "asset-1": {"selection": {"image_gate_run_id": "gate-1",
+                                   "privacy_review_run_id": "privacy-1"}},
+        "asset-2": {"selection": {"image_gate_run_id": "gate-2",
+                                   "privacy_review_run_id": "privacy-2"}},
+    }
+    rows = [
+        mobile._review_references(
+            mobile._selection_for(decisions, "asset-1"),
+            {"run_id": "gate-1", "source_sha256": "a" * 64}, "region-1", "absent",
+        ),
+        mobile._review_references(
+            mobile._selection_for(decisions, "asset-2"),
+            {"run_id": "gate-2", "source_sha256": "b" * 64}, "region-2", "uncertain",
+        ),
+    ]
+    assert [row["privacy_review_run_id"] for row in rows] == ["privacy-1", "privacy-2"]
+    assert [row["presented_source_sha256"] for row in rows] == ["a" * 64, "b" * 64]
+
+
 def test_画像とmaskは別表示で元座標を保つ():
     image = Image.new("RGB", (1600, 1000), "white")
     mask = np.zeros((1000, 1600), dtype=bool)
