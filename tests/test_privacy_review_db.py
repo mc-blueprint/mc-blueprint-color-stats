@@ -398,6 +398,99 @@ def test_issue120閲覧検証は保留privacy_runのrun_hashを受け付ける(
             })
 
 
+@pytest.mark.parametrize("wrong_hash", [False, True])
+def test_issue120正規selectionでHTMLを生成しpolicy定義hashへの差替えは拒否する(
+    queue, asset, review_source, tmp_path, wrong_hash,
+):
+    from bench.issue114.mobile import build
+    from bench.issue114.privacy import digest as file_digest
+
+    source, _, _ = review_source
+    rid = write(queue, asset, review_source)
+    with Session(queue.engine) as session, session.begin():
+        retention.register_asset(session, session.get(Asset, asset), {}, "test")
+        selection = privacy.selection(session, asset, rid)
+        policy = region_policy.reference(session.get(ProcessingRun, source["region_run_id"]))
+        raw = Path(session.get(Asset, asset).storage_path)
+    if wrong_hash:
+        selection["region_policy_hash"] = policy["policy_hash"]
+    bundle, execution, output = (tmp_path / name for name in ("bundle", "execution", "mobile"))
+    (bundle / "images").mkdir(parents=True)
+    execution.mkdir()
+    with Image.open(raw) as image:
+        image.save(bundle / "images" / f"{asset}-raw.png")
+    row = {"asset_id": str(asset), "selection": selection,
+           "input_path": source["input_path"], "input_sha256": policy["input_sha256"],
+           "mask_path": policy["exclusions"]["person"]["path"],
+           "mask_sha256": policy["exclusions"]["person"]["sha256"],
+           "decision": "accepted", "subject": "building", "reason": "person_not_detected",
+           "person_ratio": 0, "mask_ratio": 0}
+    decisions = execution / "privacy-decisions.json"
+    decisions.write_text(json.dumps([row]))
+    (bundle / "manifest.json").write_text(json.dumps({
+        "required_ids": [str(asset)], "random_ids": [str(asset)], "boundary_ids": [],
+        "decisions_sha256": file_digest(decisions),
+    }))
+    if wrong_hash:
+        with pytest.raises(ValueError, match="参照が一致"):
+            build(queue.engine, bundle, execution, output, Path("taxonomy"))
+        assert not output.exists()
+    else:
+        build(queue.engine, bundle, execution, output, Path("taxonomy"))
+        assert (output / "review-01.html").exists()
+        mapping = json.loads((output / "number-map.json").read_text())
+        assert mapping["rows"][0]["privacy_review_run_id"] == str(rid)
+
+
+@pytest.mark.parametrize("state", [
+    "accepted", "corrected_person", "human_hold", "policy_hold", "policy_excluded",
+])
+def test_issue120問題なし返信は既存の人物訂正と保留を変更しない(
+    queue, asset, review_source, state,
+):
+    from bench.issue114.mobile import apply_privacy_reply
+
+    original = write(queue, asset, review_source)
+    if state in {"corrected_person", "human_hold"}:
+        original = write(queue, asset, review_source, input_run_id=original, reviewer="確認者",
+                         real_people="present" if state == "corrected_person" else "absent",
+                         hold=state == "human_hold", presented_source_sha256=review_source[2],
+                         note="人物訂正または保留")
+    elif state in {"policy_hold", "policy_excluded"}:
+        with Session(queue.engine) as session, session.begin():
+            gate = session.get(ProcessingRun, review_source[1])
+            parameters = copy.deepcopy(gate.parameters)
+            path = Path(parameters["result_path"])
+            result = json.loads(path.read_text())
+            if state == "policy_hold":
+                result["result"]["real_people"] = "uncertain"
+            else:
+                result["result"]["black_and_white"] = True
+            path.write_text(json.dumps(result))
+            parameters["result_sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+            parameters["verdict"] = image_gate.decision(result["result"])
+            gate.parameters = parameters
+        original = write(queue, asset, review_source, code_version="uncertain")
+    with Session(queue.engine) as session:
+        before = copy.deepcopy(session.get(ProcessingRun, original).parameters)
+    data = {"reviewer": "ユーザー", "rows": [{
+        "asset_id": str(asset), "error_found": False, "note": "提示画像を確認済み・問題なし",
+        "privacy_review_run_id": str(original), "presented_source_sha256": review_source[2],
+        "image_gate_run_id": str(review_source[1]),
+        "region_policy_run_id": str(review_source[0]["region_run_id"]),
+        "confirmed_real_people": "absent",
+    }]}
+    applied = apply_privacy_reply(queue, data)
+    with Session(queue.engine) as session:
+        recorded = session.get(ProcessingRun, applied["rows"][0]["recorded_privacy_review_run_id"])
+        assert recorded.parameters["evidence"] == before["evidence"]
+        assert recorded.parameters["verdict"] == before["verdict"]
+        assert session.get(ProcessingRunInput, (recorded.id, original))
+        if state != "accepted":
+            with pytest.raises(PermissionError):
+                privacy.selection(session, asset, recorded.id)
+
+
 def test_訂正前に準備したjobも完了時に承認を迂回できない(
     queue, asset, review_source, monkeypatch,
 ):
