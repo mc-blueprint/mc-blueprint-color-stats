@@ -1,105 +1,61 @@
-# Issue #118 実装引継ぎ
+# Issue #118 引継ぎ（GPU検証後）
 
-担当：complex_worker。worktreeは`colorstats-118/mc-blueprint-color-stats`、
-ブランチは`feature/issue-118`、起点は`5270a36957e3db4141d29711203e283eb52b904a`。
-引継ぎ済みorigin/developを再利用し、fetch・ブランチ変更・再委譲は行っていない。
+ownerは同じcomplex_worker。ブランチは`feature/issue-118`、起点は
+`5270a36957e3db4141d29711203e283eb52b904a`。前回実装を先に`43a8b5c`へcommitした。
+今回も再委譲・push・PR作成・merge・Issue closeは行っていない。
 
-## 変更と共有契約
+## 現在の状態
 
-- `segment.method=oneformer-region-v1`。既存候補生成と公式semantic後処理を再利用する。
-- raw Region/CVATを保全し、整数semantic map・排他role mask・理由別maskを新runへ保存する。
-- 後続payloadに`region_policy`を追加する。解決APIは
-  `color.region_policy_input(session, asset_id, region_run_id)`。
-  旧policyではNone。既存`region_inputs`も引き続き渡す。
-- wall/treeは親和集合、異なるroleの交差はvoid。子ラベルの新しいsupportedは作らない。
-- shade/colorのrole観測は出力JSONの`roles`、snapshotは有効maskから直接計算したgroupsへ保存する。
-  ColorObservationへの親role用の偽Region登録は行わない。
-- 新policyのgroupsは`quality_eligible=false`。後続Dでの品質合格・採用対応が必要。
-- #66 runnerは契約を引き渡し、異なる入力・モデル・promptや旧segmentの流用を拒否する。
-  OOMは再試行不可として記録し、runnerのstopファイルを残す。
-- 新しいmaskを別途重ねる経路は未提供。追加人物mask等を使う場合は新runの契約確定が必要。
-  今回は実在人物を保留する決定を前提とする。
-- schema・migration・既存採用configは変更していない。#117の0009に干渉しない。
+- 固定revisionの8ファイルを両機へ取得し、終了後も全SHA一致を確認。
+- 既存cohortから固定seedで同じ3入力を選び、両GPUの3件連続smokeが成功。
+- OOM・別GPUプロセス混入0。OneFormerと候補工程間のモジュール参照残存0。
+- 実機で見つかったprocessor初期化とOneFormer/SAM2のLRU保持を修正。
+  後者は新policyだけに適用し、旧`sam2-dino`の常駐は維持した。
+- WSL隔離DB込み全pytest **1,138 passed / 1 skipped**、ruff・sdist/wheel build成功。
+- **建物の有効画素は両機とも0**。空混入・交差0を実用的な改善合格とは扱わない。
+  `Refs #118`として未完を維持し、品質採用・全量統計を保留する。
 
-契約・取得条件・許容表の方針は[region-policy.md](../../docs/region-policy.md)。
-後続C/E/Dへはこの契約を確定したcommitをメインから渡す必要がある。まだcommitは作っていない。
+集計・完成条件照合・検証根拠は[gpu-results.md](gpu-results.md)、
+機械可読な件数・率は[gpu-summary.json](gpu-summary.json)。
+画像単位の記録、全試行の失敗、入力・出力SHA、mask、確認図はGit外の
+`H:/mc-blueprint/private/issue118-smoke-20261107/`に保全した。
+本番DBには接続していない。GPUプロセス・監視thread・隔離テストDBは全て終了済み。
 
-## 検証
+## 共有契約・依存先への連絡
 
-隔離DB込み全pytestは**1,136 passed / 1 skipped、245.90秒**。skipは従来の実GPUテスト。
-ruff・sdist/wheel buildも成功。既存warning 4件。
-artifact：`/tmp/colorstats-issue118-GR41Rd/`。
-記録：`20261107T070338Z-b640c65b77784b039d6d6de2edf2e115.jsonl`。
+`segment.method=oneformer-region-v1`。raw Region/CVATとsemantic/有効role maskを分離する。
+後続payloadには`color.region_inputs`と併せて
+`color.region_policy_input(session, asset_id, region_run_id)`の戻り値を
+`region_policy`として必ず渡す。旧policyではNone。
+path/SHA・入力SHA/寸法・revision・policy hashを固定し、省略・差替え・旧観測流用を拒否する。
 
-全件検証開始後にsky/person maskの全画素保存と診断数の区別を明確化したため、
-最新ソースで関連unit **28 passed**、DB統合 **7 passed**、ruff・sdist/wheel buildを確認。
-最新DB統合artifact：`/tmp/colorstats-issue118-wAi2ji/`。
-記録：`20261107T070757Z-31b0954155024b6f89f0e5aaf697d4fa.jsonl`、
-`20261107T070850Z-135634d8fa1d419b86ed2481b1aceeb4.jsonl`。
-検証用DBは各試行の終了時に停止済み。バックグラウンド処理は残していない。
-wheelの固定JSON 3点の同梱、`bash -n`、`git diff --check`も確認。
+shade/colorは有効role maskから直接計算してJSONの`roles`へ保存し、
+snapshotも有効maskからgroupsを作る。親role用の偽Regionや個別supportedは作らない。
+`quality_eligible=false`を維持する。schema・migration・既存採用configは変更なし。
+#117の0009には干渉しない。追加人物maskとの重ね合わせは新runの契約確定が必要。
 
-関連85件の隔離DB検証も成功。初回全件検証で旧snapshotの早期終了前にpayloadを
-読み出す回帰を検出し、旧経路の順序を維持するよう修正した。
-OOMの通常再試行も重点確認で修正した。
+今回のメモリ保持修正はpolicy hashに含む。確定commitをC/E/Dへ渡す際は、
+建物全欠測と未採用状態も必ず伝える。旧runの有効maskや色観測を再利用しない。
+粗いbuilding/houseをwall等へ許容する判断は共有policyの変更になるため、
+勝手に表を緩めず、建物保持と部位誤りを評価してメインが方針を決める必要がある。
 
-## 未解決・残作業
+## 残作業
 
-- 重みは取得していない。著者HFの`pytorch_model.bin`は879,517,517 bytes、
-  設定・README等の8ファイル合計は881,200,070 bytes、MIT表示。
-  revisionは`4a5bac8e64f82681a12db2e151a4c2f4ce6092b2`。
-  取得規模は報告済みで、ユーザーの了承は未受領。固定SHA一覧は作成済みだが、
-  重み本体の実SHA確認は取得後に必要。
-- GPUは実行禁止のため8GB/12GB smoke・ピークVRAM・実GPUでの単独常駐は未検証。
-  mockの解放順・OOM停止検証を実GPU成功とは扱わない。Issue #118のGPU完成条件は未達。
-- roof/snowなど専用semanticクラスがない部位、window内競合は欠測になる。
-  有効領域を出しただけで品質採用にしない。coverageを含む後続Dの検証が必要。
-- 本番DB書き込み、API実行、全量統計、commit/push/PR作成・merge・Issue closeは未実施。
-- この担当は再委譲禁止。公開する場合はメインが残条件と差分を確認し、別モデル公開担当へ
-  ownerを引き継ぐ。本引継ぎは公開済み・通常PR完成の報告ではない。
+- 建物全欠測の解消方針を決め、建物を保持した既知失敗例で検証する。
+- 後続Dで独立GT・coverage/recall/IoUを含む品質判定を行う。
+  今回のOneFormer sky参照の0%をprecision合格へ読み替えない。
+- 完成条件を再照合し、未達が解消したときだけ公開文面を`Closes #118`へ更新する。
+- push・PR作成は依頼範囲外。この担当は再委譲禁止。
+  公開が必要になったら、メインが差分と未達条件を確認して公開担当へownerを渡す。
 
-新規ドメイン知識として外部保存すべき事項はない。実装契約はプロジェクト文書へ記録した。
+## 公開文面の正本3ファイル
 
-## 用意したコミット文
+- [commit-message.txt](commit-message.txt)
+- [pr-title.txt](pr-title.txt)
+- [pr-body.md](pr-body.md)：`Refs #118`
 
-```text
-fix: OneFormerの排他領域で統計用マスクを制約する
+baseはdevelop、headはfeature/issue-118。
+ラベル候補は既存の`type: bug`、`priority: high`。優先度根拠はIssueと同じ入力汚染。
+この引継ぎはPR公開・Issue完了の報告ではない。
 
-- 固定revisionのsemantic mapで部位候補をclipし親和集合と競合voidを保存する
-- 有効role maskの不変参照をshade・color・snapshotへ渡し旧観測の流用を拒否する
-- 合成maskと隔離DBで由来・欠測・排他性・OOM停止を検証する
-```
-
-PRタイトル：`fix: OneFormerの排他領域で統計用マスクを制約する`
-
-ラベル候補：既存の`type: bug`、`priority: high`。
-優先度根拠はIssueと同じく主要な色統計入力の汚染。
-作成前に既存ラベルとテンプレートを公開担当が照合する。
-
-## 用意したPR本文
-
-```markdown
-## 概要
-
-- 空・人物・異なる部位の混入を防ぐため、OneFormerのsemantic mapで統計用領域を制約する。
-- 新方式の品質採用は保留し、旧policyの再現経路を維持する。
-
-## 変更内容
-
-- 版付きsegment method、固定モデル証跡、raw候補・排他role mask・除外理由の別保存を追加。
-- wall/treeの親和集合と異role競合のvoid化、coverage・欠測を記録。
-- shade/color/snapshotを有効role maskへ接続し、旧run・旧観測の流用を拒否。
-- #66 runnerの共有payloadとOOM停止を追加。schema・migration・既存採用設定は変更なし。
-
-## 検証
-
-- [x] 隔離DB込み全pytest：1,136 passed / 1 skipped（従来の実GPUテスト）
-- [x] 最後の診断数変更後：関連unit 28件、DB統合7件成功
-- [x] ruff・sdist/wheel build・git diff --check
-- [x] 合成mask、raw保全、shade/color/snapshotの関連85件の隔離検証
-- [ ] 8GB/12GB実GPU smoke・ピークVRAM：実行禁止のため未実施
-
-## 関連Issue
-
-Refs #118（GPU完成条件が未達のため、この本文ではcloseしない）
-```
+新規の外部保存対象となるドメイン知識はない。実装・検証の記録はプロジェクト内に残した。

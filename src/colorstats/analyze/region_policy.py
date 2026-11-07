@@ -17,7 +17,9 @@ REVISION = "4a5bac8e64f82681a12db2e151a4c2f4ce6092b2"
 MODEL_FILES = json.loads(Path(__file__).with_name("oneformer-files.json").read_text("utf-8"))
 TRANSFORM = {"shortest_edge": 640, "longest_edge": 2560, "batch_size": 1,
              "restore": "semantic-logits-bilinear-align_corners_false-argmax",
-             "orientation": "prep-pixels-exif-1", "pad": "bottom-right-batch-1"}
+             "orientation": "prep-pixels-exif-1", "pad": "bottom-right-batch-1",
+             "processor": "fixed-json-local-class-info-CLIPTokenizer",
+             "position_embedding_cache": "disabled"}
 
 # ADEのbuildingをwallへ読み替えず、専用クラスがない部位は欠測にする。
 ALLOW = {

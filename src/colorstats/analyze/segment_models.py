@@ -1,5 +1,6 @@
 """ローカルに配置済みの公式重みを使うGPU推論。重みの自動取得は行わない。"""
 
+import json
 import time
 from functools import lru_cache
 from pathlib import Path
@@ -24,6 +25,31 @@ def _unload():
     torch.cuda.empty_cache()
 
 
+def _oneformer_processor(path):
+    from transformers import CLIPTokenizer, OneFormerImageProcessor, OneFormerProcessor
+
+    config = json.loads((Path(path) / "preprocessor_config.json").read_text("utf-8"))
+    parameters = {key: config[key] for key in (
+        "do_resize", "size", "resample", "do_rescale", "rescale_factor", "do_normalize",
+        "image_mean", "image_std", "ignore_index", "num_text", "num_labels",
+    ) if key in config}
+    image_processor = OneFormerImageProcessor(
+        **parameters, repo_path=str(Path(__file__).parent),
+        class_info_file="oneformer-classes.json", do_reduce_labels=False,
+    )
+    return OneFormerProcessor(
+        image_processor=image_processor,
+        tokenizer=CLIPTokenizer.from_pretrained(path, local_files_only=True),
+    )
+
+
+def _uncache_positions(model, embedding_type):
+    # 公式LRUがGPU Tensorを保持するため、試行内の位置埋め込みはキャッシュしない。
+    for module in model.modules():
+        if isinstance(module, embedding_type):
+            module.forward = module.forward.__wrapped__.__get__(module, type(module))
+
+
 def predict_regions(image, payload, parameters):
     """OneFormerを解放してから既存DINO/SAM2候補を生成する。OOMは代替せず送出する。
 
@@ -46,19 +72,18 @@ def predict_regions(image, payload, parameters):
     started = time.perf_counter()
     model = processor = inputs = outputs = None
     try:
-        from transformers import OneFormerForUniversalSegmentation, OneFormerProcessor
+        from transformers import OneFormerForUniversalSegmentation
+        from transformers.models.oneformer.modeling_oneformer import OneFormerSinePositionEmbedding
 
         path = payload["model_paths"]["oneformer"]
-        processor = OneFormerProcessor.from_pretrained(
-            path, local_files_only=True, repo_path=str(Path(__file__).parent),
-            class_info_file="oneformer-classes.json",
-        )
+        processor = _oneformer_processor(path)
         processor.image_processor.size = {key: TRANSFORM[key]
                                           for key in ("shortest_edge", "longest_edge")}
         processor.image_processor._max_size = TRANSFORM["longest_edge"]
         model = OneFormerForUniversalSegmentation.from_pretrained(
             path, local_files_only=True, weights_only=True,
         ).eval().to("cuda")
+        _uncache_positions(model, OneFormerSinePositionEmbedding)
         validate_labels({str(k): v for k, v in model.config.id2label.items()})
         torch.manual_seed(0)
         with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
@@ -83,7 +108,7 @@ def predict_regions(image, payload, parameters):
     try:
         rows, candidate_metrics = predict(
             image, "sam2-dino", paths, hashes, payload["prompts"],
-            parameters["threshold"], parameters["text_threshold"],
+            parameters["threshold"], parameters["text_threshold"], transient=True,
         )
     except torch.cuda.OutOfMemoryError as error:
         raise NonRetryableError(OOM_REASON + ": 部位候補生成のGPU適合を確認してください") from error
@@ -95,11 +120,13 @@ def predict_regions(image, payload, parameters):
     return semantic, rows, metrics
 
 
-def predict(image, method, paths, model_hashes, prompts, threshold, text_threshold):
+def predict(image, method, paths, model_hashes, prompts, threshold, text_threshold, *,
+            transient=False):
     """(label, boolマスク, confidence)の列とGPU計測を返す。CUDA必須。
 
     同じパス・実ファイルhashのモデルをプロセス内で保持する。初期化と推論を個別に計測し、VRAMは
     初期化も含むPyTorch allocatorの最大値。OOM・依存不足はそのまま送出する。
+    transient=Trueは新policy用。モデル常駐と位置埋め込みLRUを使用しない。
     """
     import torch
 
@@ -115,7 +142,8 @@ def predict(image, method, paths, model_hashes, prompts, threshold, text_thresho
         for name in sorted(paths)
         for filename, digest in sorted(model_hashes[name]["files"].items())
     )
-    runner = _resident(tuple(sorted(paths.items())), files)
+    runner = (_sam2(dict(paths), cache_positions=False) if transient
+              else _resident(tuple(sorted(paths.items())), files))
     torch.cuda.synchronize()
     loaded = time.perf_counter()
     with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
@@ -139,7 +167,7 @@ def _resident(paths, files):
     return _sam2(dict(paths))
 
 
-def _sam2(paths):
+def _sam2(paths, *, cache_positions=True):
     from transformers import (
         AutoModelForZeroShotObjectDetection,
         AutoProcessor,
@@ -153,6 +181,10 @@ def _sam2(paths):
     ).eval().to("cuda")
     sam_processor = Sam2Processor.from_pretrained(paths["sam2"], local_files_only=True)
     model = Sam2Model.from_pretrained(paths["sam2"], local_files_only=True).eval().to("cuda")
+    if not cache_positions:
+        from transformers.models.sam2.modeling_sam2 import Sam2SinePositionEmbedding
+
+        _uncache_positions(model, Sam2SinePositionEmbedding)
 
     def run(image, prompts, threshold, text_threshold):
         rows = []

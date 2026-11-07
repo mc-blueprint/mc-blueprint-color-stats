@@ -7,8 +7,9 @@ stage、DBモデル、migration、taxonomy、既存の採用設定は変更し�
 
 ## モデルの取得条件
 
-重み取得、GPU実行、本番DB更新は本実装の検証では行わない。
-取得はユーザーの明示了承後、GPU smokeは別の実行許可後に行う。
+2026-11-07のユーザー了承により固定8ファイルの取得と両GPUの3件smokeを実施した。
+結果と制約は[GPU検証](../bench/issue118/gpu-results.md)を参照。本番DB更新は行わない。
+通常のsegment処理には重みの自動取得を追加しない。
 
 - [著者checkpoint](https://huggingface.co/shi-labs/oneformer_ade20k_swin_large/tree/4a5bac8e64f82681a12db2e151a4c2f4ce6092b2)
   のrevision `4a5bac8e64f82681a12db2e151a4c2f4ce6092b2`を固定する。
@@ -19,8 +20,7 @@ stage、DBモデル、migration、taxonomy、既存の採用設定は変更し�
 - 著者形式の`250_16_swin_l_oneformer_ade20k_160k.pth`（949,729,587 bytes）は使用しない。
   Mask2FormerのNC重みで代用しない。
 - 固定SHA一覧は`src/colorstats/analyze/oneformer-files.json`。
-  配布一覧と小さな設定・tokenizerファイルだけを照合して作成した。重みのSHAは公式LFS情報による。
-  重み本体の実SHA照合は取得後に必要。
+  配布メタデータで固定し、了承後の取得で重み本体を含む全8ファイルの実SHAも両機で照合した。
 
 取得先`models/oneformer/`には一覧の8ファイルだけを置き、次の取得証跡を
 `provenance.json`として追加する。`files`は固定SHA一覧と同じ辞書であり、
@@ -36,8 +36,10 @@ stage、DBモデル、migration、taxonomy、既存の採用設定は変更し�
 ```
 
 `OneFormerProcessor`は通常、`shi-labs/oneformer_demo`からクラス情報を取得する。
-本実装は固定preprocessorのmetadataから構成した`oneformer-classes.json`を渡し、
-追加のネットワーク取得を防ぐ。モデルID対応は`oneformer-labels.json`と全150クラスを照合する。
+本実装は固定JSONから`OneFormerImageProcessor`を直接構成し、metadataから構成した
+`oneformer-classes.json`とローカルCLIPTokenizerを使って追加のネットワーク取得を防ぐ。
+`from_pretrained`のkwargsによる上書きは初期化に間に合わないため使用しない。
+モデルID対応は`oneformer-labels.json`と全150クラスを照合する。
 ADE注釈の1始まりIDは受け付けない。例：wall=0、sky=2、tree=4、person=12。
 
 ## segmentの入力・処理
@@ -56,6 +58,8 @@ semantic logitsをbilinear（align_corners=False）復元してからargmaxす�
 
 OneFormerのロード前に既存モデルcacheを解放し、OneFormerを解放してから
 従来のDINO/SAM2部位候補を生成する。終了・例外時もcacheを解放する。
+新policyではOneFormer/SAM2の位置埋め込みLRUと候補モデルの常駐を使わず、
+試行間のGPU Tensor保持を防ぐ。旧`sam2-dino`のモデル常駐は維持する。
 通常の例外はqueueへ返す。OOMは再試行不可として記録し、#66 runnerは停止フラグを残す。
 別モデルや低解像度に切り替えない。
 工程別時間、OneFormerのピークallocated/reserved、既存候補生成のVRAM、実行版を記録する。
@@ -119,7 +123,8 @@ mockモデルによる座標復元呼出し・オフライン初期化・解放�
 snapshotのParquet生成、raw保全、由来、不正再利用のrollbackを検証する。
 既存依存を再利用するWSL隔離検証は`bench/issue118/verify.sh`。
 
-実GPUの8GB/12GB smoke、ピークVRAM、重み実体のSHA、実画像精度は未検証。
-GPU実行と本番DB更新は禁止のため実行しない。両GPUで測るまで適合とは扱わない。
-8GB不適合なら明示した12GB側の粗分割工程へ分離し、12GB不適合なら停止する。
-解像度やモデルを暗黙変更しない。IssueのGPU完成条件は未達として引き継ぐ。
+実GPUの8GB/12GBで各3件smoke、ピークVRAM、重み本体SHA、工程間のモジュール解放を検証済み。
+実OOMは未発生。OOM時停止はmock/隔離DBで検証した。解像度やモデルの暗黙変更はしない。
+ただし両機で建物の有効画素が0になったため、実用的な改善は未達として`Refs #118`で引き継ぐ。
+画素GTに基づく品質合格、建物を保持するpolicyの改善、後続Dの採否判断は残る。
+全量統計・本番DB更新は実行していない。

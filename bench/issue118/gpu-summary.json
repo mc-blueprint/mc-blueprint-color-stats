@@ -1,0 +1,135 @@
+{
+  "seed": 11820261107,
+  "eligible": 1274,
+  "distinct_inputs": 3,
+  "paired_hosts": true,
+  "hosts": {
+    "ubuntu-1": {
+      "attempted": 3,
+      "succeeded": 3,
+      "oom": 0,
+      "failed": 0,
+      "total_seconds": 53.254190395993646,
+      "peak_allocated_bytes": 2107801088,
+      "oneformer_peak_allocated_bytes": 1917686784,
+      "candidates_peak_allocated_bytes": 2107801088,
+      "gpu_total_bytes": 8186494976,
+      "max_foreign_gpu_processes": 0,
+      "observed_process_peak_mib": 2602,
+      "unload_checks": 9,
+      "unload_live_module_checks": 0,
+      "candidate_start_checks": 3,
+      "candidate_start_live_module_checks": 0,
+      "runtime_workspace_peak_bytes": 9796096,
+      "monitor_errors": 0,
+      "oneformer_files_verified": 8,
+      "peak_reserved_bytes": 2596274176,
+      "oneformer_total_seconds": 3.5421868629637174,
+      "candidates_inference_total_seconds": 24.05768730706768,
+      "candidates_load_total_seconds": 2.49305850896053,
+      "post_gpu_processes": 0,
+      "model_verified_bytes": 881200070,
+      "counts": {
+        "pixels": 568832,
+        "sky_pixels": 138053,
+        "raw_building_pixels": 242300,
+        "effective_building_pixels": 0,
+        "sky_building_before": 56185,
+        "sky_building_after": 0,
+        "building_terrain_before": 151597,
+        "building_terrain_after": 0,
+        "effective_pixels": 253748,
+        "void_pixels": 315084
+      },
+      "rates": {
+        "sky_building_before_image_rate": 0.09877257256975698,
+        "sky_building_after_image_rate": 0.0,
+        "building_terrain_before_image_rate": 0.26650575213771377,
+        "building_terrain_after_image_rate": 0.0,
+        "effective_pixels_image_rate": 0.44608601485148514,
+        "void_pixels_image_rate": 0.5539139851485149
+      },
+      "known_cases": {
+        "sky_building": {
+          "cases": 1,
+          "positive_before": 1,
+          "positive_after": 0
+        },
+        "overlap_reported": {
+          "cases": 2,
+          "positive_before": 2,
+          "positive_after": 0
+        }
+      }
+    },
+    "ubuntu-2": {
+      "attempted": 3,
+      "succeeded": 3,
+      "oom": 0,
+      "failed": 0,
+      "total_seconds": 37.99710535205668,
+      "peak_allocated_bytes": 2107298304,
+      "oneformer_peak_allocated_bytes": 1917686784,
+      "candidates_peak_allocated_bytes": 2107298304,
+      "gpu_total_bytes": 12428640256,
+      "max_foreign_gpu_processes": 0,
+      "observed_process_peak_mib": 2406,
+      "unload_checks": 9,
+      "unload_live_module_checks": 0,
+      "candidate_start_checks": 3,
+      "candidate_start_live_module_checks": 0,
+      "runtime_workspace_peak_bytes": 9796096,
+      "monitor_errors": 0,
+      "oneformer_files_verified": 8,
+      "peak_reserved_bytes": 2596274176,
+      "oneformer_total_seconds": 2.357669241959229,
+      "candidates_inference_total_seconds": 13.976303574105259,
+      "candidates_load_total_seconds": 1.7289680429385044,
+      "post_gpu_processes": 0,
+      "model_verified_bytes": 881200070,
+      "counts": {
+        "pixels": 568832,
+        "sky_pixels": 138140,
+        "raw_building_pixels": 243626,
+        "effective_building_pixels": 0,
+        "sky_building_before": 56282,
+        "sky_building_after": 0,
+        "building_terrain_before": 152720,
+        "building_terrain_after": 0,
+        "effective_pixels": 242855,
+        "void_pixels": 325977
+      },
+      "rates": {
+        "sky_building_before_image_rate": 0.09894309743474347,
+        "sky_building_after_image_rate": 0.0,
+        "building_terrain_before_image_rate": 0.26847997299729975,
+        "building_terrain_after_image_rate": 0.0,
+        "effective_pixels_image_rate": 0.42693624831233123,
+        "void_pixels_image_rate": 0.5730637516876688
+      },
+      "known_cases": {
+        "sky_building": {
+          "cases": 1,
+          "positive_before": 1,
+          "positive_after": 0
+        },
+        "overlap_reported": {
+          "cases": 2,
+          "positive_before": 2,
+          "positive_after": 0
+        }
+      }
+    }
+  },
+  "model_revision": "4a5bac8e64f82681a12db2e151a4c2f4ce6092b2",
+  "model_sha256": {
+    "config.json": "27452b656a467dbdebdf879dc413d6f3facd2bfe3643824ae66c32c22884b4bd",
+    "preprocessor_config.json": "49e2c8f207405d063cf7824f97c2814fa864f8f19ea9e02c9e20a9ff539c6d49",
+    "README.md": "987c2f143f6f899d037e24d0110630fbc6eba57ab73b6e0d8c83868597b4c348",
+    "merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+    "vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349",
+    "tokenizer_config.json": "968a6126200b3c8f68fe955d61da20f3537e641a1deb538dc39fdad142248d72",
+    "special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+    "pytorch_model.bin": "c0b2fe11dfecee6f2f1f315f466946e96f4e94813f3f6d660ff3747b83c28cc9"
+  }
+}
