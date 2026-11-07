@@ -452,11 +452,34 @@ def _observations(db, directory):
 
 
 def _groups(asset, chosen, regions, run, segment, quality):
+    from types import SimpleNamespace
+
     import cv2
     import numpy as np
     from PIL import Image
 
     from colorstats.analyze import color
+    from colorstats.analyze.region_policy import reference
+
+    policy = reference(SimpleNamespace(**segment))
+    payload = run["parameters"].get("payload", {})
+    if policy is not None or payload.get("region_policy") is not None:
+        if policy != payload.get("region_policy") or policy is None:
+            raise ValueError("snapshotのregion-policyが選択segmentと一致しません")
+        if (str(chosen["segment"]) != policy["run_id"]
+                or color.config_hash(payload) != run["config_hash"]):
+            raise ValueError("snapshotの新policy色入力hashが一致しません")
+        for role, data in color.role_observations(payload).items():
+            if not role.startswith(asset["domain"] + "/"):
+                continue
+            yield {
+                "id": str(uuid.uuid5(chosen["color"], role)), "asset_id": asset["id"],
+                "run_id": chosen["color"], "role": role, "eligible": False,
+                "data": {**data, "region_policy": policy,
+                         "input_config_hash": run["config_hash"]},
+                "quality_eligible": False, "reasons": ["region_policy_quality_unvalidated"],
+            }
+        return
 
     groups = {role: members for role, members in quality.get("group_members", {}).items()
               if role.startswith(asset["domain"] + "/")

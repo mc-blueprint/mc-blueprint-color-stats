@@ -37,18 +37,35 @@ def save(path, value):
 
 def implementation():
     paths = sorted((ROOT / "src/colorstats").rglob("*.py"))
+    paths += sorted((ROOT / "src/colorstats/analyze").glob("oneformer-*.json"))
     paths += [Path(__file__), ROOT / "configs/segment_stats.yaml"]
     return {str(p.relative_to(ROOT)): segment._hash(p) for p in paths}
 
 
-def freeze(engine, root, asset_ids=None, *, reuse_segments=False):
+def _check_policy_reuse(source, settings):
+    from colorstats.analyze.region_policy import METHOD, policy_hash
+
+    if settings["segment"]["method"] != METHOD:
+        return
+    payload = source.parameters.get("payload", {})
+    if (source.parameters.get("region_policy_hash") != policy_hash()
+            or any(payload.get(k) != v for k, v in settings["segment"].items())
+            or segment.config_hash(payload) != source.config_hash):
+        raise ValueError("新policyで旧segmentや異なる入力・モデル・promptは再利用できません")
+
+
+def freeze(engine, root, asset_ids=None, *, reuse_segments=False, settings_path=None):
     """指定assetの完了prepと入力hashを新規固定する。省略時は#66固定全量を検査する。
 
     asset_idsは重複のないUUID一覧。欠落・未完了prep・既存manifestは拒否する。
     DBは読取り専用で、成功prep出力を後続GPU処理の不変入力とする。
     reuse_segmentsは同じprepと画像hashの成功segmentを固定し、後続だけを新規実行する。
     人物判定があればそのSHAとperson_maskも固定する。
+    settings_pathはfreezeする別設定YAML。省略時は既存の採用設定を使う。
     """
+    settings = yaml.safe_load((settings_path or ROOT / "configs/segment_stats.yaml").read_text(
+        encoding="utf-8",
+    ))
     if asset_ids is not None:
         identifiers = [UUID(value) for value in asset_ids]
         if not identifiers or len(set(identifiers)) != len(identifiers):
@@ -96,11 +113,11 @@ def freeze(engine, root, asset_ids=None, *, reuse_segments=False):
                     source = session.get(ProcessingRun, previous.run_id)
                     if source.finished_at is None or source.failure_reason:
                         raise ValueError("再利用segmentのrunが未確定です")
+                    _check_policy_reuse(source, settings)
                     row["segment_run_id"] = str(source.id)
             elif job.status != "failed":
                 raise ValueError("prep が未完了です")
             rows.append(row)
-    settings = yaml.safe_load((ROOT / "configs/segment_stats.yaml").read_text(encoding="utf-8"))
     if asset_ids is None and (
         len(rows) != 7607 or sum(r["prep_status"] == "succeeded" for r in rows) != 7603
     ):
@@ -178,6 +195,7 @@ def run_batch(engine, root, manifest, models, limit):
     import fcntl
 
     from colorstats.analyze import color, shade
+    from colorstats.analyze.region_policy import METHOD, OOM_REASON
 
     lock = (root / "runner.lock").open("a")
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -221,6 +239,10 @@ def run_batch(engine, root, manifest, models, limit):
                         if segment._digest(review) != row["privacy_review_sha256"]:
                             raise ValueError("固定後に人物判定が変わっています")
                 region_run = UUID(row["segment_run_id"]) if row.get("segment_run_id") else None
+                if region_run is not None:
+                    with Session(engine) as session:
+                        _check_policy_reuse(session.get(ProcessingRun, region_run),
+                                            manifest["settings"])
                 for stage in STAGES:
                     if stage == "segment" and row.get("segment_run_id"):
                         continue
@@ -231,12 +253,20 @@ def run_batch(engine, root, manifest, models, limit):
                     handler = {"segment": segment, "shade": shade, "color": color}[stage]
                     if stage == "segment":
                         payload.update(manifest["settings"]["segment"])
-                        payload["model_paths"] = {n: str(models / n) for n in ("sam2", "dino")}
+                        components = ("sam2", "dino")
+                        if payload["method"] == METHOD:
+                            components += ("oneformer",)
+                        payload["model_paths"] = {n: str(models / n) for n in components}
                     else:
                         with Session(engine) as session:
                             payload["regions"] = color.region_inputs(
                                 session, UUID(row["asset_id"]), region_run,
                             )
+                            policy = color.region_policy_input(
+                                session, UUID(row["asset_id"]), region_run,
+                            )
+                            if policy is not None:
+                                payload["region_policy"] = policy
                         payload["region_run_id"] = str(region_run)
                         if stage == "shade":
                             payload.update(manifest["settings"]["shade"])
@@ -271,6 +301,9 @@ def run_batch(engine, root, manifest, models, limit):
                                           "reason": job.failure_reason,
                                           "seconds": time.monotonic() - attempt_start,
                                           "at": datetime.now(UTC), "io": io_counters(worker)})
+                            if (payload.get("method") == METHOD
+                                    and OOM_REASON in (job.failure_reason or "")):
+                                stop.touch()
                     with Session(engine) as session:
                         job = session.get(Job, job_id)
                         if job.status != "succeeded":
@@ -337,6 +370,10 @@ def report(engine, root, manifest, output):
                     expected_links.add(region_run)
                     if payload["regions"] != color.region_inputs(session, job.asset_id, region_run):
                         violations.append(f"{run.id}:regions")
+                    if payload.get("region_policy") != color.region_policy_input(
+                        session, job.asset_id, region_run,
+                    ):
+                        violations.append(f"{run.id}:region_policy")
                 licenses = [row["license_class"], source.license_class]
                 if stage != "segment":
                     licenses.append(session.get(ProcessingRun, region_run).license_class)
@@ -466,6 +503,8 @@ def main(engine=None):
                         help="freeze対象のUUID一覧JSON。省略は#66固定全量")
     parser.add_argument("--reuse-segments", action="store_true",
                         help="freeze時に同じprep入力の成功segmentを固定して再利用")
+    parser.add_argument("--settings", type=Path,
+                        help="freeze時の設定。新policyは既存の採用設定とは別ファイルで指定")
     args = parser.parse_args()
     root = args.root.resolve()
     root.mkdir(parents=True, exist_ok=True)
@@ -475,7 +514,7 @@ def main(engine=None):
     try:
         if args.action == "freeze":
             freeze(engine, root, json.loads(args.asset_ids.read_text()) if args.asset_ids else None,
-                   reuse_segments=args.reuse_segments)
+                   reuse_segments=args.reuse_segments, settings_path=args.settings)
         else:
             manifest = json.loads((root / "manifest.json").read_text())
             if args.action == "run":

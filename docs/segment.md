@@ -223,3 +223,9 @@ wallは第一階層、treeは幹＋樹冠の和集合であり、terrain taxonom
 支持は公開正解の対応画素内の条件付き精度に限る。全画素の精度や実写真一般へ拡張しない。
 他ラベルは診断用途に保ち、公開正解画像は本番統計へ入れない。
 M3有用性条件の確定subject>=10・n_eff>=10は#66/#75で未検証である。
+
+## OneFormerによる新しい領域制約
+
+`oneformer-region-v1`の入力・不変artifact・後続payload契約は
+[region-policy-v1](region-policy.md)を参照する。既存`sam2-dino`とは別の版付きmethodとし、
+旧方式の品質判定や統計観測を新方式へ継承しない。
