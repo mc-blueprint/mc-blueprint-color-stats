@@ -475,10 +475,12 @@ def test_0008の非空台帳はdowngradeを拒否して台帳とrevisionを保�
     lease.acquire()
     with queue.engine.connect() as connection:
         before = connection.execute(text("SELECT key, state FROM collection_limit")).all()
+        previous_version = connection.scalar(text("SELECT version_num FROM alembic_version"))
     with pytest.raises(DBAPIError, match="通信枠台帳が残る"):
         command.downgrade(Config("alembic.ini"), "0007")
     with queue.engine.connect() as connection:
-        assert connection.scalar(text("SELECT version_num FROM alembic_version")) == "0008"
+        version = connection.scalar(text("SELECT version_num FROM alembic_version"))
+        assert version == previous_version
         assert connection.execute(text("SELECT key, state FROM collection_limit")).all() == before
 
 

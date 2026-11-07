@@ -173,23 +173,26 @@ class Queue:
                 retention.assert_usable(session, job.asset_id, images=True)
             job.lease_until = session.scalar(select(func.clock_timestamp())) + self.lease
 
-    def fail(self, claim: Claim, reason: str, *, retryable: bool = True) -> None:
-        """再試行可能で3試行未満だけpendingへ戻す。期限切れはLeaseLost。"""
+    def fail(self, claim: Claim, reason: str, *, retryable: bool = True,
+             delay: timedelta = timedelta(0)) -> None:
+        """再試行可能で3試行未満だけpendingへ戻す。delayはDB時計からの待機期間。
+
+        期限切れはLeaseLost。待機しても試行数は戻さない。
+        """
         with self._transaction() as session:
             job = self._owned(session, claim)
             job.status = "failed" if not retryable or job.attempts >= 3 else "pending"
             job.failure_reason = reason
+            job.available_at = session.scalar(select(func.clock_timestamp())) + delay
             job.lease_token = job.lease_until = None
 
-    def defer(self, claim: Claim, reason: str) -> None:
-        """試行数を返し、DB時計で30秒後に再取得可能にする。失効時はLeaseLost。"""
+    def defer(self, claim: Claim, reason: str, *, delay: timedelta = timedelta(seconds=30)) -> None:
+        """試行数を返し、DB時計からdelay後に再取得可能にする。失効時はLeaseLost。"""
         with self._transaction() as session:
             job = self._owned(session, claim)
             job.status = "pending"
             job.attempts -= 1
-            job.available_at = session.scalar(select(func.clock_timestamp())) + timedelta(
-                seconds=30
-            )
+            job.available_at = session.scalar(select(func.clock_timestamp())) + delay
             job.failure_reason = reason
             job.lease_token = job.lease_until = None
 

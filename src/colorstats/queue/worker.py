@@ -6,6 +6,7 @@ import multiprocessing
 import socket
 import threading
 from dataclasses import dataclass, field
+from datetime import timedelta
 from pathlib import Path
 from time import monotonic, sleep
 
@@ -29,6 +30,15 @@ class Prepared:
     files: list[tuple[Path, Path]] = field(default_factory=list)
 
 
+@dataclass(frozen=True)
+class Deferred:
+    """次回取得まで延期する。実際のAPI失敗だけconsume_attemptを指定する。"""
+
+    reason: str
+    delay: timedelta
+    consume_attempt: bool = False
+
+
 def _prepare(connection):
     try:
         while True:
@@ -41,7 +51,10 @@ def _prepare(connection):
             module_name, claim = request
             try:
                 module = importlib.import_module(module_name)
-                result = (True, module.prepare(claim))
+                if claim.stage == "review" and claim.payload.get("kind") == "image_gate":
+                    result = (True, module.prepare_job(claim))
+                else:
+                    result = (True, module.prepare(claim))
             except Exception as error:
                 result = (
                     False,
@@ -61,6 +74,7 @@ class Worker:
 
     prepareは試行固有の一時ファイルだけを書き、DBや確定先を変更しない。
     registerは親プロセスの完了取引内でDB登録のみを行う。
+    reviewのkind=image_gateは子プロセスでAPI台帳を先行確定し、共通ループでleaseを更新する。
     """
 
     def __init__(
@@ -173,6 +187,11 @@ class Worker:
                 self.queue.defer(claim, "保存先の復旧待ち")
                 return
             self.queue.check_input(claim)
+            module_name = (
+                "colorstats.image_gate"
+                if claim.stage == "review" and claim.payload.get("kind") == "image_gate"
+                else self.handlers[claim.stage]
+            )
             self._start_prepare()
             process = self._process
             preparing = True
@@ -183,7 +202,7 @@ class Worker:
 
             def communicate():
                 try:
-                    connection.send((self.handlers[claim.stage], claim))
+                    connection.send((module_name, claim))
                     response.append(connection.recv())
                 except Exception as error:
                     errors.append(error)
@@ -227,7 +246,13 @@ class Worker:
                         self._stop_prepare()
                         self._return(claim)
                         return
-                    module = importlib.import_module(self.handlers[claim.stage])
+                    if isinstance(result, Deferred):
+                        if result.consume_attempt:
+                            self.queue.fail(claim, result.reason, delay=result.delay)
+                        else:
+                            self.queue.defer(claim, result.reason, delay=result.delay)
+                        return
+                    module = importlib.import_module(module_name)
                     self.queue.complete(
                         claim,
                         result.info,
