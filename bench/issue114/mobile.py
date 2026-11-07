@@ -146,6 +146,37 @@ def write_pages(cards, output, limit=LIMIT, group_counts=None):
     return files
 
 
+def _review_references(selection, gate, region_run_id, people):
+    return {
+        "image_gate_run_id": gate.get("run_id") or selection.get("image_gate_run_id"),
+        "region_policy_run_id": region_run_id,
+        "privacy_review_run_id": selection.get("privacy_review_run_id"),
+        "presented_source_sha256": gate.get("source_sha256"),
+        "confirmed_real_people": people,
+    }
+
+
+def _selection_for(decisions, asset_id):
+    row = decisions[asset_id]
+    return row.get("selection", row)
+
+
+def validate_presentation_run(session, asset_id, selection):
+    """閲覧対象のprivacy run/hashとA/B参照を照合する。保留verdictも提示可能。"""
+    run_id = selection.get("privacy_review_run_id")
+    run = session.get(ProcessingRun, UUID(run_id)) if run_id else None
+    parameters = run.parameters if run else {}
+    evidence = parameters.get("evidence", {})
+    if (run is None or run.stage != "review" or not run.finished_at
+            or run.failure_reason is not None or parameters.get("kind") != "privacy_review"
+            or evidence.get("asset_id") != str(asset_id)
+            or evidence.get("image_gate_run_id") != selection.get("image_gate_run_id")
+            or evidence.get("region_policy_run_id") != selection.get("region_policy_run_id")
+            or selection.get("privacy_review_hash") != contract_digest(parameters)):
+        raise ValueError("提示するprivacy review run/hashの参照が一致しません")
+    return run
+
+
 def build(db, bundle, execution, output, taxonomy, *, host=None, require_contracts=True):
     """保持ロック下で利用可否を確認し、画像入りHTMLと番号表を保持登録する。"""
     manifest = json.loads((bundle / "manifest.json").read_text())
@@ -181,7 +212,7 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
     region_run_ids = {}
     for aid in ids:
         row = decisions[aid]
-        selection = row.get("selection", row)
+        selection = _selection_for(decisions, aid)
         gate_run_id = row.get("image_gate_run_id") or selection.get("image_gate_run_id")
         if require_contracts and (selection.get("contract") != "image-review-v1"
                                   or not gate_run_id):
@@ -225,7 +256,7 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
                      or selection.get("region_policy_hash") != policy["policy_hash"])):
             raise ValueError("image-review-v1とregion-policy-v1の参照が一致しません")
         if require_contracts:
-            privacy_review.check_selection(session, UUID(aid), selection)
+            validate_presentation_run(session, UUID(aid), selection)
         payload = {"region_policy": policy, "region_run_id": str(run.id),
                    "input_path": row["input_path"], "input_sha256": row["input_sha256"]}
         role_masks = region_policy_contract.load_masks(payload)
@@ -254,6 +285,7 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
               "random": len(random_ids), "challenge": len(challenge_ids)}
     for number, aid in enumerate(ids, 1):
         row = decisions[aid]
+        selection = _selection_for(decisions, aid)
         labels = ["固定無作為群"] if aid in random_ids else ["目的抽出challenge群"]
         if aid in overlap:
             labels.append("無作為群から重複除外")
@@ -360,11 +392,7 @@ src="{outline_uri(union, input_size, pattern='dash' if index % 2 else 'solid')}"
                                                 "person_ratio", "mask_ratio")},
                      "image_review_version": row.get("image_review_version"),
                      "image_gate_identity_hash": gate.get("identity_hash"),
-                     "image_gate_run_id": gate.get("run_id"),
-                     "region_policy_run_id": region_run_ids.get(aid),
-                     "privacy_review_run_id": selection.get("privacy_review_run_id"),
-                     "presented_source_sha256": gate.get("source_sha256"),
-                     "confirmed_real_people": people,
+                     **_review_references(selection, gate, region_run_ids.get(aid), people),
                      "image_gate_decision": gate_decision.get("decision"),
                      "image_gate_reason": gate_reason,
                      "image_gate_subject": verdict.get("subject"),
@@ -394,21 +422,28 @@ src="{outline_uri(union, input_size, pattern='dash' if index % 2 else 'solid')}"
 def parse_chat_reply(text, total):
     """「全N枚確認済み。問題あり：番号 理由」の返信を番号記録にする。"""
     if not isinstance(text, str) or not text.strip():
-        raise ValueError("確認済み枚数を含む会話返信が必要です")
-    normalized = text.replace(",", "、").replace(";", "、").replace("；", "、")
-    if f"全{total}枚" not in normalized or "確認" not in normalized:
-        raise ValueError("提示件数と一致する全件確認済みの返信が必要です")
-    if "問題なし" in normalized and "問題あり" not in normalized:
+        raise ValueError("全件確認済みの肯定形返信が必要です")
+    normalized = text.translate(str.maketrans("０１２３４５６７８９，；", "0123456789,;"))
+    prefix = f"全{total}枚確認済み。"
+    if not normalized.startswith(prefix):
+        raise ValueError("提示件数と一致する全件確認済みの肯定形が必要です")
+    result = normalized[len(prefix):]
+    if result == "問題なし":
         return {"all_reviewed": True, "reply_text": text, "problems": []}
-    match = re.search(r"問題あり\s*[:：]?\s*(.+)$", normalized)
+    match = re.fullmatch(r"問題あり[：:]\s*(.+)", result)
     if not match:
         raise ValueError("問題なし、または問題番号と理由を返信してください")
+    if any(term in result for term in ("問題なし", "問題ない", "未確認", "確認していない")):
+        raise ValueError("問題内容と否定形が混在した返信は受け付けられません")
     problems = []
-    for item in match.group(1).split("、"):
-        found = re.fullmatch(r"\s*(?:番号\s*)?(\d+)\s*(?:[:：]\s*)?(.+?)\s*", item)
-        if not found:
+    for item in re.split(r"[,、;]", match.group(1)):
+        found = re.fullmatch(r"\s*(?:番号\s*)?(\d+)(?:\s*[:：]\s*|\s+)(\S(?:.*\S)?)\s*", item)
+        if not found or int(found.group(1)) < 1 or int(found.group(1)) > total:
             raise ValueError("問題番号ごとに理由を記載してください")
-        problems.append({"number": int(found.group(1)), "reason": found.group(2)})
+        number = int(found.group(1))
+        if any(problem["number"] == number for problem in problems):
+            raise ValueError("問題番号が重複しています")
+        problems.append({"number": number, "reason": found.group(2)})
     return {"all_reviewed": True, "reply_text": text, "problems": problems}
 
 

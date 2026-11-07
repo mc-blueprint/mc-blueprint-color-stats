@@ -369,6 +369,35 @@ def test_issue120番号返信は新privacy契約を失効させ旧writerを使�
         assert held.parameters["verdict"] == {"decision": "pending", "reason": "human_hold"}
 
 
+def test_issue120閲覧検証は保留privacy_runのrun_hashを受け付ける(
+    queue, asset, review_source,
+):
+    from bench.issue114.mobile import validate_presentation_run
+
+    source, gate_id, source_sha256 = review_source
+    original = privacy.write(
+        queue, asset, gate_id, source["region_run_id"], code_version="test",
+    )
+    held_id = privacy.record_hold(
+        queue, asset, original, code_version="test", reviewer="確認者",
+        presented_source_sha256=source_sha256, note="閲覧対象の保留例",
+    )
+
+    with Session(queue.engine) as session:
+        held = session.get(ProcessingRun, held_id)
+        with pytest.raises(PermissionError, match="保留"):
+            privacy.selection(session, asset, held_id)
+        selection = {"image_gate_run_id": str(gate_id),
+                     "region_policy_run_id": str(source["region_run_id"]),
+                     "privacy_review_run_id": str(held_id),
+                     "privacy_review_hash": digest(held.parameters)}
+        assert validate_presentation_run(session, asset, selection) == held
+        with pytest.raises(ValueError, match="run/hash"):
+            validate_presentation_run(session, asset, selection | {
+                "privacy_review_hash": "0" * 64,
+            })
+
+
 def test_訂正前に準備したjobも完了時に承認を迂回できない(
     queue, asset, review_source, monkeypatch,
 ):
