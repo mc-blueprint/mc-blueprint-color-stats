@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 from colorstats import api_budget
 from colorstats import image_gate as gate
-from colorstats.api_budget import BUDGET_KEY, NUSD, PRICING, Ledger, RetryLater
+from colorstats.api_budget import BUDGET_KEY, NUSD, PRICING, Ledger, RetryLater, WaitForSend
 from colorstats.queue import LeaseLost, Queue
 from colorstats.queue.core import NonRetryableError
 from colorstats.queue.worker import Worker
@@ -282,7 +282,11 @@ def test_lease切れ後も台帳の保存応答を使い二重送信しない(tr
     assert len(requests) == 2
 
 
-def test_タイムアウトは予約を残してバッチ停止し自動再送しない(trial, monkeypatch):
+@pytest.mark.parametrize("concurrency", [1, 4])
+def test_タイムアウトは上限精算して当該要求だけ停止し自動再送しない(
+    trial, monkeypatch, concurrency,
+):
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_CONCURRENCY", str(concurrency))
     queue, claim, requests = trial
     original = api_budget.request
 
@@ -300,8 +304,152 @@ def test_タイムアウトは予約を残してバッチ停止し自動再送�
     assert len(requests) == 2
     with Session(queue.engine) as session:
         call = session.scalar(select(ApiCall).where(ApiCall.endpoint == "responses"))
-        assert call.state == "unknown" and call.cost_nusd is None and call.reserved_nusd > 0
+        assert call.state == "stopped" and call.cost_nusd == call.reserved_nusd > 0
+        assert call.details["failure_phase"] == "request"
+        assert call.details["failure_type"] == "TimeoutError"
+        assert not session.get(ApiBudget, BUDGET_KEY).stopped
+
+
+def test_応答保存エラーも秘密値なしで原因を記録し再送しない(trial, monkeypatch):
+    queue, claim, requests = trial
+    save = api_budget.save_private
+
+    def fail(path, envelope):
+        if "usage" in json.loads(envelope["body"]):
+            raise OSError("記録してはいけない本文")
+        save(path, envelope)
+
+    monkeypatch.setattr(api_budget, "save_private", fail)
+    with pytest.raises(NonRetryableError):
+        gate.prepare(queue, claim, key="fixture")
+    with pytest.raises(NonRetryableError):
+        gate.prepare(queue, claim, key="fixture")
+    assert len(requests) == 2
+    with Session(queue.engine) as session:
+        call = session.scalar(select(ApiCall).where(ApiCall.endpoint == "responses"))
+        assert call.state == "stopped" and call.cost_nusd == call.reserved_nusd
+        assert call.details["failure_phase"] == "save_response"
+        assert call.details["failure_type"] == "OSError"
+        assert "記録してはいけない本文" not in json.dumps(call.details, ensure_ascii=False)
+
+
+@pytest.mark.parametrize("reset", [False, True])
+def test_不明連続3件または成功を挟む累計30件だけで共有予算を停止する(
+    trial, monkeypatch, tmp_path, reset,
+):
+    queue, claim, requests = trial
+    original = api_budget.request
+
+    def timeout(endpoint, body, key):
+        if endpoint == "responses":
+            requests.append(endpoint)
+            raise TimeoutError
+        return original(endpoint, body, key)
+
+    limit = 30 if reset else 3
+    for index in range(limit):
+        if index:
+            job = gate.enqueue(queue, claim.asset_id, tmp_path / f"unknown-{index}",
+                               budget_key=BUDGET_KEY, code_version="test",
+                               execution_authorized=True)
+            claim = queue.claim(("review",), job_ids=[job])
+        monkeypatch.setattr(api_budget, "request", timeout)
+        with pytest.raises(NonRetryableError):
+            gate.prepare(queue, claim, key="fixture")
+        with Session(queue.engine) as session:
+            stopped = session.get(ApiBudget, BUDGET_KEY).stopped
+            assert stopped == (index == limit - 1)
+            row = session.scalar(select(ApiCall).where(ApiCall.job_id == claim.id,
+                                                      ApiCall.endpoint == "responses"))
+            assert row.details["unknown_total"] == index + 1
+            assert row.details["unknown_streak"] == (1 if reset else index + 1)
+            assert row.details["stop_policy"]["unknown_total"] == 30
+        if reset and not stopped:
+            monkeypatch.setattr(api_budget, "request", original)
+            job = gate.enqueue(queue, claim.asset_id, tmp_path / f"success-{index}",
+                               budget_key=BUDGET_KEY, code_version="test",
+                               execution_authorized=True)
+            success = queue.claim(("review",), job_ids=[job])
+            Ledger(queue, success, lambda s: None).call(
+                "responses", {"model": gate.MODEL}, 1_000_000, key="fixture")
+
+
+def test_保存応答があれば保存直後の例外でも再送せず実usageで精算する(trial, monkeypatch):
+    queue, claim, requests = trial
+    original = api_budget.save_private
+
+    def fail_after_save(path, envelope):
+        original(path, envelope)
+        raise OSError("fsync後の例外")
+
+    monkeypatch.setattr(api_budget, "save_private", fail_after_save)
+    complete(queue, claim, gate.prepare(queue, claim, key="fixture"))
+    assert len(requests) == 2
+    with Session(queue.engine) as session:
+        assert not session.get(ApiBudget, BUDGET_KEY).stopped
+        assert all(row.state == "settled" for row in session.scalars(select(ApiCall)))
+
+
+def test_4並列の課金不明も共有ロックで重複なく上限精算して閾値停止する(
+    trial, monkeypatch, tmp_path,
+):
+    queue, claim, requests = trial
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_CONCURRENCY", "4")
+    claims = [claim]
+    for index in range(3):
+        job = gate.enqueue(queue, claim.asset_id, tmp_path / str(index), budget_key=BUDGET_KEY,
+                           code_version="test", execution_authorized=True)
+        claims.append(queue.claim(("review",), job_ids=[job]))
+    started, resume = Event(), Event()
+
+    def timeout(endpoint, body, key):
+        requests.append(endpoint)
+        if len(requests) == 4:
+            started.set()
+        assert resume.wait(10)
+        raise TimeoutError
+
+    monkeypatch.setattr(api_budget, "request", timeout)
+    with ThreadPoolExecutor(4) as pool:
+        futures = [pool.submit(Ledger(queue, item, lambda s: None).call,
+                               "responses", {"model": gate.MODEL}, 1_000_000, key="fixture")
+                   for item in claims]
+        try:
+            assert started.wait(10)
+        finally:
+            resume.set()
+        for future in futures:
+            with pytest.raises(NonRetryableError):
+                future.result()
+    with Session(queue.engine) as session:
+        rows = session.scalars(select(ApiCall)).all()
+        assert sorted(row.details["unknown_total"] for row in rows) == [1, 2, 3, 4]
+        assert all(row.state == "stopped" and row.cost_nusd == 1_000_000 for row in rows)
         assert session.get(ApiBudget, BUDGET_KEY).stopped
+
+
+def test_予約上限で精算し停止した要求は予算解除後も再送しない(trial, monkeypatch):
+    queue, claim, requests = trial
+    original = api_budget.request
+
+    def timeout(endpoint, body, key):
+        if endpoint == "responses":
+            requests.append((endpoint, body))
+            raise TimeoutError
+        return original(endpoint, body, key)
+
+    monkeypatch.setattr(api_budget, "request", timeout)
+    with pytest.raises(NonRetryableError):
+        gate.prepare(queue, claim, key="fixture")
+    with Session(queue.engine) as session, session.begin():
+        call = session.scalar(select(ApiCall).where(ApiCall.endpoint == "responses"))
+        assert call.reserved_nusd > 0
+        call.cost_nusd, call.state = call.reserved_nusd, "stopped"
+        call.details = {**call.details, "reconciliation": {"basis": "reservation_upper_bound"}}
+        session.get(ApiBudget, BUDGET_KEY).stopped = False
+    with pytest.raises(NonRetryableError, match="停止済み"):
+        gate.prepare(queue, claim, key="fixture")
+    assert len(requests) == 2
 
 
 @pytest.mark.parametrize("status,code", [
@@ -322,7 +470,11 @@ def test_認証とquotaと非対応countは本判定へ進まない(trial, monke
 
 
 @pytest.mark.parametrize("status", [429, 503])
-def test_一時HTTP障害はRetryAfterを尊重し連続障害で停止する(trial, monkeypatch, status):
+@pytest.mark.parametrize("concurrency", [1, 4])
+def test_一時HTTP障害はRetryAfterを尊重し連続障害で停止する(
+    trial, monkeypatch, status, concurrency,
+):
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_CONCURRENCY", str(concurrency))
     queue, claim, requests = trial
 
     def error(endpoint, body, key):
@@ -340,10 +492,10 @@ def test_一時HTTP障害はRetryAfterを尊重し連続障害で停止する(tr
     with Session(queue.engine) as session, session.begin():
         row = session.scalar(select(ApiCall))
         row.details = {**row.details, "retry_at": datetime.now(UTC).isoformat()}
-    with pytest.raises(NonRetryableError):
+    with pytest.raises(NonRetryableError if status == 429 else RetryLater):
         gate.prepare(queue, claim, key="fixture")
     with Session(queue.engine) as session:
-        assert session.get(ApiBudget, BUDGET_KEY).stopped
+        assert session.get(ApiBudget, BUDGET_KEY).stopped == (status == 429)
     assert len(requests) == 2
 
 
@@ -381,6 +533,58 @@ def test_同時予約で共有capと直列送信を守る(trial, monkeypatch, tm
     assert requests == ["responses"]
     with Session(queue.engine) as session:
         assert session.scalar(select(func.count()).select_from(ApiCall)) == 1
+
+
+@pytest.mark.parametrize("slots,blocked", [(4, WaitForSend), (3, NonRetryableError)])
+def test_4並列でも送信枠と共有capを守り精算後も再送しない(
+    trial, monkeypatch, tmp_path, slots, blocked,
+):
+    queue, claim, requests = trial
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_CONCURRENCY", "4")
+    with Session(queue.engine) as session, session.begin():
+        session.get(ApiBudget, BUDGET_KEY).cap_nusd = slots * 1_000_000
+    claims = [claim]
+    for index in range(slots):
+        job_id = gate.enqueue(queue, claim.asset_id, tmp_path / str(index),
+                              budget_key=BUDGET_KEY, code_version="test",
+                              execution_authorized=True)
+        claims.append(queue.claim(("review",), job_ids=[job_id]))
+    started, resume = Event(), Event()
+
+    def blocking(endpoint, body, key):
+        requests.append(endpoint)
+        if len(requests) == slots:
+            started.set()
+        assert resume.wait(20)
+        return {"status": 200, "request_id": "req_fixture", "retry_after": None,
+                "body": json.dumps(response())}
+
+    monkeypatch.setattr(api_budget, "request", blocking)
+    body = {"model": gate.MODEL}
+    with ThreadPoolExecutor(slots) as pool:
+        futures = [pool.submit(Ledger(queue, item, lambda s: None).call,
+                               "responses", body, 1_000_000, key="fixture")
+                   for item in claims[:slots]]
+        try:
+            assert started.wait(10)
+            with pytest.raises(blocked):
+                Ledger(queue, claims[-1], lambda s: None).call(
+                    "responses", body, 1_000_000, key="fixture")
+            with Session(queue.engine) as session:
+                assert session.scalar(select(func.count()).select_from(ApiCall).where(
+                    ApiCall.state == "sent")) == slots
+                assert session.scalar(select(func.sum(ApiCall.reserved_nusd))) == slots * 1_000_000
+        finally:
+            resume.set()
+        for future in futures:
+            future.result()
+    Ledger(queue, claim, lambda s: None).call(
+        "responses", body, 1_000_000, key="fixture")
+    assert len(requests) == slots
+    with Session(queue.engine) as session:
+        assert session.scalar(select(func.count()).select_from(ApiCall).where(
+            ApiCall.state != "settled")) == 0
+        assert session.scalar(select(func.sum(ApiCall.cost_nusd))) <= slots * 1_000_000
 
 
 def test_境界額を超える予約は送らず不明請求も差し引く(trial):
@@ -454,8 +658,9 @@ def test_応答を失ったsent台帳は再送せず予約を保全する(trial)
             "responses", {"model": gate.MODEL}, 2_000_000, key="fixture")
     assert not requests
     with Session(queue.engine) as session:
-        assert session.scalar(select(ApiCall.state)) == "unknown"
-        assert session.get(ApiBudget, BUDGET_KEY).stopped
+        row = session.scalar(select(ApiCall))
+        assert row.state == "stopped" and row.cost_nusd == row.reserved_nusd
+        assert not session.get(ApiBudget, BUDGET_KEY).stopped
 
 
 def test_上限予約ちょうどは許可し超過usageは採用しない(trial):
@@ -518,7 +723,7 @@ def test_usage欠測は0円にせず停止する(trial, monkeypatch):
         gate.prepare(queue, claim, key="fixture")
     with Session(queue.engine) as session:
         row = session.scalar(select(ApiCall).where(ApiCall.endpoint == "responses"))
-        assert row.cost_nusd is None and row.reserved_nusd > 0
+        assert row.cost_nusd == row.reserved_nusd > 0
 
 
 @pytest.mark.parametrize("changes", [
@@ -541,8 +746,9 @@ def test_別modelとtierとcache欠測は料金不明として停止する(trial
         gate.prepare(queue, claim, key="fixture")
     with Session(queue.engine) as session:
         row = session.scalar(select(ApiCall).where(ApiCall.endpoint == "responses"))
-        assert row.cost_nusd is None and row.state == "unknown"
-        assert session.get(ApiBudget, BUDGET_KEY).stopped
+        assert row.cost_nusd == row.reserved_nusd and row.state == "stopped"
+        assert session.get(ApiBudget, BUDGET_KEY).stopped == (
+            "model" in changes or "service_tier" in changes)
 
 
 def test_count成功は判定要求の連続障害を解除しない(trial, monkeypatch, tmp_path):
@@ -552,7 +758,7 @@ def test_count成功は判定要求の連続障害を解除しない(trial, monk
     def unavailable(endpoint, body, key):
         result = original(endpoint, body, key)
         if endpoint == "responses":
-            result.update(status=503, retry_after="1", body="{}")
+            result.update(status=429, retry_after="1", body="{}")
         return result
 
     monkeypatch.setattr(api_budget, "request", unavailable)
@@ -561,6 +767,11 @@ def test_count成功は判定要求の連続障害を解除しない(trial, monk
     other_id = gate.enqueue(queue, claim.asset_id, tmp_path / "other", budget_key=BUDGET_KEY,
                             code_version="test", execution_authorized=True)
     other = queue.claim(("review",), job_ids=[other_id])
+    with pytest.raises(WaitForSend):
+        gate.prepare(queue, other, key="fixture")
+    with Session(queue.engine) as session, session.begin():
+        row = session.scalar(select(ApiCall).where(ApiCall.endpoint == "responses"))
+        row.details = {**row.details, "retry_at": datetime.now(UTC).isoformat()}
     with pytest.raises(NonRetryableError):
         gate.prepare(queue, other, key="fixture")
     with Session(queue.engine) as session:
@@ -582,6 +793,95 @@ def test_取得品質reviewの既存監査は専用経路に入らない(trial, 
     assert called == []
     with Session(queue.engine) as session:
         assert session.get(Job, other.id).failure_reason.endswith("既存経路")
+
+
+@pytest.mark.parametrize("status", [429, 503])
+def test_別jobも同じendpointとmodelのRetryAfterを共有する(
+    trial, monkeypatch, tmp_path, status,
+):
+    queue, claim, requests = trial
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_CONCURRENCY", "4")
+
+    def limited(endpoint, body, key):
+        requests.append(endpoint)
+        return {"status": status, "request_id": "req_fixture", "retry_after": "300",
+                "body": "{}"}
+
+    monkeypatch.setattr(api_budget, "request", limited)
+    body = {"model": gate.MODEL}
+    with pytest.raises(RetryLater):
+        Ledger(queue, claim, lambda s: None).call("responses", body, 1000, key="fixture")
+    other_id = gate.enqueue(queue, claim.asset_id, tmp_path / "shared-wait",
+                            budget_key=BUDGET_KEY, code_version="test",
+                            execution_authorized=True)
+    other = queue.claim(("review",), job_ids=[other_id])
+    with pytest.raises(WaitForSend) as caught:
+        Ledger(queue, other, lambda s: None).call("responses", body, 1000, key="fixture")
+    assert 295 < caught.value.delay.total_seconds() <= 300
+    assert requests == ["responses"]
+    with Session(queue.engine) as session:
+        assert not session.get(ApiBudget, BUDGET_KEY).stopped
+        assert session.scalar(select(func.count()).select_from(ApiCall)) == 1
+
+
+@pytest.mark.parametrize("changes", [
+    {"model": "fixture-unpriced-model"}, {"service_tier": "priority"},
+])
+def test_料金前提の不一致は別jobの送信も止める(trial, monkeypatch, tmp_path, changes):
+    queue, claim, requests = trial
+
+    def mismatch(endpoint, body, key):
+        requests.append(endpoint)
+        return {"status": 200, "request_id": "req_fixture", "retry_after": None,
+                "body": json.dumps(response(**changes))}
+
+    monkeypatch.setattr(api_budget, "request", mismatch)
+    with pytest.raises(NonRetryableError):
+        Ledger(queue, claim, lambda s: None).call(
+            "responses", {"model": gate.MODEL}, 1000, key="fixture")
+    with Session(queue.engine) as session:
+        assert session.get(ApiBudget, BUDGET_KEY).stopped
+        row = session.scalar(select(ApiCall))
+        assert row.cost_nusd == row.reserved_nusd and row.state == "stopped"
+    other_id = gate.enqueue(queue, claim.asset_id, tmp_path / "pricing-stop",
+                            budget_key=BUDGET_KEY, code_version="test",
+                            execution_authorized=True)
+    other = queue.claim(("review",), job_ids=[other_id])
+    with pytest.raises(NonRetryableError):
+        Ledger(queue, other, lambda s: None).call(
+            "responses/input_tokens", {"model": gate.MODEL}, 0, key="fixture")
+    assert requests == ["responses"]
+
+
+def test_RetryAfterはendpointとmodelを区別し期限後に共有待機を解除する(
+    trial, monkeypatch, tmp_path,
+):
+    queue, claim, requests = trial
+    original = api_budget.request
+
+    def limited(endpoint, body, key):
+        requests.append(endpoint)
+        return {"status": 429, "request_id": "req_fixture", "retry_after": "300",
+                "body": "{}"}
+
+    monkeypatch.setattr(api_budget, "request", limited)
+    with pytest.raises(RetryLater):
+        Ledger(queue, claim, lambda s: None).call(
+            "responses/input_tokens", {"model": gate.MODEL}, 0, key="fixture")
+    other_id = gate.enqueue(queue, claim.asset_id, tmp_path / "separate-wait",
+                            budget_key=BUDGET_KEY, code_version="test",
+                            execution_authorized=True)
+    other = queue.claim(("review",), job_ids=[other_id])
+    monkeypatch.setattr(api_budget, "request", original)
+    ledger = Ledger(queue, other, lambda s: None)
+    ledger.call("responses/input_tokens", {"model": "fixture-other-model"}, 0, key="fixture")
+    ledger.call("responses", {"model": gate.MODEL}, 1_000_000, key="fixture")
+    with Session(queue.engine) as session, session.begin():
+        row = session.scalar(select(ApiCall).where(ApiCall.job_id == claim.id))
+        row.details = {**row.details, "retry_at": datetime.now(UTC).isoformat()}
+    Ledger(queue, claim, lambda s: None).call(
+        "responses/input_tokens", {"model": gate.MODEL}, 0, key="fixture")
+    assert len(requests) == 4
 
 
 def test_workerはimage_gateだけ専用経路へdispatchする(trial, monkeypatch, tmp_path):
