@@ -420,26 +420,21 @@ src="{outline_uri(union, input_size, pattern='dash' if index % 2 else 'solid')}"
 
 
 def parse_chat_reply(text, total):
-    """「全N枚確認済み。問題あり：番号 理由」の返信を番号記録にする。"""
+    """担当が確認した定型テキストを読む。理由は分割・解釈せず行単位で保持する。"""
     if not isinstance(text, str) or not text.strip():
         raise ValueError("全件確認済みの肯定形返信が必要です")
-    normalized = text.translate(str.maketrans("０１２３４５６７８９，；", "0123456789,;"))
-    normalized = normalized.strip().rstrip("。").rstrip()
-    prefix = re.match(rf"全{total}枚確認済み[。\s]*", normalized)
-    if not prefix:
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    header = re.fullmatch(r"全([0-9０-９]+)枚確認済み。?", lines[0])
+    if not header or int(header.group(1)) != total:
         raise ValueError("提示件数と一致する全件確認済みの肯定形が必要です")
-    result = normalized[prefix.end():]
-    if result == "問題なし":
+    if lines[1:] == ["問題なし"]:
         return {"all_reviewed": True, "reply_text": text, "problems": []}
-    match = re.fullmatch(r"問題あり[：:]\s*(.+)", result, re.DOTALL)
-    if not match:
-        raise ValueError("問題なし、または問題番号と理由を返信してください")
-    if any(term in result for term in ("問題なし", "問題ない", "未確認", "確認していない")):
-        raise ValueError("問題内容と否定形が混在した返信は受け付けられません")
+    if len(lines) < 2:
+        raise ValueError("問題なし、または1行1件の番号: 理由が必要です")
     problems = []
-    for item in re.split(r"[,、;。\r\n]+\s*|\s+(?=(?:番号\s*)?[0-9])", match.group(1)):
-        found = re.fullmatch(r"\s*(?:番号\s*)?(\d+)(?:\s*[:：]\s*|\s+)(\S(?:.*\S)?)\s*", item)
-        if not found or int(found.group(1)) < 1 or int(found.group(1)) > total:
+    for line in lines[1:]:
+        found = re.fullmatch(r"([0-9０-９]+)[：:]\s*(\S.*)", line)
+        if not found or not 1 <= int(found.group(1)) <= total:
             raise ValueError("問題番号ごとに理由を記載してください")
         number = int(found.group(1))
         if any(problem["number"] == number for problem in problems):
