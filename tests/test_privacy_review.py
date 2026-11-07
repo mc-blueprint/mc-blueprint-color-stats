@@ -17,3 +17,10 @@ def test_新版の欠損参照を旧契約として扱わない():
     assert is_new({"contract": "image-review-v1"})
     assert is_new({"privacy_review_run_id": "missing"})
     assert not is_new({"person_mask": None})
+
+
+@pytest.mark.parametrize("key", ["contract", "image_gate_hash", "privacy_review_hash",
+                                 "region_policy_hash", "image_gate_input_sha256",
+                                 "person_mask_sha256", "analysis_domain"])
+def test_新版の項目はnullだけでも旧契約にならない(key):
+    assert is_new({key: None})

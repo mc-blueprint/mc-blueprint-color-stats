@@ -17,7 +17,7 @@ from colorstats.collect import Candidate, SearchResult, measurement
 from colorstats.collect import stage as collect
 from colorstats.queue import RunInfo
 from colorstats.retention import review_privacy
-from colorstats.schema.models import Asset, ProcessingRun, Source, Subject
+from colorstats.schema.models import Asset, ProcessingRun, Retention, RetentionFile, Source, Subject
 from colorstats.stats import aggregate, subjects
 from colorstats.stats.snapshot import execute
 from colorstats.stats.subject_cli import load_rules
@@ -38,7 +38,7 @@ pytestmark = pytest.mark.skipif(
 
 
 @pytest.mark.parametrize("category", ["analysis_only", "open"])
-def test_収集からsubjectと全stageを経由して統計へ区分と根拠が伝播する(
+def test_旧cohortのsubjectと全stageを経由して統計へ区分と根拠が伝播する(
     queue, tmp_path, analysis_policy, payload, settings, monkeypatch, category,
 ):
     with Session(queue.engine) as session, session.begin():
@@ -141,6 +141,9 @@ def test_収集からsubjectと全stageを経由して統計へ区分と根拠�
             "region_run_id": segment_id, "regions": regions, "license_class": category,
             "taxonomy_version": "0.1.0", "output_path": str(tmp_path / "shade.json")}
     with Session(queue.engine) as session, session.begin():
+        # 旧cohortの権利伝播を検証し、新規画像の人物確認とは分ける。
+        session.execute(delete(RetentionFile).where(RetentionFile.asset_id == asset_id))
+        session.execute(delete(Retention).where(Retention.asset_id == asset_id))
         review_privacy(session, asset_id, reviewer="fixture", subject="building")
     complete_stage(shade, "shade", base | {"method": "none"})
     color_id, _ = complete_stage(color, "color", base | {

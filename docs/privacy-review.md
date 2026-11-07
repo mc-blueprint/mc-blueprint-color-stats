@@ -39,7 +39,8 @@ workerの入力検証と完了登録で再検証し、色runからprivacy runへ
 新snapshotのasset selectionにも同じ`row`を展開する。色runと選択の全参照が一致しない、
 または訂正で承認が失効した場合、新snapshot作成を拒否する。旧snapshotの読み取りは変えない。
 新版参照が一部でもあれば、旧`quality.privacy_review`へ代替しない。
-旧契約のpayload・selectionは従来の検証経路を使う。
+hashだけ、またはnullの項目だけが残った場合も新版と判定し、不足するrun参照を拒否する。
+旧契約の解析payloadを使えるのは、Retentionがなく、新しい画像判定・人物reviewへ未投入の旧cohortだけ。
 
 ## 人の訂正と表示担当への接続
 
@@ -58,6 +59,25 @@ human_run_id = privacy_review.write(
 提示済み原画像SHA・確認者・所見・元privacy runを必須とし、人物画像根拠だけを訂正する。
 semantic personや保留方針を人の一括承認で解除しない。元runは残し、その承認に依存する
 旧色解析を新snapshotへ採用する操作を拒否する。再訂正も直前のrunを指定する。
+訂正はasset、取得画像SHA、A/Bの入力画像SHA・寸法に結び付ける。
+同じ入力でcode_versionやA/Bのrun IDを変えても、最後の人の訂正を新しいrunへ継承する。
+人の訂正より前の兄弟runと、処理中だったjobも承認には使えない。訂正を解除・変更するには、
+現在有効なreview runを指定した新しい明示訂正が必要で、原判定からの再生成では解除しない。
+
+番号返信で問題が指摘された場合、#120は次の公開APIを使う。人物あり・なしを推測して埋めない。
+
+```python
+held_run_id = privacy_review.record_hold(
+    queue, asset_id, run_id, code_version=code_version, reviewer=reviewer,
+    presented_source_sha256=source_sha256, note=reason,
+)
+```
+
+`run_id`は番号対応表で実際に提示したprivacy review run、SHAは提示した取得解像度の原画像のもの。
+返り値はappend-onlyで追加した保留run ID。人物根拠は維持し、理由付きの保留を別に固定する。
+同じasset/A/Bの既存承認は失効し、以後の再生成にも保留を継承する。古い返信・SHA不一致は拒否する。
+Retentionあり、または新reviewに投入済みの対象に`retention.review_privacy`を使うと例外になり、
+旧qualityを変更しない。#120の呼出し元変更は#119のmerge後に別担当が行う。
 画像判定自体の訂正は#117のwriterを使い、新しいimage gateからprivacy runを作り直す。
 人物方針・subject・mask・入力が変われば新しいprivacy/shade/color runとselectionが必要。
 
