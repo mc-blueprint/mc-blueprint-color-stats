@@ -57,6 +57,28 @@ def _not_corrected(session, run):
         raise PermissionError("人の訂正により古い判定・解析承認は失効しています")
 
 
+def _latest_correction(session, data):
+    return session.scalar(select(ProcessingRun).where(
+        ProcessingRun.stage == "review", ProcessingRun.finished_at.is_not(None),
+        ProcessingRun.failure_reason.is_(None),
+        ProcessingRun.parameters["kind"].astext == "privacy_review",
+        ProcessingRun.parameters["method"].astext == "human",
+        ProcessingRun.parameters["evidence"]["correction_key"].astext == data["correction_key"],
+    ).order_by(ProcessingRun.finished_at.desc(), ProcessingRun.id.desc()).limit(1))
+
+
+def _apply_correction(data, correction):
+    if correction:
+        previous = correction.parameters["evidence"]
+        data.update(real_people=previous["real_people"], human_hold=previous["human_hold"])
+
+
+def _verdict(data):
+    if data["human_hold"]:
+        return {"decision": "pending", "reason": "human_hold"}
+    return decision(data["real_people"], data["semantic_person_pixels"])
+
+
 def evidence(session, asset_id, gate_id, segment_id):
     """完了済みA/Bと私有artifactを照合し、座標・SHAと独立した二つの根拠を返す。
 
@@ -100,7 +122,13 @@ def evidence(session, asset_id, gate_id, segment_id):
         mask = np.array(image)
     if not np.array_equal(mask != 0, semantic == 12):
         raise PermissionError("人物maskとsemantic person画素が一致しません")
+    correction_key = digest({
+        "asset_id": str(asset_id), "source_sha256": asset.sha256,
+        "image_gate_input_sha256": p["identity"]["input_sha256"],
+        "region_input_sha256": policy["input_sha256"], "size": policy["size"],
+    })
     return {"asset_id": str(asset_id), "policy": POLICY, "policy_hash": digest(POLICY),
+            "correction_key": correction_key, "human_hold": False,
             "subject_id": str(asset.subject_id) if asset.subject_id else None,
             "source_sha256": asset.sha256, "image_gate_run_id": str(gate.id),
             "image_gate_hash": digest(p),
@@ -113,37 +141,43 @@ def evidence(session, asset_id, gate_id, segment_id):
 
 
 def write(queue, asset_id, gate_id, segment_id, *, code_version, input_run_id=None,
-          reviewer=None, real_people=None, presented_source_sha256=None, note=None):
+          reviewer=None, real_people=None, presented_source_sha256=None, note=None, hold=False):
     """A/Bを固定したreview runを追加する。旧Asset/quality/判定は書き換えない。
 
     人の訂正は元privacy run・取得解像度画像の提示SHA・確認者・所見を必要とする。
-    訂正できるのは画像上の実在人物根拠だけで、画素根拠や保留方針を上書きしない。
+    人の訂正は同じasset・A/B実入力で版やrunを作り直しても継承する。
+    hold=Trueは人物根拠と独立した保留。解除は元runを指定した新しい訂正でのみ行える。
     呼出し側は提示済みの画像への番号返信だけをこの引数へ変換する。
     """
     asset_id = uuid.UUID(str(asset_id))
     with queue._transaction() as session:
         retention.lock(session)
         data = evidence(session, asset_id, gate_id, segment_id)
+        correction = _latest_correction(session, data)
+        _apply_correction(data, correction)
         if input_run_id:
-            original = _run(session, asset_id, input_run_id, "review", "privacy_review")
-            _not_corrected(session, original)
+            original = _review(session, asset_id, input_run_id)
             before = original.parameters["evidence"]
-            if (any(before[k] != data[k] for k in data if k != "real_people")
+            if (any(before[k] != data[k] for k in data if k not in {"real_people", "human_hold"})
                     or not reviewer or not note or real_people not in {
                         "present", "absent", "uncertain"}
+                    or not isinstance(hold, bool)
                     or presented_source_sha256 != data["source_sha256"]):
                 raise ValueError("訂正元・提示画像・確認者・所見が一致しません")
-            data["real_people"] = real_people
-        elif any(v is not None for v in (reviewer, real_people, presented_source_sha256, note)):
+            data.update(real_people=real_people, human_hold=hold)
+        elif hold or any(v is not None for v in (
+            reviewer, real_people, presented_source_sha256, note
+        )):
             raise ValueError("人の訂正には元privacy runが必要です")
         asset = session.get(Asset, asset_id)
         info = RunInfo(asset.license_class, code_version, asset.taxonomy_version, "privacy",
                        {"kind": "privacy_review", "evidence": data,
                         "method": "human" if input_run_id else "policy",
                         "input_run_id": str(input_run_id) if input_run_id else None,
+                        "correction_run_id": str(correction.id) if correction else None,
                         "reviewer": reviewer, "note": note,
                         "presented_source_sha256": presented_source_sha256,
-                        "verdict": decision(data["real_people"], data["semantic_person_pixels"])})
+                        "verdict": _verdict(data)})
     payload = {"kind": "privacy_review", "parameters": info.parameters,
                "license_class": info.license_class, "code_version": code_version,
                "taxonomy_version": info.taxonomy_version}
@@ -161,6 +195,23 @@ def write(queue, asset_id, gate_id, segment_id, *, code_version, input_run_id=No
                           lambda session, run: register(session, run, prepared.data))
 
 
+def record_hold(queue, asset_id, run_id, *, code_version, reviewer,
+                presented_source_sha256, note):
+    """提示済み画像への番号返信を、別review runの保留として追記する。
+
+    run_idは番号対応表で提示したprivacy run。提示原画像SHA・確認者・理由を必須とし、
+    古い返信は拒否する。同じasset/A/Bの承認を全て失効させ、旧qualityは変更しない。
+    戻り値は新しいreview run ID。API通信は行わない。
+    """
+    with queue._transaction() as session:
+        run = _review(session, asset_id, run_id)
+        data = run.parameters["evidence"]
+    return write(queue, asset_id, data["image_gate_run_id"], data["region_policy_run_id"],
+                 code_version=code_version, input_run_id=run_id, reviewer=reviewer,
+                 real_people=data["real_people"], presented_source_sha256=presented_source_sha256,
+                 note=note, hold=True)
+
+
 def prepare(claim):
     """共通review workerから再開できる、通信・ファイル書込みなしの準備処理。"""
     p = claim.payload
@@ -175,15 +226,21 @@ def register(session, run, data):
     saved = p["evidence"]
     current = evidence(session, data["asset_id"], saved["image_gate_run_id"],
                        saved["region_policy_run_id"])
+    correction = _latest_correction(session, current)
+    correction_id = str(correction.id) if correction else None
+    if p["correction_run_id"] != correction_id:
+        raise PermissionError("人の訂正により処理中の承認は失効しています")
+    _apply_correction(current, correction)
     if p["input_run_id"]:
-        original = _run(session, data["asset_id"], p["input_run_id"], "review", "privacy_review")
-        _not_corrected(session, original)
-        current["real_people"] = saved["real_people"]
-    if current != saved:
+        _review(session, data["asset_id"], p["input_run_id"])
+        current.update(real_people=saved["real_people"], human_hold=saved["human_hold"])
+    if current != saved or p["verdict"] != _verdict(current):
         raise PermissionError("人物reviewの入力が変更されています")
     parents = {uuid.UUID(saved["image_gate_run_id"]), uuid.UUID(saved["region_policy_run_id"])}
     if p["input_run_id"]:
         parents.add(uuid.UUID(p["input_run_id"]))
+    if correction:
+        parents.add(correction.id)
     session.add_all(ProcessingRunInput(run_id=run.id, input_run_id=parent) for parent in parents)
 
 
@@ -194,12 +251,17 @@ def _review(session, asset_id, run_id):
     p = run.parameters
     data = p["evidence"]
     current = evidence(session, asset_id, data["image_gate_run_id"], data["region_policy_run_id"])
+    correction = _latest_correction(session, current)
+    correction_id = str(correction.id) if correction else None
+    expected_id = str(run.id) if p["method"] == "human" else p["correction_run_id"]
+    if correction_id != expected_id:
+        raise PermissionError("人の訂正により古い判定・解析承認は失効しています")
+    _apply_correction(current, correction)
     if p["method"] == "human":
         if (not p["reviewer"] or not p["note"]
                 or p["presented_source_sha256"] != current["source_sha256"]):
             raise PermissionError("人の確認根拠がありません")
-        current["real_people"] = data["real_people"]
-    verdict = decision(data["real_people"], data["semantic_person_pixels"])
+    verdict = _verdict(current)
     if current != data or p["verdict"] != verdict:
         raise PermissionError("人物確認の入力・policyが変更されています")
     return run
@@ -246,6 +308,10 @@ def evaluation_input(session, samples):
 
 def check_selection(session, asset_id, payload):
     """新policyの全段階でrun・hash・寸法を検証する。旧qualityへ代替しない。"""
+    if (payload.get("contract") != "image-review-v1" or not set(FIELDS).issubset(payload)
+            or not all(payload.get(k) for k in (
+                "image_gate_run_id", "privacy_review_run_id", "region_policy_run_id"))):
+        raise PermissionError("新契約のrun・hash・寸法が不足しています")
     expected = selection(session, asset_id, payload["privacy_review_run_id"])
     if payload.get("contract") != "image-review-v1" or any(
             payload.get(k) != expected[k] for k in FIELDS):
@@ -260,6 +326,13 @@ def check_selection(session, asset_id, payload):
 
 def is_new(payload):
     """欠損した新版参照を旧policyとして通さないための判別。"""
-    return payload.get("contract") == "image-review-v1" or any(
-        payload.get(k) is not None for k in (
-            "image_gate_run_id", "privacy_review_run_id", "region_policy_run_id"))
+    return any(k in {"contract", "analysis_domain", "person_mask_sha256"}
+               or k.startswith(("image_gate_", "privacy_review_", "region_policy_"))
+               for k in payload)
+
+
+def uses_new_contract(session, asset_id):
+    """新しい画像判定・人物reviewへ投入済みの対象を旧writerから保護する。"""
+    return session.scalar(select(Job.id).where(
+        Job.asset_id == uuid.UUID(str(asset_id)), Job.stage == "review",
+        Job.payload["kind"].astext.in_(["image_gate", "privacy_review"])).limit(1)) is not None

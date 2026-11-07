@@ -2,6 +2,7 @@ import copy
 import hashlib
 import json
 import os
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import numpy as np
@@ -16,7 +17,14 @@ from colorstats.analyze import color, region_policy, shade
 from colorstats.api_budget import digest
 from colorstats.queue import RunInfo
 from colorstats.queue.worker import Worker
-from colorstats.schema.models import Asset, Job, ProcessingRun, ProcessingRunInput, Subject
+from colorstats.schema.models import (
+    Asset,
+    Job,
+    ProcessingRun,
+    ProcessingRunInput,
+    Retention,
+    Subject,
+)
 from colorstats.stats.snapshot import execute
 from tests.test_image_gate import verdict
 from tests.test_queue import asset as asset
@@ -69,10 +77,10 @@ def review_source(queue, asset, policy_source, tmp_path):
     return policy_source, gate_id, sha
 
 
-def write(queue, asset, source, **kwargs):
+def write(queue, asset, source, *, code_version="test", **kwargs):
     payload, gate_id, _ = source
     return privacy.write(queue, asset, gate_id, payload["region_run_id"],
-                         code_version="test", **kwargs)
+                         code_version=code_version, **kwargs)
 
 
 @pytest.mark.parametrize("stage", ["color", "shade"])
@@ -103,8 +111,8 @@ def test_人物承認を解析とsnapshotへ固定する(queue, asset, review_so
             "color_run_id": str(run_id)}]}
         execute(queue.engine, selection, tmp_path / "snapshot", quality=quality,
                 code_version="test")
-        write(queue, asset, review_source, input_run_id=rid, reviewer="確認者",
-              real_people="present", presented_source_sha256=review_source[2], note="小人物")
+        privacy.record_hold(queue, asset, rid, code_version="mobile", reviewer="確認者",
+                            presented_source_sha256=review_source[2], note="番号返信での問題指摘")
         with pytest.raises(PermissionError, match="失効"):
             execute(queue.engine, selection, tmp_path / "stale", quality=quality,
                     code_version="test")
@@ -243,3 +251,123 @@ def test_同じdomainでもsubject変更後の承認は失効する(queue, asset
         session.get(Asset, asset).subject_id = subject.id
     with Session(queue.engine) as session, pytest.raises(PermissionError, match="変更"):
         privacy.selection(session, asset, rid)
+
+
+def test_code版の変更でも人の訂正を迂回できない(queue, asset, review_source):
+    first = write(queue, asset, review_source)
+    sibling = write(queue, asset, review_source, code_version="before-correction")
+    human = write(queue, asset, review_source, input_run_id=first, reviewer="確認者",
+                  real_people="present", presented_source_sha256=review_source[2], note="人物")
+    renewed = write(queue, asset, review_source, code_version="after-correction")
+    with Session(queue.engine) as session:
+        data = session.get(ProcessingRun, renewed).parameters["evidence"]
+        assert data["real_people"] == "present"
+        for rid in (first, sibling, human, renewed):
+            with pytest.raises(PermissionError):
+                privacy.selection(session, asset, rid)
+    corrected = write(queue, asset, review_source, input_run_id=human, reviewer="確認者",
+                      real_people="absent", presented_source_sha256=review_source[2], note="訂正")
+    latest = write(queue, asset, review_source, code_version="after-new-correction")
+    with Session(queue.engine) as session:
+        assert privacy.selection(session, asset, corrected)
+        assert privacy.selection(session, asset, latest)
+
+
+@pytest.mark.parametrize("retained", [False, True])
+def test_hashだけの新契約を旧qualityへ代替しない(queue, asset, review_source, retained):
+    rid = write(queue, asset, review_source)
+    with Session(queue.engine) as session, session.begin():
+        if retained:
+            session.add(Retention(asset_id=asset, expires_at=datetime.now(UTC) + timedelta(days=1),
+                                  backup_until=datetime.now(UTC) + timedelta(days=2)))
+        row = privacy.selection(session, asset, rid)
+        payload = {k: v for k, v in row.items() if k.endswith("_hash")}
+        with pytest.raises(PermissionError):
+            retention.check_privacy(session, asset, payload)
+
+
+def test_Retentionのある画像は旧qualityの承認だけで採用しない(queue, asset, review_source):
+    with Session(queue.engine) as session, session.begin():
+        session.add(Retention(asset_id=asset, expires_at=datetime.now(UTC) + timedelta(days=1),
+                              backup_until=datetime.now(UTC) + timedelta(days=2)))
+        with pytest.raises(PermissionError):
+            retention.check_privacy(session, asset, {})
+
+
+@pytest.mark.parametrize("privacy_written", [False, True])
+def test_旧writerは新契約の対象を変更できない(queue, asset, review_source, privacy_written):
+    if privacy_written:
+        write(queue, asset, review_source)
+    with Session(queue.engine) as session, session.begin():
+        before = copy.deepcopy(session.get(Asset, asset).quality)
+        with pytest.raises(PermissionError):
+            retention.review_privacy(session, asset, reviewer="確認者", subject="building",
+                                     decision="pending", note="番号返信")
+        assert session.get(Asset, asset).quality == before
+
+
+def test_番号返信の保留は別runに保存され全承認と新版runを失効させる(
+    queue, asset, review_source,
+):
+    first = write(queue, asset, review_source)
+    sibling = write(queue, asset, review_source, code_version="sibling")
+    held = privacy.record_hold(queue, asset, first, code_version="mobile",
+                               reviewer="確認者", presented_source_sha256=review_source[2],
+                               note="番号返信での問題指摘")
+    renewed = write(queue, asset, review_source, code_version="after-hold")
+    with Session(queue.engine) as session:
+        assert session.get(ProcessingRun, first).parameters["verdict"]["decision"] == "accepted"
+        assert session.get(ProcessingRunInput, (held, first))
+        for rid in (first, sibling, held, renewed):
+            with pytest.raises(PermissionError):
+                privacy.selection(session, asset, rid)
+        assert session.get(Asset, asset).quality["privacy_review"]["reviewer"] == "旧確認者"
+        assert session.get(ProcessingRun, held).parameters["evidence"]["real_people"] == "absent"
+    cleared = write(queue, asset, review_source, input_run_id=held, reviewer="確認者",
+                    real_people="absent", presented_source_sha256=review_source[2], note="再確認")
+    with Session(queue.engine) as session:
+        assert privacy.selection(session, asset, cleared)
+
+
+def test_訂正前に準備したjobも完了時に承認を迂回できない(
+    queue, asset, review_source, monkeypatch,
+):
+    first = write(queue, asset, review_source)
+    with monkeypatch.context() as context:
+        context.setattr(queue, "claim", lambda *a, **kw: None)
+        with pytest.raises(RuntimeError):
+            write(queue, asset, review_source, code_version="queued")
+    privacy.record_hold(queue, asset, first, code_version="mobile", reviewer="確認者",
+                        presented_source_sha256=review_source[2], note="保留")
+    claim = queue.claim(("review",))
+    prepared = privacy.prepare(claim)
+    with pytest.raises(PermissionError, match="失効"):
+        queue.complete(claim, prepared.info,
+                       lambda s, r: privacy.register(s, r, prepared.data))
+
+
+def test_同じ実入力のAとBを別runへ作り直しても人の訂正を継承する(
+    queue, asset, review_source,
+):
+    first = write(queue, asset, review_source)
+    privacy.record_hold(queue, asset, first, code_version="mobile", reviewer="確認者",
+                        presented_source_sha256=review_source[2], note="保留")
+
+    def clone(run_id):
+        with Session(queue.engine) as session:
+            old = session.get(ProcessingRun, run_id)
+            stage = old.stage
+            parameters, paths = copy.deepcopy(old.parameters), dict(old.output_paths)
+        job_id = queue.enqueue(stage, asset, digest({"clone": str(run_id)}), {"clone": str(run_id)})
+        claim = queue.claim((stage,), job_ids=[job_id])
+
+        def register(session, run):
+            run.output_paths = paths
+
+        return queue.complete(claim, RunInfo("open", "test", "0.1.0", "fixture", parameters),
+                              register)
+
+    gate_id, segment_id = clone(review_source[1]), clone(review_source[0]["region_run_id"])
+    renewed = privacy.write(queue, asset, gate_id, segment_id, code_version="new-runs")
+    with Session(queue.engine) as session, pytest.raises(PermissionError, match="保留"):
+        privacy.selection(session, asset, renewed)
