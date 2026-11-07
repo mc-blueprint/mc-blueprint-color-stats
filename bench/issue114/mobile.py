@@ -444,7 +444,7 @@ def parse_chat_reply(text, total):
 
 
 def reply_reviews(mapping, manifest, decisions_sha256, reply):
-    """全提示画像の確認済み返信だけを変換する。未提示画像は人の確認にしない。"""
+    """定型テキストだけを解析して変換する。辞書入力・未確認・参照変更はValueError。"""
     if (mapping["format"] != "issue114-mobile-v1"
             or mapping["decisions_sha256"] != decisions_sha256
             or mapping["review_manifest_sha256"] != digest(manifest)):
@@ -459,24 +459,10 @@ def reply_reviews(mapping, manifest, decisions_sha256, reply):
     for row in rows:
         if any(row[key] != value for key, value in originals[row["asset_id"]].items()):
             raise ValueError("番号表の自動判定が閲覧原本と一致しません")
-    if isinstance(reply, str):
-        reply = parse_chat_reply(reply, len(rows))
-    reply_text = reply.get("reply_text") if isinstance(reply, dict) else None
-    if (reply.get("all_reviewed") is not True or not isinstance(reply_text, str)
-            or not reply_text.strip() or not isinstance(reply.get("problems"), list)):
-        raise ValueError("全提示画像の確認済み返信が必要です")
-    problems = {}
-    for problem in reply["problems"]:
-        if not isinstance(problem, dict):
-            raise ValueError("問題番号と理由の形式が不正です")
-        number = problem.get("number")
-        reason = problem.get("reason")
-        if (type(number) is not int or number < 1 or number > len(rows)
-                or number in problems or not isinstance(reason, str) or not reason.strip()):
-            raise ValueError("問題番号が範囲外・重複、または理由が空です")
-        problems[number] = reason.strip()
+    reply = parse_chat_reply(reply, len(rows))
+    problems = {problem["number"]: problem["reason"] for problem in reply["problems"]}
     return {"reviewer": "ユーザー", "confirm_no_errors": not problems,
-            "decisions_sha256": decisions_sha256, "chat_reply": reply_text.strip(),
+            "decisions_sha256": decisions_sha256, "chat_reply": reply["reply_text"].strip(),
             "number_map_sha256": hashlib.sha256(
                 json.dumps(mapping, sort_keys=True).encode()).hexdigest(),
             "rows": [{"asset_id": row["asset_id"],
