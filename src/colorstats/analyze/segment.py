@@ -101,6 +101,7 @@ def _configuration(payload):
     }
     if method == region_policy.METHOD:
         parameters["region_policy_hash"] = region_policy.policy_hash()
+        parameters["parent_table"] = region_policy.parent_table_reference()
         parameters["transform"] = region_policy.TRANSFORM
     return parameters
 

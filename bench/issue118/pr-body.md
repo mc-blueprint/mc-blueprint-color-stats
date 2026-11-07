@@ -1,27 +1,30 @@
 ## 概要
 
-- 空・人物・異なる部位の混入を制約する版付きsegment methodと不変role mask契約を追加する。
-- 両GPUのsmokeは成功したが、建物の有効画素が0となるため実用的な改善は未達。品質採用・全量統計は保留する。
+- OneFormerのsemantic親領域と部位候補の積で空・人物・地形への混入を制約する。
+- 外観がbuilding等に分割される場合の建物全欠測を、版付きの親対応表で修正する。
 
 ## 変更内容
 
-- raw候補を保全し、semantic map・親和集合・排他role mask・除外理由・欠測/void率を別保存。
-- shade/color/snapshotと#66 runnerを有効maskへ接続し、旧観測の流用を拒否。
-- オフラインprocessor初期化と新policyでの位置埋め込みLRU保持を修正。旧policyは維持。
-- 固定revisionの8ファイルを両機でSHA照合し、同じ固定seedの3入力でGPU検証。
-- schema・migration・既存採用設定は変更なし。本番DB更新・全量処理なし。
+- 全41部位の親表v2を固定し、表の版/SHA・入力/出力SHA・model/revisionをrun契約へ保存。
+- raw候補を保全し、wall/treeの同親和集合、異role交差のvoid化、欠測・coverageを記録。
+- 有効maskをshade/color/snapshotと#66 runnerへ渡し、旧hashや旧観測の流用を拒否。
+- オフラインprocessorと新policyのGPU解放を実装。schema・migration・旧policyは維持。
+- 前回3件と追加20件をubuntu-2で別々に検証。画像・個別記録はprivate、Gitには集計のみを保存。
 
 ## 検証
 
-- [x] WSL隔離DB込み全pytest：1,138 passed / 1 skipped（従来の実GPUテスト）
+- [x] WSL隔離DB込み全pytest：1,160 passed / 1 skipped（従来の実GPUテスト）
 - [x] ruff・sdist/wheel build
-- [x] RTX 4060 8GB / RTX 4070 12GB：各3件成功、OOM・別GPUプロセス混入0
-- [x] 工程間のモジュール参照残存0、OOM時の再試行不可・runner停止を模擬/隔離DB検証
-- [x] 空への建物maskは9.8773%/9.8943%から0%、建物/地形交差は26.6506%/26.8480%から0%
-- [ ] 建物を保持した改善・品質採用：建物の有効画素0のため未達。上記0%をprecision合格とは扱わない
+- [x] 親表の網羅・空/人物除外・候補外への拡張なし・旧hash拒否・後続stage統合
+- [x] 先行の8GB/12GB各3件smoke、新表の12GB 3件＋20件smoke。OOM・別GPU処理混入0
+- [x] 建物有効率：前回3件は0→2.4211%、追加20件は8.8645%
+- [x] 空混入・建物/地形交差はいずれも0。地形有効率28.4416%/21.3064%、void率69.0670%/67.9523%
+- [x] 旧3件のraw/semantic 89ファイルはSHA一致、旧成果物を保全
 
-詳細：`bench/issue118/gpu-results.md`。画像・画像別記述はprivateに保存し、Gitには集計のみを含める。
+`bench/issue118/parent-v2-results.md`に詳細を記録する。
+部位精度の独立した採否は後続Dで判断し、`quality_eligible=false`と全量統計の保留を維持する。
+本番DB更新・サービス配備・全量処理は行っていない。
 
 ## 関連Issue
 
-Refs #118
+Closes #118

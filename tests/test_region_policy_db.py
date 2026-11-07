@@ -77,7 +77,7 @@ def test_segment_to_color_shade_snapshot_immutable_provenance(queue, asset, poli
         assert session.get(ProcessingRunInput, (run_id, source.id)) is not None
         assert run.license_class == "noncommercial"
         assert Path(run.output_paths[payload["output_path"]]).is_file()
-        assert prepared.data["roles"]["real_building/wall"]["area"] == 42
+        assert prepared.data["roles"]["real_building/wall"]["area"] == 43
         if stage == "color":
             group_rows = list(_groups(
                 {"id": asset, "domain": "real_building"},
@@ -87,7 +87,7 @@ def test_segment_to_color_shade_snapshot_immutable_provenance(queue, asset, poli
                  "output_paths": source.output_paths}, {},
             ))
             wall = next(row for row in group_rows if row["role"] == "real_building/wall")
-            assert wall["data"]["area"] == 42
+            assert wall["data"]["area"] == 43
             assert not wall["quality_eligible"]
     if stage == "color":
         from tests.test_stats_snapshot_db import QUALITY

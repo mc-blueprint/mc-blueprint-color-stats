@@ -19,7 +19,8 @@ def prediction(image, payload, parameters):
     semantic[0, :4] = [2, 12, 1, 4]
     semantic[1, :2] = 8
     mask = np.ones(semantic.shape, dtype=bool)
-    rows = [(label, mask.copy(), 0.99 if label == "window_frame" else 0.5)
+    rows = [(label, (semantic == 8) if label.startswith("window_") else mask.copy(),
+             0.99 if label == "window_frame" else 0.5)
             for label in payload["prompts"]]
     return semantic, rows, {"batch_size": 1}
 
@@ -28,7 +29,7 @@ def prediction(image, payload, parameters):
 def regional_payload(payload, monkeypatch):
     with Image.open(payload["input_path"]) as image:
         pixels = np.array(image)
-    pixels[0, :4] = [[0, 0, 255], [255, 0, 0], [100, 0, 100], [0, 128, 0]]
+    pixels[0, :4] = [[0, 0, 255], [255, 0, 0], [255, 165, 0], [0, 128, 0]]
     pixels[1, :2] = [0, 255, 255]
     Image.fromarray(pixels).save(payload["input_path"])
     root = Path(payload["input_path"]).parent / "oneformer"
@@ -80,22 +81,30 @@ def policy_payload(regional_payload, monkeypatch):
 
 
 def test_exclusion_union_conflict_and_missing():
-    semantic = np.array([[2, 12, 1, 0, 4, 34, 8, 16]], dtype=np.uint8)
+    semantic = np.array([[2, 12, 1, 0, 4, 34, 8, 16, 19]], dtype=np.uint8)
     mask = np.ones(semantic.shape, dtype=bool)
     labels = ["wall_main", "wall_secondary", "tree_trunk", "vegetation_tree_canopy",
               "rock_face", "rock_scree", "window_glass", "window_frame", "snow_ice"]
     original = mask.copy()
-    masks, reasons, metrics = region_policy.constrain(
-        semantic, [(k, mask, 1) for k in labels], labels,
-    )
-    assert masks["real_building/wall"].sum() == 1
+    rows = []
+    for label in labels:
+        candidate = mask
+        if label.startswith("window_"):
+            candidate = semantic == 8
+        elif label == "rock_scree":
+            candidate = semantic == 34
+        elif label == "snow_ice":
+            candidate = np.zeros(semantic.shape, dtype=bool)
+        rows.append((label, candidate, 1))
+    masks, reasons, metrics = region_policy.constrain(semantic, rows, labels)
+    assert masks["real_building/wall"].sum() == 2
     assert masks["real_terrain/tree"].sum() == 1
     assert masks["real_terrain/rock_face"].sum() == 1
     assert reasons["conflict"].sum() == 2
     assert reasons["sky"].sum() == reasons["person"].sum() == 1
     assert reasons["semantic_mismatch"].sum() == 1
     assert "real_terrain/snow_ice" in metrics["missing_roles"]
-    assert metrics["coverage"] == 3 / 8 and metrics["void_rate"] == 5 / 8
+    assert metrics["coverage"] == 4 / 9 and metrics["void_rate"] == 5 / 9
     assert np.max(sum(masks.values())) == 1
     np.testing.assert_array_equal(mask, original)
 
@@ -109,6 +118,50 @@ def test_all_void_is_reported_as_missing():
     assert reasons["person"].sum() == reasons["sky"].sum() == 1
     assert metrics["semantic_pixels"] == {"sky": 1, "person": 1}
     assert metrics["excluded_pixels"]["person"] == 0
+
+
+def test_parent_table_covers_taxonomy_and_excludes_sky_person():
+    from colorstats.schema.taxonomy import load_taxonomy
+
+    taxonomy = load_taxonomy(Path("taxonomy"))
+    labels = {label for group in taxonomy["parts"]["groups"].values() for label in group}
+    labels.update(taxonomy["terrain"]["labels"])
+    assert set(region_policy.ALLOW) == labels
+    assert region_policy.parent_table_reference()["version"] == "ade-role-parents-v2"
+    assert all(ids and ids == sorted(set(ids)) and not {2, 12} & set(ids)
+               and all(0 <= value < 150 for value in ids) for ids in region_policy.ALLOW.values())
+    assert not {4, 72} & set(region_policy.ALLOW["snow_ice"])
+    assert not {16, 34, 68} & set(region_policy.ALLOW["vegetation_tree_canopy"])
+
+
+@pytest.mark.parametrize("semantic_id", [0, 1, 25, 48, 51, 79, 84, 88])
+def test_building_parent_clips_candidate_without_promoting_entire_building(semantic_id):
+    semantic = np.full((1, 5), semantic_id, dtype=np.uint8)
+    candidate = np.array([[False, True, True, False, False]])
+    masks, _, metrics = region_policy.constrain(semantic, [("wall_main", candidate, 0.8)],
+                                                ["wall_main"])
+    np.testing.assert_array_equal(masks["real_building/wall"], candidate)
+    assert metrics["coverage"] == 2 / 5
+
+
+@pytest.mark.parametrize("label,semantic_id", [
+    ("window_glass", 1), ("window_glass", 8), ("roof_surface", 1), ("roof_surface", 86),
+    ("column", 42), ("stairs_entry", 53), ("railing", 95), ("ground_soil", 94),
+    ("ground_grass", 17), ("rock_scree", 16), ("water", 109), ("snow_ice", 16),
+])
+def test_coarse_or_specific_parent_preserves_only_matching_candidate(label, semantic_id):
+    semantic = np.array([[semantic_id, 2, 12]], dtype=np.uint8)
+    masks, _, _ = region_policy.constrain(semantic, [(label, np.ones((1, 3), dtype=bool), 0.8)],
+                                          [label])
+    assert sum(int(mask.sum()) for mask in masks.values()) == 1
+
+
+def test_parent_table_change_rejects_previous_result(policy_payload, monkeypatch):
+    original = region_policy.parent_table_reference()
+    monkeypatch.setitem(region_policy.ALLOW, "wall_main", [*region_policy.ALLOW["wall_main"], 14])
+    assert region_policy.parent_table_reference()["sha256"] != original["sha256"]
+    with pytest.raises(ValueError, match="policy hash"):
+        color.config_hash(policy_payload)
 
 
 @pytest.mark.parametrize("value", [np.array([[150]]), np.array([[-1]]), np.array([[0.0]])])
@@ -144,7 +197,7 @@ def test_segment_preserves_raw_and_exports_semantic(policy_payload):
     masks = region_policy.load_masks(policy_payload)
     raw = np.array(Image.open(Path(policy_payload["input_path"]).with_name("segments-0000.png")))
     assert np.all(raw == 255)
-    assert masks["real_building/wall"].sum() == 42
+    assert masks["real_building/wall"].sum() == 43
     assert masks["real_terrain/tree"].sum() == 1
     assert not masks["real_building/window_frame"].any()
     assert not masks["real_building/window_glass"].any()
@@ -184,7 +237,7 @@ def test_color_and_shade_use_roles_without_child_observations(policy_payload):
     shaded = shade.prepare(make_claim(payload, shade, "shade"))
     for result in (colored, shaded):
         assert not any(result.data[key] for key in ("observations", "regions", "relations"))
-        assert result.data["roles"]["real_building/wall"]["area"] == 42
+        assert result.data["roles"]["real_building/wall"]["area"] == 43
         assert result.data["roles"]["real_terrain/tree"]["area"] == 1
         assert result.data["roles"]["real_terrain/rock_face"]["missing"]
     observed = colored.data["roles"]["real_building/wall"]["observations"][0]["observed_oklab"]
@@ -246,7 +299,7 @@ def test_snapshot_reads_effective_roles_and_keeps_quality_pending(policy_payload
     groups = list(_groups({"id": uuid.uuid4(), "domain": "real_building"}, chosen, [],
                           run, segment_run, {}))
     wall = next(row for row in groups if row["role"] == "real_building/wall")
-    assert wall["data"]["area"] == 42
+    assert wall["data"]["area"] == 43
     assert not wall["eligible"] and not wall["quality_eligible"]
     run["parameters"]["payload"] = {k: v for k, v in policy_payload.items() if k != "region_policy"}
     with pytest.raises(ValueError, match="region-policy"):
