@@ -259,6 +259,68 @@ def test_all_void_color_and_shade_are_missing_without_raw_fallback(policy_payloa
         assert all(row["missing"] and not row["observations"] for row in data["roles"].values())
 
 
+@pytest.mark.parametrize("value", [0, 255])
+def test_gray_world_clipped_role_pixels_are_missing(policy_payload, value):
+    pixels = np.full((6, 8, 3), value, dtype=np.uint8)
+    pixels[0, :2] = [100, 140, 180]  # 空と人物の色はWB推定に使わない。
+    Image.fromarray(pixels).save(policy_payload["input_path"])
+    sha = segment._hash(policy_payload["input_path"])
+    policy_payload["input_sha256"] = sha
+    policy_payload["region_policy"]["input_sha256"] = sha
+    payload = {**policy_payload, "method": "gray-world"}
+    data = shade.prepare(make_claim(payload, shade, "shade")).data
+    assert data["roles"]["real_building/wall"]["area"] > 0
+    assert all(row["missing"] and not row["observations"] for row in data["roles"].values())
+
+
+def test_unload_releases_legacy_sam2_position_cache(monkeypatch):
+    import gc
+    import sys
+    import weakref
+    from functools import lru_cache, wraps
+    from types import SimpleNamespace
+
+    from colorstats.analyze import segment_models
+
+    def compile_cache(*args, **kwargs):
+        def decorate(func):
+            cached = lru_cache(*args, **kwargs)(func)
+
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                return cached(*args, **kwargs)
+
+            return wrapper
+        return decorate
+
+    class PositionEmbedding:
+        @compile_cache(maxsize=1)
+        def forward(self, shape):
+            return shape
+
+    embedding = PositionEmbedding()
+    reference = weakref.ref(embedding)
+    embedding.forward((6, 8))
+    del embedding
+    gc.collect()
+    assert reference() is not None
+    assert not hasattr(PositionEmbedding.forward, "cache_clear")
+    monkeypatch.setitem(sys.modules, "transformers.models.sam2.modeling_sam2",
+                        SimpleNamespace(Sam2SinePositionEmbedding=PositionEmbedding,
+                                        compile_compatible_method_lru_cache=compile_cache))
+    empty_cache = SimpleNamespace(called=False)
+
+    def empty():
+        assert reference() is None
+        empty_cache.called = True
+
+    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(
+        cuda=SimpleNamespace(empty_cache=empty),
+    ))
+    segment_models._unload()
+    assert reference() is None and empty_cache.called
+
+
 @pytest.mark.parametrize("field", ["mask_path", "person_mask"])
 def test_new_policy_rejects_unversioned_additional_mask(policy_payload, field):
     policy_payload[field] = policy_payload["input_path"]

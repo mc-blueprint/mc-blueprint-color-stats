@@ -17,10 +17,18 @@ REPOSITORIES = {
 
 def _unload():
     import gc
+    import sys
 
     import torch
 
     _resident.cache_clear()
+    sam2 = sys.modules.get("transformers.models.sam2.modeling_sam2")
+    if sam2 is not None:
+        # 公式のcompile対応ラッパーにはcache_clearがないため、空のラッパーへ置換する。
+        embedding = sam2.Sam2SinePositionEmbedding
+        embedding.forward = sam2.compile_compatible_method_lru_cache(maxsize=1)(
+            embedding.forward.__wrapped__,
+        )
     gc.collect()
     torch.cuda.empty_cache()
 

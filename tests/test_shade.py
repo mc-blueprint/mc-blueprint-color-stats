@@ -119,3 +119,33 @@ def test_intrinsic_seeds_numpy_and_restores_state_on_success_and_failure(monkeyp
         correct(image, "intrinsic")
     np.testing.assert_array_equal(np.random.get_state()[1], state[1])
     torch.use_deterministic_algorithms.assert_called_with(False, warn_only=False)
+
+
+def test_intrinsic_excludes_transparent_rgb_from_estimation(monkeypatch):
+    torch = SimpleNamespace(
+        manual_seed=Mock(), are_deterministic_algorithms_enabled=lambda: False,
+        is_deterministic_algorithms_warn_only_enabled=lambda: False,
+        use_deterministic_algorithms=Mock(), inference_mode=nullcontext,
+        backends=SimpleNamespace(cudnn=SimpleNamespace(flags=lambda **kwargs: nullcontext())),
+    )
+    pipeline = ModuleType("intrinsic.pipeline")
+    pipeline.run_pipeline = Mock(side_effect=lambda models, rgb, **kwargs: {"hr_alb": rgb})
+    monkeypatch.setitem(sys.modules, "torch", torch)
+    monkeypatch.setitem(sys.modules, "intrinsic", ModuleType("intrinsic"))
+    monkeypatch.setitem(sys.modules, "intrinsic.pipeline", pipeline)
+    monkeypatch.setattr("colorstats.analyze.shade._models", lambda *args: {})
+    pixels = np.array([[[80, 120, 160, 255], [200, 160, 120, 255], [0, 0, 255, 0]]],
+                      dtype=np.uint8)
+    original = pixels.copy()
+    first = correct(Image.fromarray(pixels), "intrinsic")
+    first_input = pipeline.run_pipeline.call_args.args[1].copy()
+    np.testing.assert_allclose(first_input[0, 2], [140 / 255] * 3)
+    np.testing.assert_array_equal(pixels, original)
+    pixels[0, 2, :3] = [255, 0, 0]
+    second = correct(Image.fromarray(pixels), "intrinsic")
+    np.testing.assert_array_equal(first_input, pipeline.run_pipeline.call_args.args[1])
+    np.testing.assert_array_equal(first, second)
+    pipeline.run_pipeline.reset_mock()
+    pixels[:, :, 3] = 0
+    correct(Image.fromarray(pixels), "intrinsic")
+    pipeline.run_pipeline.assert_not_called()
