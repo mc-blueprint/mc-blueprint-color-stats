@@ -23,7 +23,13 @@ from colorstats.collect.http import MeasurementLimit
 from colorstats.collect.measurement import Meter, report
 from colorstats.collect.openverse import OpenverseAdapter
 from colorstats.collect.policy import load_policy
-from colorstats.schema.models import Asset, CollectionReservation, ProcessingRun, Subject
+from colorstats.schema.models import (
+    Asset,
+    CollectionLimit,
+    CollectionReservation,
+    ProcessingRun,
+    Subject,
+)
 from tests.test_collect import RECORDED, Clock, Response, adapter_for, payload_for
 from tests.test_collect_http import make_client
 from tests.test_collection_bias import (
@@ -78,6 +84,47 @@ def measured(config):
         "http_requests_per_stratum": 40,
     }
     return config
+
+
+@DB
+def test_候補途中の画像予算停止でも取得済み画像と予約と台帳を確定する(
+    queue, measured, tmp_path, monkeypatch,
+):
+    measured["measurement"]["budget"] = {
+        "id": "partial-images", "images": 1, "api_requests": 10,
+        "bytes": 10000, "consecutive_errors": 3,
+    }
+    adapter = Adapter([candidate(0), candidate(1), candidate(2)])
+    claim = prepared_job(queue, measured, tmp_path, monkeypatch, adapter)
+    prepared = bias.prepare(claim)
+    assert len(adapter.downloaded) == len(prepared.data["records"]) == 1
+    assert prepared.info.parameters["stop_reason"] == "batch_images_limit"
+    queue.complete(claim, prepared.info, lambda s, r: bias.register(s, r, prepared.data),
+                   prepared.files)
+    with Session(queue.engine) as session:
+        asset = session.scalars(select(Asset)).one()
+        assert Path(asset.storage_path).is_file()
+        assert session.scalars(select(CollectionReservation)).one().asset_id == asset.id
+        assert session.scalar(select(CollectionLimit)).state["images"] == 1
+        counts = report(session, "fixture-77")["strata"][request().stratum]["counts"]
+        assert counts["downloads"] == counts["registered"] == 1
+
+
+@DB
+@pytest.mark.parametrize("first_only", [True, False])
+def test_本収集だけ計測付きの後続検索ページを計画できる(queue, measured, tmp_path, first_only):
+    from colorstats.schema.models import Job
+
+    measured["measurement"]["first_page_only"] = first_only
+    storage = tmp_path / "storage.yaml"
+    storage.write_text("storage: {}")
+    ids = bias.plan(queue, measured, policy_path=ROOT / "configs/source_policy.yaml",
+                    storage_config=storage, host="ubuntu-1", code_version="test")
+    with Session(queue.engine) as session:
+        pages = {job.payload["request"]["page"] for job in session.scalars(
+            select(Job).where(Job.id.in_(ids))
+        )}
+    assert pages == ({0} if first_only else {0, 1, 2})
 
 
 @DB

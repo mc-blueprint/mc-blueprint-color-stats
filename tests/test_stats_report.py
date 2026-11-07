@@ -78,10 +78,10 @@ def test_all_twelve_strata_duplicates_rates_and_exclusions(tmp_path):
     assert overall["confirmed_subjects_before"] == 2
     assert overall["confirmed_subjects_after"] == 1
     layer = data["strata"][1]["inferred"]
-    assert layer == overall | {"subject_deficit": 99, "subject_coverage": .01}
+    assert layer == overall | {"subject_deficit": 299, "subject_coverage": 1 / 300}
     empty = data["strata"][0]["inferred"]
     assert empty["asset_rows"] == 0 and empty["eligible"]["value"] is None
-    assert empty["subject_deficit"] == 100
+    assert empty["subject_deficit"] == 300
     assert layer["concentration"]["author"]["top_share"]["value"] == 1
     assert not data["scale_target"]["achieved"] and not data["m3_complete"]
     rendered = markdown(data)
@@ -336,7 +336,7 @@ def test_subject_location_and_era_use_collection_attribute_reader(tmp_path):
     data = report(root, identifier, aggregate(root, identifier, settings), settings)
     layer = next(row for row in data["strata"] if row["id"] == "gothic-temple")["inferred"]
     assert layer["asset_rows"] == layer["confirmed_subjects_after"] == 1
-    assert layer["subject_deficit"] == 99
+    assert layer["subject_deficit"] == 299
     assert data["classification"]["attributes_missing"]["numerator"] == 0
     assert data["classification"]["attribute_states"]["region"] == {"recorded": 1}
     assert data["classification"]["attribute_states"]["era"] == {"recorded": 1}

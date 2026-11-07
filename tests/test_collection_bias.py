@@ -133,11 +133,11 @@ def test_各割合上限とsubject画像上限を適用する(config, dimension)
     assert bias.quota_reason([row], config, *values, layer) == "subject_limit"
 
 
-def test_一万枚の集中枠はCommons八千枚で止まる():
+def test_三万枚の集中枠は同一provider二万四千枚で止まる():
     config = load_targets(ROOT / "configs/collection_targets.yaml", ROOT / "taxonomy")
-    assert config["image_budget"] == 10000
-    assert sum(layer["images"] for layer in config["strata"]) == 10000
-    assert sum(int(layer["images"] * 0.8) for layer in config["strata"]) == 8000
+    assert config["image_budget"] == 30000
+    assert sum(layer["images"] for layer in config["strata"]) == 30000
+    assert sum(int(layer["images"] * 0.8) for layer in config["strata"]) == 24000
     layer = config["strata"][0]
     row = dict(subject_id=None, author="", source="wikimedia_commons", region=None,
                attributes=layer["attributes"])
@@ -145,7 +145,7 @@ def test_一万枚の集中枠はCommons八千枚で止まる():
     quota = int(layer["images"] * config["limits"]["source_share"])
     assert bias.quota_reason([row] * (quota - 1), config, *values) is None
     assert bias.quota_reason([row] * quota, config, *values) == "stratum_source_limit"
-    assert bias.quota_reason([row] * 8000, config, *values) == "source_limit"
+    assert bias.quota_reason([row] * 24000, config, *values) == "source_limit"
 
 
 @DB
