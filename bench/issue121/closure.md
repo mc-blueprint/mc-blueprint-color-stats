@@ -8,7 +8,7 @@ wallのfailed、tree/waterの公開GT passed、未取得の人物/領域等のun
 
 ## 固定する契約
 
-- artifact：[decision.json](decision.json)、SHA-256 `99684a90e65b9d8440b11c9dc04e4f128524c27fc574e4d8018631e18040a4a0`。
+- artifact：[decision.json](decision.json)、SHA-256 `f6a6fabb14a998e472f0ffdf00d0057ec0e563dc22c2478803b943c3a244769a`。
 - 固定manifest：[handoff.json](handoff.json)。最終化は評価数値の再計算とは別の、ユーザーの運用判断として保存した。
 - 全方式一括の`quality_eligible=false`と空の全体supported一覧を維持する。
 - 後続は`downstream.terrain_only`を明示的に消費する。公開GTで合格した`water`と`real_terrain/tree`親群だけを対象にし、幹/樹冠の個別支持を作らない。
