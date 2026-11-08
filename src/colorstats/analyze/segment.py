@@ -37,11 +37,11 @@ def _digest(value):
 
 
 def _configuration(payload):
-    from colorstats.analyze import region_policy
+    from colorstats.analyze import region_policy, visible_wall
 
     method = payload["method"]
     components = {"sam2", "dino"}
-    if method == region_policy.METHOD:
+    if method in (region_policy.METHOD, visible_wall.METHOD):
         components.add("oneformer")
         if not payload.get("input_run_id") or not payload.get("input_sha256"):
             raise ValueError("新segmentには固定prep runと入力SHAが必要です")
@@ -71,6 +71,8 @@ def _configuration(payload):
     text_threshold = payload.get("text_threshold", 0.25)
     if not (0 < threshold <= 1 and 0 < text_threshold <= 1):
         raise ValueError("thresholdとtext_thresholdは0より大きく1以下です")
+    if method == visible_wall.METHOD and (threshold, text_threshold) != (0.35, 0.25):
+        raise ValueError("可視壁材の候補閾値は0.35/0.25に固定してください")
     models = {}
     for name in sorted(components):
         path = Path(payload["model_paths"][name])
@@ -99,8 +101,10 @@ def _configuration(payload):
         "input_sha256": input_hash,
         "taxonomy_hash": _digest(taxonomy),
     }
-    if method == region_policy.METHOD:
-        parameters["region_policy_hash"] = region_policy.policy_hash()
+    if method in (region_policy.METHOD, visible_wall.METHOD):
+        parameters["region_policy_hash"] = (visible_wall.policy_hash()
+                                            if method == visible_wall.METHOD
+                                            else region_policy.policy_hash())
         parameters["parent_table"] = region_policy.parent_table_reference()
         parameters["transform"] = region_policy.TRANSFORM
     return parameters
@@ -140,13 +144,17 @@ def prepare(claim: Claim) -> Prepared:
         raise ValueError("segmentの設定ハッシュが一致しません。入力と重みを確認してください")
     with Image.open(payload["input_path"]) as source:
         image = source.convert("RGB")
-    from colorstats.analyze import region_policy
+    from colorstats.analyze import region_policy, visible_wall
 
     semantic = None
-    if payload["method"] == region_policy.METHOD:
+    exclusion_rows = []
+    if payload["method"] in (region_policy.METHOD, visible_wall.METHOD):
         from colorstats.analyze.segment_models import predict_regions
 
         semantic, rows, metrics = predict_regions(image, payload, parameters)
+        if payload["method"] == visible_wall.METHOD:
+            exclusion_rows = [row for row in rows if row[0] in visible_wall.EXTRA_PROMPTS]
+            rows = [row for row in rows if row[0] not in visible_wall.EXTRA_PROMPTS]
     else:
         rows, metrics = predict(
             image, payload["method"], payload["model_paths"], parameters["models"],
@@ -207,6 +215,7 @@ def prepare(claim: Claim) -> Prepared:
             raise ValueError("semantic mapの復元寸法がprepと一致しません")
         policy, policy_files = region_policy.save_artifacts(
             target, str(claim.token), semantic, rows, payload["prompts"], parameters,
+            exclusion_rows=exclusion_rows,
         )
         files.extend(policy_files)
         parameters["region_policy"] = policy

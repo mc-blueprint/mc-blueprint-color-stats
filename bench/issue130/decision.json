@@ -1,0 +1,320 @@
+{
+  "version": "issue130-quality-v1",
+  "freeze_sha256": "6e2b37e65eca4ee08cb12b5ea4fc1828e06f2c353914ec1b004acd49fdd118a2",
+  "summary_sha256": "84a21edcac193f2cf269aff908235e2e651ed3663f73407281947db0a7b7570d",
+  "selected": "specific55",
+  "gates": {
+    "precision": 0.8,
+    "recall": 0.3
+  },
+  "public_gt": {
+    "cmp": {
+      "wall": {
+        "status": "failed",
+        "precision": 0.445507402697855,
+        "recall": 0.5698624700907748,
+        "iou": 0.3333954583046898,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "band_course": {
+        "status": "failed",
+        "precision": 0.09210526315789473,
+        "recall": 1.4333576731117253e-06,
+        "iou": 1.4333374217576934e-06,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "cornice": {
+        "status": "failed",
+        "precision": 0.0025414498366210818,
+        "recall": 1.3199834813495762e-05,
+        "iou": 1.3131803915903927e-05,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "column": {
+        "status": "failed",
+        "precision": null,
+        "recall": 0.0,
+        "iou": 0.0,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "window": {
+        "status": "failed",
+        "precision": null,
+        "recall": 0.0,
+        "iou": 0.0,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "door": {
+        "status": "failed",
+        "precision": null,
+        "recall": 0.0,
+        "iou": 0.0,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "shutter": {
+        "status": "failed",
+        "precision": 0.6030680728667306,
+        "recall": 0.0005589317561209248,
+        "iou": 0.0005587262108325376,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "relief": {
+        "status": "failed",
+        "precision": 0.31641408066714777,
+        "recall": 0.004181830128252682,
+        "iou": 0.004144387694550435,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      }
+    },
+    "ade": {
+      "stairs": {
+        "status": "passed",
+        "precision": 0.9891235413495687,
+        "recall": 0.48030241205952773,
+        "iou": 0.4777790541834195,
+        "reason": "全非void画素の直接計数",
+        "supported": true
+      },
+      "railing": {
+        "status": "failed",
+        "precision": 0.05766366408965175,
+        "recall": 0.025802970674114512,
+        "iou": 0.01814975219895522,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "fence": {
+        "status": "failed",
+        "precision": 0.5803600982998144,
+        "recall": 0.224811261739073,
+        "iou": 0.19337707175395968,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "path": {
+        "status": "failed",
+        "precision": 0.2738820001255592,
+        "recall": 0.4313453202710403,
+        "iou": 0.201226045891123,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "path_natural": {
+        "status": "failed",
+        "precision": 0.0334416048701763,
+        "recall": 0.01508269221909983,
+        "iou": 0.010503756841558175,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "ground_soil": {
+        "status": "failed",
+        "precision": 0.6322625787163666,
+        "recall": 0.02321427487095266,
+        "iou": 0.022905013257061638,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "ground_grass": {
+        "status": "failed",
+        "precision": 0.6853918093930341,
+        "recall": 0.7317242041932579,
+        "iou": 0.5477487350444589,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "rock": {
+        "status": "failed",
+        "precision": 0.07299520746303083,
+        "recall": 0.07560482265437113,
+        "iou": 0.03857102230407757,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "sand": {
+        "status": "failed",
+        "precision": 0.40076531754478417,
+        "recall": 0.42741381526989547,
+        "iou": 0.26076442970317,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "water": {
+        "status": "passed",
+        "precision": 0.9818581421729267,
+        "recall": 0.8520003117049303,
+        "iou": 0.8387956003962443,
+        "reason": "全非void画素の直接計数",
+        "supported": true
+      },
+      "tree": {
+        "status": "passed",
+        "precision": 0.9401816889879722,
+        "recall": 0.5339995802871063,
+        "iou": 0.5164529378660558,
+        "reason": "全非void画素の直接計数",
+        "supported": true
+      }
+    }
+  },
+  "building_parts": {
+    "accent_other": {
+      "status": "unverified",
+      "supported": false,
+      "group": "cmp/relief",
+      "reason": "群の評価のみ・個別未検証"
+    },
+    "band_course": {
+      "status": "failed",
+      "supported": false,
+      "group": "cmp/band_course",
+      "reason": "公開GTの群と同じ範囲。本番同一run契約は未検証"
+    },
+    "column": {
+      "status": "failed",
+      "supported": false,
+      "group": "cmp/column",
+      "reason": "公開GTの群と同じ範囲。本番同一run契約は未検証"
+    },
+    "cornice": {
+      "status": "failed",
+      "supported": false,
+      "group": "cmp/cornice",
+      "reason": "公開GTの群と同じ範囲。本番同一run契約は未検証"
+    },
+    "door": {
+      "status": "failed",
+      "supported": false,
+      "group": "cmp/door",
+      "reason": "公開GTの群と同じ範囲。本番同一run契約は未検証"
+    },
+    "fence": {
+      "status": "failed",
+      "supported": false,
+      "group": "ade/fence",
+      "reason": "公開GTの群と同じ範囲。本番同一run契約は未検証"
+    },
+    "gable_wall": {
+      "status": "unverified",
+      "supported": false,
+      "group": "cmp/wall",
+      "reason": "群の評価のみ・個別未検証"
+    },
+    "path": {
+      "status": "failed",
+      "supported": false,
+      "group": "ade/path",
+      "reason": "公開GTの群と同じ範囲。本番同一run契約は未検証"
+    },
+    "railing": {
+      "status": "failed",
+      "supported": false,
+      "group": "ade/railing",
+      "reason": "公開GTの群と同じ範囲。本番同一run契約は未検証"
+    },
+    "relief": {
+      "status": "unverified",
+      "supported": false,
+      "group": "cmp/relief",
+      "reason": "群の評価のみ・個別未検証"
+    },
+    "roof_surface": {
+      "status": "unverified",
+      "supported": false,
+      "reason": "部位GT対応なし"
+    },
+    "shutter": {
+      "status": "failed",
+      "supported": false,
+      "group": "cmp/shutter",
+      "reason": "公開GTの群と同じ範囲。本番同一run契約は未検証"
+    },
+    "stairs_entry": {
+      "status": "passed",
+      "supported": false,
+      "group": "ade/stairs",
+      "reason": "公開GTの群と同じ範囲。本番同一run契約は未検証"
+    },
+    "wall_main": {
+      "status": "unverified",
+      "supported": false,
+      "group": "cmp/wall",
+      "reason": "群の評価のみ・個別未検証"
+    },
+    "wall_secondary": {
+      "status": "unverified",
+      "supported": false,
+      "group": "cmp/wall",
+      "reason": "群の評価のみ・個別未検証"
+    },
+    "window_frame": {
+      "status": "unverified",
+      "supported": false,
+      "group": "cmp/window",
+      "reason": "群の評価のみ・個別未検証"
+    },
+    "window_glass": {
+      "status": "unverified",
+      "supported": false,
+      "group": "cmp/window",
+      "reason": "群の評価のみ・個別未検証"
+    }
+  },
+  "regression": {
+    "baseline_matches_issue121": true,
+    "tree_water_all_variants_unchanged": true
+  },
+  "supported_labels": [],
+  "supported_groups": [],
+  "allowed_building_parts": [],
+  "quality_eligible": false,
+  "production_contract": "unverified",
+  "production_prompt_difference": {
+    "production_only": [
+      "roof_surface"
+    ],
+    "cached_only": [],
+    "dataset_missing_production_labels": {
+      "cmp": [
+        "fence",
+        "ground_grass",
+        "ground_soil",
+        "path",
+        "path_natural",
+        "railing",
+        "rock_face",
+        "rock_scree",
+        "roof_surface",
+        "sand",
+        "stairs_entry",
+        "tree_trunk",
+        "vegetation_tree_canopy",
+        "water"
+      ],
+      "ade": [
+        "accent_other",
+        "band_course",
+        "cornice",
+        "relief",
+        "roof_surface",
+        "shutter"
+      ]
+    }
+  },
+  "unverified": [
+    "所有画像",
+    "本番全promptの全件GT評価",
+    "未対応建物部位",
+    "新実験版の本番run契約"
+  ],
+  "downstream": "#129/#118/#119/#120の同一run契約が揃うまで建物を追加しない。既合格tree親群/waterの先行を妨げない。",
+  "limitation": "公開既知GTの回帰比較。新たな盲検・所有画像の独立保証ではない。"
+}

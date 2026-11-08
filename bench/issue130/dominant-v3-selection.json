@@ -1,0 +1,79 @@
+{
+  "freeze_sha256": "519fcecc6500a343d943e7db25a3ba9cf24f28d2b0604831c26945538f1ac8e1",
+  "selected": {
+    "front": "raw_wall_union",
+    "clusters": 2
+  },
+  "index": 3,
+  "tune": [
+    {
+      "images": 324,
+      "valid": 322,
+      "missing": 2,
+      "missing_rate": 0.006172839506172839,
+      "missing_reasons": {
+        "gt_missing": 2
+      },
+      "median": 0.08037551059716039,
+      "p90": 0.18662631812590144
+    },
+    {
+      "images": 324,
+      "valid": 322,
+      "missing": 2,
+      "missing_rate": 0.006172839506172839,
+      "missing_reasons": {
+        "gt_missing": 2
+      },
+      "median": 0.08566703852128385,
+      "p90": 0.20175411288522915
+    },
+    {
+      "images": 324,
+      "valid": 322,
+      "missing": 2,
+      "missing_rate": 0.006172839506172839,
+      "missing_reasons": {
+        "gt_missing": 2
+      },
+      "median": 0.08653829095051355,
+      "p90": 0.22840196252502168
+    },
+    {
+      "images": 324,
+      "valid": 322,
+      "missing": 2,
+      "missing_rate": 0.006172839506172839,
+      "missing_reasons": {
+        "gt_missing": 2
+      },
+      "median": 0.0782400697442423,
+      "p90": 0.1810287155602562
+    },
+    {
+      "images": 324,
+      "valid": 322,
+      "missing": 2,
+      "missing_rate": 0.006172839506172839,
+      "missing_reasons": {
+        "gt_missing": 2
+      },
+      "median": 0.08380058609300212,
+      "p90": 0.21266585550340958
+    },
+    {
+      "images": 324,
+      "valid": 322,
+      "missing": 2,
+      "missing_rate": 0.006172839506172839,
+      "missing_reasons": {
+        "gt_missing": 2
+      },
+      "median": 0.08593597092462055,
+      "p90": 0.20188556621602916
+    }
+  ],
+  "eligible_candidate_exists": true,
+  "before_holdout_predictions": true,
+  "frozen_at": "2026-11-08T12:30:14.910969+00:00"
+}

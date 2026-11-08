@@ -1,0 +1,71 @@
+{
+  "version": "issue130-dominant-color-eval-v3",
+  "base_commit": "d044825",
+  "seed": 73,
+  "files": {
+    "bench/issue130/dominant-plan.md": "091d92e16c82ebcb25e3b1d6acdf81a0585236b8e42b2b28e03511773e44e5fd",
+    "bench/issue130/dominant_eval.py": "d34001fcf71ade87656e419c09b75d4a0570ad2f94aac6343c2def096877f1b9",
+    "src/colorstats/analyze/dominant_wall.py": "7d59b4e7e39ff9e8d0878e8dcfc2cc274b3eee84e249e061b97bf4d320b81a33",
+    "src/colorstats/analyze/color.py": "edfa6e90cabbbdce7edd7c5a8ef31fec626f008ef5fa1c9ee38a572a624890cd",
+    "src/colorstats/colors.py": "b50bb6ec17b6430c4e9a30387090c2500c66bea077dfffb5fa69b9ba9a473dc9",
+    "bench/issue73/plan.json": "e9082b43e44ad0b4c46e4bc0d3446c706c913f389ef51d0ae188a6a67bd4ca75"
+  },
+  "input_manifest_sha256": "f3027999662a081fe8cc5290d4ca26c07fb31f623206681ba8412bbd5d38f6c5",
+  "candidates": [
+    {
+      "front": "oneformer_building",
+      "clusters": 2
+    },
+    {
+      "front": "oneformer_building",
+      "clusters": 3
+    },
+    {
+      "front": "oneformer_building",
+      "clusters": 5
+    },
+    {
+      "front": "raw_wall_union",
+      "clusters": 2
+    },
+    {
+      "front": "raw_wall_union",
+      "clusters": 3
+    },
+    {
+      "front": "raw_wall_union",
+      "clusters": 5
+    }
+  ],
+  "gates": {
+    "median_delta_ok_max": 0.02,
+    "missing_rate_max": 0.2
+  },
+  "truth": "CMP ID2全画素のOKLab算術平均・黒白保持",
+  "prediction": "正面のOKLab k-means最大クラスタの画素平均・同面積は欠測",
+  "baseline": "visible-wall-policy-v2 ubuntu-2の有効壁mask平均",
+  "kmeans": {
+    "seed": 0,
+    "attempts": 1,
+    "max_iter": 100,
+    "epsilon": 1e-06,
+    "initialization": "k-means++",
+    "clip_extremes": false,
+    "threads": 1
+  },
+  "versions": {
+    "numpy": "2.5.4",
+    "Pillow": "12.3.0",
+    "colour-science": "0.4.7",
+    "opencv-python-headless": "4.14.0.94"
+  },
+  "frozen_at": "2026-11-08T12:20:20.636413+00:00",
+  "before_predictions": true,
+  "independent_blind_confirmation": false,
+  "freeze_sha256": "519fcecc6500a343d943e7db25a3ba9cf24f28d2b0604831c26945538f1ac8e1",
+  "images": 606,
+  "split_counts": {
+    "tune": 324,
+    "holdout": 282
+  }
+}

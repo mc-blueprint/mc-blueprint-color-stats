@@ -1,0 +1,15 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4060",
+  "images": 3,
+  "freeze_sha256": "6e2b37e65eca4ee08cb12b5ea4fc1828e06f2c353914ec1b004acd49fdd118a2",
+  "policy_hash": "4128e1470ebe5be4982eb002d558d740a63ddc13690479770abd4e8652e127e2",
+  "production_prompt_count": 26,
+  "batch_size": 1,
+  "seconds": 37.076642930856906,
+  "peak_allocated_bytes": 2659068416,
+  "peak_reserved_bytes": 3772776448,
+  "quality_eligible": false,
+  "limitation": "公開3枚の適合検証。全本番promptの全件品質保証ではない。",
+  "records_sha256": "2cd638b3ca38604736605f7aae7d8bd44ca9e4e10808ae7311e1b98f2fe05b2f",
+  "records_hash_format": "sha256-raw-private"
+}

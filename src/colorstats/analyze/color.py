@@ -201,12 +201,14 @@ def extract_relations(regions: list[dict]) -> list[dict]:
 
 
 def extract_colors(
-    image: Image.Image, mask: np.ndarray | None = None, *, clusters: int = CLUSTERS
+    image: Image.Image, mask: np.ndarray | None = None, *, clusters: int = CLUSTERS,
+    clip_extremes: bool = True,
 ) -> list[dict]:
     """有効画素をOKLabで分類し、主色・分位点・有効面積に対する比を返す。
 
     maskは画像と同寸の2次元bool配列。未指定なら画像全体を対象とする。
     不透明画素のうち全RGB成分が5以下または250以上の画素は除外する。
+    clip_extremes=Falseは黒白も含めた面積で分類する。
     有効画素なし、不正なmask、正整数でないclustersはValueError。
     入力画像は変更しない。結果は面積の降順、同面積は主色の辞書順とする。
     """
@@ -214,11 +216,9 @@ def extract_colors(
         raise ValueError("clustersは正整数で指定してください")
     rgba = np.asarray(image.convert("RGBA"))
     rgb = rgba[:, :, :3]
-    valid = (
-        (rgba[:, :, 3] == 255)
-        & ~np.all(rgb <= BLACK_MAX, axis=2)
-        & ~np.all(rgb >= WHITE_MIN, axis=2)
-    )
+    valid = rgba[:, :, 3] == 255
+    if clip_extremes:
+        valid &= ~np.all(rgb <= BLACK_MAX, axis=2) & ~np.all(rgb >= WHITE_MIN, axis=2)
     if mask is not None:
         if mask.shape != valid.shape or mask.dtype != np.bool_:
             raise ValueError("maskは画像と同寸の2次元bool配列で指定してください")
