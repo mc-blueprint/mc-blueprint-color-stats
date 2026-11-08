@@ -266,7 +266,9 @@
     "human_review_recording": {
       "status": "unverified",
       "written": 0,
-      "reason": "unverified_missing_presented_privacy_and_region_runs"
+      "reason": "#121の範囲から除外。#118/#119本番runが揃った後、#114再解析で#120の正規取込を行う",
+      "in_issue121_scope": false,
+      "deferred_to_issue": 114
     },
     "privacy_region_contract": {
       "status": "unverified",
@@ -281,7 +283,9 @@
       "title_keyword_candidates": 0,
       "title_candidates_by_group": {},
       "subject_terrain": 29,
-      "reason": "現在のschemaには空撮/衛星区分がない。タイトル語は候補であって目視正解ではない。全候補数の上限を与えない。"
+      "reason": "2026-11-08に当面保留を決定。旧v1に項目がなく該当枚数は未検証。v2追加後に全量再判定する",
+      "user_policy": "hold_aerial_drone_satellite",
+      "successor_issue": 129
     }
   },
   "cost": {
@@ -291,8 +295,58 @@
     "parent_budget": "issue114-image-gate"
   },
   "downstream": {
-    "baseline_regeneration": "blocked",
-    "issue114_rerun": "blocked",
-    "reason": "wallは不合格、人物/領域契約は未検証。画像ゲートの目視だけで再生成しない"
+    "baseline_regeneration": "conditional_terrain_only",
+    "issue114_rerun": "conditional_terrain_only",
+    "reason": "ユーザー決定により合格した地形側だけを先行し、建物改善と並行する。全方式一括のquality_eligibleはfalseを維持。",
+    "terrain_only": {
+      "status": "passed",
+      "scope": "公開GTで合格した地形側の品質範囲",
+      "supported_labels": [
+        "water"
+      ],
+      "supported_groups": [
+        "real_terrain/tree"
+      ],
+      "excluded_domains": [
+        "real_building"
+      ],
+      "all_other_labels_supported": false,
+      "execution_ready": false,
+      "required_image_gate": "image-gate-v2",
+      "requirements": [
+        "#129のimage-gate-v2全量判定・評価が完了し、上空写真/暗所/混在/人物の保留を適用する",
+        "#118/#119の本番成功run・有効mask・人物根拠を明示参照し、raw候補へ代替しない",
+        "model/prompt/前処理/policy/hashを検証済み根拠と照合する。改行差や本番prompt集合の差を黙って同一扱いしない",
+        "#120の提示・番号・原画像SHAを確認する。#114の人確認取込前処理は本番B/C runが揃い次第、#122旧基準snapshot完成を待たず行える。旧v1目視をv2や未提示maskの包括承認として使わない",
+        "権利・保持・固定母集団・既存版保全を再確認し、新snapshot/run版だけを生成する"
+      ],
+      "order": [
+        129,
+        122,
+        114
+      ]
+    },
+    "building": {
+      "status": "failed",
+      "execution_ready": false,
+      "improvement_issue": 130,
+      "reason": "各建物部位がprecision>=0.80かつrecall>=0.30で合格後に別版統計へ追加。stairsを含め今回の先行範囲には入れない"
+    }
+  },
+  "finalization": {
+    "version": "issue121-handoff-v1",
+    "date": "2026-11-08",
+    "evaluation_complete": true,
+    "close_reference": "Closes #121",
+    "completion_basis": "合格条件ごとのpassed/failed/unverifiedと根拠、後続用decisionを固定した。全方式の品質合格や本番統計生成は完成条件ではない。",
+    "human_review_run_import": {
+      "written": 0,
+      "in_scope": false,
+      "successor_issue": 114
+    },
+    "followup_issues": {
+      "image_gate_v2": 129,
+      "building_improvement": 130
+    }
   }
 }
