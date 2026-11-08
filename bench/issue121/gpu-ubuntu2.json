@@ -1,0 +1,13 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4070",
+  "images": 3,
+  "input_manifest_sha256": "8ce1f7e8f85ddb6e00bf70d66419513fe525696f0fb05180f6d8c5791d5a09d7",
+  "total_seconds": 17.37987801595591,
+  "peak_allocated_bytes": 2659068416,
+  "peak_reserved_bytes": 3772776448,
+  "policy_hash": "3dad77aa16f42d620dc85cdf2e81586288db93c67154c86a39c68fb1774e65ba",
+  "quality_eligible": false,
+  "limitation": "公開3枚の両GPU適合・性能。全件の8GB適合や品質の保証ではない。",
+  "records_sha256": "9ecf7112fecd68d7538ebb3ca643ee44813285240a759a6ba57d7f2cc707ca28",
+  "records_hash_format": "sha256-raw-private"
+}

@@ -1,0 +1,353 @@
+{
+  "version": "issue121-v1",
+  "status": "failed",
+  "quality_eligible": false,
+  "supported_labels": [],
+  "supported_groups": [],
+  "evidence": {
+    "bench/issue121/paired-summary.json": "5e1d7a9714640c5cd98f81331026234b0193588eae90e75fe0c0ae663d8362ba",
+    "bench/issue121/ade-summary.json": "5b48dc3bdcce1370b53263b38338330a1078210138226e16c96ebde3ca9e6921",
+    "bench/issue121/owned-proof.json": "e38c60a6b1d5427332321d0190c332cbd9fe6f001244fb55a9cd76c92af3fc7c",
+    "bench/issue121/legacy-definition.json": "cab169361bb31aecaac91c5cdf2362fc231b28bd119d861a8fe2f146d838a811",
+    "bench/issue121/class-info-provenance.json": "497299a1faaeefa354825c03a41a769bf7efc6313db9dae0322bd556fafa5bd7",
+    "bench/issue121/gpu-ubuntu1.json": "d79c4bf35911fb9b898f04fdc0abd47499f9e12ad60a45b21853df397479d758",
+    "bench/issue121/gpu-ubuntu2.json": "0b0d85e78f860aedadc7c581673e9c94bdd8e1c810c0cf854b2fc12862ccdd15",
+    "bench/issue121/human-summary.json": "f7521625e70f020bd832d4f101f9954fa2dde53162f4880309c4f127eb8c7756",
+    "bench/issue121/aerial-summary.json": "ef597bbac1f4e04b39fe5e6875348ca4d551ac133ae70ec481e8bcb039464286"
+  },
+  "part_criteria": {
+    "oneformer/cmp/holdout": {
+      "wall": {
+        "status": "failed",
+        "precision": 0.4407014905091037,
+        "recall": 0.056014884530185015,
+        "iou": 0.05229713214078178,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "band_course": {
+        "status": "failed",
+        "precision": 0.023658395845354875,
+        "recall": 1.6790761313594496e-05,
+        "iou": 1.6779134614086042e-05,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "cornice": {
+        "status": "failed",
+        "precision": 0.00019292284330931132,
+        "recall": 1.9485470438969935e-05,
+        "iou": 1.7698266255001186e-05,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "column": {
+        "status": "failed",
+        "precision": 0.013614973282091969,
+        "recall": 0.006865114079678449,
+        "iou": 0.004584788909598372,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "window": {
+        "status": "failed",
+        "precision": 0.06558328496807893,
+        "recall": 0.0007734722591930638,
+        "iou": 0.0007650412986895753,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "door": {
+        "status": "failed",
+        "precision": 0.38160416096359157,
+        "recall": 0.0063303018927330194,
+        "iou": 0.0062660227836304275,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "shutter": {
+        "status": "failed",
+        "precision": 0.12100011807769512,
+        "recall": 0.0036423867541171234,
+        "iou": 0.003548493773038373,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "relief": {
+        "status": "failed",
+        "precision": 0.016455800876540146,
+        "recall": 0.000632679317426977,
+        "iou": 0.0006096265858460433,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      }
+    },
+    "oneformer/ade/holdout": {
+      "stairs": {
+        "status": "passed",
+        "precision": 0.8009601844763876,
+        "recall": 0.6524955923904256,
+        "iou": 0.5614574362371646,
+        "reason": "全非void画素の直接計数",
+        "supported": true
+      },
+      "railing": {
+        "status": "failed",
+        "precision": 2.446124116337663e-05,
+        "recall": 1.586898565443697e-05,
+        "iou": 9.625009625009625e-06,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "fence": {
+        "status": "failed",
+        "precision": 0.3008786848072562,
+        "recall": 0.04949352481087319,
+        "iou": 0.04438868851602112,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "path": {
+        "status": "failed",
+        "precision": 0.2691970250850876,
+        "recall": 0.676757683139463,
+        "iou": 0.23852770790056435,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "path_natural": {
+        "status": "failed",
+        "precision": 0.04781376872973683,
+        "recall": 0.01508269221909983,
+        "iou": 0.011598823821164134,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "ground_soil": {
+        "status": "failed",
+        "precision": 0.632906717605858,
+        "recall": 0.02321427487095266,
+        "iou": 0.022905857795545666,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "ground_grass": {
+        "status": "failed",
+        "precision": 0.6853918093930341,
+        "recall": 0.7317242041932579,
+        "iou": 0.5477487350444589,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "rock": {
+        "status": "failed",
+        "precision": 0.07299520746303083,
+        "recall": 0.07560482265437113,
+        "iou": 0.03857102230407757,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "sand": {
+        "status": "failed",
+        "precision": 0.40076531754478417,
+        "recall": 0.42741381526989547,
+        "iou": 0.26076442970317,
+        "reason": "全非void画素の直接計数",
+        "supported": false
+      },
+      "water": {
+        "status": "passed",
+        "precision": 0.9818581421729267,
+        "recall": 0.8520003117049303,
+        "iou": 0.8387956003962443,
+        "reason": "全非void画素の直接計数",
+        "supported": true
+      },
+      "tree": {
+        "status": "passed",
+        "precision": 0.9401816889879722,
+        "recall": 0.5339995802871063,
+        "iou": 0.5164529378660558,
+        "reason": "全非void画素の直接計数",
+        "supported": true
+      }
+    }
+  },
+  "criteria": {
+    "legacy81_reproduction": {
+      "status": "passed",
+      "images": 1223
+    },
+    "three_methods_same_inputs": {
+      "status": "passed",
+      "reason": "固定plan・画像/正解/cache mask SHAを各入力で照合し、3方式を同じ正解で計数"
+    },
+    "ade_all_validation": {
+      "status": "passed",
+      "images": 2000,
+      "reason": "ADE学習済みsemanticの公開診断。部位保証ではない"
+    },
+    "both_gpus": {
+      "status": "passed",
+      "reason": "同じ公開3枚、各host 1 slot・batch 1の工程別計測"
+    },
+    "owned_selection": {
+      "status": "passed",
+      "selection_sha256": "22247559810a5aa6dc6fb958eab554f90d55ed9d1f94a7890bda2fc9230c138f"
+    },
+    "owned_people": {
+      "old": {
+        "status": "passed",
+        "selected": 50,
+        "reviewed": 50,
+        "accepted": 32,
+        "missed": 0,
+        "zero_miss_upper_95": 0.0893681989862648,
+        "limitation": "約100枚で0件でも、見落とし率は約3%を超えないまで。各cohort・採用分の分母が小さければ上限はさらに大きい。"
+      },
+      "new": {
+        "status": "passed",
+        "selected": 50,
+        "reviewed": 50,
+        "accepted": 26,
+        "missed": 0,
+        "zero_miss_upper_95": 0.10883035576078481,
+        "limitation": "約100枚で0件でも、見落とし率は約3%を超えないまで。各cohort・採用分の分母が小さければ上限はさらに大きい。"
+      }
+    },
+    "owned_html": {
+      "status": "passed",
+      "images": 110,
+      "sha256": "07fd1052aad76098751f795a033af20d188eff942e0c556db40715b9e47248bb",
+      "raw_only": true
+    },
+    "gate_target_subject_people": {
+      "status": "unverified",
+      "image_gate_acceptance_review": "passed",
+      "reason": "画像ゲート採用分の問題報告は計数済み。建築/地形の主体GTと#119/#118の参照は未取得"
+    },
+    "legacy21_vs16": {
+      "status": "passed",
+      "reason": "旧試験の対象外21件から接写5件を除くと16件。元診断16件とID集合SHAが完全一致。旧93.5%を新方針の精度へ継承しない"
+    },
+    "color_contamination": {
+      "status": "unverified",
+      "reason": "公開GTの誤採用画素はFPとして計数済み。所有画像での色の汚染は目視未確認"
+    },
+    "production_prompt_coverage": {
+      "status": "unverified",
+      "reason": "3方式の候補は旧公開評価のdataset別prompt集合。本番全prompt集合の候補・競合まで検証したとは扱わない"
+    },
+    "policy_hash_portability": {
+      "status": "unverified",
+      "reason": "class-infoのJSON内容は同一だが、作業時CRLFとGit blobのLFで実byte SHAが異なる。現行policy_hashはこのbyte SHAを含むため、別環境での照合を保証しない"
+    },
+    "image_gate_people": {
+      "status": "passed",
+      "selected": 100,
+      "reviewed": 100,
+      "accepted": 58,
+      "missed": 0,
+      "zero_miss_upper_95": 0.05033933833042015,
+      "limitation": "約100枚で0件でも、見落とし率は約3%を超えないまで。各cohort・採用分の分母が小さければ上限はさらに大きい。",
+      "scope": "旧・新の画像ゲート採用分。#119の人物画素評価とは別。"
+    },
+    "content_acceptance": {
+      "status": "passed",
+      "reported_problems": 26,
+      "accepted_reported_problems": 0,
+      "reason": "人が報告した対象外・白黒等が画像ゲート採用分へ残るかを固定標本で確認"
+    },
+    "review_completion": {
+      "status": "passed",
+      "explicit_in_original": false,
+      "basis": "原文は問題のある項目のみ。前回と同形式としてオーケストレータが全件確認済みと判断"
+    },
+    "human_review_recording": {
+      "status": "unverified",
+      "written": 0,
+      "reason": "#121の範囲から除外。#118/#119本番runが揃った後、#114再解析で#120の正規取込を行う",
+      "in_issue121_scope": false,
+      "deferred_to_issue": 114
+    },
+    "privacy_region_contract": {
+      "status": "unverified",
+      "privacy_run_references": 0,
+      "region_policy_run_references": 0,
+      "reason": "原画像だけを提示。#118/#119の根拠がなく、新契約の統計採用は未検証"
+    },
+    "aerial_policy": {
+      "status": "unverified",
+      "estimated_count": null,
+      "gate_explicit_aerial": 0,
+      "title_keyword_candidates": 0,
+      "title_candidates_by_group": {},
+      "subject_terrain": 29,
+      "reason": "2026-11-08に当面保留を決定。旧v1に項目がなく該当枚数は未検証。v2追加後に全量再判定する",
+      "user_policy": "hold_aerial_drone_satellite",
+      "successor_issue": 129
+    }
+  },
+  "cost": {
+    "additional_api_usd": 0,
+    "additional_cap_usd": 5,
+    "parent_cap_usd": 50,
+    "parent_budget": "issue114-image-gate"
+  },
+  "downstream": {
+    "baseline_regeneration": "conditional_terrain_only",
+    "issue114_rerun": "conditional_terrain_only",
+    "reason": "ユーザー決定により合格した地形側だけを先行し、建物改善と並行する。全方式一括のquality_eligibleはfalseを維持。",
+    "terrain_only": {
+      "status": "passed",
+      "scope": "公開GTで合格した地形側の品質範囲",
+      "supported_labels": [
+        "water"
+      ],
+      "supported_groups": [
+        "real_terrain/tree"
+      ],
+      "excluded_domains": [
+        "real_building"
+      ],
+      "all_other_labels_supported": false,
+      "execution_ready": false,
+      "required_image_gate": "image-gate-v2",
+      "requirements": [
+        "#129のimage-gate-v2全量判定・評価が完了し、上空写真/暗所/混在/人物の保留を適用する",
+        "#118/#119の本番成功run・有効mask・人物根拠を明示参照し、raw候補へ代替しない",
+        "model/prompt/前処理/policy/hashを検証済み根拠と照合する。改行差や本番prompt集合の差を黙って同一扱いしない",
+        "#120の提示・番号・原画像SHAを確認する。#114の人確認取込前処理は本番B/C runが揃い次第、#122旧基準snapshot完成を待たず行える。旧v1目視をv2や未提示maskの包括承認として使わない",
+        "権利・保持・固定母集団・既存版保全を再確認し、新snapshot/run版だけを生成する"
+      ],
+      "order": [
+        129,
+        122,
+        114
+      ]
+    },
+    "building": {
+      "status": "failed",
+      "execution_ready": false,
+      "improvement_issue": 130,
+      "reason": "各建物部位がprecision>=0.80かつrecall>=0.30で合格後に別版統計へ追加。stairsを含め今回の先行範囲には入れない"
+    }
+  },
+  "finalization": {
+    "version": "issue121-handoff-v1",
+    "date": "2026-11-08",
+    "evaluation_complete": true,
+    "close_reference": "Closes #121",
+    "completion_basis": "合格条件ごとのpassed/failed/unverifiedと根拠、後続用decisionを固定した。全方式の品質合格や本番統計生成は完成条件ではない。",
+    "human_review_run_import": {
+      "written": 0,
+      "in_scope": false,
+      "successor_issue": 114
+    },
+    "followup_issues": {
+      "image_gate_v2": 129,
+      "building_improvement": 130
+    }
+  },
+  "evidence_hash_format": "sha256-lf-normalized"
+}

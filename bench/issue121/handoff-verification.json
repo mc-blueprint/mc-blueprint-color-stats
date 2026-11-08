@@ -1,0 +1,37 @@
+{
+  "decision_sha256": "f6a6fabb14a998e472f0ffdf00d0057ec0e563dc22c2478803b943c3a244769a",
+  "metadata_checks": "passed",
+  "original_and_canonical_unchanged": true,
+  "issue_bodies_verified": {
+    "114": {
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/114",
+      "body_verified": true,
+      "state": "OPEN"
+    },
+    "121": {
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/121",
+      "body_verified": true,
+      "state": "OPEN"
+    },
+    "122": {
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/122",
+      "body_verified": true,
+      "state": "OPEN"
+    },
+    "129": {
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/129",
+      "body_verified": true,
+      "state": "OPEN"
+    },
+    "130": {
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/130",
+      "body_verified": true,
+      "state": "OPEN"
+    }
+  },
+  "new_issues_milestone": 7,
+  "production_database_writes": 0,
+  "api_model_calls": 0,
+  "pytest_ruff_build_reference": "bench/issue121/review-verification.json",
+  "decision_hash_format": "sha256-lf-normalized"
+}

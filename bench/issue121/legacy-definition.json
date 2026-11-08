@@ -1,0 +1,10 @@
+{
+  "old_outside": 21,
+  "building_details_reclassified": 5,
+  "new_outside": 16,
+  "new_outside_set_sha256": "b9a08149751c8741c0ec83de1684c48db70f093137afebf72d1bdbe52a6626b5",
+  "source_sha256": "6d3a5a576009f5ee867b28b5b6b4de6bfaad54717fbb963136643f961d5d5777",
+  "diagnostic_outside": 16,
+  "diagnostic_outside_set_sha256": "b9a08149751c8741c0ec83de1684c48db70f093137afebf72d1bdbe52a6626b5",
+  "diagnostic_source": "/home/toumokorosi/issue114-diagnostic-flags.json"
+}

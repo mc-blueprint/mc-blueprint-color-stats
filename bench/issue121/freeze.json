@@ -1,0 +1,99 @@
+{
+  "version": "issue121-v1",
+  "base_commit": "d3c742c",
+  "seed": 12120261107,
+  "frozen_at": "2026-11-07T13:38:39.329460+00:00",
+  "files": {
+    "bench/issue121/plan.md": "b4e8e7428363fb02bb11c0f7ee834c66a4635bfeb716b78793826e3a18a3b96b",
+    "bench/issue121/public.py": "32df31bc933688924e85b24dcc5765839513a4f75ef188fb6b3519556af7deec",
+    "bench/issue121/quality.py": "19ac3f44534cd9ee97271655e0e21d59b05d9a94eaa452324c99635dc8de4b03",
+    "bench/issue121/owned.py": "0aa666f36ad915330fdf4bca2a1d1391cb1c3172a329874e44241b0e4485adc0",
+    "bench/issue121/inventory.py": "405fe66e2adaa299fdadbf2f2e1a726f191affa9c8e735e77e905429c2629ca1",
+    "bench/issue73/plan.json": "e9082b43e44ad0b4c46e4bc0d3446c706c913f389ef51d0ae188a6a67bd4ca75",
+    "bench/issue81/label-map.yaml": "857d74db426de1c7d7005a5ef98bfb69d80dd12ffec130816132445b010c2d0e",
+    "configs/segment_stats.yaml": "d1bac9e5e23d17ade71421b561718bdf853671f928678e071a9c0fe4d09910ff",
+    "src/colorstats/analyze/segment_models.py": "2bbc7d7166ccafa88849adcc4f1f621a3786eb361dc8423226a40d4c0bb04684",
+    "src/colorstats/analyze/region_policy.py": "9dc847bc7ac5a21452af6479053e099c4b5e5f82c30814d6baf695ce37764e1c",
+    "src/colorstats/analyze/region-parents-v2.json": "84b79cfdbd9f75b6e617408cd799eec227acb69750cf9fc827dbafe99fa95c44",
+    "src/colorstats/segmentation_evaluation.py": "c7c4c85292d9aa184af403320d533f52aac342645c07544963b7063ff3c910d6"
+  },
+  "archives": {
+    "CMP_facade_DB_extended.zip": "071c16c53732bb19f2d5ee294af4507b3e2ff0244909cdccad755fc51a57130b",
+    "CMP_facade_DB_base.zip": "5cff59b2156dad44e00777ee43960357b44c1522bd2f8701e52bc6026305a29a",
+    "ADEChallengeData2016.zip": "7ff1be44964418441f542a7cc1e1a650e7dc0fc275f5d23252bc9bbdbc977b29"
+  },
+  "models": {
+    "dino": {
+      "README.md": "cf46f74c7b6850f1d5cbe406028324d8798148726016d46a69a365b4a2d3e89f",
+      "added_tokens.json": "909e96cb32d92ce728a01bc99850cbba26196d74115c17ebeb019275412588f2",
+      "config.json": "eec82c5ab66e16df12a9a212e68ac011779927c2536cf9078658e35d85f0c67a",
+      "model.safetensors": "1a2412ef99bd74bcd3c2a246fa1e48581f8889a1300c9051974741314fc042f3",
+      "preprocessor_config.json": "8454179ba95e2ad22947835aad7b45862a601fc0055ab88bf1ee70892d3aea60",
+      "source.json": "53f3336c67751b1becc189603249b8060f680d10bd900780db87c24127e57098",
+      "special_tokens_map.json": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+      "tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+      "tokenizer_config.json": "d40ab645b68211910b9170d22433d43186a6ec8ee6fd10ba170524b25bf4fb56",
+      "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    },
+    "sam2": {
+      "README.md": "dfa401b1b9358b9650ae487dd2f2bb336fd745c3609e3244adf2e97a22343857",
+      "config.json": "860aff9751b139d83a4ad7df1e5535416fded533e0ead02625edbefcb9953cce",
+      "model.safetensors": "48c14467e5cf9e51870511feb72c89688e82dd74523142c0538b663e193ac2a7",
+      "preprocessor_config.json": "6ebf229ee259368ce4a8d4f2fe893a72b053023710853e257253939e601f583d",
+      "processor_config.json": "f8a68e865cfad115c1c2763f3d93eca7b1c622da06da2a9273eb437fb2389b6d",
+      "source.json": "d85e211d9c15a306f07c719ffee7c799a073873839f565dd93d9d8314265a72b",
+      "video_preprocessor_config.json": "9fccfe5f464ec38c2f236d0e6a68e95511c80c22132fc2fa4b9f7b65f24fad95"
+    }
+  },
+  "oneformer": {
+    "repository": "shi-labs/oneformer_ade20k_swin_large",
+    "revision": "4a5bac8e64f82681a12db2e151a4c2f4ce6092b2",
+    "files": {
+      "README.md": "987c2f143f6f899d037e24d0110630fbc6eba57ab73b6e0d8c83868597b4c348",
+      "config.json": "27452b656a467dbdebdf879dc413d6f3facd2bfe3643824ae66c32c22884b4bd",
+      "merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+      "preprocessor_config.json": "49e2c8f207405d063cf7824f97c2814fa864f8f19ea9e02c9e20a9ff539c6d49",
+      "pytorch_model.bin": "c0b2fe11dfecee6f2f1f315f466946e96f4e94813f3f6d660ff3747b83c28cc9",
+      "special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+      "tokenizer_config.json": "968a6126200b3c8f68fe955d61da20f3537e641a1deb538dc39fdad142248d72",
+      "vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+    },
+    "license_class": "open",
+    "id2label_hash": "23e0d637c10b3210a4fece9d0ffd393db262b8754c8c9514dcc7bd6a874d2064"
+  },
+  "policy_hash": "3dad77aa16f42d620dc85cdf2e81586288db93c67154c86a39c68fb1774e65ba",
+  "parent_table": {
+    "version": "ade-role-parents-v2",
+    "sha256": "9657fe1c90fae5ea3b87eca49b3b84a91d57d1287dae1a81db519cdd76acc21b"
+  },
+  "transform": {
+    "shortest_edge": 640,
+    "longest_edge": 2560,
+    "batch_size": 1,
+    "restore": "semantic-logits-bilinear-align_corners_false-argmax",
+    "orientation": "prep-pixels-exif-1",
+    "pad": "bottom-right-batch-1",
+    "processor": "fixed-json-local-class-info-CLIPTokenizer",
+    "position_embedding_cache": "disabled"
+  },
+  "methods": [
+    "raw",
+    "prompt_post",
+    "oneformer"
+  ],
+  "thresholds": {
+    "raw": 0.35,
+    "prompt_post": 0.45,
+    "oneformer": 0.35
+  },
+  "gates": {
+    "precision": 0.8,
+    "recall": 0.3
+  },
+  "split_sha_overlap": 0,
+  "paired_images": 1223,
+  "ade_validation_images": 2000,
+  "before_new_predictions": true,
+  "known_regression_set": true,
+  "quality_eligible": false
+}

@@ -1,0 +1,14 @@
+{
+  "passed": 1350,
+  "skipped": 1,
+  "failures": 0,
+  "errors": 0,
+  "ruff": true,
+  "build": true,
+  "focused_tests": 6,
+  "artifact": "/tmp/colorstats-issue121-0eKoov",
+  "test_seconds": 335.25,
+  "isolated_database": "stopped",
+  "log": "20261107T140419Z-c78626bfd3c940ee9c7a99cc0cebd85c.jsonl",
+  "post_metadata_cli": "旧21件/16件照合と本番prompt未検証条件を反映してdecision生成成功"
+}

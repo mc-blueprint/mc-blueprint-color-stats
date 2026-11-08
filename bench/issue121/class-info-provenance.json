@@ -1,0 +1,7 @@
+{
+  "working_sha256": "d5ff4738cd85456386599233460a88f7dca344ccba38309d2d54478194008e14",
+  "git_blob_sha256": "cb295c6e28e32b6f7e386329074478ba4b221360c74c6a551665e092259bb2b6",
+  "json_equal": true,
+  "byte_equal": false,
+  "scope": "実行時class-infoの改行差。意味は同じだが現行policy_hashには実byte SHAが入る。"
+}

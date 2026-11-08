@@ -1,0 +1,22 @@
+{
+  "selection_sha256": "22247559810a5aa6dc6fb958eab554f90d55ed9d1f94a7890bda2fc9230c138f",
+  "inventory_sha256": "9c4860acbf537ccaaa493b63614a4aa60d5328dab2cf36cadaa48c976d66b451",
+  "known_sha256": "2315ad72ddf57f98de78a4b815b807955dc243d3e41a1b55d1acfce785c4c539",
+  "random": {
+    "old": 50,
+    "new": 50
+  },
+  "challenge": 10,
+  "eligible": {
+    "old": 3393,
+    "new": 2441
+  },
+  "cohort_identity_sha256": "b02cb113c0decb883f683c34dc6405d6afcfcdf0094fe2e74ce88a0b4527c971",
+  "known_overlap": 0,
+  "sha_duplicates": 0,
+  "input_root_missing": true,
+  "html_generated": false,
+  "read_only": true,
+  "api_batch_already_started": true,
+  "api_results_used": false
+}
