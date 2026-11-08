@@ -1,8 +1,10 @@
-# #121 品質評価（目視・本番判定待ち）
+# #121 品質評価（原画像目視照合済み）
 
 起点 `d3c742c`、2026-11-07。旧#81 decision・旧run・本番DBを変更していない。
 新しい [decision.json](decision.json) は `quality_eligible=false`。
-公開GTではwallが不合格で、人物・所有画像は未検証。後続の旧基準訂正・#114再実行を許可しない。
+公開GTではwallが不合格。原画像目視による画像ゲート採用分の確認は成功したが、
+人物/領域契約と確認run取込は未検証。[110枚目視結果](human-results.md)を参照。
+後続の旧基準訂正・#114再実行を許可しない。
 
 ## 予測前固定と再現
 
@@ -33,7 +35,8 @@ ADE buildingをwall正解にはしていない。同親はunion、異群重複�
 合格基準はprecision>=0.80かつrecall>=0.30。OneFormerのCMP全群は不合格。
 ADEではstairs・water・treeの公開GT指標が基準を満たした。treeの幹／樹冠やwindowの
 ガラス／枠の個別支持、GT対応がないroof/snow等の支持には昇格させていない。
-全体として所有画像未確認なので、decisionのsupported_labels/groupsは空を維持した。
+原画像目視は照合済みだが、所有画像の人物/領域契約は未検証なので、
+decisionのsupported_labels/groupsは空を維持した。
 
 [paired-summary.json](paired-summary.json)に群別TP/FP/FN/TN、全GT IDへの予測ヒストグラム、
 coverage/予測void、GT void、意味対応外の非void画素、群の交差を保存した。
@@ -77,22 +80,18 @@ challengeは既知の人物・対象失敗例から別seedで10枚。無作為�
 全量API判定は抽出より先に開始済みだが、その判定結果は抽出・選別に使っていない。
 
 私有固定台帳：`ubuntu-2:/mnt/data/work/issue-121/owned-20261107/selection.json`。
-原画像の論理root `/srv/colorstats/raw-*` はubuntu-2になく、ubuntu-1には存在する。
-標本を再抽出せず保全。HTMLは未生成で、固定選択台帳のubuntu-1への転送承認が必要。
-Windowsの既知試験台帳の転送は自動承認審査で拒否され、実行していない。
+許可されたLAN内台帳転送後、ubuntu-1で固定110枚のHTMLを作成し、
+`H:/mc-blueprint/private/issue121-review/review.html`へ配置済み。
+13,679,667 bytes、全110画像の復号・外部参照0・転送SHA一致を検証済み。
+画像ゲート判定は#117完了後の固定runで照合済み。人の返信との照合はhuman-results.mdを参照。
 
 残作業：
 
-1. 承認された経路で固定110件の単体HTMLを生成（25MB以内・data URI・外部参照なし）。
-   原画像だけを先に提示し、予測比較を見た確認は盲検と呼ばない。
-2. ユーザーの全件確認・番号と理由・主体を受け、#117完了後の固定run/hashと照合する。
-   target/subject/personのTP/FP/FN/TNをcohort別に計数し、採用分の人物見落とし0件を確認する。
-   約100枚0件でも「約3%を超えない」まで。実際のcohort別採用分母で片側95%上限を出す。
-3. 旧21件には接写5枚の除外が含まれ、新方針は接写採用。旧93.5%は新精度へ継承しない。
-   旧21件から接写5件を除いた16件は、元診断16件とID集合SHAが完全一致した。
-   [legacy-definition.json](legacy-definition.json)に個別IDを含めず照合証跡を保存した。
-4. 保持台帳へのHTML/番号表登録は本番DB書込を要する。本タスクのREAD ONLY制約では未実施。
-   必要なDB書込は保持登録・人の訂正run記録であり、包括承認や本番採用に転用しない。
+1. #120の人確認run記録には、今回未提示のprivacy/region runが必要。
+   後付けの参照を作らず、保存契約の判断をメインへ返す。人確認run書込み0件。
+2. 主体GT・#118/#119の独立した人物/領域評価は未検証。原画像目視だけで採用を承認しない。
+3. HTML生成時の許可範囲で、HTML二配置の保持紐付け220件と必要な親1件だけを登録済み。
+   今回の返信評価では本番DBへ書き込んでいない。
 
 追加API費用0 USD。追加5 USD以内・#117の50 USD枠という上限を維持した。
 新snapshot/rule_stat/report生成・サービス変更・push/PRは実施していない。
@@ -115,3 +114,5 @@ Linuxでの新規checkout等ではpolicy hashが一致しない可能性があ�
 [class-info-provenance.json](class-info-provenance.json)に両SHAを保存し、
 decisionの`policy_hash_portability`を未検証にした。共有契約の変更は行っていない。
 再利用・後続採用の前にメインで#118のhash正規化・テキスト属性と版更新の方針を判断する必要がある。
+
+原画像目視照合の追加検証は[human-verification.json](human-verification.json)を参照。

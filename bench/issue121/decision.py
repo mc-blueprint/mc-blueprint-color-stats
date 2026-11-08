@@ -7,6 +7,45 @@ from bench.issue73.evaluate import digest, read, write
 from bench.issue121.quality import part_decision, person_decision
 
 
+def apply_human(result, human):
+    """画像ゲート採用分の目視だけを更新し、未取得の人物/領域契約を合格にしない。"""
+    groups = human["groups"]
+    escaped = sum(group["accepted_reported_problems"] for group in groups.values())
+    complete = (human["review_count"] == 110 and all(groups[name]["reviewed"] == count
+                for name, count in (("old", 50), ("new", 50), ("challenge", 10))))
+    content = "failed" if escaped else "passed" if complete else "unverified"
+    criteria = result["criteria"]
+    criteria["owned_people"] = {name: groups[name]["people_decision"] for name in ("old", "new")}
+    criteria["image_gate_people"] = {**human["random_people"],
+        "scope": "旧・新の画像ゲート採用分。#119の人物画素評価とは別。"}
+    criteria["content_acceptance"] = {"status": content,
+        "reported_problems": human["problem_count"],
+        "accepted_reported_problems": escaped,
+        "reason": "人が報告した対象外・白黒等が画像ゲート採用分へ残るかを固定標本で確認"}
+    criteria["owned_html"] = {"status": "passed" if human["presentation_images"] == 110
+        and human["external_references"] == 0 and human["data_uri_decoded"] == 110
+        else "unverified", "images": human["presentation_images"],
+        "sha256": human["presentation_sha256"], "raw_only": True}
+    criteria["review_completion"] = {"status": "passed" if complete else "unverified",
+        "explicit_in_original": human["completion_explicit_in_original"],
+        "basis": human["completion_basis"]}
+    criteria["human_review_recording"] = {"status": "passed" if
+        human["import_status"] == "recorded" and human["human_runs_written"] == 110
+        else "unverified", "written": human["human_runs_written"],
+        "reason": human["import_status"]}
+    criteria["privacy_region_contract"] = {"status": "unverified",
+        "privacy_run_references": human["privacy_run_references"],
+        "region_policy_run_references": human["region_policy_run_references"],
+        "reason": "原画像だけを提示。#118/#119の根拠がなく、新契約の統計採用は未検証"}
+    criteria["gate_target_subject_people"] = {"status": "unverified",
+        "image_gate_acceptance_review": content,
+        "reason": "画像ゲート採用分の問題報告は計数済み。"
+                  "建築/地形の主体GTと#119/#118の参照は未取得"}
+    result["downstream"]["reason"] = (
+        "wallは不合格、人物/領域契約は未検証。画像ゲートの目視だけで再生成しない")
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--paired", type=Path, required=True)
@@ -15,6 +54,8 @@ def main():
     parser.add_argument("--legacy", type=Path, required=True)
     parser.add_argument("--class-info", type=Path, required=True)
     parser.add_argument("--gpu", type=Path, action="append", required=True)
+    parser.add_argument("--human", type=Path)
+    parser.add_argument("--aerial", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     paired, ade, owned = (read(path) for path in (args.paired, args.ade, args.owned))
@@ -27,7 +68,7 @@ def main():
     expected_reports = {f"{method}/{dataset}/{split}" for method in (
         "raw", "prompt_post", "oneformer") for dataset in ("cmp", "ade")
         for split in ("tune", "holdout")}
-    write(args.output, {
+    result = {
         "version": "issue121-v1", "status": "failed" if failed else "unverified",
         "quality_eligible": False, "supported_labels": [], "supported_groups": [],
         "evidence": {str(path): digest(path) for path in (
@@ -76,7 +117,14 @@ def main():
                  "parent_cap_usd": 50, "parent_budget": "issue114-image-gate"},
         "downstream": {"baseline_regeneration": "blocked", "issue114_rerun": "blocked",
                        "reason": "wallは不合格、所有画像・人物は未検証。旧runへの代替禁止"},
-    })
+    }
+    if args.human:
+        apply_human(result, read(args.human))
+        result["evidence"][str(args.human)] = digest(args.human)
+    if args.aerial:
+        result["criteria"]["aerial_policy"] = read(args.aerial)
+        result["evidence"][str(args.aerial)] = digest(args.aerial)
+    write(args.output, result)
 
 
 if __name__ == "__main__":

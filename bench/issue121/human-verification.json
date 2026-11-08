@@ -1,0 +1,24 @@
+{
+  "passed": 1354,
+  "skipped": 1,
+  "failures": 0,
+  "errors": 0,
+  "seconds": 462.601,
+  "ruff": true,
+  "build": true,
+  "focused_tests": 10,
+  "artifact": "/var/tmp/colorstats-issue121-pOXcck",
+  "isolated_database_stopped": true,
+  "python": "3.12.3",
+  "versions": {
+    "pytest": "9.2.0",
+    "ruff": "0.17.3",
+    "Pillow": "12.3.0",
+    "SQLAlchemy": "2.0.55",
+    "hatchling": "1.33.0"
+  },
+  "uv_lock_text_sha256": "0d6a5b97bf983bb4ee6f23cd98b45e01ba93f5f502cc028cdf2cc6254635881e",
+  "test_environment": "task-owned /var/tmp venv; uv.lock frozen/offline cache restore",
+  "production_database_writes": 0,
+  "privacy_region_preconditions": "unverified"
+}

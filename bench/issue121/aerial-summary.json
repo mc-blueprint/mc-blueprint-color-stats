@@ -1,0 +1,9 @@
+{
+  "status": "unverified",
+  "estimated_count": null,
+  "gate_explicit_aerial": 0,
+  "title_keyword_candidates": 0,
+  "title_candidates_by_group": {},
+  "subject_terrain": 29,
+  "reason": "現在のschemaには空撮/衛星区分がない。タイトル語は候補であって目視正解ではない。全候補数の上限を与えない。"
+}
