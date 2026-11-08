@@ -16,6 +16,22 @@ from colorstats.analyze import region_policy, segment_models
 from colorstats.analyze.segment import _digest
 
 
+def save_summary(output, records, metadata):
+    """画像別記録はprivate出力へ保存し、公開summaryには全件集計と実byte SHAだけを残す。"""
+    write(output / "records.json", records)
+    write(output / "summary.json", {
+        **metadata, "images": len(records),
+        "seconds": sum(row["seconds"] for row in records),
+        "peak_allocated_bytes": max(max(row["runtime"]["peak_allocated_bytes"],
+                                        row["runtime"]["oneformer_peak_allocated_bytes"])
+                                    for row in records),
+        "peak_reserved_bytes": max(max(row["runtime"]["peak_reserved_bytes"],
+                                       row["runtime"]["oneformer_peak_reserved_bytes"])
+                                   for row in records),
+        "records_sha256": digest(output / "records.json"),
+        "records_hash_format": "sha256-raw-private"})
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("models", "inputs", "freeze", "output", "slot"):
@@ -77,18 +93,11 @@ def main():
                 raise RuntimeError("実行中に別のGPU処理を検出しました")
         import torch
 
-        write(args.output / "summary.json", {"gpu": torch.cuda.get_device_name(),
-              "images": len(records), "freeze_sha256": digest(args.freeze),
+        save_summary(args.output, records, {"gpu": torch.cuda.get_device_name(),
+              "freeze_sha256": digest(args.freeze),
               "policy_hash": _digest(policy()), "production_prompt_count": len(
                   spec["production_prompts"]), "batch_size": 1,
-              "seconds": sum(row["seconds"] for row in records),
-              "peak_allocated_bytes": max(max(row["runtime"]["peak_allocated_bytes"],
-                                              row["runtime"]["oneformer_peak_allocated_bytes"])
-                                          for row in records),
-              "peak_reserved_bytes": max(max(row["runtime"]["peak_reserved_bytes"],
-                                             row["runtime"]["oneformer_peak_reserved_bytes"])
-                                         for row in records),
-              "records": records, "quality_eligible": False,
+              "quality_eligible": False,
               "limitation": "公開3枚の適合検証。全本番promptの全件品質保証ではない。"})
 
 

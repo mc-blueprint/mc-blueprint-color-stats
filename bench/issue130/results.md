@@ -166,3 +166,19 @@ Refs #130で公開し、Issueは開いたままにする。
 木と地形の統計が完成したあと、外壁専用モデルの学習を別のIssueで設計する。
 [ユーザー決定](https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/130#issuecomment-6721634618)に従い、
 本作業では学習へ着手せず、建物統計を再開しない。
+
+## 反証P2：GPU計測の公開範囲の修正
+
+gpu-ubuntu1.jsonとgpu-ubuntu2.jsonの画像別recordsをprivateへ移し、
+Gitには既存の件数・合計時間・最大VRAM等の集計とrecords_sha256だけを残した。
+hash形式は#121と同じsha256-raw-private（private JSONの実byte SHA）。
+原本は`H:/mc-blueprint/private/issue130-review/gpu-records-20261108/<ubuntu1|ubuntu2>/records.json`。
+gpu.pyもprivate records.jsonと公開summaryを分離し、再混入防止のテストを追加した。
+公開データセットの画像計測値であるため、#121と同じ判断で履歴は書き換えない。
+GPU再推論や品質判定の変更はしていない。
+
+fetch時点のorigin/developはbd8b90b（#121のPR #131を含む）。変更パスの重複と
+merge-treeの競合はなく、branchへのmergeは不要と判断した。
+最新#121のコード・テストを作業内容の隔離コピーへ追加し、統合時の全検証を行った。
+結果は1409 passed / 1 skipped（401.80秒）、全ruff・sdist/wheel build成功。
+隔離DBは正常停止。GPUの再推論・branchへのmerge・履歴改変・pushは行っていない。

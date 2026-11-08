@@ -1,0 +1,26 @@
+{
+  "upstream_commit": "bd8b90b",
+  "upstream_includes_pr": 131,
+  "changed_path_overlap": 0,
+  "merge_tree_conflicts": false,
+  "branch_merge_performed": false,
+  "integration_scope": "現worktreeの隔離コピーへbd8b90bのbench/issue121とtests/test_issue121_*を追加",
+  "full_pytest": {
+    "passed": 1409,
+    "skipped": 1,
+    "warnings": 4,
+    "seconds": 401.80,
+    "environment": "WSL Ubuntu-24.04 root・隔離PostgreSQL16",
+    "artifact": "/tmp/colorstats-issue130-rEjYEq",
+    "database_stopped": true,
+    "log": "20261108T130108Z-04c916da3fbe4778b9e5e6187fc19858.jsonl"
+  },
+  "publication_tests": "2 passed",
+  "ruff": "passed",
+  "build": ["sdist passed", "wheel passed"],
+  "records_hash_format": "sha256-raw-private",
+  "private_root": "H:/mc-blueprint/private/issue130-review/gpu-records-20261108",
+  "aggregate_values_changed": false,
+  "new_gpu_predictions": 0,
+  "history_rewritten": false
+}
