@@ -3,7 +3,7 @@
 # Issue #121専用。#120と同じWSL root・隔離PostgreSQL方式。
 set -euo pipefail
 
-root=$(mktemp -d /tmp/colorstats-issue121-XXXXXX)
+root=$(mktemp -d "${COLORSTATS_TEST_TMPDIR:-/tmp}/colorstats-issue121-XXXXXX")
 chmod 755 "$root"
 mkdir -p "$root/code" "$root/socket" "$root/pgdata"
 tar -C /mnt/h/mc-blueprint/worktrees/colorstats-121/mc-blueprint-color-stats \
@@ -17,7 +17,7 @@ runuser -u postgres -- "$pg/pg_ctl" -D "$root/pgdata" -l "$root/pgdata/server.lo
 trap 'runuser -u postgres -- "$pg/pg_ctl" -D "$root/pgdata" stop -m fast' EXIT
 "$pg/createdb" -h "$root/socket" -p 55121 -U postgres issue121
 cd "$root/code"
-venv=/tmp/colorstats-issue87/scratchpad/integrated-venv
+venv=${COLORSTATS_TEST_VENV:-/tmp/colorstats-issue87/scratchpad/integrated-venv}
 export PYTHONPATH="$root/code/src:$root/code"
 export TEST_DATABASE_URL="postgresql+psycopg://postgres@/issue121?host=$root/socket&port=55121"
 echo "artifact: $root"

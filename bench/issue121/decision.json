@@ -11,7 +11,9 @@
     "bench/issue121/legacy-definition.json": "791de726604c9a5a35f089546430ec9fed72917ba5a7fc29feb7e2121287c1d5",
     "bench/issue121/class-info-provenance.json": "497299a1faaeefa354825c03a41a769bf7efc6313db9dae0322bd556fafa5bd7",
     "bench/issue121/gpu-ubuntu1.json": "14566896f004154b1264f20bb6cf89ad143811c0a8f89b5762ec191474fcffe3",
-    "bench/issue121/gpu-ubuntu2.json": "37ab090c0731ab143948914b6cb07ae7eaa6752cf74e4a91b9d8e6654768d783"
+    "bench/issue121/gpu-ubuntu2.json": "37ab090c0731ab143948914b6cb07ae7eaa6752cf74e4a91b9d8e6654768d783",
+    "bench/issue121/human-summary.json": "f7521625e70f020bd832d4f101f9954fa2dde53162f4880309c4f127eb8c7756",
+    "bench/issue121/aerial-summary.json": "ef597bbac1f4e04b39fe5e6875348ca4d551ac133ae70ec481e8bcb039464286"
   },
   "part_criteria": {
     "oneformer/cmp/holdout": {
@@ -195,31 +197,34 @@
     },
     "owned_people": {
       "old": {
-        "status": "unverified",
+        "status": "passed",
         "selected": 50,
-        "reviewed": 0,
-        "accepted": 0,
+        "reviewed": 50,
+        "accepted": 32,
         "missed": 0,
-        "zero_miss_upper_95": null,
+        "zero_miss_upper_95": 0.0893681989862648,
         "limitation": "約100枚で0件でも、見落とし率は約3%を超えないまで。各cohort・採用分の分母が小さければ上限はさらに大きい。"
       },
       "new": {
-        "status": "unverified",
+        "status": "passed",
         "selected": 50,
-        "reviewed": 0,
-        "accepted": 0,
+        "reviewed": 50,
+        "accepted": 26,
         "missed": 0,
-        "zero_miss_upper_95": null,
+        "zero_miss_upper_95": 0.10883035576078481,
         "limitation": "約100枚で0件でも、見落とし率は約3%を超えないまで。各cohort・採用分の分母が小さければ上限はさらに大きい。"
       }
     },
     "owned_html": {
-      "status": "unverified",
-      "reason": "原画像がubuntu-2になく、固定選択台帳のubuntu-1への転送承認待ち"
+      "status": "passed",
+      "images": 110,
+      "sha256": "07fd1052aad76098751f795a033af20d188eff942e0c556db40715b9e47248bb",
+      "raw_only": true
     },
     "gate_target_subject_people": {
       "status": "unverified",
-      "reason": "#117完了後に固定runと目視のTP/FP/FN/TNをcohort別に計数する"
+      "image_gate_acceptance_review": "passed",
+      "reason": "画像ゲート採用分の問題報告は計数済み。建築/地形の主体GTと#119/#118の参照は未取得"
     },
     "legacy21_vs16": {
       "status": "passed",
@@ -236,6 +241,47 @@
     "policy_hash_portability": {
       "status": "unverified",
       "reason": "class-infoのJSON内容は同一だが、作業時CRLFとGit blobのLFで実byte SHAが異なる。現行policy_hashはこのbyte SHAを含むため、別環境での照合を保証しない"
+    },
+    "image_gate_people": {
+      "status": "passed",
+      "selected": 100,
+      "reviewed": 100,
+      "accepted": 58,
+      "missed": 0,
+      "zero_miss_upper_95": 0.05033933833042015,
+      "limitation": "約100枚で0件でも、見落とし率は約3%を超えないまで。各cohort・採用分の分母が小さければ上限はさらに大きい。",
+      "scope": "旧・新の画像ゲート採用分。#119の人物画素評価とは別。"
+    },
+    "content_acceptance": {
+      "status": "passed",
+      "reported_problems": 26,
+      "accepted_reported_problems": 0,
+      "reason": "人が報告した対象外・白黒等が画像ゲート採用分へ残るかを固定標本で確認"
+    },
+    "review_completion": {
+      "status": "passed",
+      "explicit_in_original": false,
+      "basis": "原文は問題のある項目のみ。前回と同形式としてオーケストレータが全件確認済みと判断"
+    },
+    "human_review_recording": {
+      "status": "unverified",
+      "written": 0,
+      "reason": "unverified_missing_presented_privacy_and_region_runs"
+    },
+    "privacy_region_contract": {
+      "status": "unverified",
+      "privacy_run_references": 0,
+      "region_policy_run_references": 0,
+      "reason": "原画像だけを提示。#118/#119の根拠がなく、新契約の統計採用は未検証"
+    },
+    "aerial_policy": {
+      "status": "unverified",
+      "estimated_count": null,
+      "gate_explicit_aerial": 0,
+      "title_keyword_candidates": 0,
+      "title_candidates_by_group": {},
+      "subject_terrain": 29,
+      "reason": "現在のschemaには空撮/衛星区分がない。タイトル語は候補であって目視正解ではない。全候補数の上限を与えない。"
     }
   },
   "cost": {
@@ -247,6 +293,6 @@
   "downstream": {
     "baseline_regeneration": "blocked",
     "issue114_rerun": "blocked",
-    "reason": "wallは不合格、所有画像・人物は未検証。旧runへの代替禁止"
+    "reason": "wallは不合格、人物/領域契約は未検証。画像ゲートの目視だけで再生成しない"
   }
 }

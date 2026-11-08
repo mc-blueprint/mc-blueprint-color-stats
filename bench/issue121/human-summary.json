@@ -1,0 +1,407 @@
+{
+  "groups": {
+    "old": {
+      "reviewed": 50,
+      "accepted": 32,
+      "reported_problems": 9,
+      "accepted_reported_problems": 0,
+      "verdicts": {
+        "accepted": 32,
+        "rejected": 10,
+        "pending": 8
+      },
+      "categories": {
+        "non_target": {
+          "human_positive": 5,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 5,
+            "rate": 0.0
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 32,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 50,
+            "rate": 0.0
+          }
+        },
+        "black_and_white": {
+          "human_positive": 3,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 3,
+            "rate": 0.0
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 32,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 50,
+            "rate": 0.0
+          }
+        },
+        "real_people": {
+          "human_positive": 1,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 1,
+            "rate": 0.0
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 32,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 50,
+            "rate": 0.0
+          }
+        },
+        "depicted_people": {
+          "human_positive": 1,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 1,
+            "rate": 0.0
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 32,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 50,
+            "rate": 0.0
+          }
+        }
+      },
+      "known_label_confusion": {
+        "non_target": {
+          "tp": 5,
+          "fp": 1,
+          "fn": 0,
+          "tn": 39,
+          "unknown_truth": 4,
+          "unknown_prediction": 1
+        },
+        "black_and_white": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 0,
+          "tn": 38,
+          "unknown_truth": 6,
+          "unknown_prediction": 1
+        },
+        "real_people": {
+          "tp": 1,
+          "fp": 2,
+          "fn": 0,
+          "tn": 39,
+          "unknown_truth": 7,
+          "unknown_prediction": 1
+        }
+      },
+      "subject_prediction_counts": {
+        "building": 30,
+        "terrain": 11,
+        "other": 6,
+        "mixed": 2,
+        "unknown": 1
+      },
+      "people_decision": {
+        "status": "passed",
+        "selected": 50,
+        "reviewed": 50,
+        "accepted": 32,
+        "missed": 0,
+        "zero_miss_upper_95": 0.0893681989862648,
+        "limitation": "約100枚で0件でも、見落とし率は約3%を超えないまで。各cohort・採用分の分母が小さければ上限はさらに大きい。"
+      }
+    },
+    "new": {
+      "reviewed": 50,
+      "accepted": 26,
+      "reported_problems": 10,
+      "accepted_reported_problems": 0,
+      "verdicts": {
+        "accepted": 26,
+        "rejected": 7,
+        "pending": 17
+      },
+      "categories": {
+        "non_target": {
+          "human_positive": 2,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 2,
+            "rate": 0.0
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 26,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 50,
+            "rate": 0.0
+          }
+        },
+        "black_and_white": {
+          "human_positive": 6,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 6,
+            "rate": 0.0
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 26,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 50,
+            "rate": 0.0
+          }
+        },
+        "real_people": {
+          "human_positive": 6,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 6,
+            "rate": 0.0
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 26,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 50,
+            "rate": 0.0
+          }
+        },
+        "depicted_people": {
+          "human_positive": 0,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 0,
+            "rate": null
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 26,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 50,
+            "rate": 0.0
+          }
+        }
+      },
+      "known_label_confusion": {
+        "non_target": {
+          "tp": 2,
+          "fp": 4,
+          "fn": 0,
+          "tn": 36,
+          "unknown_truth": 8,
+          "unknown_prediction": 0
+        },
+        "black_and_white": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 1,
+          "tn": 40,
+          "unknown_truth": 4,
+          "unknown_prediction": 0
+        },
+        "real_people": {
+          "tp": 6,
+          "fp": 5,
+          "fn": 0,
+          "tn": 33,
+          "unknown_truth": 4,
+          "unknown_prediction": 2
+        }
+      },
+      "subject_prediction_counts": {
+        "terrain": 17,
+        "other": 6,
+        "mixed": 2,
+        "building": 25
+      },
+      "people_decision": {
+        "status": "passed",
+        "selected": 50,
+        "reviewed": 50,
+        "accepted": 26,
+        "missed": 0,
+        "zero_miss_upper_95": 0.10883035576078481,
+        "limitation": "約100枚で0件でも、見落とし率は約3%を超えないまで。各cohort・採用分の分母が小さければ上限はさらに大きい。"
+      }
+    },
+    "challenge": {
+      "reviewed": 10,
+      "accepted": 1,
+      "reported_problems": 7,
+      "accepted_reported_problems": 0,
+      "verdicts": {
+        "rejected": 7,
+        "pending": 2,
+        "accepted": 1
+      },
+      "categories": {
+        "non_target": {
+          "human_positive": 6,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 6,
+            "rate": 0.0
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 1,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 10,
+            "rate": 0.0
+          }
+        },
+        "black_and_white": {
+          "human_positive": 0,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 0,
+            "rate": null
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 1,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 10,
+            "rate": 0.0
+          }
+        },
+        "real_people": {
+          "human_positive": 1,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 1,
+            "rate": 0.0
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 1,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 10,
+            "rate": 0.0
+          }
+        },
+        "depicted_people": {
+          "human_positive": 0,
+          "escape_among_reported_positives": {
+            "numerator": 0,
+            "denominator": 0,
+            "rate": null
+          },
+          "contamination_among_accepted": {
+            "numerator": 0,
+            "denominator": 1,
+            "rate": 0.0
+          },
+          "escape_among_reviewed": {
+            "numerator": 0,
+            "denominator": 10,
+            "rate": 0.0
+          }
+        }
+      },
+      "known_label_confusion": {
+        "non_target": {
+          "tp": 6,
+          "fp": 1,
+          "fn": 0,
+          "tn": 2,
+          "unknown_truth": 1,
+          "unknown_prediction": 0
+        },
+        "black_and_white": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 3,
+          "unknown_truth": 7,
+          "unknown_prediction": 0
+        },
+        "real_people": {
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "tn": 2,
+          "unknown_truth": 6,
+          "unknown_prediction": 0
+        }
+      },
+      "subject_prediction_counts": {
+        "other": 7,
+        "building": 2,
+        "terrain": 1
+      }
+    }
+  },
+  "random_people": {
+    "status": "passed",
+    "selected": 100,
+    "reviewed": 100,
+    "accepted": 58,
+    "missed": 0,
+    "zero_miss_upper_95": 0.05033933833042015,
+    "limitation": "約100枚で0件でも、見落とし率は約3%を超えないまで。各cohort・採用分の分母が小さければ上限はさらに大きい。"
+  },
+  "subject_ground_truth": "unverified",
+  "statistical_adoption": "unverified_without_privacy_and_region_runs",
+  "review_count": 110,
+  "problem_count": 26,
+  "completion_explicit_in_original": false,
+  "completion_basis": "原文は問題のある項目のみ。前回と同形式としてオーケストレータが全件確認済みと判断",
+  "canonical_parser": "bench.issue114.mobile.parse_chat_reply",
+  "human_reply_sha256": "c58519fd2d8027af5213519b76ec97925d6d9e5c5b9904c4ab5e423549249b63",
+  "original_reply_sha256": "3d7590cbea3bc579e97503080653333f65a2a9736f721c7462349f9dd237d178",
+  "number_map_sha256": "d7c999105875c3e8e38262b06fc208e6461581857df83f50b4f3f69df03830d3",
+  "presentation_sha256": "07fd1052aad76098751f795a033af20d188eff942e0c556db40715b9e47248bb",
+  "presentation_images": 110,
+  "external_references": 0,
+  "data_uri_decoded": 110,
+  "privacy_run_references": 0,
+  "region_policy_run_references": 0,
+  "import_status": "unverified_missing_presented_privacy_and_region_runs",
+  "human_runs_written": 0,
+  "limits": [
+    "問題報告なしは指示に従い問題なしと仮定",
+    "他分類だけの所見から対象/白黒/実在人物の陰性を補完しない",
+    "subjectの建築/地形GTは未提示",
+    "人物の絵は実在人物の見落としに数えず、対象外の絵として扱う",
+    "image-gate accepted単体は統計採用の承認ではない"
+  ]
+}
