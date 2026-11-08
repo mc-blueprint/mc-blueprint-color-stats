@@ -1,0 +1,38 @@
+{
+  "base_commit": "9698f12e740ec08bee145f15b614253db7b84f39",
+  "branch": "feature/issue-130",
+  "database": "WSL Ubuntu-24.04 root・今回だけのPostgreSQL 16/socket/port 55130",
+  "full_pytest": {
+    "passed": 1377,
+    "skipped": 1,
+    "warnings": 4,
+    "seconds": 345.62,
+    "artifact": "/tmp/colorstats-issue130-ftvKcR",
+    "database_stopped": true,
+    "log": "20261108T100525Z-d0241b7dfb174e9cb298b8e412e31575.jsonl",
+    "scope": "当初の診断テスト5件を含む全件。後続のhashテスト2件は重点実行で確認"
+  },
+  "final_focused_pytest": {
+    "passed": 7,
+    "seconds": 2.17,
+    "log": "20261108T101008Z-b2361ca12a904a51af5f0cd7377fd70e.jsonl"
+  },
+  "ruff": "passed",
+  "final_build": {
+    "status": "passed",
+    "formats": ["sdist", "wheel"],
+    "artifact": "/tmp/colorstats-issue130-final-dist",
+    "log": "20261108T101151Z-9e3df9b3be6b44ac9f04821dcd91b5e8.jsonl"
+  },
+  "gpu_smoke": {
+    "ubuntu-1": "passed・公開3枚・全本番26prompt",
+    "ubuntu-2": "passed・同じ公開3枚・全本番26prompt",
+    "actual_oom": false,
+    "oom_stop": "既存predict_regionsの両工程OOM送出とrunner停止・再試行不可を隔離全pytestで確認",
+    "scope": "全形状のVRAM上限や本番全promptの全件品質保証ではない"
+  },
+  "production_db_access": "none",
+  "migration_added": false,
+  "production_policy_changed": false,
+  "api_calls": 0
+}

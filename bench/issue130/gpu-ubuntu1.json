@@ -1,0 +1,207 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4060",
+  "images": 3,
+  "freeze_sha256": "6e2b37e65eca4ee08cb12b5ea4fc1828e06f2c353914ec1b004acd49fdd118a2",
+  "policy_hash": "4128e1470ebe5be4982eb002d558d740a63ddc13690479770abd4e8652e127e2",
+  "production_prompt_count": 26,
+  "batch_size": 1,
+  "seconds": 37.076642930856906,
+  "peak_allocated_bytes": 2659068416,
+  "peak_reserved_bytes": 3772776448,
+  "records": [
+    {
+      "seconds": 15.003284634905867,
+      "runtime": {
+        "oneformer_seconds": 3.929377230000682,
+        "oneformer_peak_allocated_bytes": 2191341056,
+        "oneformer_peak_reserved_bytes": 3024093184,
+        "load_seconds": 1.209713640040718,
+        "inference_seconds": 8.30288324097637,
+        "peak_allocated_bytes": 2102604800,
+        "peak_reserved_bytes": 2287992832,
+        "gpu": "NVIDIA GeForce RTX 4060",
+        "torch_version": "2.11.0+cu130",
+        "cuda_version": "13.0",
+        "batch_size": 1,
+        "versions": {
+          "torch": "2.11.0",
+          "transformers": "4.57.6",
+          "Pillow": "12.3.0"
+        },
+        "single_resident_phase": "oneformer-then-dino-sam2"
+      },
+      "variants": {
+        "baseline": {
+          "candidate_count": 21,
+          "accepted_count": 21,
+          "candidate_overlap_pixels": 128000,
+          "same_parent_duplicate_pixels": 250852,
+          "conflict_pixels": 125127,
+          "missing_roles": 18,
+          "effective_pixels": 1869,
+          "pixels": 138752
+        },
+        "specific": {
+          "candidate_count": 21,
+          "accepted_count": 21,
+          "candidate_overlap_pixels": 128000,
+          "same_parent_duplicate_pixels": 250121,
+          "conflict_pixels": 125121,
+          "missing_roles": 20,
+          "effective_pixels": 1859,
+          "pixels": 138752
+        },
+        "specific45": {
+          "candidate_count": 21,
+          "accepted_count": 16,
+          "candidate_overlap_pixels": 128000,
+          "same_parent_duplicate_pixels": 250121,
+          "conflict_pixels": 125121,
+          "missing_roles": 20,
+          "effective_pixels": 1859,
+          "pixels": 138752
+        },
+        "specific55": {
+          "candidate_count": 21,
+          "accepted_count": 15,
+          "candidate_overlap_pixels": 128000,
+          "same_parent_duplicate_pixels": 250121,
+          "conflict_pixels": 125076,
+          "missing_roles": 20,
+          "effective_pixels": 1904,
+          "pixels": 138752
+        }
+      }
+    },
+    {
+      "seconds": 10.216611190000549,
+      "runtime": {
+        "oneformer_seconds": 1.199554838007316,
+        "oneformer_peak_allocated_bytes": 2659068416,
+        "oneformer_peak_reserved_bytes": 3772776448,
+        "load_seconds": 0.7145110699348152,
+        "inference_seconds": 7.78649863996543,
+        "peak_allocated_bytes": 1768768512,
+        "peak_reserved_bytes": 1923088384,
+        "gpu": "NVIDIA GeForce RTX 4060",
+        "torch_version": "2.11.0+cu130",
+        "cuda_version": "13.0",
+        "batch_size": 1,
+        "versions": {
+          "torch": "2.11.0",
+          "transformers": "4.57.6",
+          "Pillow": "12.3.0"
+        },
+        "single_resident_phase": "oneformer-then-dino-sam2"
+      },
+      "variants": {
+        "baseline": {
+          "candidate_count": 53,
+          "accepted_count": 53,
+          "candidate_overlap_pixels": 92742,
+          "same_parent_duplicate_pixels": 182822,
+          "conflict_pixels": 91632,
+          "missing_roles": 19,
+          "effective_pixels": 322,
+          "pixels": 101888
+        },
+        "specific": {
+          "candidate_count": 53,
+          "accepted_count": 53,
+          "candidate_overlap_pixels": 92742,
+          "same_parent_duplicate_pixels": 182822,
+          "conflict_pixels": 91630,
+          "missing_roles": 20,
+          "effective_pixels": 247,
+          "pixels": 101888
+        },
+        "specific45": {
+          "candidate_count": 53,
+          "accepted_count": 12,
+          "candidate_overlap_pixels": 92742,
+          "same_parent_duplicate_pixels": 91412,
+          "conflict_pixels": 23,
+          "missing_roles": 21,
+          "effective_pixels": 91591,
+          "pixels": 101888
+        },
+        "specific55": {
+          "candidate_count": 53,
+          "accepted_count": 8,
+          "candidate_overlap_pixels": 92742,
+          "same_parent_duplicate_pixels": 91412,
+          "conflict_pixels": 0,
+          "missing_roles": 22,
+          "effective_pixels": 91412,
+          "pixels": 101888
+        }
+      }
+    },
+    {
+      "seconds": 11.85674710595049,
+      "runtime": {
+        "oneformer_seconds": 1.129591898061335,
+        "oneformer_peak_allocated_bytes": 2454318592,
+        "oneformer_peak_reserved_bytes": 3447717888,
+        "load_seconds": 0.7015057499520481,
+        "inference_seconds": 9.44439922599122,
+        "peak_allocated_bytes": 1890534400,
+        "peak_reserved_bytes": 2321547264,
+        "gpu": "NVIDIA GeForce RTX 4060",
+        "torch_version": "2.11.0+cu130",
+        "cuda_version": "13.0",
+        "batch_size": 1,
+        "versions": {
+          "torch": "2.11.0",
+          "transformers": "4.57.6",
+          "Pillow": "12.3.0"
+        },
+        "single_resident_phase": "oneformer-then-dino-sam2"
+      },
+      "variants": {
+        "baseline": {
+          "candidate_count": 74,
+          "accepted_count": 74,
+          "candidate_overlap_pixels": 103270,
+          "same_parent_duplicate_pixels": 390065,
+          "conflict_pixels": 98360,
+          "missing_roles": 13,
+          "effective_pixels": 8239,
+          "pixels": 115200
+        },
+        "specific": {
+          "candidate_count": 74,
+          "accepted_count": 74,
+          "candidate_overlap_pixels": 103270,
+          "same_parent_duplicate_pixels": 390065,
+          "conflict_pixels": 98332,
+          "missing_roles": 16,
+          "effective_pixels": 8189,
+          "pixels": 115200
+        },
+        "specific45": {
+          "candidate_count": 74,
+          "accepted_count": 32,
+          "candidate_overlap_pixels": 103270,
+          "same_parent_duplicate_pixels": 71230,
+          "conflict_pixels": 2597,
+          "missing_roles": 19,
+          "effective_pixels": 102796,
+          "pixels": 115200
+        },
+        "specific55": {
+          "candidate_count": 74,
+          "accepted_count": 14,
+          "candidate_overlap_pixels": 103270,
+          "same_parent_duplicate_pixels": 0,
+          "conflict_pixels": 0,
+          "missing_roles": 19,
+          "effective_pixels": 7523,
+          "pixels": 115200
+        }
+      }
+    }
+  ],
+  "quality_eligible": false,
+  "limitation": "公開3枚の適合検証。全本番promptの全件品質保証ではない。"
+}
