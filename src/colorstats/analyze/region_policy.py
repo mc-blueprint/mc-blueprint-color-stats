@@ -113,9 +113,13 @@ def constrain(class_map, rows, labels):
     return masks, reasons, metrics
 
 
-def save_artifacts(target, token, class_map, rows, labels, parameters):
+def save_artifacts(target, token, class_map, rows, labels, parameters, *, exclusion_rows=()):
     """PNGと除外理由を試行専用に保存し、論理path/SHA付き契約と公開対象列を返す。"""
-    masks, reasons, metrics = constrain(class_map, rows, labels)
+    from colorstats.analyze import visible_wall
+
+    visible = parameters.get("payload", {}).get("method") == visible_wall.METHOD
+    masks, reasons, metrics = (visible_wall.constrain(class_map, rows, labels, exclusion_rows)
+                               if visible else constrain(class_map, rows, labels))
     files = []
 
     def save(name, array):
@@ -125,7 +129,8 @@ def save_artifacts(target, token, class_map, rows, labels, parameters):
         files.append((temp, path))
         return {"path": str(path), "sha256": _hash(temp)}
 
-    contract = {"version": VERSION, "policy_hash": policy_hash(),
+    contract = {"version": visible_wall.VERSION if visible else VERSION,
+                "policy_hash": visible_wall.policy_hash() if visible else policy_hash(),
                 "parent_table": parent_table_reference(),
                 "input_sha256": parameters["input_sha256"],
                 "size": [class_map.shape[1], class_map.shape[0]],
@@ -135,6 +140,12 @@ def save_artifacts(target, token, class_map, rows, labels, parameters):
                           for role, mask in sorted(masks.items())},
                 "exclusions": {reason: save(reason, mask.astype(np.uint8) * 255)
                                for reason, mask in reasons.items()}, "metrics": metrics}
+    if visible:
+        contract["wall_policy"] = visible_wall.configuration()
+        contract["wall_candidates"] = [
+            {"label": label, "confidence": score, "mask": save(
+                f"exclude-candidate-{index}", mask.astype(np.uint8) * 255)}
+            for index, (label, mask, score) in enumerate(exclusion_rows)]
     return contract, files
 
 
@@ -142,12 +153,17 @@ def reference(run):
     """segment runの契約を確定済みpathへ解決する。旧方式にはNoneを返す。"""
     policy = run.parameters.get("region_policy")
     if policy is None:
-        if run.parameters.get("payload", {}).get("method") == METHOD:
+        from colorstats.analyze.visible_wall import METHOD as WALL_METHOD
+
+        if run.parameters.get("payload", {}).get("method") in (METHOD, WALL_METHOD):
             raise ValueError("新segment runにregion_policyがありません")
         return None
     result = json.loads(json.dumps(policy))
     result["run_id"] = str(run.id)
     for record in [result["semantic"], *result["roles"].values(), *result["exclusions"].values()]:
+        record["path"] = run.output_paths[record["path"]]
+    for candidate in result.get("wall_candidates", []):
+        record = candidate["mask"]
         record["path"] = run.output_paths[record["path"]]
     return result
 
@@ -158,20 +174,29 @@ def load_masks(payload):
     契約不一致・入力の差替え・JPEGや非二値maskはValueError。raw Regionへの代替はしない。
     """
     policy = payload["region_policy"]
+    from colorstats.analyze import visible_wall
+
+    visible = policy["version"] == visible_wall.VERSION
+    expected_hash = visible_wall.policy_hash() if visible else policy_hash()
     if payload.get("mask_path") or payload.get("person_mask"):
         raise ValueError("新policyに別のmaskを重ねず、新segment runへ固定してください")
-    if (policy["version"] != VERSION or policy["policy_hash"] != policy_hash()
+    if (policy["version"] not in (VERSION, visible_wall.VERSION)
+            or policy["policy_hash"] != expected_hash
             or policy.get("parent_table") != parent_table_reference()
             or policy["run_id"] != str(payload["region_run_id"])
             or policy["input_sha256"] != _hash(payload["input_path"])
             or payload.get("input_sha256") != policy["input_sha256"]):
         raise ValueError("region-policyの入力SHA・run・policy hashが一致しません")
+    if visible and policy.get("wall_policy") != visible_wall.configuration():
+        raise ValueError("可視壁材のpolicy仕様が一致しません")
     with Image.open(payload["input_path"]) as image:
         if list(image.size) != policy["size"] or image.getexif().get(274, 1) != 1:
             raise ValueError("region-policyの寸法・向きが一致しません")
     arrays = {}
     for key, record in [("semantic", policy["semantic"]), *policy["roles"].items(),
-                        *(("exclude/" + k, v) for k, v in policy["exclusions"].items())]:
+                        *(("exclude/" + k, v) for k, v in policy["exclusions"].items()),
+                        *((f"candidate/{i}", row["mask"]) for i, row in enumerate(
+                            policy.get("wall_candidates", [])))]:
         if _hash(record["path"]) != record["sha256"]:
             raise ValueError("region-policyの出力SHAが一致しません")
         with Image.open(record["path"]) as image:
@@ -191,4 +216,8 @@ def load_masks(payload):
         count += mask
     if np.any(count > 1) or np.any((count > 0) & np.isin(arrays["semantic"], [2, 12])):
         raise ValueError("有効role maskに競合またはsky/personがあります")
+    if visible and ("exclude/wall_parts" not in arrays or np.any(
+            masks.get(visible_wall.WALL, np.zeros(count.shape, dtype=bool))
+            & (arrays["exclude/wall_parts"] != 0))):
+        raise ValueError("壁maskに差引き対象の部位が残っています")
     return masks

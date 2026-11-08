@@ -11,7 +11,7 @@ from PIL import Image
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from colorstats.analyze import color, region_policy, segment, segment_models, shade
+from colorstats.analyze import color, region_policy, segment, segment_models, shade, visible_wall
 from colorstats.schema.models import (
     ColorObservation,
     Job,
@@ -134,8 +134,9 @@ def test_register_rejects_raw_fallback_and_replaced_policy(queue, asset, policy_
 
 
 @pytest.mark.skipif(os.name != "posix", reason="runnerのflockはLinux専用")
+@pytest.mark.parametrize("method", [region_policy.METHOD, visible_wall.METHOD])
 def test_runner_oom_fails_once_and_leaves_stop_file(
-    queue, asset, regional_payload, prep_source, tmp_path, monkeypatch,
+    queue, asset, regional_payload, prep_source, tmp_path, monkeypatch, method,
 ):
     from ops.deploy import m3_analysis
 
@@ -146,7 +147,7 @@ def test_runner_oom_fails_once_and_leaves_stop_file(
            "input_path": regional_payload["input_path"],
            "input_sha256": regional_payload["input_sha256"]}
     manifest = {"assets": [row], "settings": {
-        "segment": {"method": region_policy.METHOD, "prompts": regional_payload["prompts"]},
+        "segment": {"method": method, "prompts": regional_payload["prompts"]},
         "shade": {"method": "none"},
     }, "implementation": m3_analysis.implementation()}
     (root / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")

@@ -8,7 +8,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from colorstats.analyze import color, region_policy, segment, shade
+from colorstats.analyze import color, region_policy, segment, shade, visible_wall
 from colorstats.queue.core import Claim, NonRetryableError
 from colorstats.stats.snapshot import _groups
 from tests.test_segment import payload as payload
@@ -370,8 +370,9 @@ def test_snapshot_reads_effective_roles_and_keeps_quality_pending(policy_payload
 
 
 @pytest.mark.parametrize("fail", [False, True])
+@pytest.mark.parametrize("method", [region_policy.METHOD, visible_wall.METHOD])
 def test_oneformer_restores_coordinates_offline_and_unloads_before_candidates(
-    regional_payload, monkeypatch, fail,
+    regional_payload, monkeypatch, fail, method,
 ):
     import sys
     from contextlib import nullcontext
@@ -379,6 +380,8 @@ def test_oneformer_restores_coordinates_offline_and_unloads_before_candidates(
     from types import SimpleNamespace
 
     from colorstats.analyze import segment_models
+
+    regional_payload["method"] = method
 
     events = []
     active = []
@@ -483,6 +486,8 @@ def test_oneformer_restores_coordinates_offline_and_unloads_before_candidates(
     def candidates(*args, **kwargs):
         assert not active
         assert kwargs == {"transient": True}
+        assert args[4] == ({**regional_payload["prompts"], **visible_wall.EXTRA_PROMPTS}
+                           if method == visible_wall.METHOD else regional_payload["prompts"])
         events.append("candidates")
         return [], {}
 

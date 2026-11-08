@@ -45,11 +45,15 @@ def implementation():
 
 def _check_policy_reuse(source, settings):
     from colorstats.analyze.region_policy import METHOD, policy_hash
+    from colorstats.analyze.visible_wall import METHOD as WALL_METHOD
+    from colorstats.analyze.visible_wall import policy_hash as wall_hash
 
-    if settings["segment"]["method"] != METHOD:
+    method = settings["segment"]["method"]
+    if method not in (METHOD, WALL_METHOD):
         return
     payload = source.parameters.get("payload", {})
-    if (source.parameters.get("region_policy_hash") != policy_hash()
+    if (source.parameters.get("region_policy_hash") != (
+            wall_hash() if method == WALL_METHOD else policy_hash())
             or any(payload.get(k) != v for k, v in settings["segment"].items())
             or segment.config_hash(payload) != source.config_hash):
         raise ValueError("新policyで旧segmentや異なる入力・モデル・promptは再利用できません")
@@ -197,6 +201,7 @@ def run_batch(engine, root, manifest, models, limit):
 
     from colorstats.analyze import color, shade
     from colorstats.analyze.region_policy import METHOD, OOM_REASON
+    from colorstats.analyze.visible_wall import METHOD as WALL_METHOD
 
     lock = (root / "runner.lock").open("a")
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -255,7 +260,7 @@ def run_batch(engine, root, manifest, models, limit):
                     if stage == "segment":
                         payload.update(manifest["settings"]["segment"])
                         components = ("sam2", "dino")
-                        if payload["method"] == METHOD:
+                        if payload["method"] in (METHOD, WALL_METHOD):
                             components += ("oneformer",)
                         payload["model_paths"] = {n: str(models / n) for n in components}
                     else:
@@ -302,7 +307,7 @@ def run_batch(engine, root, manifest, models, limit):
                                           "reason": job.failure_reason,
                                           "seconds": time.monotonic() - attempt_start,
                                           "at": datetime.now(UTC), "io": io_counters(worker)})
-                            if (payload.get("method") == METHOD
+                            if (payload.get("method") in (METHOD, WALL_METHOD)
                                     and OOM_REASON in (job.failure_reason or "")):
                                 stop.touch()
                     with Session(engine) as session:
