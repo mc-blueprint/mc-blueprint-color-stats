@@ -113,9 +113,14 @@ def predict_regions(image, payload, parameters):
         _unload()
     paths = {key: value for key, value in payload["model_paths"].items() if key != "oneformer"}
     hashes = {key: parameters["models"][key] for key in paths}
+    from colorstats.analyze import visible_wall
+
+    prompts = payload["prompts"]
+    if payload.get("method") == visible_wall.METHOD:
+        prompts = {**prompts, **visible_wall.EXTRA_PROMPTS}
     try:
         rows, candidate_metrics = predict(
-            image, "sam2-dino", paths, hashes, payload["prompts"],
+            image, "sam2-dino", paths, hashes, prompts,
             parameters["threshold"], parameters["text_threshold"], transient=True,
         )
     except torch.cuda.OutOfMemoryError as error:

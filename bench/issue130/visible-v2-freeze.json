@@ -1,0 +1,585 @@
+{
+  "version": "issue130-visible-wall-eval-v2",
+  "frozen_at": "2026-11-08T11:40:51.300532+00:00",
+  "definition": "窓・扉・装飾などを除いた、壁材が見えている面",
+  "base_commit": "4fe8dfc",
+  "files": {
+    "bench/issue130/visible-plan.md": "34c2895709651341fda3b39d9c77c4f0c21939ac6b708721831785ca5d3396e9",
+    "bench/issue130/visible_eval.py": "b2424d0ab3bd852b8bc253ac443fad9aac528b955e789cdeef22fc04d4342557",
+    "bench/issue130/analyze_fp.py": "f84dce060006e852636f10a70c2e1a31621e49278990f5fddb6e6cdd91341c13",
+    "bench/issue73/plan.json": "e9082b43e44ad0b4c46e4bc0d3446c706c913f389ef51d0ae188a6a67bd4ca75",
+    "bench/issue81/label-map.yaml": "857d74db426de1c7d7005a5ef98bfb69d80dd12ffec130816132445b010c2d0e",
+    "configs/segment_stats.yaml": "d1bac9e5e23d17ade71421b561718bdf853671f928678e071a9c0fe4d09910ff",
+    "src/colorstats/colors.py": "b50bb6ec17b6430c4e9a30387090c2500c66bea077dfffb5fa69b9ba9a473dc9",
+    "ops/deploy/m3_analysis.py": "2768e09c611b61d462a7f7cc6ca44476e391e6e56362c206ae9e28beb6fa290a",
+    "src/colorstats/analyze/visible_wall.py": "0493561105b278cea811634efa6064d91e7fdb1575ea079d3f6af96cb8410685",
+    "src/colorstats/analyze/region_policy.py": "11ae495905505228ee3f8442b06a20d1dc09e142d78dbd23d2a5e4b69c78a244",
+    "src/colorstats/analyze/segment.py": "b0e3ae6a2ff1cc50409d10d472487b84e2e90e802f662b6389c3288f53436f05",
+    "src/colorstats/analyze/segment_models.py": "8ae394d5e8a193613e4b73b2a224b383e896110a27e23ce25c6664d968228ba2",
+    "src/colorstats/analyze/region-parents-v2.json": "84b79cfdbd9f75b6e617408cd799eec227acb69750cf9fc827dbafe99fa95c44"
+  },
+  "reference": {
+    "public": "32df31bc933688924e85b24dcc5765839513a4f75ef188fb6b3519556af7deec",
+    "quality": "19ac3f44534cd9ee97271655e0e21d59b05d9a94eaa452324c99635dc8de4b03"
+  },
+  "input_manifest_hash": "bb1060d54a12ee5f23a3fd7e0c7a1330b1c8d14b3291627e8a93bab0274b8c6c",
+  "seed": 73,
+  "gates": {
+    "precision": 0.8,
+    "recall": 0.3
+  },
+  "policy": {
+    "version": "visible-wall-policy-v2",
+    "definition": "窓・扉・装飾などを除いた、壁材が見えている面",
+    "wall_threshold": 0.55,
+    "candidate_threshold": 0.35,
+    "other_building_threshold": 0.55,
+    "text_threshold": 0.25,
+    "extra_prompts": {
+      "exclude/balcony": "balcony",
+      "exclude/shop": "shopfront",
+      "exclude/sill": "window sill"
+    },
+    "exclude_labels": [
+      "accent_other",
+      "arch",
+      "band_course",
+      "beam",
+      "chimney",
+      "column",
+      "corner_quoin",
+      "cornice",
+      "door",
+      "dormer",
+      "eave",
+      "gable_trim",
+      "half_timber",
+      "light_fixture",
+      "plinth",
+      "railing",
+      "relief",
+      "ridge",
+      "roof_surface",
+      "shutter",
+      "stairs_entry",
+      "vegetation_attached",
+      "window_frame",
+      "window_glass"
+    ],
+    "parents": {
+      "version": "ade-role-parents-v2",
+      "allow": {
+        "plinth": [
+          0,
+          1,
+          25,
+          40,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "stairs_entry": [
+          1,
+          25,
+          48,
+          51,
+          53,
+          59,
+          79,
+          84,
+          88,
+          121
+        ],
+        "wall_main": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "wall_secondary": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "gable_wall": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "column": [
+          0,
+          1,
+          25,
+          42,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "beam": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "corner_quoin": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "half_timber": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "window_glass": [
+          1,
+          8,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "window_frame": [
+          0,
+          1,
+          8,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "door": [
+          1,
+          14,
+          25,
+          48,
+          51,
+          58,
+          79,
+          84,
+          88
+        ],
+        "shutter": [
+          1,
+          8,
+          25,
+          48,
+          51,
+          63,
+          79,
+          84,
+          88
+        ],
+        "arch": [
+          0,
+          1,
+          14,
+          25,
+          42,
+          48,
+          51,
+          58,
+          79,
+          84,
+          88
+        ],
+        "roof_surface": [
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          86,
+          88,
+          106
+        ],
+        "eave": [
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          86,
+          88,
+          106
+        ],
+        "ridge": [
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "gable_trim": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "chimney": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "dormer": [
+          1,
+          8,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "cornice": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "band_course": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88
+        ],
+        "railing": [
+          1,
+          25,
+          32,
+          38,
+          48,
+          51,
+          79,
+          84,
+          88,
+          95
+        ],
+        "relief": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88,
+          132
+        ],
+        "accent_other": [
+          0,
+          1,
+          25,
+          48,
+          51,
+          79,
+          84,
+          88,
+          132
+        ],
+        "path": [
+          3,
+          6,
+          11,
+          52
+        ],
+        "fence": [
+          32,
+          38,
+          95
+        ],
+        "vegetation_attached": [
+          4,
+          17,
+          66,
+          72
+        ],
+        "light_fixture": [
+          1,
+          25,
+          36,
+          48,
+          51,
+          79,
+          82,
+          84,
+          85,
+          87,
+          88,
+          134
+        ],
+        "floor_visible": [
+          3,
+          11,
+          13,
+          52,
+          94
+        ],
+        "ground_soil": [
+          13,
+          29,
+          52,
+          91,
+          94
+        ],
+        "ground_grass": [
+          9,
+          17,
+          29
+        ],
+        "rock_face": [
+          16,
+          34,
+          68
+        ],
+        "rock_scree": [
+          13,
+          16,
+          34,
+          68,
+          94
+        ],
+        "sand": [
+          13,
+          46,
+          94
+        ],
+        "snow_ice": [
+          13,
+          16,
+          34,
+          68,
+          94
+        ],
+        "water": [
+          21,
+          26,
+          60,
+          109,
+          113,
+          128
+        ],
+        "vegetation_low": [
+          9,
+          17,
+          29,
+          66
+        ],
+        "vegetation_tree_canopy": [
+          4,
+          72
+        ],
+        "tree_trunk": [
+          4,
+          72
+        ],
+        "path_natural": [
+          13,
+          52,
+          91,
+          94
+        ]
+      }
+    },
+    "roles": {
+      "wall_main": "real_building/wall",
+      "wall_secondary": "real_building/wall",
+      "gable_wall": "real_building/wall",
+      "vegetation_tree_canopy": "real_terrain/tree",
+      "tree_trunk": "real_terrain/tree"
+    },
+    "terrain": [
+      "ground_grass",
+      "ground_soil",
+      "path_natural",
+      "rock_face",
+      "rock_scree",
+      "sand",
+      "snow_ice",
+      "tree_trunk",
+      "vegetation_low",
+      "vegetation_tree_canopy",
+      "water"
+    ],
+    "transform": {
+      "shortest_edge": 640,
+      "longest_edge": 2560,
+      "batch_size": 1,
+      "restore": "semantic-logits-bilinear-align_corners_false-argmax",
+      "orientation": "prep-pixels-exif-1",
+      "pad": "bottom-right-batch-1",
+      "processor": "fixed-json-local-class-info-CLIPTokenizer",
+      "position_embedding_cache": "disabled"
+    },
+    "class_info": "ef18f02454138eb5ae41e33758d35c5364cae02aa3d2d34b79b2846662f3e7e1",
+    "order": "raw-part-union-subtract-wall-then-parent-and-conflict-void"
+  },
+  "policy_hash": "6a3ee354dc9c8be3dab33e7cee5219528166704a1bd66f5d045fbc3c6aa80ab1",
+  "models": {
+    "dino": {
+      "README.md": "cf46f74c7b6850f1d5cbe406028324d8798148726016d46a69a365b4a2d3e89f",
+      "added_tokens.json": "909e96cb32d92ce728a01bc99850cbba26196d74115c17ebeb019275412588f2",
+      "config.json": "eec82c5ab66e16df12a9a212e68ac011779927c2536cf9078658e35d85f0c67a",
+      "model.safetensors": "1a2412ef99bd74bcd3c2a246fa1e48581f8889a1300c9051974741314fc042f3",
+      "preprocessor_config.json": "8454179ba95e2ad22947835aad7b45862a601fc0055ab88bf1ee70892d3aea60",
+      "source.json": "53f3336c67751b1becc189603249b8060f680d10bd900780db87c24127e57098",
+      "special_tokens_map.json": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3",
+      "tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+      "tokenizer_config.json": "d40ab645b68211910b9170d22433d43186a6ec8ee6fd10ba170524b25bf4fb56",
+      "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    },
+    "sam2": {
+      "README.md": "dfa401b1b9358b9650ae487dd2f2bb336fd745c3609e3244adf2e97a22343857",
+      "config.json": "860aff9751b139d83a4ad7df1e5535416fded533e0ead02625edbefcb9953cce",
+      "model.safetensors": "48c14467e5cf9e51870511feb72c89688e82dd74523142c0538b663e193ac2a7",
+      "preprocessor_config.json": "6ebf229ee259368ce4a8d4f2fe893a72b053023710853e257253939e601f583d",
+      "processor_config.json": "f8a68e865cfad115c1c2763f3d93eca7b1c622da06da2a9273eb437fb2389b6d",
+      "source.json": "d85e211d9c15a306f07c719ffee7c799a073873839f565dd93d9d8314265a72b",
+      "video_preprocessor_config.json": "9fccfe5f464ec38c2f236d0e6a68e95511c80c22132fc2fa4b9f7b65f24fad95"
+    }
+  },
+  "oneformer": {
+    "repository": "shi-labs/oneformer_ade20k_swin_large",
+    "revision": "4a5bac8e64f82681a12db2e151a4c2f4ce6092b2",
+    "files": {
+      "README.md": "987c2f143f6f899d037e24d0110630fbc6eba57ab73b6e0d8c83868597b4c348",
+      "config.json": "27452b656a467dbdebdf879dc413d6f3facd2bfe3643824ae66c32c22884b4bd",
+      "merges.txt": "9fd691f7c8039210e0fced15865466c65820d09b63988b0174bfe25de299051a",
+      "preprocessor_config.json": "49e2c8f207405d063cf7824f97c2814fa864f8f19ea9e02c9e20a9ff539c6d49",
+      "pytorch_model.bin": "c0b2fe11dfecee6f2f1f315f466946e96f4e94813f3f6d660ff3747b83c28cc9",
+      "special_tokens_map.json": "c4864a9376a8401918425bed71fc14fc0e81f9b59ec45c1cf96cccb2df508eac",
+      "tokenizer_config.json": "968a6126200b3c8f68fe955d61da20f3537e641a1deb538dc39fdad142248d72",
+      "vocab.json": "e089ad92ba36837a0d31433e555c8f45fe601ab5c221d4f607ded32d9f7a4349"
+    },
+    "license_class": "open",
+    "id2label_hash": "23e0d637c10b3210a4fece9d0ffd393db262b8754c8c9514dcc7bd6a874d2064"
+  },
+  "production_prompts": {
+    "wall_main": "building wall",
+    "wall_secondary": "secondary building wall",
+    "gable_wall": "gable wall",
+    "band_course": "horizontal stone band",
+    "cornice": "cornice",
+    "column": "column",
+    "window_glass": "window glass",
+    "window_frame": "window frame",
+    "door": "door",
+    "shutter": "window shutter",
+    "relief": "carved relief",
+    "accent_other": "architectural ornament",
+    "stairs_entry": "entrance stairs",
+    "railing": "railing",
+    "fence": "fence",
+    "path": "paved path",
+    "path_natural": "dirt path",
+    "ground_soil": "soil",
+    "ground_grass": "grass",
+    "rock_face": "rock cliff",
+    "rock_scree": "loose rocks",
+    "sand": "sand",
+    "water": "water",
+    "vegetation_tree_canopy": "tree canopy",
+    "tree_trunk": "tree trunk",
+    "roof_surface": "roof"
+  },
+  "cached_prompts": {
+    "cmp": {
+      "accent_other": "architectural ornament",
+      "band_course": "horizontal stone band",
+      "column": "column",
+      "cornice": "cornice",
+      "door": "door",
+      "gable_wall": "gable wall",
+      "relief": "carved relief",
+      "shutter": "window shutter",
+      "wall_main": "building wall",
+      "wall_secondary": "secondary building wall",
+      "window_frame": "window frame",
+      "window_glass": "window glass"
+    },
+    "ade": {
+      "column": "column",
+      "door": "door",
+      "fence": "fence",
+      "gable_wall": "gable wall",
+      "ground_grass": "grass",
+      "ground_soil": "soil",
+      "path": "paved path",
+      "path_natural": "dirt path",
+      "railing": "railing",
+      "rock_face": "rock cliff",
+      "rock_scree": "loose rocks",
+      "sand": "sand",
+      "stairs_entry": "entrance stairs",
+      "tree_trunk": "tree trunk",
+      "vegetation_tree_canopy": "tree canopy",
+      "wall_main": "building wall",
+      "wall_secondary": "secondary building wall",
+      "water": "water",
+      "window_frame": "window frame",
+      "window_glass": "window glass"
+    }
+  },
+  "before_new_predictions": true,
+  "independent_blind_confirmation": false,
+  "freeze_sha256": "e4c151e861ae57e225a0a50c87a1903f1e3410b825524861c2a8d46c34ad26b9",
+  "input_count": 1223,
+  "smoke_count": 6
+}

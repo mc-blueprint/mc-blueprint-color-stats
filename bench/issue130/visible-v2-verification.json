@@ -1,0 +1,34 @@
+{
+  "version": "issue130-visible-wall-verification-v2",
+  "full_pytest": {
+    "passed": 1389,
+    "skipped": 1,
+    "warnings": 4,
+    "seconds": 383.32,
+    "environment": "WSL Ubuntu-24.04 root・隔離PostgreSQL16",
+    "artifact": "/tmp/colorstats-issue130-jtA3TN",
+    "database_stopped": true,
+    "log": "20261108T114841Z-63e4d61f36b24e75b554230ce2efd12f.jsonl"
+  },
+  "ruff": "passed",
+  "build": ["sdist passed", "wheel passed"],
+  "focused_before_freeze": "58 passed",
+  "gpu_runs": {
+    "ubuntu-1": "20261108T114308Z-7f2c5d0c70c84a259c28b6418029a4a7.jsonl",
+    "ubuntu-2": "20261108T114155Z-d4292afc52024552be52378a0f411683.jsonl"
+  },
+  "regression_images_per_gpu": 1223,
+  "fresh_auxiliary_images_per_gpu": 606,
+  "full_production_prompt_smoke_per_gpu": 6,
+  "tree_water_pixel_changes": 0,
+  "actual_oom": false,
+  "gpu_processes_after": 0,
+  "simulated_oom_and_stop": "passed・新旧method",
+  "production_database_access": "none",
+  "migration_added": false,
+  "statistics_changed": false,
+  "old_quality_decision_changed": false,
+  "independent_blind_confirmation": false,
+  "quality_status": "failed",
+  "pr_relation": "Refs #130"
+}

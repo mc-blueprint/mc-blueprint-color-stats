@@ -1,0 +1,221 @@
+{
+  "version": "issue130-visible-wall-quality-v2",
+  "status": "failed",
+  "freeze_sha256": "e4c151e861ae57e225a0a50c87a1903f1e3410b825524861c2a8d46c34ad26b9",
+  "policy_hash": "6a3ee354dc9c8be3dab33e7cee5219528166704a1bd66f5d045fbc3c6aa80ab1",
+  "gates": {
+    "precision": 0.8,
+    "recall": 0.3
+  },
+  "definition": "窓・扉・装飾などを除いた、壁材が見えている面",
+  "hosts": {
+    "ubuntu-1": {
+      "status": "failed",
+      "wall": {
+        "tp": 1749,
+        "fp": 28641,
+        "fn": 21130527,
+        "tn": 32347245,
+        "truth_histogram": [
+          0,
+          23933,
+          1749,
+          154,
+          980,
+          16,
+          20,
+          111,
+          24,
+          798,
+          385,
+          2198,
+          22
+        ],
+        "iou": 8.265237276815556e-05,
+        "precision": 0.05755182625863771,
+        "recall": 8.276439319645456e-05
+      },
+      "diagnostics": {
+        "wall_subtracted_pixels": 33936216,
+        "images": 282,
+        "removed_gt_wall": 14867521,
+        "removed_nonwall": 19068695,
+        "remaining_part_fp": 4708,
+        "missing_wall_images": 144
+      },
+      "coverage": {
+        "images": 282,
+        "pixels": 53508162,
+        "nonvoid_pixels": 53508162,
+        "truth_void_pixels": 0,
+        "unmapped_nonvoid_pixels": 15540095,
+        "predicted_nonvoid_pixels": 5872825,
+        "prediction_void_pixels": 47635337,
+        "predicted_on_truth_void_pixels": 0,
+        "group_overlap_pixels": 0,
+        "coverage": 0.1097556854971023,
+        "void_rate": 0.8902443145028978
+      },
+      "summary_sha256": "7b0db0e0d1a3b627dd18bc323545a87548e581dbdd574f1eeded4d1674add404",
+      "gpu": "NVIDIA GeForce RTX 4060"
+    },
+    "ubuntu-2": {
+      "status": "failed",
+      "wall": {
+        "tp": 1644,
+        "fp": 28347,
+        "fn": 21130632,
+        "tn": 32347539,
+        "truth_histogram": [
+          0,
+          23700,
+          1644,
+          124,
+          973,
+          13,
+          18,
+          103,
+          22,
+          792,
+          382,
+          2198,
+          22
+        ],
+        "iou": 7.769147439562626e-05,
+        "precision": 0.05481644493348004,
+        "recall": 7.779569034589554e-05
+      },
+      "diagnostics": {
+        "wall_subtracted_pixels": 33936610,
+        "images": 282,
+        "removed_gt_wall": 14867611,
+        "removed_nonwall": 19068999,
+        "remaining_part_fp": 4647,
+        "missing_wall_images": 145
+      },
+      "coverage": {
+        "images": 282,
+        "pixels": 53508162,
+        "nonvoid_pixels": 53508162,
+        "truth_void_pixels": 0,
+        "unmapped_nonvoid_pixels": 15540095,
+        "predicted_nonvoid_pixels": 5872426,
+        "prediction_void_pixels": 47635736,
+        "predicted_on_truth_void_pixels": 0,
+        "group_overlap_pixels": 0,
+        "coverage": 0.10974822869079301,
+        "void_rate": 0.890251771309207
+      },
+      "summary_sha256": "550ba37d5dd3bd88dc76ee7fcd1f8fc1b6ddc4a9a046be7170fb50ab3ed9e7e7",
+      "gpu": "NVIDIA GeForce RTX 4070"
+    }
+  },
+  "color": {
+    "ubuntu-1": {
+      "image_delta_ok": {
+        "tp": {
+          "images": 111,
+          "mean": 0.04866426980528413,
+          "median": 0.02937556289946155,
+          "p95": 0.1590131208183706,
+          "max": 0.2303620516106616
+        },
+        "gt": {
+          "images": 138,
+          "mean": 0.11191754234631561,
+          "median": 0.08493276862175413,
+          "p95": 0.29353472377606676,
+          "max": 0.48454112909310093
+        }
+      },
+      "pooled": {
+        "prediction": {
+          "pixels": 30390,
+          "mean_oklab": [
+            0.5407062938627721,
+            0.02396205669511089,
+            0.018475907725204337
+          ]
+        },
+        "tp": {
+          "pixels": 1749,
+          "mean_oklab": [
+            0.6172413529001437,
+            0.004823601236299802,
+            0.021761588671854515
+          ]
+        },
+        "gt": {
+          "pixels": 21132276,
+          "mean_oklab": [
+            0.5789788504737212,
+            0.005673346491151773,
+            0.018626775230264875
+          ]
+        }
+      }
+    },
+    "ubuntu-2": {
+      "image_delta_ok": {
+        "tp": {
+          "images": 105,
+          "mean": 0.04449381177325842,
+          "median": 0.026931762709196325,
+          "p95": 0.15754721698437107,
+          "max": 0.3124766167495359
+        },
+        "gt": {
+          "images": 137,
+          "mean": 0.1108216707827379,
+          "median": 0.08400645167561062,
+          "p95": 0.2818761825937333,
+          "max": 0.3870174593350419
+        }
+      },
+      "pooled": {
+        "prediction": {
+          "pixels": 29991,
+          "mean_oklab": [
+            0.5402186678977503,
+            0.024218693782582266,
+            0.018361995863892668
+          ]
+        },
+        "tp": {
+          "pixels": 1644,
+          "mean_oklab": [
+            0.6179585262567119,
+            0.00475182578098731,
+            0.021648172795069465
+          ]
+        },
+        "gt": {
+          "pixels": 21132276,
+          "mean_oklab": [
+            0.5789788504737212,
+            0.005673346491151773,
+            0.018626775230264875
+          ]
+        }
+      }
+    }
+  },
+  "tree_water_pixel_changes": 0,
+  "public_gt_passed_wall": false,
+  "quality_eligible": false,
+  "supported_labels": [],
+  "supported_groups": [],
+  "allowed_building_parts": [],
+  "pr_relation": "Refs #130",
+  "scope": "CMP holdout282枚の同じ旧regular候補と新規補助3prompt。両GPU個別判定。",
+  "known_regression_images": 1223,
+  "fresh_auxiliary_images_per_gpu": 606,
+  "full_production_prompt_smoke_per_gpu": 6,
+  "independent_blind_confirmation": false,
+  "unverified": [
+    "独立した所有画像GT",
+    "本番全29promptの全件品質",
+    "本番統計への採用"
+  ],
+  "next": "削り過ぎと残る部位FPを分け、部位候補自体のmask精度と採否を次版で検証する。現行の閾値や正解を結果に合わせて変更せず、建物統計の見送りを維持する。"
+}
