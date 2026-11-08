@@ -1,0 +1,36 @@
+{
+  "decision_sha256": "99684a90e65b9d8440b11c9dc04e4f128524c27fc574e4d8018631e18040a4a0",
+  "metadata_checks": "passed",
+  "original_and_canonical_unchanged": true,
+  "issue_bodies_verified": {
+    "114": {
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/114",
+      "body_verified": true,
+      "state": "OPEN"
+    },
+    "121": {
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/121",
+      "body_verified": true,
+      "state": "OPEN"
+    },
+    "122": {
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/122",
+      "body_verified": true,
+      "state": "OPEN"
+    },
+    "129": {
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/129",
+      "body_verified": true,
+      "state": "OPEN"
+    },
+    "130": {
+      "url": "https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/130",
+      "body_verified": true,
+      "state": "OPEN"
+    }
+  },
+  "new_issues_milestone": 7,
+  "production_database_writes": 0,
+  "api_model_calls": 0,
+  "pytest_ruff_build_reference": "bench/issue121/human-verification.json"
+}

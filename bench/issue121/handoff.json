@@ -1,0 +1,38 @@
+{
+  "version": "issue121-handoff-v1",
+  "date": "2026-11-08",
+  "issue": 121,
+  "completion_reference": "Closes #121",
+  "decision_path": "bench/issue121/decision.json",
+  "decision_sha256": "99684a90e65b9d8440b11c9dc04e4f128524c27fc574e4d8018631e18040a4a0",
+  "evaluation_status": "failed",
+  "quality_eligible_all_parts": false,
+  "terrain_supported_labels": [
+    "water"
+  ],
+  "terrain_supported_groups": [
+    "real_terrain/tree"
+  ],
+  "building_supported": false,
+  "image_gate_v2_issue": 129,
+  "building_improvement_issue": 130,
+  "statistics_order": [
+    129,
+    122,
+    114
+  ],
+  "deferred_human_import": {
+    "successor_issue": 114,
+    "written": 0,
+    "source_materials": "private原文・canonical・番号表・提示HTMLをそのまま保全"
+  },
+  "completion_checks": {
+    "legacy_reproduction_and_regressions": "passed",
+    "input_and_split_hashes": "passed",
+    "both_gpu_measurements_and_owned_review": "passed",
+    "criteria_status_and_evidence": "passed",
+    "downstream_scoped_decision_fixed": "passed",
+    "pytest_ruff_build": "passed"
+  },
+  "quality_failure_is_not_issue_incompletion": true
+}
