@@ -58,6 +58,7 @@ def main():
                         "policy": policy_metrics})
     import torch
 
+    write(args.output / "records.json", records)
     write(args.output / "summary.json", {
         "gpu": torch.cuda.get_device_name(), "images": len(records),
         "input_manifest_sha256": digest(args.inputs / "inputs.json"),
@@ -68,7 +69,9 @@ def main():
         "peak_reserved_bytes": max(max(row["runtime"]["peak_reserved_bytes"],
                                        row["runtime"]["oneformer_peak_reserved_bytes"])
                                    for row in records),
-        "records": records, "policy_hash": region_policy.policy_hash(),
+        "records_sha256": digest(args.output / "records.json"),
+        "records_hash_format": "sha256-raw-private",
+        "policy_hash": region_policy.policy_hash(),
         "quality_eligible": False,
         "limitation": "公開3枚の両GPU適合・性能。全件の8GB適合や品質の保証ではない。"})
 

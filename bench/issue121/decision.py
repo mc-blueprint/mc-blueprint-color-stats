@@ -3,7 +3,8 @@
 import argparse
 from pathlib import Path
 
-from bench.issue73.evaluate import digest, read, write
+from bench.issue73.evaluate import read, write
+from bench.issue81.evaluate import text_digest
 from bench.issue121.quality import part_decision, person_decision
 
 
@@ -71,7 +72,8 @@ def main():
     result = {
         "version": "issue121-v1", "status": "failed" if failed else "unverified",
         "quality_eligible": False, "supported_labels": [], "supported_groups": [],
-        "evidence": {str(path): digest(path) for path in (
+        "evidence_hash_format": "sha256-lf-normalized",
+        "evidence": {str(path): text_digest(path) for path in (
             args.paired, args.ade, args.owned, args.legacy, args.class_info, *args.gpu)},
         "part_criteria": parts,
         "criteria": {
@@ -120,10 +122,10 @@ def main():
     }
     if args.human:
         apply_human(result, read(args.human))
-        result["evidence"][str(args.human)] = digest(args.human)
+        result["evidence"][str(args.human)] = text_digest(args.human)
     if args.aerial:
         result["criteria"]["aerial_policy"] = read(args.aerial)
-        result["evidence"][str(args.aerial)] = digest(args.aerial)
+        result["evidence"][str(args.aerial)] = text_digest(args.aerial)
     write(args.output, result)
 
 

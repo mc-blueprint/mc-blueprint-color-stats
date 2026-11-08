@@ -117,3 +117,15 @@ decisionの`policy_hash_portability`を未検証にした。共有契約の変�
 再利用・後続採用の前にメインで#118のhash正規化・テキスト属性と版更新の方針を判断する必要がある。
 
 原画像目視照合の追加検証は[human-verification.json](human-verification.json)を参照。
+
+## 反証後の証跡修正
+
+decisionのevidenceとhandoffのdecision_sha256は、CRLFをLFへ正規化したUTF-8内容のSHA256とする。
+Git保存内容との照合を回帰テストで確認する。画像・モデル・非公開台帳などの実byte hashは変更しない。
+初回予測前のfreezeと計測コードhashは当時の証跡として保持し、後日の集計出力修正で再固定しない。
+GPU別の画像単位recordsは `H:/mc-blueprint/private/issue121-review/public-gpu-records/` へ保全した。
+公開JSONには従来の件数・時間・VRAM集計とprivate recordsの実byte SHA256だけを残す。
+過去の公開データセット計測を含むGit履歴は書き換えない。
+
+反証修正後の全検証: **1,358 passed / 1 skipped**、ruff・sdist/wheel build成功。
+[review-verification.json](review-verification.json)に隔離DB停止を含む結果を記録した。

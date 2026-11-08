@@ -4,7 +4,7 @@
   "issue": 121,
   "completion_reference": "Closes #121",
   "decision_path": "bench/issue121/decision.json",
-  "decision_sha256": "99684a90e65b9d8440b11c9dc04e4f128524c27fc574e4d8018631e18040a4a0",
+  "decision_sha256": "f6a6fabb14a998e472f0ffdf00d0057ec0e563dc22c2478803b943c3a244769a",
   "evaluation_status": "failed",
   "quality_eligible_all_parts": false,
   "terrain_supported_labels": [
@@ -34,5 +34,6 @@
     "downstream_scoped_decision_fixed": "passed",
     "pytest_ruff_build": "passed"
   },
-  "quality_failure_is_not_issue_incompletion": true
+  "quality_failure_is_not_issue_incompletion": true,
+  "decision_hash_format": "sha256-lf-normalized"
 }

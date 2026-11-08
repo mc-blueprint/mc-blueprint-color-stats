@@ -1,5 +1,5 @@
 {
-  "decision_sha256": "99684a90e65b9d8440b11c9dc04e4f128524c27fc574e4d8018631e18040a4a0",
+  "decision_sha256": "f6a6fabb14a998e472f0ffdf00d0057ec0e563dc22c2478803b943c3a244769a",
   "metadata_checks": "passed",
   "original_and_canonical_unchanged": true,
   "issue_bodies_verified": {
@@ -32,5 +32,6 @@
   "new_issues_milestone": 7,
   "production_database_writes": 0,
   "api_model_calls": 0,
-  "pytest_ruff_build_reference": "bench/issue121/human-verification.json"
+  "pytest_ruff_build_reference": "bench/issue121/review-verification.json",
+  "decision_hash_format": "sha256-lf-normalized"
 }

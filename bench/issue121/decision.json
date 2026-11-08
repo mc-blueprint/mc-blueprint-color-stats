@@ -8,10 +8,10 @@
     "bench/issue121/paired-summary.json": "5e1d7a9714640c5cd98f81331026234b0193588eae90e75fe0c0ae663d8362ba",
     "bench/issue121/ade-summary.json": "5b48dc3bdcce1370b53263b38338330a1078210138226e16c96ebde3ca9e6921",
     "bench/issue121/owned-proof.json": "e38c60a6b1d5427332321d0190c332cbd9fe6f001244fb55a9cd76c92af3fc7c",
-    "bench/issue121/legacy-definition.json": "791de726604c9a5a35f089546430ec9fed72917ba5a7fc29feb7e2121287c1d5",
+    "bench/issue121/legacy-definition.json": "cab169361bb31aecaac91c5cdf2362fc231b28bd119d861a8fe2f146d838a811",
     "bench/issue121/class-info-provenance.json": "497299a1faaeefa354825c03a41a769bf7efc6313db9dae0322bd556fafa5bd7",
-    "bench/issue121/gpu-ubuntu1.json": "14566896f004154b1264f20bb6cf89ad143811c0a8f89b5762ec191474fcffe3",
-    "bench/issue121/gpu-ubuntu2.json": "37ab090c0731ab143948914b6cb07ae7eaa6752cf74e4a91b9d8e6654768d783",
+    "bench/issue121/gpu-ubuntu1.json": "d79c4bf35911fb9b898f04fdc0abd47499f9e12ad60a45b21853df397479d758",
+    "bench/issue121/gpu-ubuntu2.json": "0b0d85e78f860aedadc7c581673e9c94bdd8e1c810c0cf854b2fc12862ccdd15",
     "bench/issue121/human-summary.json": "f7521625e70f020bd832d4f101f9954fa2dde53162f4880309c4f127eb8c7756",
     "bench/issue121/aerial-summary.json": "ef597bbac1f4e04b39fe5e6875348ca4d551ac133ae70ec481e8bcb039464286"
   },
@@ -348,5 +348,6 @@
       "image_gate_v2": 129,
       "building_improvement": 130
     }
-  }
+  },
+  "evidence_hash_format": "sha256-lf-normalized"
 }
