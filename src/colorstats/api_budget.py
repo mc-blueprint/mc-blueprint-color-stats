@@ -18,6 +18,8 @@ from colorstats.schema.models import ApiBudget, ApiCall
 
 NUSD = 1_000_000_000
 BUDGET_KEY = "issue114-image-gate"
+V2_CAP = 5 * NUSD
+V2_POLICY = "image-gate-v2"
 PRICING = {
     "version": "openai-standard-2026-11-07-v2",
     "input_nusd": 100, "cached_nusd": 10, "write_nusd": 125,
@@ -234,6 +236,15 @@ class Ledger:
                 )), 0)).where(ApiCall.budget_key == budget.key))
                 if reserved < 0 or used + reserved > budget.cap_nusd:
                     raise NonRetryableError("API費用上限を超える予約は送信できません")
+                if payload["identity"].get("policy_version") == V2_POLICY:
+                    v2_used = session.scalar(select(func.coalesce(func.sum(func.coalesce(
+                        ApiCall.cost_nusd, ApiCall.reserved_nusd,
+                    )), 0)).where(
+                        ApiCall.budget_key == budget.key,
+                        ApiCall.details["identity"]["input"]["policy_version"].astext == V2_POLICY,
+                    ))
+                    if v2_used + reserved > V2_CAP:
+                        raise NonRetryableError("画像ゲートv2の追加5 USD上限を超える予約です")
                 call_id = uuid.uuid4()
                 path = Path(payload["artifact_dir"]) / f"{call_id}.json"
                 retention.lock(session)

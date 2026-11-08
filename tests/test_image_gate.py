@@ -50,12 +50,13 @@ def test_HTTP要求は設定timeoutで一度だけ送る(monkeypatch, seconds):
 
 def verdict(**changes):
     return {"target": True, "subject": "building", "real_people": "absent",
-            "interior": False, "black_and_white": False, "dark": False,
+            "interior": False, "black_and_white": False, "dark": False, "aerial_view": False,
             "reason_codes": ["building_detail"], **changes}
 
 
 def response(**changes):
     return {"id": "resp_fixture", "model": gate.MODEL, "status": "completed",
+            "reasoning": {"effort": "low"},
             "usage": {"input_tokens": 4000, "output_tokens": 100,
                       "input_tokens_details": {"cached_tokens": 0, "cache_write_tokens": 0}},
             "output": [{"type": "message", "content": [
@@ -70,6 +71,7 @@ def response(**changes):
     ({"real_people": "present"}, "pending"),
     ({"real_people": "uncertain"}, "pending"),
     ({"dark": True}, "pending"), ({"dark": None}, "pending"),
+    ({"aerial_view": True}, "pending"), ({"aerial_view": None}, "pending"),
     ({"subject": "mixed"}, "pending"), ({"subject": "unknown"}, "pending"),
     ({"target": None}, "pending"), ({"interior": None}, "pending"),
     ({"black_and_white": None}, "pending"), ({"reason_codes": []}, "pending"),
@@ -89,12 +91,22 @@ def test_確定主体との矛盾は検索意図に優先して保留する():
     assert gate.decision(verdict(subject="terrain"))["analysis_domain"] == "real_terrain"
 
 
+def test_上空属性は必須で他の除外理由があっても保留する():
+    old = verdict()
+    del old["aerial_view"]
+    assert gate.decision(old)["reason"] == "invalid_schema"
+    for aerial in (True, None):
+        assert gate.decision(verdict(aerial_view=aerial, black_and_white=True,
+                                     target=False))["decision"] == "pending"
+
+
 @pytest.mark.parametrize("changes", [
     {"model": "gpt-6.1-sol"}, {"model": None}, {"status": "incomplete"},
     {"output": [{"type": "message", "content": [{"type": "refusal"}]}]},
     {"output": []}, {"output": [{"type": "function_call"}]},
     {"output": None}, {"output": ["invalid"]},
     {"reasoning": {"effort": "high"}},
+    {"reasoning": {}}, {"reasoning": None},
     {"output": [{"type": "message", "content": [{"type": "output_text", "text": "{"}]}]},
 ])
 def test_別modelや拒否や不完全応答は採用しない(changes):

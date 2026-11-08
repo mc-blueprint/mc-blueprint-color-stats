@@ -1,0 +1,27 @@
+#!/bin/bash
+# Issue #129専用の隔離DB検証。
+set -euo pipefail
+root=$(mktemp -d /var/tmp/colorstats-issue129-XXXXXX)
+chmod 755 "$root"
+mkdir -p "$root/code" "$root/socket" "$root/pgdata"
+tar -C /mnt/h/mc-blueprint/worktrees/colorstats-129/mc-blueprint-color-stats \
+    --exclude=.git --exclude=.venv --exclude=__pycache__ --exclude=.pytest_cache \
+    --exclude=.ruff_cache --exclude=dist --exclude=data -cf - . | tar -C "$root/code" -xf -
+chown postgres:postgres "$root/pgdata" "$root/socket"
+pg=/usr/lib/postgresql/16/bin
+runuser -u postgres -- "$pg/initdb" -D "$root/pgdata" -A trust > "$root/initdb.log"
+runuser -u postgres -- "$pg/pg_ctl" -D "$root/pgdata" -l "$root/pgdata/server.log" \
+    -o "-k $root/socket -p 55129 -h ''" start
+trap 'runuser -u postgres -- "$pg/pg_ctl" -D "$root/pgdata" stop -m fast' EXIT
+"$pg/createdb" -h "$root/socket" -p 55129 -U postgres issue129
+cd "$root/code"
+venv=/var/tmp/colorstats-issue129-tools
+printf '%s\n' /opt/colorstats/venvs/issue41/lib/python3.12/site-packages \
+    > "$venv/lib/python3.12/site-packages/issue129-dependencies.pth"
+export PYTHONPATH="$root/code/src:$root/code"
+export TEST_DATABASE_URL="postgresql+psycopg://postgres@/issue129?host=$root/socket&port=55129"
+echo "artifact: $root"
+"$venv/bin/python" -m pip install --no-deps --no-build-isolation -e . > "$root/install.log"
+"$venv/bin/ruff" check .
+"$venv/bin/python" -m pytest -q --tb=short --junitxml="$root/results.xml" "$@"
+"$venv/bin/python" -m hatchling build -d "$root/dist"

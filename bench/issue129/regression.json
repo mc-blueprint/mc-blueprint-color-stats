@@ -1,0 +1,291 @@
+{
+  "groups": {
+    "old": {
+      "reviewed": 50,
+      "accepted_rate": 0.52,
+      "verdicts": {
+        "accepted": 26,
+        "pending": 13,
+        "rejected": 11
+      },
+      "accepted_reported_problems": 0,
+      "attributes": {
+        "non_target": {
+          "tp": 5,
+          "fp": 1,
+          "fn": 0,
+          "tn": 39,
+          "unknown_truth": 4,
+          "unknown_prediction": 1
+        },
+        "black_and_white": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 0,
+          "tn": 38,
+          "unknown_truth": 6,
+          "unknown_prediction": 1
+        },
+        "real_people": {
+          "tp": 1,
+          "fp": 2,
+          "fn": 0,
+          "tn": 39,
+          "unknown_truth": 7,
+          "unknown_prediction": 1
+        },
+        "aerial_view": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 0,
+          "tn": 46,
+          "unknown_truth": 1,
+          "unknown_prediction": 1
+        }
+      }
+    },
+    "new": {
+      "reviewed": 50,
+      "accepted_rate": 0.5,
+      "verdicts": {
+        "accepted": 25,
+        "pending": 20,
+        "rejected": 5
+      },
+      "accepted_reported_problems": 0,
+      "attributes": {
+        "non_target": {
+          "tp": 2,
+          "fp": 3,
+          "fn": 0,
+          "tn": 37,
+          "unknown_truth": 8,
+          "unknown_prediction": 0
+        },
+        "black_and_white": {
+          "tp": 6,
+          "fp": 0,
+          "fn": 0,
+          "tn": 40,
+          "unknown_truth": 4,
+          "unknown_prediction": 0
+        },
+        "real_people": {
+          "tp": 6,
+          "fp": 6,
+          "fn": 0,
+          "tn": 33,
+          "unknown_truth": 4,
+          "unknown_prediction": 1
+        },
+        "aerial_view": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 48,
+          "unknown_truth": 1,
+          "unknown_prediction": 1
+        }
+      }
+    },
+    "challenge": {
+      "reviewed": 10,
+      "accepted_rate": 0,
+      "verdicts": {
+        "rejected": 7,
+        "pending": 3
+      },
+      "accepted_reported_problems": 0,
+      "attributes": {
+        "non_target": {
+          "tp": 6,
+          "fp": 1,
+          "fn": 0,
+          "tn": 2,
+          "unknown_truth": 1,
+          "unknown_prediction": 0
+        },
+        "black_and_white": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 3,
+          "unknown_truth": 7,
+          "unknown_prediction": 0
+        },
+        "real_people": {
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "tn": 2,
+          "unknown_truth": 6,
+          "unknown_prediction": 0
+        },
+        "aerial_view": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "tn": 9,
+          "unknown_truth": 0,
+          "unknown_prediction": 0
+        }
+      }
+    }
+  },
+  "independent_evaluation": false,
+  "prediction_coverage": {
+    "total": 110,
+    "observed": 109,
+    "expected_input_holds": 1,
+    "unexpected_unavailable": 0
+  },
+  "low_saturation_color": {
+    "reviewed": 11,
+    "black_and_white_false_positive": 0
+  },
+  "known_black_and_white": {
+    "positive": 9,
+    "missed_or_unknown": 0
+  },
+  "aerial_adopted": 0,
+  "v1_groups": {
+    "old": {
+      "reviewed": 50,
+      "accepted_rate": 0.64,
+      "verdicts": {
+        "accepted": 32,
+        "rejected": 10,
+        "pending": 8
+      },
+      "accepted_reported_problems": 0,
+      "attributes": {
+        "non_target": {
+          "tp": 5,
+          "fp": 1,
+          "fn": 0,
+          "tn": 39,
+          "unknown_truth": 4,
+          "unknown_prediction": 1
+        },
+        "black_and_white": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 0,
+          "tn": 38,
+          "unknown_truth": 6,
+          "unknown_prediction": 1
+        },
+        "real_people": {
+          "tp": 1,
+          "fp": 2,
+          "fn": 0,
+          "tn": 39,
+          "unknown_truth": 7,
+          "unknown_prediction": 1
+        },
+        "aerial_view": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "unknown_truth": 1,
+          "unknown_prediction": 49
+        }
+      }
+    },
+    "new": {
+      "reviewed": 50,
+      "accepted_rate": 0.52,
+      "verdicts": {
+        "accepted": 26,
+        "rejected": 7,
+        "pending": 17
+      },
+      "accepted_reported_problems": 0,
+      "attributes": {
+        "non_target": {
+          "tp": 2,
+          "fp": 4,
+          "fn": 0,
+          "tn": 36,
+          "unknown_truth": 8,
+          "unknown_prediction": 0
+        },
+        "black_and_white": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 1,
+          "tn": 40,
+          "unknown_truth": 4,
+          "unknown_prediction": 0
+        },
+        "real_people": {
+          "tp": 6,
+          "fp": 5,
+          "fn": 0,
+          "tn": 33,
+          "unknown_truth": 4,
+          "unknown_prediction": 2
+        },
+        "aerial_view": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "unknown_truth": 1,
+          "unknown_prediction": 49
+        }
+      }
+    },
+    "challenge": {
+      "reviewed": 10,
+      "accepted_rate": 0.1,
+      "verdicts": {
+        "rejected": 7,
+        "pending": 2,
+        "accepted": 1
+      },
+      "accepted_reported_problems": 0,
+      "attributes": {
+        "non_target": {
+          "tp": 6,
+          "fp": 1,
+          "fn": 0,
+          "tn": 2,
+          "unknown_truth": 1,
+          "unknown_prediction": 0
+        },
+        "black_and_white": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 3,
+          "unknown_truth": 7,
+          "unknown_prediction": 0
+        },
+        "real_people": {
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "tn": 2,
+          "unknown_truth": 6,
+          "unknown_prediction": 0
+        },
+        "aerial_view": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 0,
+          "tn": 0,
+          "unknown_truth": 0,
+          "unknown_prediction": 10
+        }
+      }
+    }
+  },
+  "aerial_policy": {
+    "positive": 3,
+    "held_with_aerial_signal": 3,
+    "ordinary_accepted": 51
+  },
+  "passed": true
+}

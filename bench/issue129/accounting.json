@@ -1,0 +1,34 @@
+{
+  "unsettled_reserved_nusd": 0,
+  "booked_nusd": 2524195660,
+  "additional_cap_nusd": 5000000000,
+  "additional_remaining_nusd": 2475804340,
+  "unknown_calls": 0,
+  "usage": {
+    "input_tokens": 18629364,
+    "output_tokens": 1267071,
+    "total_tokens": 19896435,
+    "cached_tokens": 3800796,
+    "cache_write_tokens": 14735336,
+    "reasoning_tokens": 680012
+  },
+  "http": {
+    "200": 22190,
+    "520": 1
+  },
+  "endpoints": {
+    "responses/input_tokens": 11095,
+    "responses": 11096
+  },
+  "returned_models": {
+    "gpt-6-luna": 11095
+  },
+  "returned_efforts": {
+    "low": 11095
+  },
+  "v1_artifacts": {
+    "checked": 10221,
+    "missing": 0,
+    "changed": 0
+  }
+}

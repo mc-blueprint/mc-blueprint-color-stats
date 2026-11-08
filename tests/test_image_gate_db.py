@@ -211,6 +211,24 @@ def test_投入後の契約変更は再利用も送信も拒否する(trial, mon
     assert requests == []
 
 
+def test_旧identityのrunを選択もv2再利用もしない(trial, tmp_path):
+    queue, claim, requests = trial
+    original_id = complete(queue, claim, gate.prepare(queue, claim, key="fixture"))
+    with Session(queue.engine) as session, session.begin():
+        original = session.get(ProcessingRun, original_id)
+        meta = {**original.parameters["identity"], "policy_version": "image-gate-v1"}
+        original.parameters = {**original.parameters, "identity": meta,
+                               "identity_hash": api_budget.digest(meta)}
+    with Session(queue.engine) as session:
+        with pytest.raises(PermissionError, match="契約版"):
+            gate.selection(session, claim.asset_id, original_id)
+    job = gate.enqueue(queue, claim.asset_id, tmp_path / "v2-new", budget_key=BUDGET_KEY,
+                       code_version="test", execution_authorized=True)
+    next_claim = queue.claim(("review",), job_ids=[job])
+    complete(queue, next_claim, gate.prepare(queue, next_claim, key="fixture"))
+    assert len(requests) == 4
+
+
 def test_同じ機械判定だけ再利用し人の訂正は別runへ追加する(trial, tmp_path):
     queue, claim, requests = trial
     run_id = complete(queue, claim, gate.prepare(queue, claim, key="fixture"))
@@ -603,6 +621,64 @@ def test_境界額を超える予約は送らず不明請求も差し引く(tria
         ledger.call("responses", {}, 1, key="fixture")
     result, _ = ledger.call("responses/input_tokens", {}, 0, key="fixture")
     assert result["input_tokens"] == 4000
+
+
+@pytest.mark.parametrize("state,cost", [("settled", 4_999_000_000), ("unknown", None)])
+def test_v2追加枠は旧版費用と分離し精算と不明予約を含める(trial, state, cost):
+    queue, claim, requests = trial
+    with Session(queue.engine) as session, session.begin():
+        session.add_all([
+            ApiCall(budget_key=BUDGET_KEY, job_id=claim.id, endpoint="v1",
+                    attempt=1, input_hash="a" * 64, state="settled",
+                    reserved_nusd=2 * NUSD, cost_nusd=2 * NUSD, response_path="v1",
+                    details={"identity": {"input": {"policy_version": "image-gate-v1"}}}),
+            ApiCall(budget_key=BUDGET_KEY, job_id=claim.id, endpoint="v2",
+                    attempt=1, input_hash="b" * 64, state=state,
+                    reserved_nusd=4_999_000_000, cost_nusd=cost, response_path="v2",
+                    details={"identity": {"input": claim.payload["identity"]}}),
+        ])
+    ledger = Ledger(queue, claim, lambda s: None)
+    with pytest.raises(NonRetryableError, match="追加5 USD"):
+        ledger.call("responses", {"model": gate.MODEL}, 1_000_001, key="fixture")
+    assert requests == []
+    _, record = ledger.call("responses", {"model": gate.MODEL}, 1_000_000, key="fixture")
+    assert record["cost_nusd"] <= 1_000_000
+
+
+def test_v2四並列予約は追加枠を同じ親ロックで守る(trial, monkeypatch, tmp_path):
+    queue, claim, requests = trial
+    monkeypatch.setenv("COLORSTATS_IMAGE_GATE_CONCURRENCY", "4")
+    with Session(queue.engine) as session, session.begin():
+        session.add(ApiCall(budget_key=BUDGET_KEY, job_id=claim.id, endpoint="prior",
+                            attempt=1, input_hash="a" * 64, state="stopped",
+                            reserved_nusd=4_998_000_000, cost_nusd=4_998_000_000,
+                            response_path="prior",
+                            details={"identity": {"input": claim.payload["identity"]}}))
+    other_id = gate.enqueue(queue, claim.asset_id, tmp_path / "v2-parallel",
+                            budget_key=BUDGET_KEY, code_version="test",
+                            execution_authorized=True)
+    other = queue.claim(("review",), job_ids=[other_id])
+    started, resume = Event(), Event()
+    original = api_budget.request
+
+    def blocking(endpoint, body, key):
+        started.set()
+        assert resume.wait(10)
+        return original(endpoint, body, key)
+
+    monkeypatch.setattr(api_budget, "request", blocking)
+    with ThreadPoolExecutor(1) as pool:
+        future = pool.submit(Ledger(queue, claim, lambda s: None).call,
+                             "responses", {"model": gate.MODEL}, 2_000_000, key="fixture")
+        try:
+            assert started.wait(10)
+            with pytest.raises(NonRetryableError, match="追加5 USD"):
+                Ledger(queue, other, lambda s: None).call(
+                    "responses", {"model": gate.MODEL}, 1, key="fixture")
+        finally:
+            resume.set()
+        future.result()
+    assert len(requests) == 1
 
 
 def test_送信前の停止と開始未許可でAPIへ渡さない(trial):
