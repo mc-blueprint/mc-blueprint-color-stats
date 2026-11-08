@@ -1,0 +1,28 @@
+{
+  "version": "issue130-dominant-color-verification-v3",
+  "full_pytest": {
+    "passed": 1393,
+    "skipped": 1,
+    "warnings": 4,
+    "seconds": 441.09,
+    "environment": "WSL Ubuntu-24.04 root・隔離PostgreSQL16",
+    "artifact": "/tmp/colorstats-issue130-h0QCNM",
+    "database_stopped": true,
+    "log": "20261108T121947Z-4828b7ed0df24d8095139247dc9ec038.jsonl"
+  },
+  "ruff": "passed",
+  "build": ["sdist passed", "wheel passed"],
+  "focused_before_freeze": "19 passed",
+  "evaluation_backend": "CPU・OpenCV 1 thread・seed0",
+  "evaluation_log": "20261108T122037Z-4cb8da2685044aa6abe39e29ac449e1f.jsonl",
+  "new_gpu_predictions": 0,
+  "evaluation_process_stopped": true,
+  "quality_status": "failed",
+  "pr_relation": "Refs #130",
+  "new_dependencies": 0,
+  "production_database_access": "none",
+  "migration_added": false,
+  "statistics_changed": false,
+  "old_quality_decision_changed": false,
+  "independent_blind_confirmation": false
+}

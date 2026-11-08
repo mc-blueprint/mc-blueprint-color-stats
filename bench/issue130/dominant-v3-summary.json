@@ -1,0 +1,61 @@
+{
+  "version": "issue130-dominant-color-eval-v3",
+  "freeze_sha256": "519fcecc6500a343d943e7db25a3ba9cf24f28d2b0604831c26945538f1ac8e1",
+  "selection_sha256": "96b9e065540c47b96bb0c95794998e2f39b746e9fda757f2e46df4ced7e24eb9",
+  "selected": {
+    "front": "raw_wall_union",
+    "clusters": 2
+  },
+  "status": "failed",
+  "gates": {
+    "median_delta_ok_max": 0.02,
+    "missing_rate_max": 0.2
+  },
+  "holdout": {
+    "images": 282,
+    "valid": 282,
+    "missing": 0,
+    "missing_rate": 0.0,
+    "missing_reasons": {},
+    "median": 0.08854678370164838,
+    "p90": 0.19589277334696534
+  },
+  "baseline": {
+    "images": 282,
+    "valid": 137,
+    "missing": 145,
+    "missing_rate": 0.5141843971631206,
+    "missing_reasons": {
+      "wall_mask_missing": 145
+    },
+    "median": 0.08400645167561062,
+    "p90": 0.25087694935275984
+  },
+  "paired": {
+    "images": 137,
+    "prediction": {
+      "images": 137,
+      "valid": 137,
+      "missing": 0,
+      "missing_rate": 0.0,
+      "missing_reasons": {},
+      "median": 0.08274546388472674,
+      "p90": 0.19227042985384496
+    },
+    "baseline": {
+      "images": 137,
+      "valid": 137,
+      "missing": 0,
+      "missing_rate": 0.0,
+      "missing_reasons": {},
+      "median": 0.08400645167561062,
+      "p90": 0.25087694935275984
+    }
+  },
+  "seconds": 655.5675647730241,
+  "opencv_threads": 1,
+  "new_gpu_predictions": 0,
+  "pr_relation": "Refs #130",
+  "production_statistics_changed": false,
+  "independent_blind_confirmation": false
+}
