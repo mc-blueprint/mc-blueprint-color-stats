@@ -5,7 +5,7 @@
 設定した本数以内でも共有費用capを超える要求は送らない。
 429/一時5xxのRetry-After、停止閾値、課金不明要求の再送禁止は並列時も同じ。
 
-Issue #117。取得済み画像を `review` stage・`kind=image_gate` で判定する。
+Issue #117・#129。取得済み画像を `review` stage・`kind=image_gate` で判定する。
 収集取引では通信しない。既存の原本品質review・監査は従来どおり
 `colorstats.collect.quality` のhandlerで扱い、Workerが画像ゲートだけを専用経路へ分岐する。
 画像ゲートはprepare_jobでAPI台帳を更新し、既存の計算子プロセスで実行する。
@@ -99,10 +99,28 @@ APIへ送るのはその画像と固定prompt/schemaだけ。asset ID・出典�
 画像内の文字を指示として扱わず、人物の同定・属性推測は要求しない。
 
 原判定schemaは `image_gate.SCHEMA`、prompt/policyも同moduleで版管理する。
+現行prompt/schema/policyは`image-gate-v2`。必須属性`aerial_view: boolean | null`を追加し、
+空撮・航空写真・ドローン・衛星画像のtrueと視点不明のnullは保留する。
+地形subjectで代用せず、falseだけを他条件へ進める。
 人物present/uncertain、暗所、mixed、不明・拒否・不完全・schema不正は保留。
 白黒と対象外は除外。建築部位の接写は採用可能。
+白黒は単色調色の古写真を含み、低彩度カラーや紙・台紙だけの色と区別して独立判定する。
+写真でない図版・絵・文書でも、主要な描写が白黒・単色ならtrueとする。
+自然に灰色の石材・金属・雪という被写体だけを白黒の根拠にせず、残る自然な色を確認する。
+森林・立木・草地等の景観は対象とし、花・葉が主の接写とは区別する。
+実物の建築装飾・浮彫や付属設備の写真は、平面の絵画・文書そのものと区別して対象に保つ。
+台紙、カタログ、表紙、楽譜、文書、図面、鳥・植物の接写は対象外と明示する。
 確定Subject.domainとの矛盾は保留にし、検索意図であるAsset.domainは変更しない。
 API失敗のjobはfailedとなり、原判定が得られない画像を旧承認で採用しない。
+返却effort欠測・不一致も保留し、要求・返却model/effortをrunへ記録する。
+
+v2の評価・count・再試行・不明請求を含む追加枠は5 USD。
+既存の親50 USD予算行ロック内で、`ApiCall.details.identity.input.policy_version`が
+`image-gate-v2`の全費用・未精算予約を集計し、親枠と追加枠の両方を予約時に検証する。
+新しいbudget表・migration・別クライアントは追加しない。
+旧v1のrun・artifact・quality・subjectは変更しない。再利用・選択時は現行v2の版とhashを
+照合するため、v1応答や人の旧確認を黙ってv2へ転用しない。
+選択行の構造`image-review-v1`は維持するが、参照先はv2の明示runへ固定する必要がある。
 
 入力SHA・前処理版・要求model/effort・prompt/schema/policy版とhashを再利用キーにする。
 人の確認の転用を防ぐため、機械判定の再利用も同じassetに限定する。

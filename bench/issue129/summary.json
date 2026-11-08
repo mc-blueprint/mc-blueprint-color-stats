@@ -1,0 +1,102 @@
+{
+  "at": "2026-11-08T19:25:00.413951+00:00",
+  "jobs": {
+    "succeeded": 10223
+  },
+  "parent_nusd": "4260624100",
+  "v2_nusd": "2524195660",
+  "sent": 0,
+  "stopped": false,
+  "cap_nusd": 50000000000,
+  "target_assets": 10226,
+  "complete": true,
+  "verdicts": {
+    "accepted": 5287,
+    "pending": 3402,
+    "rejected": 1537
+  },
+  "transitions": {
+    "accepted->accepted": 5039,
+    "pending->accepted": 147,
+    "accepted->pending": 848,
+    "pending->pending": 2431,
+    "rejected->rejected": 1433,
+    "pending->rejected": 44,
+    "rejected->pending": 119,
+    "accepted->rejected": 60,
+    "rejected->accepted": 100,
+    "unavailable->pending": 4,
+    "unavailable->accepted": 1
+  },
+  "cohort_verdicts": {
+    "old": {
+      "accepted": 3925,
+      "pending": 2501,
+      "rejected": 1200
+    },
+    "new": {
+      "pending": 901,
+      "accepted": 1362,
+      "rejected": 337
+    }
+  },
+  "distributions": {
+    "target": {
+      "True": 8728,
+      "False": 1494,
+      "unavailable": 3,
+      "None": 1
+    },
+    "subject": {
+      "building": 4572,
+      "terrain": 3365,
+      "mixed": 1186,
+      "other": 1099,
+      "unavailable": 3,
+      "unknown": 1
+    },
+    "real_people": {
+      "absent": 8362,
+      "uncertain": 257,
+      "present": 1604,
+      "unavailable": 3
+    },
+    "black_and_white": {
+      "False": 9205,
+      "True": 1018,
+      "unavailable": 3
+    },
+    "aerial_view": {
+      "False": 9802,
+      "True": 377,
+      "unavailable": 3,
+      "None": 44
+    }
+  },
+  "accounting": {
+    "booked_nusd": 2524195660,
+    "unsettled": 0,
+    "calls": 22191
+  },
+  "usage": {
+    "input_tokens": 18629364,
+    "total_tokens": 19896435,
+    "output_tokens": 1267071
+  },
+  "audit": {},
+  "old_data": {
+    "asset": {
+      "before_rows": 10226,
+      "changed_or_missing": 0
+    },
+    "processing_run": {
+      "before_rows": 65100,
+      "changed_or_missing": 0
+    }
+  },
+  "regression_passed": true,
+  "input_holds": {
+    "UnidentifiedImageError": 1,
+    "DecompressionBombError": 2
+  }
+}

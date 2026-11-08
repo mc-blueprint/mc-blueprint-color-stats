@@ -1,0 +1,28 @@
+{
+  "assets": 10226,
+  "sendable": 10223,
+  "holds": 3,
+  "review_sendable": 109,
+  "review_input_holds": 1,
+  "inputs_sha256": "c07c466bbf244207775cc8198a921514d9b4ba1478d0dab22521ef38faf3a9b9",
+  "targets_sha256": "685b14b91bfc226cb87a7ee15f2dfc05a3cd51295077a67ac87d66f79fac6c9d",
+  "review_sha256": "6dec63d6a6d0a93ec31969b8bbaaa5023aeb4037aa20df3e8195ad2e452a4fbf",
+  "identity": {
+    "preprocess_version": "exif-transpose-rgb-png-1024-v1",
+    "requested_model": "gpt-6-luna",
+    "effort": "low",
+    "prompt_version": "image-gate-v2",
+    "prompt_hash": "46b0193f84d0189ce4e67ee8da97a959a74797829a8aa07fe1407f154421ac8a",
+    "schema_version": "image-gate-v2",
+    "schema_hash": "2cd95eaf5c830745b035e4fe3ae345ee195a87616fb4fa7dc3a61a4682c68b4c",
+    "policy_version": "image-gate-v2",
+    "policy_hash": "dd3b23dcd03feb2c5410a32395f5c5febcd14a35aec250b6c105b242cb5a4c79"
+  },
+  "backup_sha256": "fe3c92f1585b077d7d018f6adf0cc44ed018a8aec7ee87e64c85a18e23a26f96",
+  "dependency": {
+    "commit": "27656dc156c47628d5c3dfd0151d8ff313bbed7f",
+    "decision_sha256": "f6a6fabb14a998e472f0ffdf00d0057ec0e563dc22c2478803b943c3a244769a",
+    "handoff_sha256": "6eba6c1ba805ebd99c031585ef3ceea4ba06d47720c4094d7019d8b065466dc9",
+    "published_pr": 131
+  }
+}
