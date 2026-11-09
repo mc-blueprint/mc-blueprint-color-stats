@@ -1,6 +1,40 @@
-import pytest
+import hashlib
+import uuid
+from types import SimpleNamespace
 
-from colorstats.privacy_review import decision, is_new
+import pytest
+from PIL import Image
+
+from colorstats.analyze import prep
+from colorstats.privacy_review import _check_prep_origin, decision, is_new
+
+
+@pytest.mark.parametrize("change", [None, "raw", "output", "profile", "recorded_sha"])
+def test_取得画像SHAのない旧prepは再生成して固定出力を照合する(tmp_path, change):
+    raw = tmp_path / "raw.png"
+    Image.new("RGB", (80, 60), "orange").save(raw)
+    claim = SimpleNamespace(asset_id=uuid.uuid4(), token=uuid.uuid4(), payload={
+        "input_path": str(raw), "derived_path": str(tmp_path / "prep.jpg"),
+        "license_class": "open", "taxonomy_version": "0.1.0"})
+    prepared = prep.prepare(claim)
+    output_sha = hashlib.sha256(prepared.files[0][0].read_bytes()).hexdigest()
+    source = raw.read_bytes()
+    source_sha = hashlib.sha256(source).hexdigest()
+    parameters = {"max_size": [512, 512], "phash_distance": 6}
+    if change == "raw":
+        Image.new("RGB", (80, 60), "blue").save(raw)
+        source = raw.read_bytes()
+    elif change == "output":
+        output_sha = "0" * 64
+    elif change == "profile":
+        parameters["max_size"] = [256, 256]
+    elif change == "recorded_sha":
+        parameters["input_sha256"] = "0" * 64
+    if change is None:
+        _check_prep_origin(parameters, source, source_sha, output_sha)
+    else:
+        with pytest.raises(PermissionError):
+            _check_prep_origin(parameters, source, source_sha, output_sha)
 
 
 @pytest.mark.parametrize("people,pixels,accepted", [

@@ -1,6 +1,7 @@
 """画像と画素の人物根拠を別review runへ固定する。実在人物は当面保留する。"""
 
 import hashlib
+import io
 import json
 import uuid
 from pathlib import Path
@@ -22,6 +23,22 @@ FIELDS = ("image_gate_run_id", "image_gate_hash", "image_gate_input_sha256",
           "analysis_domain", "privacy_review_run_id", "privacy_review_hash",
           "region_policy_run_id", "region_policy_hash", "input_sha256", "size",
           "person_mask_sha256")
+
+
+def _check_prep_origin(parameters, raw, source_sha256, output_sha256):
+    if "input_sha256" in parameters:
+        if parameters["input_sha256"] != source_sha256:
+            raise PermissionError("prepの取得画像SHAが一致しません")
+        return
+    if parameters != {"max_size": [512, 512], "phash_distance": 6}:
+        raise PermissionError("取得画像SHAのないprepの前処理版を確認できません")
+    with Image.open(io.BytesIO(raw)) as source:
+        image = source.convert("RGB")
+    image.thumbnail((512, 512), Image.Resampling.LANCZOS)
+    encoded = io.BytesIO()
+    image.save(encoded, format="JPEG", quality=90, optimize=True)
+    if hashlib.sha256(encoded.getvalue()).hexdigest() != output_sha256:
+        raise PermissionError("旧prepの再生成結果と固定出力SHAが一致しません")
 
 
 def decision(people, pixels):
@@ -110,9 +127,9 @@ def evidence(session, asset_id, gate_id, segment_id):
     prep = _run(session, asset_id, payload["input_run_id"], "prep")
     prep_job = session.scalar(select(Job).where(Job.run_id == prep.id))
     if (payload["input_path"] not in prep.output_paths.values()
-            or prep_job.payload.get("input_path") != asset.storage_path
-            or prep.parameters.get("input_sha256") != asset.sha256):
+            or prep_job.payload.get("input_path") != asset.storage_path):
         raise PermissionError("prepと取得画像の由来が一致しません")
+    _check_prep_origin(prep.parameters, raw, asset.sha256, policy["input_sha256"])
     region_policy.load_masks({**payload, "region_run_id": str(segment.id),
                               "region_policy": policy})
     with Image.open(policy["semantic"]["path"]) as image:
