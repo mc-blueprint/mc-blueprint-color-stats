@@ -330,7 +330,9 @@ def report(snapshot, expected_hash, statistics, settings):
                 "sensitivity": distribution["diagnostics"],
             }
         )
-    for domain in ("real_building", "real_terrain"):
+    domains = (("real_terrain",) if manifest["quality"].get("region_validation")
+               else ("real_building", "real_terrain"))
+    for domain in domains:
         candidates = [
             r for r in support if r["kind"] == "palette" and r["conditions"] == {"domain": domain}
         ]
@@ -391,7 +393,9 @@ def report(snapshot, expected_hash, statistics, settings):
         {
             "condition": 4,
             "status": "passed" if all(g["passed"] for g in gates.values()) else "failed",
-            "reason": ("建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定。"
+            "reason": ("地形側の水・tree親群のsubject数・n_effとモデル品質で判定。建物側は未集計"
+                       if manifest["quality"].get("region_validation") else
+                       "建築・地形の部分層補正主結果のsubject数・n_effとモデル品質で判定。"
                        "passed は層補正の有効性を意味しない"),
             "role_results": {domain: gate["correction"] for domain, gate in gates.items()},
             "quality_flags": sorted({flag for gate in gates.values()

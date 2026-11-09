@@ -4,6 +4,7 @@ import json
 import os
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -116,6 +117,15 @@ def test_人物承認を解析とsnapshotへ固定する(queue, asset, review_so
         with pytest.raises(PermissionError, match="失効"):
             execute(queue.engine, selection, tmp_path / "stale", quality=quality,
                     code_version="test")
+        from colorstats.stats.aggregate import register
+
+        manifest = json.loads((tmp_path / "snapshot/manifest.json").read_text())
+        pending_run = SimpleNamespace(
+            stage="aggregate", config_hash="unused", taxonomy_version="0.1.0",
+            parameters={"payload": {"snapshot": str(tmp_path / "snapshot")}},
+        )
+        with Session(queue.engine) as session, pytest.raises(PermissionError, match="失効"):
+            register(session, pending_run, {"snapshot_id": manifest["snapshot_id"]})
 
 
 def test_人の訂正は別runで旧runとqualityを保全し承認を失効する(queue, asset, review_source):

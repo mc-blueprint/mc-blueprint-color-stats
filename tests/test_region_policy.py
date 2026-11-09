@@ -349,6 +349,29 @@ def test_runner_refuses_old_segment_for_new_policy():
         _check_policy_reuse(source, {"segment": {"method": region_policy.METHOD}})
 
 
+@pytest.mark.parametrize("missing", [False, True])
+def test_validated_effective_roles_with_missing_color_are_not_eligible(
+    policy_payload, monkeypatch, missing,
+):
+    from colorstats.stats import region_quality
+
+    policy = copy.deepcopy(policy_payload["region_policy"])
+    run_id = uuid.UUID(policy.pop("run_id"))
+    source = {"id": run_id, "parameters": {"region_policy": policy},
+              "output_paths": {row["path"]: row["path"] for row in [policy["semantic"],
+                               *policy["roles"].values(), *policy["exclusions"].values()]}}
+    monkeypatch.setattr(region_quality, "approved_roles", lambda *args: {"real_terrain/water"})
+    monkeypatch.setattr(color, "role_observations", lambda *args: {
+        "real_terrain/water": {"area": 1, "area_ratio": 0.1, "missing": missing,
+                               "observations": [] if missing else [{"observed_oklab": {}}]}})
+    run = {"parameters": {"payload": policy_payload},
+           "config_hash": color.config_hash(policy_payload)}
+    rows = list(_groups({"id": uuid.uuid4(), "domain": "real_terrain"},
+                        {"segment": run_id, "color": uuid.uuid4()}, [], run, source, {}))
+    assert rows[0]["quality_eligible"] is not missing
+    assert rows[0]["reasons"] == (["effective_role_color_missing"] if missing else [])
+
+
 def test_snapshot_reads_effective_roles_and_keeps_quality_pending(policy_payload):
     policy = copy.deepcopy(policy_payload["region_policy"])
     run_id = uuid.UUID(policy.pop("run_id"))

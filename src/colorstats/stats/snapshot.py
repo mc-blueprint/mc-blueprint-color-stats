@@ -248,6 +248,8 @@ def _collect(db, selection, quality, records, directory):
     taxonomy = selection["taxonomy_version"]
     for asset in records["assets"]:
         aid, item = asset["id"], by_id[asset["id"]]
+        if item.get("contract") == "image-review-v1":
+            asset = dict(asset) | {"domain": item["analysis_domain"]}
         source = sources[asset["source_id"]]
         adopted, chosen = {}, {}
         for stage in ("prep", "segment", "color"):
@@ -465,6 +467,7 @@ def _groups(asset, chosen, regions, run, segment, quality):
 
     from colorstats.analyze import color
     from colorstats.analyze.region_policy import reference
+    from colorstats.stats.region_quality import approved_roles
 
     policy = reference(SimpleNamespace(**segment))
     payload = run["parameters"].get("payload", {})
@@ -474,15 +477,19 @@ def _groups(asset, chosen, regions, run, segment, quality):
         if (str(chosen["segment"]) != policy["run_id"]
                 or color.config_hash(payload) != run["config_hash"]):
             raise ValueError("snapshotの新policy色入力hashが一致しません")
+        supported = approved_roles(quality, segment["parameters"])
         for role, data in color.role_observations(payload).items():
             if not role.startswith(asset["domain"] + "/"):
                 continue
+            usable = role in supported and not data["missing"]
+            reason = ("effective_role_color_missing" if role in supported
+                      else "region_policy_quality_unvalidated")
             yield {
                 "id": str(uuid.uuid5(chosen["color"], role)), "asset_id": asset["id"],
                 "run_id": chosen["color"], "role": role, "eligible": False,
                 "data": {**data, "region_policy": policy,
                          "input_config_hash": run["config_hash"]},
-                "quality_eligible": False, "reasons": ["region_policy_quality_unvalidated"],
+                "quality_eligible": usable, "reasons": [] if usable else [reason],
             }
         return
 

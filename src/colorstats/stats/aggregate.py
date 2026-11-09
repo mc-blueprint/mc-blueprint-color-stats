@@ -164,7 +164,8 @@ def aggregate(snapshot, expected_hash, settings):
                 condition_sets[domain][canonical(condition)] = condition
         for region in _read(db, "regions"):
             domain = assets[region["asset_id"]]["domain"]
-            roles.setdefault(domain, set()).add(region["label"])
+            if not quality.get("region_validation"):
+                roles.setdefault(domain, set()).add(region["label"])
         for aid, kind, parts, area, metrics in _points(db, assets, quality):
             asset = assets[aid]
             domain = asset["domain"]
@@ -372,6 +373,11 @@ def register(session, run, data):
     lock(session)
     manifest = verify(Path(run.parameters["payload"]["snapshot"]), data["snapshot_id"])
     check_selection(session, manifest["selection"])
+    from colorstats import privacy_review
+
+    for item in manifest["selection"]["assets"]:
+        if privacy_review.is_new(item):
+            privacy_review.check_selection(session, item["asset_id"], item)
     if (run.stage != "aggregate" or run.config_hash != config_hash(run.parameters["payload"])
             or data["snapshot_id"] != run.parameters["payload"]["snapshot_id"]
             or run.taxonomy_version != data["taxonomy_version"]):
