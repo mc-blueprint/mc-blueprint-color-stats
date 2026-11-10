@@ -213,11 +213,11 @@ def check_access(db, rows):
         raise PermissionError("担当する全原画像・prepの読取りを確認できません")
 
 
-def run(db, host, models, limit):
+def run(db, host, models, limit, *, execution_name="execution-r5.json", code_prefix="issue122"):
     import fcntl
 
     plan = read(ROOT / "plan.json")
-    execution = read(ROOT / "execution-r5.json")
+    execution = read(ROOT / execution_name)
     assert execution["implementation"] == implementation()
     assert execution["plan_sha256"] == segment._hash(ROOT / "plan.json")
     check_models(models)
@@ -252,7 +252,7 @@ def run(db, host, models, limit):
             record = records.setdefault(aid, {})
             base = {key: row[key] for key in ("input_path", "input_run_id", "input_sha256",
                                              "license_class", "taxonomy_version")}
-            base.update(code_version="issue122-" + execution["implementation_hash"][:16],
+            base.update(code_version=code_prefix + "-" + execution["implementation_hash"][:16],
                         batch=segment._hash(ROOT / "plan.json"))
             if "segment_run_id" not in record:
                 payload = {**base, **plan["settings"],
