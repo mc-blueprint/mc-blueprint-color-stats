@@ -122,8 +122,12 @@ def summary(data, manifest):
             "roles": roles, "building": "未集計", "building_fallback": False}
 
 
-def ensure_snapshot(db, selected, quality):
+def ensure_snapshot(db, selected, quality, *, policy="issue122-terrain-v1"):
     """完成済みを照合して再利用し、未完成出力は保全して別の試行先で再生成する。"""
+    selected = json.loads(canonical(selected))
+    selected["assets"].sort(key=lambda item: item["asset_id"])
+    if "subject_attribute_run_ids" in selected:
+        selected["subject_attribute_run_ids"].sort()
     snapshot = OUTPUT / "snapshot"
     if (snapshot / "manifest.json").exists():
         manifest = read(snapshot / "manifest.json")
@@ -133,14 +137,15 @@ def ensure_snapshot(db, selected, quality):
         attempt = (OUTPUT / ("snapshot-attempt-" + uuid4().hex)
                    if snapshot.exists() else snapshot)
         manifest = execute(db, selected, attempt, quality=quality,
-                           code_version="issue122-terrain-v1-" + digest(quality)[:16])
+                           code_version=policy + "-" + digest(quality)[:16])
         if attempt != snapshot:
             snapshot.rename(OUTPUT / ("snapshot-incomplete-" + uuid4().hex))
             attempt.rename(snapshot)
     return snapshot, manifest
 
 
-def main():
+def main(*, policy="issue122-terrain-v1", baseline_registration=None,
+         scope_key="issue122_scope", heading="#122 地形側の訂正版基準"):
     db = database()
     try:
         OUTPUT.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -152,7 +157,7 @@ def main():
         else:
             save(selected_path, selected)
         quality = load_quality(CODE)
-        snapshot, manifest = ensure_snapshot(db, selected, quality)
+        snapshot, manifest = ensure_snapshot(db, selected, quality, policy=policy)
         settings = load_settings(CODE / "configs/stats.yaml",
                                  CODE / "configs/collection_targets.yaml", CODE / "taxonomy")
         settings["strata"] = [row for row in settings["strata"]
@@ -189,17 +194,19 @@ def main():
         assert all(row["conditions"]["domain"] == "real_terrain" and
                    set(row["target_parts"]) <= {"tree", "water"} for row in data["rows"])
         result = summary(data, manifest)
+        result["policy"] = policy
         rendered = report(snapshot, manifest["snapshot_id"], data, settings)
-        rendered["issue122_scope"] = {"roles": ["water", "tree"], "building": "未集計",
+        rendered[scope_key] = {"roles": ["water", "tree"], "building": "未集計",
                                       "human_review": execution["human_review"]}
         save(OUTPUT / "report/report.json", rendered)
         (OUTPUT / "report/report.md").write_text(
-            "# #122 地形側の訂正版基準\n\n建物側は未集計。\n\n" + markdown(rendered),
+            "# " + heading + "\n\n建物側は未集計。\n\n" + markdown(rendered),
             encoding="utf-8")
         old_manifest = read(OLD / "snapshot/manifest.json")
         verify(OLD / "snapshot", OLD_SNAPSHOT)
         old_report = read(OLD / "report/report.json")
-        old_registration = read(OLD / "aggregate/registration.json")
+        old_registration = (baseline_registration if baseline_registration is not None
+                            else read(OLD / "aggregate/registration.json"))
         sources = {}
         with duckdb.connect() as connection:
             for name, root in (("old", OLD), ("new", OUTPUT)):

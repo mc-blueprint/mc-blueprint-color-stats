@@ -63,6 +63,22 @@ def test_incomplete_snapshot_is_preserved_and_retried(tmp_path, monkeypatch):
     assert len(attempts) == 2
 
 
+def test_completed_snapshot_accepts_same_selection_in_different_order(tmp_path, monkeypatch):
+    monkeypatch.setattr(statistics, "OUTPUT", tmp_path)
+    monkeypatch.setattr(statistics, "verify", lambda path, expected: None)
+    selected = {"assets": [{"asset_id": "b"}, {"asset_id": "a"}],
+                "subject_attribute_run_ids": ["b", "a"]}
+    normalized = {"assets": [{"asset_id": "a"}, {"asset_id": "b"}],
+                  "subject_attribute_run_ids": ["a", "b"]}
+    snapshot = tmp_path / "snapshot"
+    snapshot.mkdir()
+    manifest = {"snapshot_id": "complete", "selection_hash": statistics.digest(normalized)}
+    (snapshot / "manifest.json").write_text(json.dumps(manifest))
+    assert statistics.ensure_snapshot(None, selected, {}) == (snapshot, manifest)
+    assert selected["assets"][0]["asset_id"] == "b"
+    assert selected["subject_attribute_run_ids"] == ["b", "a"]
+
+
 @pytest.mark.parametrize("failure", ["interrupted", "corrupt"])
 def test_prep_copy_is_published_only_after_verification(tmp_path, monkeypatch, failure):
     source, target = tmp_path / "source", tmp_path / "copy"

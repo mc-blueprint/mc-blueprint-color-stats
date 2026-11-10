@@ -10,7 +10,8 @@ from colorstats.privacy_review import _check_prep_origin, decision, is_new
 
 
 @pytest.mark.parametrize("change", [None, "raw", "output", "profile", "recorded_sha"])
-def test_取得画像SHAのない旧prepは再生成して固定出力を照合する(tmp_path, change):
+@pytest.mark.parametrize("with_rendition", [False, True])
+def test_取得画像SHAのない旧prepは再生成して固定出力を照合する(tmp_path, change, with_rendition):
     raw = tmp_path / "raw.png"
     Image.new("RGB", (80, 60), "orange").save(raw)
     claim = SimpleNamespace(asset_id=uuid.uuid4(), token=uuid.uuid4(), payload={
@@ -21,6 +22,10 @@ def test_取得画像SHAのない旧prepは再生成して固定出力を照合�
     source = raw.read_bytes()
     source_sha = hashlib.sha256(source).hexdigest()
     parameters = {"max_size": [512, 512], "phash_distance": 6}
+    if with_rendition:
+        parameters.update(rendition={"requested_width": 1024},
+                          transform={"mode": "RGB", "resample": "LANCZOS", "format": "JPEG",
+                                     "quality": 90, "optimize": True})
     if change == "raw":
         Image.new("RGB", (80, 60), "blue").save(raw)
         source = raw.read_bytes()
@@ -35,6 +40,21 @@ def test_取得画像SHAのない旧prepは再生成して固定出力を照合�
     else:
         with pytest.raises(PermissionError):
             _check_prep_origin(parameters, source, source_sha, output_sha)
+
+
+@pytest.mark.parametrize("change", ["unknown_key", "transform", "rendition"])
+def test_旧rendition形式でも未知の処理条件は拒否する(change):
+    parameters = {"max_size": [512, 512], "phash_distance": 6, "rendition": {},
+                  "transform": {"mode": "RGB", "resample": "LANCZOS", "format": "JPEG",
+                                "quality": 90, "optimize": True}}
+    if change == "unknown_key":
+        parameters["unknown"] = True
+    elif change == "transform":
+        parameters["transform"]["quality"] = 80
+    else:
+        parameters["rendition"] = None
+    with pytest.raises(PermissionError, match="前処理版"):
+        _check_prep_origin(parameters, b"", "unused", "unused")
 
 
 @pytest.mark.parametrize("people,pixels,accepted", [

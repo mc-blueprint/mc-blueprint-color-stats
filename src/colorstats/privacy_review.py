@@ -30,7 +30,12 @@ def _check_prep_origin(parameters, raw, source_sha256, output_sha256):
         if parameters["input_sha256"] != source_sha256:
             raise PermissionError("prepの取得画像SHAが一致しません")
         return
-    if parameters != {"max_size": [512, 512], "phash_distance": 6}:
+    legacy = {"max_size": [512, 512], "phash_distance": 6}
+    rendition = {**legacy, "rendition": parameters.get("rendition"),
+                 "transform": {"mode": "RGB", "resample": "LANCZOS", "format": "JPEG",
+                               "quality": 90, "optimize": True}}
+    if parameters != legacy and not (parameters == rendition and
+                                      isinstance(parameters.get("rendition"), dict)):
         raise PermissionError("取得画像SHAのないprepの前処理版を確認できません")
     with Image.open(io.BytesIO(raw)) as source:
         image = source.convert("RGB")
