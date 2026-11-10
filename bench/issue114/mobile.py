@@ -13,6 +13,7 @@ from pathlib import Path
 from uuid import UUID
 
 import numpy as np
+from bench.issue114.mobile_labels import CODE_NAMES, mask_description
 from bench.issue114.privacy import digest, save
 from PIL import Image, ImageFilter
 from sqlalchemy import select
@@ -24,7 +25,7 @@ from colorstats.api_budget import digest as contract_digest
 from colorstats.queue import Queue
 from colorstats.schema.models import ProcessingRun, Region
 
-LIMIT = 25_000_000
+LIMIT = 12_500_000
 REASONS = {"person_not_detected": "人物検出なし", "person_masked": "人物maskあり",
            "subject_ambiguous": "主体混在", "subject_unresolved": "主体不明",
            "person_over_limit": "人物面積超過"}
@@ -34,7 +35,17 @@ img{display:block;max-width:100%;height:auto;margin:8px 0}.mask,.outline{image-r
 article{border-top:2px solid #777;
 padding:12px 0}p{line-height:1.6}h2{font-size:1.3rem}figure{margin:0 0 16px}
 figcaption{font-weight:bold} .legend{border:1px solid #777;padding:8px} .raw{border:3px solid #222}
-.mask{border:3px dashed #176b35}.outline{border:3px dotted #174ea6}"""
+.mask{border:3px dashed #176b35}.outline{border:3px dotted #174ea6}
+.comparison-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:start}
+.comparison-grid figure{min-width:0;margin:0}.comparison-grid img{width:100%;margin:0}
+.comparison-grid figcaption{line-height:1.4;min-height:2.8em}
+.photo{background-image:var(--photo);background-size:100% 100%;background-repeat:no-repeat;
+background-origin:content-box;background-clip:content-box;border:3px dotted #174ea6}
+.photo .outline{border:0}
+.mask-comparison{border-top:1px solid #aaa;padding:10px 0}.mask-comparison h3{font-size:1rem}
+table{border-collapse:collapse;width:100%;table-layout:fixed}
+td,th{border:1px solid #aaa;padding:6px;text-align:left}
+th:first-child{width:30%}code{overflow-wrap:anywhere}"""
 
 
 def jpeg(image):
@@ -57,13 +68,13 @@ def mask_uri(mask, size):
     return "data:image/png;base64," + base64.b64encode(stream.getvalue()).decode()
 
 
-def outline_uri(mask, size, *, pattern="solid"):
+def outline_uri(mask, size, *, pattern="solid", transparent=False):
     """元座標の輪郭を別画像にし、役割ごとの線種で区別する。"""
     values = np.asarray(mask) != 0
     if values.shape != (size[1], size[0]):
         raise ValueError("輪郭maskの寸法が一致しません")
     source = Image.fromarray(values.astype("uint8") * 255, mode="L")
-    outer = np.asarray(source.filter(ImageFilter.MaxFilter(3))) != 0
+    outer = np.asarray(source.filter(ImageFilter.MaxFilter(7 if transparent else 3))) != 0
     edge = outer & ~values
     if pattern == "dash":
         edge[1::4] = False
@@ -75,13 +86,66 @@ def outline_uri(mask, size, *, pattern="solid"):
         edge[3::4, ::3] = False
     elif pattern != "solid":
         raise ValueError("未対応の輪郭線種です")
-    result = Image.fromarray(np.where(edge, 0, 255).astype("uint8"), mode="L")
+    if transparent:
+        pixels = np.zeros((*edge.shape, 4), dtype="uint8")
+        pixels[edge] = [255, 96, 0, 255]
+        result = Image.fromarray(pixels, mode="RGBA")
+    else:
+        result = Image.fromarray(np.where(edge, 0, 255).astype("uint8"), mode="L")
     stream = io.BytesIO()
     result.save(stream, format="PNG", optimize=True)
     return "data:image/png;base64," + base64.b64encode(stream.getvalue()).decode()
 
 
-def page(cards, first, last, total, groups=None):
+def explain(value):
+    code = str(value)
+    text = CODE_NAMES.get(code)
+    if text is None and re.search(r"[a-zA-Z]", code):
+        text = "説明未記載"
+    return html.escape(f"{code}（{text}）" if text else code)
+
+
+def _uri_sha(uri):
+    return hashlib.sha256(base64.b64decode(uri.split(",", 1)[1])).hexdigest()
+
+
+def _image(uri, alt, style):
+    return (f'<img class="{style}" alt="{html.escape(alt)}" src="{uri}" '
+            f'data-sha256="{_uri_sha(uri)}" loading="lazy">')
+
+
+def mask_section(label, mask, size, *, number, kind, pattern="solid"):
+    """同じ座標の写真＋透明な輪郭と二値maskを、一つの2列区画にする。"""
+    name, definition = mask_description(label, kind)
+    safe_label = html.escape(label)
+    category = {"raw": "raw候補", "effective": "有効mask", "exclusion": "除外mask",
+                "person": "人物mask"}[kind]
+    line = {"solid": "実線", "dash": "破線", "dot": "点線", "dashdot": "一点鎖線"}[pattern]
+    outline = _image(outline_uri(mask, size, pattern=pattern, transparent=True),
+                     f"番号{number} {name} 写真上の輪郭", "outline")
+    binary = _image(mask_uri(mask, size), f"番号{number} {name} 二値mask", "mask")
+    return f'''<section class="mask-comparison" data-label="{safe_label}" data-kind="{kind}">
+<h3>{category}：{html.escape(name)} <code>{safe_label}</code></h3>
+<p>{html.escape(definition)}</p><div class="comparison-grid">
+<figure><figcaption>写真＋輪郭（{line}）</figcaption><div class="photo">{outline}</div></figure>
+<figure><figcaption>mask（白い部分が対象）</figcaption>{binary}</figure>
+</div></section>'''
+
+
+def _legend(cards):
+    entries = sorted(set(re.findall(
+        r'<section class="mask-comparison" data-label="([^"]*)" data-kind="([^"]*)"',
+        "".join(cards))))
+    rows = []
+    for label, kind in entries:
+        label = html.unescape(label)
+        name, definition = mask_description(label, kind)
+        rows.append(f'<tr><th>{html.escape(name)}<br><code>{html.escape(label)}</code></th>'
+                    f'<td>{html.escape(definition)}</td></tr>')
+    return '<table><caption>maskの日本語名と処理上の定義</caption>' + "".join(rows) + '</table>'
+
+
+def page(cards, first, last, total, groups=None, *, legend=None):
     counts = groups or {}
     return f'''<!doctype html><html lang="ja"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -98,25 +162,29 @@ content="default-src 'none'; img-src data:; style-src 'unsafe-inline'">
 全件確認後は「全{total}枚確認済み。問題なし」または
 「全{total}枚確認済み。問題あり：7 人物の見落とし、…」と返信します。
 途中の確認は完了扱いにしません。JSONの保存・送付は不要です。</p>
-<p class="legend">凡例：原画像は実線枠、mask単独表示は破線枠、輪郭は点線枠。
-mask画像は原画像と同じ座標で表示し、写真へ色を重ねません。
-raw候補とregion-policy-v1の有効maskは明確に区別します。
+<p class="legend">各区画の左は写真（解析画像と同じ座標）＋輪郭線、右は二値maskです。
+写真の色を隠す塗りは重ねません。線の場所以外は写真のままです。
+raw候補は親領域の制約前、有効maskは候補と許容親領域の共通部分から空・人物・異roleの競合を除いたものです。
+意味や品質が正しいと保証する表示ではありません。幹・樹冠や壁の子分類の支持も保証しません。
 予測を表示した画像の確認は盲検ではありません。保留は確認後も自動採用されません。</p>
+{_legend(cards) if legend is None else legend}
 {''.join(cards)}</html>'''
 
 
 def write_pages(cards, output, limit=LIMIT, group_counts=None):
     """UTF-8の実byte数で上限を守り、通し番号を維持して分割する。"""
     groups, current, first = [], [], 1
+    legend = _legend(cards)
     sizes = [len(card.encode()) for card in cards]
     total = sum(sizes)
-    if len(page([], 1, len(cards), len(cards), group_counts).encode()) + total > limit:
+    header = len(page([], 1, len(cards), len(cards), group_counts, legend=legend).encode())
+    if header + total > limit:
         candidates, prefix = [], 0
         for cut, size in enumerate(sizes[:-1], 1):
             prefix += size
-            left = prefix + len(page([], 1, cut, len(cards), group_counts).encode())
+            left = prefix + len(page([], 1, cut, len(cards), group_counts, legend=legend).encode())
             right = total - prefix + len(page(
-                [], cut + 1, len(cards), len(cards), group_counts,
+                [], cut + 1, len(cards), len(cards), group_counts, legend=legend,
             ).encode())
             if max(left, right) <= limit:
                 candidates.append((abs(left - right), cut))
@@ -124,7 +192,8 @@ def write_pages(cards, output, limit=LIMIT, group_counts=None):
             cut = min(candidates)[1]
             groups = [(1, cut, cards[:cut]), (cut + 1, len(cards), cards[cut:])]
     for number, card in enumerate([] if groups else cards, 1):
-        if len(page(current + [card], first, number, len(cards), group_counts).encode()) > limit:
+        if len(page(current + [card], first, number, len(cards), group_counts,
+                    legend=legend).encode()) > limit:
             if not current:
                 raise ValueError("1画像分のHTMLが容量上限を超えました")
             groups.append((first, number - 1, current))
@@ -134,7 +203,7 @@ def write_pages(cards, output, limit=LIMIT, group_counts=None):
         groups.append((first, len(cards), current))
     files = []
     for part, (first, last, group) in enumerate(groups, 1):
-        content = page(group, first, last, len(cards), group_counts).encode()
+        content = page(group, first, last, len(cards), group_counts, legend=legend).encode()
         if len(content) > limit:
             raise ValueError("HTMLが容量上限を超えました")
         path = output / f"review-{part:02}.html"
@@ -198,7 +267,7 @@ def build(db, bundle, execution, output, taxonomy, *, host=None, require_contrac
         raise
 
 
-def _build(session, manifest, bundle, execution, output, taxonomy, host, require_contracts):
+def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
     if manifest["decisions_sha256"] != digest(execution / "privacy-decisions.json"):
         raise ValueError("閲覧manifestと自動判定が一致しません")
     decisions = {row["asset_id"]: row for row in json.loads(
@@ -308,55 +377,40 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
         gate = gate_views.get(aid, {})
         verdict = row.get("image_gate_verdict") or gate.get("observation") or {}
         people = verdict.get("real_people", row.get("real_people", "未記録"))
-        details = {"accepted": "採用", "rejected": "除外", "pending": "保留"}
         gate_decision = gate.get("result") or {}
-        gate_state = details.get(row.get("gate_state", gate_decision.get("decision", "")), "未記録")
+        gate_state = row.get("gate_state", gate_decision.get("decision", "未記録"))
         gate_reason = gate_decision.get("reason", "未記録")
         identity = gate.get("identity") or {}
         image_review_version = identity.get(
             "policy_version", row.get("image_review_version", "未記録"),
         )
-        extras = [f"人物：{html.escape(str(people))}",
-                  f"対象：{html.escape(str(verdict.get('target', '未記録')))}",
-                  f"白黒：{html.escape(str(verdict.get('black_and_white', '未記録')))}",
-                  f"暗所：{html.escape(str(verdict.get('dark', '未記録')))}",
-                  f"室内：{html.escape(str(verdict.get('interior', '未記録')))}",
-                  f"混在：{html.escape(str(verdict.get('subject', '未記録')))}",
-                  f"理由code：{html.escape('・'.join(verdict.get('reason_codes') or ['未記録']))}",
-                  f"image-review：{html.escape(str(image_review_version))}",
-                  f"schema：{html.escape(str(identity.get('schema_version', '未記録')))}",
-                  f"領域policy：{html.escape(str(row.get('region_policy_version', 'raw候補のみ')))}"
+        reasons = '・'.join(explain(code) for code in verdict.get('reason_codes') or ['未記録'])
+        extras = [f"人物：{explain(people)}",
+                  f"対象：{explain(verdict.get('target', '未記録'))}",
+                  f"白黒：{explain(verdict.get('black_and_white', '未記録'))}",
+                  f"暗所：{explain(verdict.get('dark', '未記録'))}",
+                  f"室内：{explain(verdict.get('interior', '未記録'))}",
+                  f"上空写真：{explain(verdict.get('aerial_view', '未記録'))}",
+                  f"主体：{explain(verdict.get('subject', '未記録'))}",
+                  f"理由code：{reasons}",
+                  f"image-review：{explain(image_review_version)}",
+                  f"schema：{explain(identity.get('schema_version', '未記録'))}",
+                  f"領域policy：{explain(row.get('region_policy_version', 'raw候補のみ'))}"
                   ]
-        parts = [f'''<figure><figcaption>人物mask単独表示（実線輪郭）</figcaption>
-<img class="mask" alt="番号{number} 人物mask"
-src="{mask_uri(person_mask, input_size)}"></figure>
-<figure><figcaption>人物mask輪郭</figcaption>
-<img class="outline" alt="番号{number} 人物mask輪郭"
-src="{outline_uri(person_mask, input_size)}"></figure>''']
+        parts = [mask_section("person", person_mask, input_size, number=number, kind="person")]
         effective = policy_views.get(aid)
         if effective:
             extras.append(f"region-policy hash：{effective['hash']}")
             for role, mask in sorted(effective["roles"].items()):
                 pattern = "dash" if role.startswith("real_terrain/") else "solid"
-                parts.append(f'''<figure><figcaption>有効領域単独mask：{html.escape(role)}</figcaption>
-<img class="mask" alt="番号{number} {html.escape(role)} 有効mask"
-src="{mask_uri(mask, input_size)}"></figure>
-<figure><figcaption>有効領域輪郭：{html.escape(role)}</figcaption>
-<img class="outline" alt="番号{number} {html.escape(role)} 輪郭"
-src="{outline_uri(mask, input_size, pattern=pattern)}"></figure>''')
+                parts.append(mask_section(role, mask, input_size, number=number,
+                                          kind="effective", pattern=pattern))
             exclusion_styles = {"sky": "dash", "person": "dot", "conflict": "dashdot",
                                 "semantic_mismatch": "solid", "void": "dot"}
-            exclusion_labels = {"sky": "空", "person": "人物", "conflict": "競合void",
-                                "semantic_mismatch": "semantic不一致", "void": "void全域"}
             for reason, mask in sorted(effective["exclusions"].items()):
-                label = exclusion_labels.get(reason, reason)
                 pattern = exclusion_styles.get(reason, "dashdot")
-                parts.append(f'''<figure><figcaption>除外mask単独：{html.escape(label)}</figcaption>
-<img class="mask" alt="番号{number} {html.escape(reason)} 除外mask"
-src="{mask_uri(mask, input_size)}"></figure>
-<figure><figcaption>除外mask輪郭：{html.escape(label)}（{pattern}）</figcaption>
-<img class="outline" alt="番号{number} {html.escape(reason)} 輪郭"
-src="{outline_uri(mask, input_size, pattern=pattern)}"></figure>''')
+                parts.append(mask_section(reason, mask, input_size, number=number,
+                                          kind="exclusion", pattern=pattern))
         else:
             extras.append("region-policy：未記録。以下はraw候補で、有効maskとして判定できません")
         for index, label in enumerate(sorted({label for label, _ in regions.get(aid, [])})
@@ -369,22 +423,18 @@ src="{outline_uri(mask, input_size, pattern=pattern)}"></figure>''')
                     if values.shape != union.shape:
                         raise ValueError("部位maskと原画像の座標が一致しません")
                     union |= values
-            style = "mask" if index % 2 == 0 else "outline"
-            parts.append(f'''<figure><figcaption>raw候補：{html.escape(label)} mask単独</figcaption>
-<img class="{style}" alt="番号{number} {html.escape(label)} mask"
-src="{mask_uri(union, input_size)}"></figure>
-<figure><figcaption>raw候補：{html.escape(label)} 輪郭</figcaption>
-<img class="outline" alt="番号{number} {html.escape(label)} 輪郭"
-src="{outline_uri(union, input_size, pattern='dash' if index % 2 else 'solid')}"></figure>''')
-        cards.append(f'''<article id="n{number}"><h2>番号 {number}：{'・'.join(labels)}</h2>
+            parts.append(mask_section(label, union, input_size, number=number, kind="raw",
+                                      pattern='dash' if index % 2 else 'solid'))
+        cards.append(f'''<article id="n{number}" style="--photo:url('{prepared_uri}')"
+data-photo-sha256="{_uri_sha(prepared_uri)}"><h2>番号 {number}：{'・'.join(labels)}</h2>
 <p>既存判定：{decision}／{html.escape(REASONS.get(row['reason'], str(row['reason'])))}。
-画像ゲート：{gate_state}／{html.escape(str(gate_reason))}。
-人物率 {row['person_ratio']:.4%}（膨張後 {row['mask_ratio']:.4%}）、subject：{subject}。</p>
+画像ゲート：{explain(gate_state)}／{explain(gate_reason)}。
+人物率 {row['person_ratio']:.4%}（使用mask {row['mask_ratio']:.4%}）、主体：{subject}。</p>
 <p>{'／'.join(extras)}</p>
+<details><summary>取得画像を開く（解析前の参照用）</summary>
 <figure><figcaption>取得画像</figcaption>
-<img class="raw" alt="番号{number} 取得画像" src="{raw_uri}" loading="lazy"></figure>
-<figure><figcaption>解析画像（maskと同一座標）</figcaption>
-<img class="raw" alt="番号{number} 解析画像" src="{prepared_uri}" loading="lazy"></figure>
+{_image(raw_uri, f'番号{number} 取得画像', 'raw')}</figure></details>
+<p>以下の写真は解析画像です。maskと同じ座標で比較します。</p>
 {''.join(parts)}</article>''')
         rows.append({"number": number, "asset_id": aid, "groups": labels,
                      "input_sha256": row["input_sha256"],
@@ -401,9 +451,12 @@ src="{outline_uri(union, input_size, pattern='dash' if index % 2 else 'solid')}"
                      "dark": verdict.get("dark"),
                      "region_policy_version": row.get("region_policy_version"),
                      "region_policy_hash": row.get("region_policy_hash")})
+    return cards, rows, groups
+
+
+def _build(session, manifest, bundle, execution, output, taxonomy, host, require_contracts):
+    cards, rows, groups = _render(session, manifest, bundle, execution, taxonomy, require_contracts)
     files = write_pages(cards, output, group_counts=groups)
-    if len(files) != 1:
-        raise ValueError("目視確認は容量25 MB以下の単一HTMLにしてください")
     save(output / "number-map.json", {
         "format": "issue114-mobile-v1", "review_manifest_sha256": digest(bundle / "manifest.json"),
         "decisions_sha256": manifest["decisions_sha256"], "groups": groups,
@@ -413,7 +466,8 @@ src="{outline_uri(union, input_size, pattern='dash' if index % 2 else 'solid')}"
         for row in rows[item["first"] - 1:item["last"]]:
             retention.register_file(session, UUID(row["asset_id"]), host,
                                     output / item["file"], "image_bundle")
-    for aid in ids:
+    for row in rows:
+        aid = row["asset_id"]
         retention.register_file(session, UUID(aid), host,
                                 output / "number-map.json", "image_bundle")
     print(json.dumps({"total": len(rows), "files": files}, ensure_ascii=False))
