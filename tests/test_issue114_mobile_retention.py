@@ -2,9 +2,10 @@ import json
 import os
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
+from bench.issue114 import mobile
 from bench.issue114.mobile import build
 from bench.issue114.privacy import digest
 from PIL import Image
@@ -164,3 +165,32 @@ def test_単一HTMLは構成画像の一件失効で削除し原画像は保持�
     assert not (output / mapping["files"][0]["file"]).exists()
     assert not (output / "number-map.json").exists()
     assert raw.exists()
+
+
+def test_分割HTMLは各ページの対象だけを保持登録し番号表は全対象へ登録する(
+    queue, managed, shared_mobile, monkeypatch,
+):
+    bundle, execution, output, other_id, raw = shared_mobile
+    write = mobile.write_pages
+
+    def split(cards, output, *, group_counts):
+        header = len(mobile.page([], 1, 2, 2, group_counts,
+                                 legend=mobile._legend(cards)).encode())
+        return write(cards, output, limit=header + max(len(c.encode()) for c in cards) + 20,
+                     group_counts=group_counts)
+
+    monkeypatch.setattr(mobile, "write_pages", split)
+    build(queue.engine, bundle, execution, output, ROOT / "taxonomy", host="review-test",
+          require_contracts=False)
+    mapping = json.loads((output / "number-map.json").read_text())
+    assert len(mapping["files"]) == 2
+    with Session(queue.engine) as session:
+        for item in mapping["files"]:
+            actual = set(session.scalars(select(RetentionFile.asset_id).where(
+                RetentionFile.path == str(output / item["file"]))))
+            expected = {UUID(row["asset_id"]) for row in
+                        mapping["rows"][item["first"] - 1:item["last"]]}
+            assert actual == expected
+        actual = set(session.scalars(select(RetentionFile.asset_id).where(
+            RetentionFile.path == str(output / "number-map.json"))))
+        assert actual == {managed[0], other_id}

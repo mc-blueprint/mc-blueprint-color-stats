@@ -223,13 +223,15 @@ def test_画像とmaskは別表示で元座標を保つ():
 def test_HTML容量と連番を守り外部画像を参照しない(tmp_path):
     cards = [f'<article id="n{i}">番号{i}<img src="{jpeg(Image.new("RGB", (20, 20)))}"></article>'
              for i in range(1, 7)]
-    files = write_pages(cards, tmp_path, limit=3500,
+    limit = len(mobile.page([], 1, 6, 6,
+                           {"population": 20, "random": 4, "challenge": 2}).encode()) + 1800
+    files = write_pages(cards, tmp_path, limit=limit,
                         group_counts={"population": 20, "random": 4, "challenge": 2})
     assert len(files) == 2 and abs(files[0]["bytes"] - files[1]["bytes"]) < 100
     numbers = []
     for item in files:
         path = tmp_path / item["file"]
-        assert path.stat().st_size <= 3500
+        assert path.stat().st_size <= limit
         content = path.read_text()
         assert "対象母数：20枚" in content and "固定無作為群：4枚" in content
         numbers.extend(map(int, re.findall(r'id="n(\d+)"', content)))
@@ -241,3 +243,97 @@ def test_HTML容量と連番を守り外部画像を参照しない(tmp_path):
             with Image.open(io.BytesIO(data)) as decoded:
                 decoded.verify()
     assert numbers == list(range(1, 7))
+
+
+def test_写真上の輪郭は輪郭以外の画素を隠さず座標を保つ():
+    mask = np.zeros((40, 60), dtype=bool)
+    mask[10:25, 10:30] = True
+    uri = outline_uri(mask, (60, 40), transparent=True)
+    with Image.open(io.BytesIO(base64.b64decode(uri.split(",")[1]))) as image:
+        assert image.mode == "RGBA" and image.size == (60, 40)
+        alpha = np.asarray(image)[:, :, 3]
+    assert alpha[15, 15] == 0 and alpha[35, 50] == 0
+    assert alpha[9, 15] == 255
+    assert np.count_nonzero(alpha) < np.count_nonzero(mask)
+
+
+def test_比較区画は写真とmaskを2列で対にし日本語名と定義とSHAを持つ():
+    mask = np.zeros((20, 20), dtype=bool)
+    mask[:5] = True
+    card = mobile.mask_section("real_building/window_frame", mask, (20, 20),
+                               number=1, kind="effective")
+    page = mobile.page([card], 1, 1, 1)
+    assert "repeat(2,minmax(0,1fr))" in page and 'class="photo"' in card
+    assert "窓枠" in card and "窓ガラスとの競合は除く" in card
+    assert page.index("maskの日本語名と処理上の定義") < page.index('class="mask-comparison"')
+    for uri, sha in re.findall(r'src="([^"]+)" data-sha256="([^"]+)"', card):
+        assert mobile._uri_sha(uri) == sha
+        with Image.open(io.BytesIO(base64.b64decode(uri.split(",")[1]))) as image:
+            assert image.size == (20, 20)
+
+
+def test_全roleと除外に訳語があり未記載定義は推測で補わない():
+    from bench.issue114.mobile_labels import NAMES, mask_description
+
+    from colorstats.analyze import region_policy
+
+    assert set(region_policy.ALLOW) <= NAMES.keys()
+    for label in (*region_policy.ALLOW, "wall", "tree"):
+        name, definition = mask_description(label, "effective")
+        assert name != "名称未記載" and definition
+    for label in ("sky", "person", "conflict", "semantic_mismatch", "void"):
+        assert mask_description(label, "exclusion")[0] != "名称未記載"
+    assert "定義未記載" in mask_description("wall_secondary", "raw")[1]
+    assert "制約・空・人物・競合の除去は未適用" in mask_description("wall_main", "raw")[1]
+    assert "定義未記載" in mask_description("new_unknown", "effective")[1]
+
+
+def test_判定codeは原値と日本語を併記し未知値とHTMLを安全に表示する():
+    assert mobile.explain("aerial_or_unknown") == "aerial_or_unknown（上空写真または視点不明）"
+    assert mobile.explain(False) == "False（いいえ）"
+    assert mobile.explain("future_code") == "future_code（説明未記載）"
+    assert "<script>" not in mobile.explain("<script>")
+
+
+def test_凡例の容量を含めて複数ページを上限内へ分割する(tmp_path):
+    mask = np.zeros((20, 20), dtype=bool)
+    cards = [f'<article id="n{i}">' + mobile.mask_section(
+        "real_terrain/ground_grass", mask, (20, 20), number=i, kind="effective") + '</article>'
+        for i in range(1, 5)]
+    header = len(mobile.page([], 1, 4, 4, legend=mobile._legend(cards)).encode())
+    limit = header + max(len(card.encode()) for card in cards) + 20
+    files = write_pages(cards, tmp_path, limit=limit)
+    assert len(files) == 4
+    assert all(item['bytes'] <= limit for item in files)
+    assert [item['first'] for item in files] == [1, 2, 3, 4]
+
+
+def test_除外理由の説明は所属ゼロと競合と全voidの集合を区別する():
+    from bench.issue114.mobile_labels import mask_description
+
+    from colorstats.analyze import region_policy
+
+    classes = np.array([[34, 8, 8, 8, 2, 12, 1, 4]])
+    pixels = {"window_frame": [0, 1, 2, 4, 5], "window_glass": [1],
+              "wall_main": [6], "wall_secondary": [6],
+              "vegetation_tree_canopy": [7], "tree_trunk": [7]}
+    rows = []
+    for label, indices in pixels.items():
+        mask = np.zeros(classes.shape, dtype=bool)
+        mask[0, indices] = True
+        rows.append((label, mask, 0.9))
+    masks, reasons, _ = region_policy.constrain(classes, rows, pixels)
+    assert reasons["semantic_mismatch"].tolist() == [[True, False, False, False,
+                                                      False, False, False, False]]
+    assert reasons["conflict"].tolist() == [[False, True, False, False,
+                                            False, False, False, False]]
+    assert reasons["void"].tolist() == [[True, True, False, True, True, True, False, False]]
+    assert reasons["sky"][0, 4] and reasons["person"][0, 5]
+    assert masks["real_building/wall"][0, 6] and masks["real_terrain/tree"][0, 7]
+    assert "role所属数が0" in mask_description("semantic_mismatch", "exclusion")[1]
+    assert "role所属数が2以上" in mask_description("conflict", "exclusion")[1]
+    assert "role所属数が1でない" in mask_description("void", "exclusion")[1]
+    card = mobile.mask_section("semantic_mismatch", reasons["semantic_mismatch"],
+                               (8, 1), number=1, kind="exclusion")
+    rendered = mobile.page([card], 1, 1, 1)
+    assert rendered.count("空・人物・競合の画素は含まない") == 2
