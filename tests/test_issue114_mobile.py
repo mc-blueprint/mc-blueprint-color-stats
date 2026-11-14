@@ -233,7 +233,7 @@ def test_HTML容量と連番を守り外部画像を参照しない(tmp_path):
         path = tmp_path / item["file"]
         assert path.stat().st_size <= limit
         content = path.read_text()
-        assert "対象母数：20枚" in content and "固定無作為群：4枚" in content
+        assert "もとの写真は20枚" in content and "無作為に選んだ写真は4枚" in content
         numbers.extend(map(int, re.findall(r'id="n(\d+)"', content)))
         assert "http:" not in content and "https:" not in content
         sources = re.findall('src="([^"]+)"', content)
@@ -264,8 +264,8 @@ def test_比較区画は写真とmaskを2列で対にし日本語名と定義と
                                number=1, kind="effective")
     page = mobile.page([card], 1, 1, 1)
     assert "repeat(2,minmax(0,1fr))" in page and 'class="photo"' in card
-    assert "窓枠" in card and "窓ガラスとの競合は除く" in card
-    assert page.index("maskの日本語名と処理上の定義") < page.index('class="mask-comparison"')
+    assert "窓枠" in card and "ガラスと重なる部分は含みません" in card
+    assert page.index("示している部分の名前と説明") < page.index('class="mask-comparison"')
     for uri, sha in re.findall(r'src="([^"]+)" data-sha256="([^"]+)"', card):
         assert mobile._uri_sha(uri) == sha
         with Image.open(io.BytesIO(base64.b64decode(uri.split(",")[1]))) as image:
@@ -280,18 +280,20 @@ def test_全roleと除外に訳語があり未記載定義は推測で補わな�
     assert set(region_policy.ALLOW) <= NAMES.keys()
     for label in (*region_policy.ALLOW, "wall", "tree"):
         name, definition = mask_description(label, "effective")
-        assert name != "名称未記載" and definition
+        assert name != "名前がまだない部分" and definition
     for label in ("sky", "person", "conflict", "semantic_mismatch", "void"):
-        assert mask_description(label, "exclusion")[0] != "名称未記載"
-    assert "定義未記載" in mask_description("wall_secondary", "raw")[1]
-    assert "制約・空・人物・競合の除去は未適用" in mask_description("wall_main", "raw")[1]
-    assert "定義未記載" in mask_description("new_unknown", "effective")[1]
+        assert mask_description(label, "exclusion")[0] != "名前がまだない部分"
+    assert "区別の基準は記録されていません" in mask_description("wall_secondary", "raw")[1]
+    assert "取り除いたりする前" in mask_description("wall_main", "raw")[1]
+    assert "区別の基準は記録されていません" in mask_description("new_unknown", "effective")[1]
 
 
 def test_判定codeは原値と日本語を併記し未知値とHTMLを安全に表示する():
-    assert mobile.explain("aerial_or_unknown") == "aerial_or_unknown（上空写真または視点不明）"
-    assert mobile.explain(False) == "False（いいえ）"
-    assert mobile.explain("future_code") == "future_code（説明未記載）"
+    assert mobile.explain("aerial_or_unknown") == (
+        '上空からの写真、または撮影した向きが不明 <small><code>aerial_or_unknown</code></small>')
+    assert mobile.explain(False) == 'いいえ <small><code>False</code></small>'
+    assert mobile.explain("future_code") == (
+        'この判定の説明はまだありません <small><code>future_code</code></small>')
     assert "<script>" not in mobile.explain("<script>")
 
 
@@ -330,10 +332,64 @@ def test_除外理由の説明は所属ゼロと競合と全voidの集合を区�
     assert reasons["void"].tolist() == [[True, True, False, True, True, True, False, False]]
     assert reasons["sky"][0, 4] and reasons["person"][0, 5]
     assert masks["real_building/wall"][0, 6] and masks["real_terrain/tree"][0, 7]
-    assert "role所属数が0" in mask_description("semantic_mismatch", "exclusion")[1]
-    assert "role所属数が2以上" in mask_description("conflict", "exclusion")[1]
-    assert "role所属数が1でない" in mask_description("void", "exclusion")[1]
+    assert "最初は何かの部位らしい" in mask_description("semantic_mismatch", "exclusion")[1]
+    assert "どの部位にも当てはまらなかった" in mask_description("semantic_mismatch", "exclusion")[1]
+    conflict = mask_description("conflict", "exclusion")[1]
+    assert "2つ以上の部位" in conflict and "壁の中の細かな区別" in conflict
+    assert "木の枝葉と幹の重なり" in conflict
+    assert "初めから何の部位も見つからなかった場所" in mask_description("void", "exclusion")[1]
     card = mobile.mask_section("semantic_mismatch", reasons["semantic_mismatch"],
                                (8, 1), number=1, kind="exclusion")
     rendered = mobile.page([card], 1, 1, 1)
-    assert rendered.count("空・人物・競合の画素は含まない") == 2
+    excluded = "空・人と判定された部分や、複数の部位が重なって決められない部分は含みません"
+    assert rendered.count(excluded) == 2
+
+
+def test_補助表記を除く全表示文に禁止語がなくコードだけを小さく添える():
+    from html import unescape
+
+    from bench.issue114.mobile_labels import CODE_NAMES, EXCLUSIONS, NAMES, mask_description
+
+    forbidden = re.compile(
+        r"role|親|所属数|raw候補|候補画素|有効mask|有効領域|semantic|和集合|payload|policy|schema|hash|gate"
+        r"|cohort|challenge|盲検|OneFormer|DINO|SAM2|\b(?:tree|palm|floor|sidewalk)\b|mask|画素|競合",
+        re.IGNORECASE,
+    )
+    mask = np.zeros((2, 2), dtype=bool)
+    cards = []
+    for label in (*NAMES, "new_unknown"):
+        for kind in ("raw", "effective"):
+            name, definition = mask_description(label, kind)
+            assert not forbidden.search(name + definition)
+            cards.append(mobile.mask_section(label, mask, (2, 2), number=1, kind=kind))
+    for label in EXCLUSIONS:
+        cards.append(mobile.mask_section(label, mask, (2, 2), number=1, kind="exclusion"))
+    page = mobile.page(cards, 1, 1, 1)
+    page += "".join(mobile.explain(code) for code in (*CODE_NAMES, "future_code", "<script>"))
+    page = re.sub(r'<style>.*?</style>|<small><code>.*?</code></small>', '', page, flags=re.S)
+    visible = unescape(re.sub(r'<[^>]*>', '', page))
+    assert not forbidden.search(visible)
+    assert "1行に1件" in visible and "次の行に「問題なし」" in visible
+    assert "正解だと思い込まず" in visible
+
+
+@pytest.mark.parametrize("people,pixels", [
+    ("uncertain", 0), ("uncertain", 3), (None, 0), ("absent", None),
+])
+def test_人物の判断が不確かな場合も記録が不足する場合も同じ説明で表す(people, pixels):
+    verdict = privacy_review.decision(people, pixels)
+    assert verdict == {"decision": "pending", "reason": "unknown_evidence"}
+    explanation = mobile.explain(verdict['reason'])
+    assert "人が写っているかどうか、はっきり判断できなかった" in explanation
+    assert "判断のもとになる記録が足りない場合も含みます" in explanation
+
+
+def test_基準の記録がないことを未決定と断定しない():
+    from bench.issue114.mobile_labels import mask_description
+
+    for label in ("eave", "cornice", "accent_other", "wall_main", "wall_secondary",
+                  "gable_wall", "new_unknown"):
+        for kind in ('raw', 'effective'):
+            _, definition = mask_description(label, kind)
+            assert "基準は記録されていません" in definition
+            assert "まだ決まっていません" not in definition
