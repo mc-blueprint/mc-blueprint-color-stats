@@ -70,6 +70,12 @@ def test_停止または期限切れ画像はモバイルHTMLを生成しない(
 def test_HTMLと番号表は保持台帳へ登録され期限後の管理対象となる(queue, managed, tmp_path):
     bundle, execution, output = inputs(tmp_path, managed)
     build(queue.engine, bundle, execution, output, ROOT / "taxonomy", require_contracts=False)
+    page = (output / "review-01.html").read_text()
+    assert "無作為に選んだ写真" in page and "周りとの関係を確かめた記録がありません" in page
+    for text in ("画像ゲート", "使用mask", "目的抽出challenge群", "raw候補", "region-policy hash"):
+        assert text not in page
+    mapping = json.loads((output / "number-map.json").read_text())
+    assert mapping['rows'][0]['groups'] == ["固定無作為群"]
     with Session(queue.engine) as session, session.begin():
         files = session.scalars(select(RetentionFile).where(
             RetentionFile.path.in_([str(p.resolve()) for p in output.iterdir()]),

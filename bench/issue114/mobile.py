@@ -26,9 +26,9 @@ from colorstats.queue import Queue
 from colorstats.schema.models import ProcessingRun, Region
 
 LIMIT = 12_500_000
-REASONS = {"person_not_detected": "人物検出なし", "person_masked": "人物maskあり",
-           "subject_ambiguous": "主体混在", "subject_unresolved": "主体不明",
-           "person_over_limit": "人物面積超過"}
+REASONS = {**CODE_NAMES,
+           "再提示待ち（自動採用しない）": "人の確認待ち。確認だけで採用に変わることはありません",
+           "追加解析後の再提示待ち（統計へ自動採用しない）": "追加の確認作業が済み、人の確認待ち"}
 STYLE = """body{margin:0 auto;padding:12px;max-width:800px;font:16px sans-serif;
 overflow-wrap:anywhere;box-sizing:border-box}*{box-sizing:border-box}
 img{display:block;max-width:100%;height:auto;margin:8px 0}.mask,.outline{image-rendering:pixelated}
@@ -45,7 +45,7 @@ background-origin:content-box;background-clip:content-box;border:3px dotted #174
 .mask-comparison{border-top:1px solid #aaa;padding:10px 0}.mask-comparison h3{font-size:1rem}
 table{border-collapse:collapse;width:100%;table-layout:fixed}
 td,th{border:1px solid #aaa;padding:6px;text-align:left}
-th:first-child{width:30%}code{overflow-wrap:anywhere}"""
+th:first-child{width:30%}code{overflow-wrap:anywhere}small{font-size:.75em;font-weight:normal}"""
 
 
 def jpeg(image):
@@ -101,8 +101,10 @@ def explain(value):
     code = str(value)
     text = CODE_NAMES.get(code)
     if text is None and re.search(r"[a-zA-Z]", code):
-        text = "説明未記載"
-    return html.escape(f"{code}（{text}）" if text else code)
+        text = "この判定の説明はまだありません"
+    if text:
+        return f'{html.escape(text)} <small><code>{html.escape(code)}</code></small>'
+    return html.escape(code)
 
 
 def _uri_sha(uri):
@@ -118,17 +120,19 @@ def mask_section(label, mask, size, *, number, kind, pattern="solid"):
     """同じ座標の写真＋透明な輪郭と二値maskを、一つの2列区画にする。"""
     name, definition = mask_description(label, kind)
     safe_label = html.escape(label)
-    category = {"raw": "raw候補", "effective": "有効mask", "exclusion": "除外mask",
-                "person": "人物mask"}[kind]
-    line = {"solid": "実線", "dash": "破線", "dot": "点線", "dashdot": "一点鎖線"}[pattern]
+    category = {"raw": "最初に見つけた部分", "effective": "今回選ばれた部分",
+                "exclusion": "使わなかった部分",
+                "person": "人のいる場所の確認"}[kind]
+    line = {"solid": "つながった線", "dash": "途切れた線", "dot": "点のある線",
+            "dashdot": "途切れた線と点"}[pattern]
     outline = _image(outline_uri(mask, size, pattern=pattern, transparent=True),
                      f"番号{number} {name} 写真上の輪郭", "outline")
-    binary = _image(mask_uri(mask, size), f"番号{number} {name} 二値mask", "mask")
+    binary = _image(mask_uri(mask, size), f"番号{number} {name} 白く示した部分", "mask")
     return f'''<section class="mask-comparison" data-label="{safe_label}" data-kind="{kind}">
-<h3>{category}：{html.escape(name)} <code>{safe_label}</code></h3>
+<h3>{html.escape(name)} <small><code>{safe_label}</code></small></h3><p>{category}</p>
 <p>{html.escape(definition)}</p><div class="comparison-grid">
 <figure><figcaption>写真＋輪郭（{line}）</figcaption><div class="photo">{outline}</div></figure>
-<figure><figcaption>mask（白い部分が対象）</figcaption>{binary}</figure>
+<figure><figcaption>白い部分が対象</figcaption>{binary}</figure>
 </div></section>'''
 
 
@@ -140,9 +144,9 @@ def _legend(cards):
     for label, kind in entries:
         label = html.unescape(label)
         name, definition = mask_description(label, kind)
-        rows.append(f'<tr><th>{html.escape(name)}<br><code>{html.escape(label)}</code></th>'
+        rows.append(f'<tr><th>{html.escape(name)}<br><small><code>{html.escape(label)}</code></small></th>'
                     f'<td>{html.escape(definition)}</td></tr>')
-    return '<table><caption>maskの日本語名と処理上の定義</caption>' + "".join(rows) + '</table>'
+    return '<table><caption>示している部分の名前と説明</caption>' + "".join(rows) + '</table>'
 
 
 def page(cards, first, last, total, groups=None, *, legend=None):
@@ -151,22 +155,26 @@ def page(cards, first, last, total, groups=None, *, legend=None):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy"
 content="default-src 'none'; img-src data:; style-src 'unsafe-inline'">
-<title>#114 目視確認 {first}–{last}</title><style>{STYLE}</style>
-<h1>#114 目視確認 {first}–{last}／全{total}枚</h1>
-<p>対象母数：{counts.get('population', total)}枚。固定無作為群：{counts.get('random', 0)}枚、
-目的抽出challenge群：{counts.get('challenge', 0)}枚（重複除外済み）。
-群を混ぜて率を計算しません。</p>
-<p>全ファイルの全番号を確認してください。人物の見落とし、maskの不足、
-主体・有効領域・自動判定の誤りがあれば、
-チャットへ「問題あり：番号と理由」を返信してください。
-全件確認後は「全{total}枚確認済み。問題なし」または
-「全{total}枚確認済み。問題あり：7 人物の見落とし、…」と返信します。
-途中の確認は完了扱いにしません。JSONの保存・送付は不要です。</p>
-<p class="legend">各区画の左は写真（解析画像と同じ座標）＋輪郭線、右は二値maskです。
-写真の色を隠す塗りは重ねません。線の場所以外は写真のままです。
-raw候補は親領域の制約前、有効maskは候補と許容親領域の共通部分から空・人物・異roleの競合を除いたものです。
-意味や品質が正しいと保証する表示ではありません。幹・樹冠や壁の子分類の支持も保証しません。
-予測を表示した画像の確認は盲検ではありません。保留は確認後も自動採用されません。</p>
+<title>#114 写真の確認 {first}–{last}</title><style>{STYLE}</style>
+<h1>#114 写真の確認 {first}–{last}／全{total}枚</h1>
+<p>もとの写真は{counts.get('population', total)}枚です。
+確認用に無作為に選んだ写真は{counts.get('random', 0)}枚、
+間違いやすい点を確かめるために選んだ写真は{counts.get('challenge', 0)}枚です。
+同じ写真は一度だけ数えています。
+選び方が違うので、まとめて全体の正しさを判断するための割合は出しません。</p>
+<p>すべてのファイルの、すべての番号を確認してください。人の見落とし、白く示した場所の過不足、
+写っているものや部位の見分け間違いがあれば、番号と理由をチャットで教えてください。
+全件確認後、最初の行に「全{total}枚確認済み」、次の行に「問題なし」と返信してください。
+問題がある場合は「問題なし」の代わりに「7: 人の見落とし」のように、1行に1件ずつ書いてください。
+途中の確認は完了扱いにしません。別のファイルを作って送る必要はありません。</p>
+<p class="legend">各区画の左は写真と輪郭線、右は同じ場所を白く示した図です。
+線の場所以外は写真の色を隠しません。
+「最初に見つけた部分」は、周りとの関係を確かめる前の表示です。
+「今回選ばれた部分」は、その関係を確かめ、空・人や、別の部位と重なって決められない部分を取り除いた表示です。
+壁の中の細かな区別どうしや、木の枝葉と幹は、重なっていてもまとめて使います。
+自動の見分け方には間違いがあります。線や白い場所を正解だと思い込まず、写真と比べてください。
+木の枝葉と幹、壁の細かな区別まで正しいとは限りません。
+確認待ちの写真は、問題なしと答えても自動で採用に変わりません。</p>
 {_legend(cards) if legend is None else legend}
 {''.join(cards)}</html>'''
 
@@ -356,17 +364,20 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
         row = decisions[aid]
         selection = _selection_for(decisions, aid)
         labels = ["固定無作為群"] if aid in random_ids else ["目的抽出challenge群"]
+        display_labels = (["無作為に選んだ写真"] if aid in random_ids
+                          else ["間違いやすい点を確かめる写真"])
         if aid in overlap:
             labels.append("無作為群から重複除外")
+            display_labels.append("両方の選び方に当てはまるので一度だけ表示")
         with Image.open(bundle / "images" / f"{aid}-raw.png") as raw:
             raw_uri = jpeg(raw)
         if digest(row["input_path"]) != row["input_sha256"] or digest(
                 row["mask_path"]) != row["mask_sha256"]:
             raise ValueError("固定した解析画像・人物maskが変わっています")
-        decision = "採用" if row["decision"] == "accepted" else "目視待ち"
-        subject = {"building": "建物", "terrain": "地形", "mixed": "混在",
-                   "other": "対象外", "unknown": "不明", None: "未確定"}.get(
-                       row["subject"], "未確定")
+        decision = "採用" if row["decision"] == "accepted" else "確認待ち"
+        subject = {"building": "建物", "terrain": "地形", "mixed": "建物と地形が混じっている",
+                   "other": "確認の対象外", "unknown": "不明", None: "まだ決まっていない"}.get(
+                       row["subject"], "まだ決まっていない")
         with Image.open(row["input_path"]) as prepared:
             input_size = prepared.size
             prepared_uri = jpeg(prepared)
@@ -380,10 +391,6 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
         gate_decision = gate.get("result") or {}
         gate_state = row.get("gate_state", gate_decision.get("decision", "未記録"))
         gate_reason = gate_decision.get("reason", "未記録")
-        identity = gate.get("identity") or {}
-        image_review_version = identity.get(
-            "policy_version", row.get("image_review_version", "未記録"),
-        )
         reasons = '・'.join(explain(code) for code in verdict.get('reason_codes') or ['未記録'])
         extras = [f"人物：{explain(people)}",
                   f"対象：{explain(verdict.get('target', '未記録'))}",
@@ -391,16 +398,12 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
                   f"暗所：{explain(verdict.get('dark', '未記録'))}",
                   f"室内：{explain(verdict.get('interior', '未記録'))}",
                   f"上空写真：{explain(verdict.get('aerial_view', '未記録'))}",
-                  f"主体：{explain(verdict.get('subject', '未記録'))}",
-                  f"理由code：{reasons}",
-                  f"image-review：{explain(image_review_version)}",
-                  f"schema：{explain(identity.get('schema_version', '未記録'))}",
-                  f"領域policy：{explain(row.get('region_policy_version', 'raw候補のみ'))}"
+                  f"何が中心に写っているか：{explain(verdict.get('subject', '未記録'))}",
+                  f"判断の理由：{reasons}"
                   ]
         parts = [mask_section("person", person_mask, input_size, number=number, kind="person")]
         effective = policy_views.get(aid)
         if effective:
-            extras.append(f"region-policy hash：{effective['hash']}")
             for role, mask in sorted(effective["roles"].items()):
                 pattern = "dash" if role.startswith("real_terrain/") else "solid"
                 parts.append(mask_section(role, mask, input_size, number=number,
@@ -412,7 +415,7 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
                 parts.append(mask_section(reason, mask, input_size, number=number,
                                           kind="exclusion", pattern=pattern))
         else:
-            extras.append("region-policy：未記録。以下はraw候補で、有効maskとして判定できません")
+            extras.append("周りとの関係を確かめた記録がありません。以下は最初に見つけた場所の表示だけです")
         for index, label in enumerate(sorted({label for label, _ in regions.get(aid, [])})
                                       if not effective else []):
             union = np.zeros((input_size[1], input_size[0]), dtype=bool)
@@ -426,15 +429,16 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
             parts.append(mask_section(label, union, input_size, number=number, kind="raw",
                                       pattern='dash' if index % 2 else 'solid'))
         cards.append(f'''<article id="n{number}" style="--photo:url('{prepared_uri}')"
-data-photo-sha256="{_uri_sha(prepared_uri)}"><h2>番号 {number}：{'・'.join(labels)}</h2>
-<p>既存判定：{decision}／{html.escape(REASONS.get(row['reason'], str(row['reason'])))}。
-画像ゲート：{explain(gate_state)}／{explain(gate_reason)}。
-人物率 {row['person_ratio']:.4%}（使用mask {row['mask_ratio']:.4%}）、主体：{subject}。</p>
+data-photo-sha256="{_uri_sha(prepared_uri)}"><h2>番号 {number}：{'・'.join(display_labels)}</h2>
+<p>これまでの判断：{decision}／{html.escape(REASONS.get(row['reason'], str(row['reason'])))}。
+写真全体を見た判断：{explain(gate_state)}／{explain(gate_reason)}。
+人と判定された広さは写真の {row['person_ratio']:.4%}（人として示す広さ {row['mask_ratio']:.4%}）、
+中心に写っているもの：{subject}。</p>
 <p>{'／'.join(extras)}</p>
-<details><summary>取得画像を開く（解析前の参照用）</summary>
-<figure><figcaption>取得画像</figcaption>
-{_image(raw_uri, f'番号{number} 取得画像', 'raw')}</figure></details>
-<p>以下の写真は解析画像です。maskと同じ座標で比較します。</p>
+<details><summary>もとの写真を開く（自動で調べる前の写真）</summary>
+<figure><figcaption>もとの写真</figcaption>
+{_image(raw_uri, f'番号{number} もとの写真', 'raw')}</figure></details>
+<p>以下は自動で調べた写真です。左右で同じ場所を比べられます。</p>
 {''.join(parts)}</article>''')
         rows.append({"number": number, "asset_id": aid, "groups": labels,
                      "input_sha256": row["input_sha256"],
