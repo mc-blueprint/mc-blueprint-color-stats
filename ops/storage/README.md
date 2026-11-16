@@ -12,7 +12,7 @@ rawの異常時はremountより先に `/var/lib/colorstats-storage/blocked/<UUID
 
 `disks/ubuntu-0.json`、`disks/ubuntu-1.json`、`disks/ubuntu-2.json` は各ホストで照合した全ディスクのUUID・serialを記録します。設定を更新するときは `lsblk -o NAME,FSTYPE,UUID,SERIAL,MOUNTPOINTS` と `smartctl -i /dev/<device>` の両方で対応を確認し、`/dev`名からserialやUUIDを推測しないでください。設定中のUUIDは `/dev/disk/by-uuid/` からSMARTを読むために使います。
 
-- ubuntu-0: OSディスク、WD 750GB、ext4のST3500×2。STはIssue #23で消去承認後にフォーマットし、新UUIDへ更新しました。`previous_uuids` はバックアップ判定が旧UUIDの異常履歴を引き継ぐための対応です。バックアップHDDはすべて `raw: false` で、この監視によるreadonly化は行いません。`ops/backup/` の転送処理が監視状態と異常記録を読み、該当媒体への転送を停止します。媒体のmount・書込み・フォーマットはこの監視設定では行いません。
+- ubuntu-0: OSディスク、WD 750GB、ext4のST3500×2が稼働中です。増設ディスク6台はファイルシステム未作成または旧NTFSのままで、未マウント・監視対象外です。移行予定とディスクの健康状態は[2026-11-16のストレージ調査](../../docs/storage-audit-2026-11-16.md)を参照してください。STはIssue #23で消去承認後にフォーマットし、新UUIDへ更新しました。`previous_uuids` はバックアップ判定が旧UUIDの異常履歴を引き継ぐための対応です。バックアップHDDはすべて `raw: false` で、この監視によるreadonly化は行いません。`ops/backup/` の転送処理が監視状態と異常記録を読み、該当媒体への転送を停止します。媒体のmount・書込み・フォーマットはこの監視設定では行いません。
 - ubuntu-1: ORICO、TOSHIBA、CSSD、SUNEAST。ORICOとSUNEASTだけ `raw: true` でmount先を指定します。
 - ubuntu-2: OSディスクとNVMeデータディスク。どちらも `raw: false` です。
 
