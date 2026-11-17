@@ -1,10 +1,8 @@
 """必須目視サンプルを単体HTMLにし、番号付きの会話返信を既存取込み形式へ変換する。"""
 
 import argparse
-import base64
 import hashlib
 import html
-import io
 import json
 import os
 import re
@@ -15,7 +13,7 @@ from uuid import UUID
 import numpy as np
 from bench.issue114.mobile_labels import CODE_NAMES, mask_description
 from bench.issue114.privacy import digest, save
-from PIL import Image, ImageFilter
+from PIL import Image
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -23,6 +21,9 @@ from colorstats import privacy_review, retention
 from colorstats.analyze import region_policy as region_policy_contract
 from colorstats.api_budget import digest as contract_digest
 from colorstats.queue import Queue
+from colorstats.review_html import image_tag as _image
+from colorstats.review_html import jpeg, mask_uri, outline_uri
+from colorstats.review_html import uri_sha as _uri_sha
 from colorstats.schema.models import ProcessingRun, Region
 
 LIMIT = 12_500_000
@@ -48,55 +49,6 @@ td,th{border:1px solid #aaa;padding:6px;text-align:left}
 th:first-child{width:30%}code{overflow-wrap:anywhere}small{font-size:.75em;font-weight:normal}"""
 
 
-def jpeg(image):
-    """長辺800px以内のJPEGをdata URI用に符号化する。"""
-    image = image.convert("RGB")
-    image.thumbnail((800, 800), Image.Resampling.LANCZOS)
-    stream = io.BytesIO()
-    image.save(stream, format="JPEG", quality=78, optimize=True)
-    return "data:image/jpeg;base64," + base64.b64encode(stream.getvalue()).decode()
-
-
-def mask_uri(mask, size):
-    """座標を維持した単独maskのdata URIを返す。"""
-    values = np.asarray(mask)
-    if values.shape != (size[1], size[0]) or not np.isin(values, [False, True, 0, 255]).all():
-        raise ValueError("maskの座標・二値値が不正です")
-    image = Image.fromarray((values != 0).astype("uint8") * 255, mode="L")
-    stream = io.BytesIO()
-    image.save(stream, format="PNG", optimize=True)
-    return "data:image/png;base64," + base64.b64encode(stream.getvalue()).decode()
-
-
-def outline_uri(mask, size, *, pattern="solid", transparent=False):
-    """元座標の輪郭を別画像にし、役割ごとの線種で区別する。"""
-    values = np.asarray(mask) != 0
-    if values.shape != (size[1], size[0]):
-        raise ValueError("輪郭maskの寸法が一致しません")
-    source = Image.fromarray(values.astype("uint8") * 255, mode="L")
-    outer = np.asarray(source.filter(ImageFilter.MaxFilter(7 if transparent else 3))) != 0
-    edge = outer & ~values
-    if pattern == "dash":
-        edge[1::4] = False
-        edge[3::4] = False
-    elif pattern == "dot":
-        edge[::3, ::3] = False
-    elif pattern == "dashdot":
-        edge[1::4] = False
-        edge[3::4, ::3] = False
-    elif pattern != "solid":
-        raise ValueError("未対応の輪郭線種です")
-    if transparent:
-        pixels = np.zeros((*edge.shape, 4), dtype="uint8")
-        pixels[edge] = [255, 96, 0, 255]
-        result = Image.fromarray(pixels, mode="RGBA")
-    else:
-        result = Image.fromarray(np.where(edge, 0, 255).astype("uint8"), mode="L")
-    stream = io.BytesIO()
-    result.save(stream, format="PNG", optimize=True)
-    return "data:image/png;base64," + base64.b64encode(stream.getvalue()).decode()
-
-
 def explain(value):
     code = str(value)
     text = CODE_NAMES.get(code)
@@ -105,15 +57,6 @@ def explain(value):
     if text:
         return f'{html.escape(text)} <small><code>{html.escape(code)}</code></small>'
     return html.escape(code)
-
-
-def _uri_sha(uri):
-    return hashlib.sha256(base64.b64decode(uri.split(",", 1)[1])).hexdigest()
-
-
-def _image(uri, alt, style):
-    return (f'<img class="{style}" alt="{html.escape(alt)}" src="{uri}" '
-            f'data-sha256="{_uri_sha(uri)}" loading="lazy">')
 
 
 def mask_section(label, mask, size, *, number, kind, pattern="solid"):
