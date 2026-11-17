@@ -531,13 +531,17 @@ def test_受信maskの事前登録から150結果の受領とHTMLまで通る(bu
     assert table["active_attempts_sha256"] == sha((root / "active-attempts.json").read_bytes())
 
 
-@pytest.mark.parametrize("field", ["sha256", "expires_at"])
-def test_事前登録maskの照合不一致では受領記録を作らない(bundle, completed, field):
+@pytest.mark.parametrize(
+    "field,days",
+    [("sha256", None), ("expires_at", 4), ("expires_at", -1)],
+    ids=["sha-mismatch", "extended", "expired"],
+)
+def test_事前登録maskの照合不一致では受領記録を作らない(bundle, completed, field, days):
     root, _, configurations, results, active, now = incoming(bundle, completed)
     ledger_path = root / "file-ledger.json"
     ledger = json.loads(ledger_path.read_text())
     row = next(r for r in ledger["files"] if r["file"].startswith("masks/"))
-    row[field] = "0" * 64 if field == "sha256" else (now + timedelta(days=1)).isoformat()
+    row[field] = "0" * 64 if field == "sha256" else (now + timedelta(days=days)).isoformat()
     ledger_path.write_text(json.dumps(ledger))
     before = ledger_path.read_bytes()
     with pytest.raises(ValueError, match="事前登録mask"):
@@ -601,3 +605,70 @@ def test_CSSの画像参照構文を固定スタイルの外では受け付け�
     )
     with pytest.raises(ValueError):
         validate_html(body, [1])
+
+
+@pytest.mark.parametrize("hours", [23, 24, 25])
+def test_事前登録maskは72時間から24時間へ短縮した期限を受領と再読込みで守る(
+    bundle, completed, hours
+):
+    from colorstats.trial_inputs import add_files, stamp
+
+    root, manifest, configurations, results, active, now = incoming(
+        bundle, completed, preregister=False
+    )
+    assert min(stamp(row["local_expires_at"]) for row in manifest["images"]) == now + timedelta(
+        hours=72
+    )
+    shorter = (now + timedelta(hours=24)).isoformat()
+    records = {
+        region["mask"]["file"]: {
+            **region["mask"],
+            "expires_at": shorter,
+        }
+        for row in results
+        for region in row["regions"]
+    }
+    add_files(root, list(records.values()))
+    validate_results(root, manifest, configurations, results, active_attempts=active)
+    accept_results(root, configurations, results, active_attempts=active, now=now)
+    assert len(read_results(root, now=now)[2]) == 150
+    ledger = json.loads((root / "file-ledger.json").read_text())
+    for record in ledger["files"]:
+        if record["file"] in records:
+            assert record == records[record["file"]]
+    later = now + timedelta(hours=hours)
+    if hours < 24:
+        assert len(read_results(root, now=later)[2]) == 150
+        assert len(build_pages(root, now=later)["rows"]) == 30
+    else:
+        before = (root / "file-ledger.json").read_bytes()
+        for operation in (read_results, build_pages):
+            with pytest.raises(ValueError, match="期限切れ"):
+                operation(root, now=later)
+        assert (root / "file-ledger.json").read_bytes() == before
+        assert not (root / "pages").exists()
+        assert not (root / "number-map.json").exists()
+        assert all((root / name).exists() for name in records)
+
+
+@pytest.mark.parametrize("change", ["sha256", "extended", "unregistered"])
+def test_再読込みとHTML生成も受領時と同じmask登録条件を使う(completed, change):
+    from colorstats.trial_inputs import stamp
+
+    root, manifest, _, _, _ = completed
+    now = stamp(manifest["created_at"])
+    path = root / "file-ledger.json"
+    ledger = json.loads(path.read_text())
+    record = next(r for r in ledger["files"] if r["file"].startswith("masks/"))
+    if change == "sha256":
+        record["sha256"] = "0" * 64
+    elif change == "extended":
+        record["expires_at"] = (now + timedelta(days=4)).isoformat()
+    else:
+        ledger["files"].remove(record)
+    path.write_text(json.dumps(ledger))
+    before = path.read_bytes()
+    for operation in (read_results, build_pages):
+        with pytest.raises(ValueError, match="mask"):
+            operation(root, now=now)
+    assert path.read_bytes() == before
