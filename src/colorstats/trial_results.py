@@ -3,6 +3,7 @@
 import json
 import math
 import re
+from datetime import UTC, datetime
 from pathlib import Path
 
 import numpy as np
@@ -177,12 +178,27 @@ def validate_results(root, manifest, configurations, results, *, active_attempts
         raise ValueError("30件×A～Eの状態に不足があります")
 
 
+def _pending_masks(manifest, results, ledger, now):
+    """登録maskのSHA・期限を照合し、未登録分の台帳行を返す。"""
+    expiry = min((row["local_expires_at"] for row in manifest["images"]), key=stamp)
+    records = {r["mask"]["file"]: r["mask"]["sha256"] for row in results for r in row["regions"]}
+    registered = {record["file"]: record for record in ledger["files"]}
+    pending = []
+    for name, value in records.items():
+        saved = registered.get(name)
+        if saved is None:
+            pending.append({"file": name, "sha256": value, "expires_at": expiry})
+        elif saved["sha256"] != value or not now < stamp(saved["expires_at"]) <= stamp(expiry):
+            raise ValueError("事前登録maskのSHA不一致・期限切れ・元期限超過の登録です")
+    return pending
+
+
 def accept_results(root, configurations, results, *, active_attempts, now=None):
-    """検証した回収結果を私有台帳へ追加する。本番run・提示登録は作らない。"""
+    """回収結果を私有台帳へ追加する。既存maskのSHAを照合し、期限の延長は拒否する。"""
+    now = now or datetime.now(UTC)
     root = Path(root)
     manifest = load_manifest(root, now=now)
     validate_results(root, manifest, configurations, results, active_attempts=active_attempts)
-    records = {r["mask"]["file"]: r["mask"]["sha256"] for row in results for r in row["regions"]}
     blobs = {
         "configurations.json": encoded(configurations),
         "results.json": encoded(results),
@@ -190,14 +206,7 @@ def accept_results(root, configurations, results, *, active_attempts, now=None):
     }
     expiry = min((row["local_expires_at"] for row in manifest["images"]), key=stamp)
     ledger = json.loads((root / "file-ledger.json").read_text(encoding="utf-8"))
-    registered = {record["file"]: record for record in ledger["files"]}
-    pending = []
-    for name, value in records.items():
-        saved = registered.get(name)
-        if saved is None:
-            pending.append({"file": name, "sha256": value, "expires_at": expiry})
-        elif saved["sha256"] != value or stamp(saved["expires_at"]) != stamp(expiry):
-            raise ValueError("事前登録maskのSHAまたは期限が一致しません")
+    pending = _pending_masks(manifest, results, ledger, now)
     pending.extend(
         {"file": name, "sha256": sha(blob), "expires_at": expiry} for name, blob in blobs.items()
     )
@@ -207,6 +216,8 @@ def accept_results(root, configurations, results, *, active_attempts, now=None):
 
 
 def read_results(root, *, now=None):
+    """受領記録と登録maskを再照合する。短縮期限切れのmaskは再利用しない。"""
+    now = now or datetime.now(UTC)
     root = Path(root)
     manifest = load_manifest(root, now=now)
     ledger = json.loads((root / "file-ledger.json").read_text(encoding="utf-8"))
@@ -217,5 +228,7 @@ def read_results(root, *, now=None):
     configurations = json.loads((root / "configurations.json").read_text(encoding="utf-8"))
     results = json.loads((root / "results.json").read_text(encoding="utf-8"))
     active_attempts = json.loads((root / "active-attempts.json").read_text(encoding="utf-8"))
+    if _pending_masks(manifest, results, ledger, now):
+        raise ValueError("受領済みmaskが台帳に登録されていません")
     validate_results(root, manifest, configurations, results, active_attempts=active_attempts)
     return manifest, configurations, results

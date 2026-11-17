@@ -31,8 +31,8 @@ from colorstats.trial_pages import build_pages
 from colorstats.trial_results import CONFIG_FIELDS, accept_results
 
 
-def demo(result_root):
-    """取得・送信・DB・GPUなしで合成30件とダミー150結果を保存する。"""
+def synthetic_inputs(result_root):
+    """取得・送信・DB・GPUなしで、#141形式の合成30件の入力束を保存する。"""
     now = datetime.now(UTC)
     with tempfile.TemporaryDirectory(prefix="colorstats-trial-") as directory:
         sources = Path(directory)
@@ -74,6 +74,13 @@ def demo(result_root):
         }
         selected = select_candidates(candidates, legacy, now=now)
         manifest = prepare(selected, result_root, now=now, synthetic=True)
+    return manifest
+
+
+def demo(result_root):
+    """取得・送信・DB・GPUなしで合成30件とダミー150結果を保存する。"""
+    manifest = synthetic_inputs(result_root)
+    now = stamp(manifest["created_at"])
     root = Path(result_root)
     (root / "masks").mkdir(mode=0o700)
     configurations = {}
