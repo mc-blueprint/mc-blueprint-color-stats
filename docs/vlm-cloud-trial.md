@@ -84,8 +84,8 @@ deploymentsの各構成は次を持つ。
 
 filesのSHAを未取得物の初回算出値で補わない。公開照合値・固定revisionでの取得証跡と
 算出値を区別し、containerと必要ファイルを別の準備段階で固定してから実行設定へ入れる。
-環境SHAはdigest(versions)、重みSHAはdigest(files)、processor SHAはdigest(LIMITS)、
-指示SHAはPROMPTのUTF-8 SHA、コードSHAはtrial_native.pyのbytesのSHA。
+環境SHAとコードSHAは後述のruntime全体の固定参照から作る。
+重みSHAはdigest(files)、processor SHAはdigest(LIMITS)、指示SHAはPROMPTのUTF-8 SHA。
 processorの実ファイルはmodelの固定一覧とrevisionにも含める。
 
 初回実装の固定モデルは承認済み計画第3節に対応する。
@@ -267,3 +267,97 @@ controller停止後も最後に確認・転送した期限に従う。停止後�
 HTTPは接続・本文受信を含む14秒総枠をPOSIXタイマーで中断する。
 低速で本文が届き続けても枠を延長せず、終了時に既存のsignal handlerを復元する。
 controllerの主スレッドから呼び、既存の実時間タイマーがある場合は併用を拒否する。
+
+## SAM3専用環境（Issue #145）
+
+通常環境はNumPy 2系、SAM3専用環境はNumPy 1.26.4に固定する。
+vLLM 0.20.0がOpenCV headless >=4.13を要求し、そのOpenCVがNumPy >=2を要求するため、
+NumPy <2を要求するSAM3を別Pythonで実行する。
+SAM3の処理はtrial_sam3へ移し、画像・ファイル検査・期限・phase保存を
+DB依存のないtrial_native_commonで共有する。
+
+### 配備と固定値
+
+ops/vlm-trial/DockerfileはCUDA 13.0.2 / Ubuntu-24.04のamd64 base digestを固定する。
+以下の3環境を同じPodのephemeral diskへ作る。
+
+| 環境 | Python | lock |
+| --- | --- | --- |
+| 通常アプリ・vLLM・SAM2・Sa2VA | /opt/colorstats/controller/bin/python | /opt/colorstats/locks/controller.lock |
+| SAM3 | /opt/colorstats/sam3/bin/python | /opt/colorstats/locks/sam3.lock |
+| 配備用uv | /opt/colorstats/tools/bin/python | /opt/colorstats/locks/tools.lock |
+
+requirements-controller.in、requirements-sam3.in、requirements-tools.inから、
+uv 0.13.6 / Python 3.12 / Ubuntu-24.04向けに生成したlockを同梱する。
+公開ソースのarchiveも固定commitとSHAで参照する。sources.jsonに照合値を置く。
+source配布の依存宣言はuv.tomlへ公式の内容を記載し、解決時のbuildを避ける。
+モデル重みは従来のprovisionで画像転送前に取得・照合する。
+
+Dockerfileは環境別lockの配布物SHAを要求し、build用依存にもcontroller.lockを適用する。
+通常アプリ本体のbuildは通常環境で行い、解決済み依存を両環境でuv pip checkする。
+SSH公開鍵はPod側のPUBLIC_KEYまたは用意済みauthorized_keysを使い、host keyは起動時に生成する。
+実行前に直接SSH接続とknown_hostsを別途確認する。
+
+deploymentsの各構成にruntimeを追加する。
+
+| 項目 | 条件 |
+| --- | --- |
+| runtime.code_files | trial_native.py、trial_native_common.py、trial_sam3.py、trial_paths.jsonのファイル名とSHAの辞書 |
+| runtime.lock | 通常環境lockの固定fileとsha256 |
+| runtime.sam3 | Eで必須。python、versions、lockを持つ |
+| runtime.sam3.python | /opt/colorstats/sam3/bin/python |
+| runtime.sam3.versions | SAM3環境の正確な配布名と版。NumPy 1.26.4、torch 2.11.0、torchvision 0.26.0、Transformers 4.57.6を含む |
+| runtime.sam3.lock | /opt/colorstats/locks/sam3.lockのfileとsha256 |
+
+code_sha256はdigest(runtime.code_files)とする。
+environment_sha256はdigest(environment_reference(versions, runtime))とし、
+通常環境の版・lockとE専用環境の版・lock・Pythonを参照に含める。
+code_files()とenvironment_reference()はtrial_native_commonの関数を使う。
+構成設定を作るときは、配備するコードとlockの実byteからSHAを算出する。
+
+既存の私有execution.jsonはruntimeと構成SHAを再生成する。
+旧設定の再開には固定参照不一致が生じるため、新しい設定・新しい試行として準備する。
+#141の入力・結果の項目、mask保持期限、番号、受領条件は従来の契約を使う。
+
+### 起動・期限・失敗
+
+親は通常環境のコード・lock・版を検査してからE専用Pythonを明示して起動する。
+E workerは通常アプリをimportせず、同じプロセスグループで動く。
+自身を含む実行コード、専用lock、宣言した依存版、固定モデルと重み一覧、
+入力SHA・長辺・保持期限を検査する。
+保存前にもdeadline.jsonの短い期限を確認する。
+OOM・期限切れ・例外は既存のfailure.jsonへ理由codeを保存し、親が失敗結果へ変換する。
+
+画像の時間上限、GPU監視、期限の独立監視、費用上限、全新設Podの清掃は
+#142の既存経路を使う。期限更新・旧attempt拒否・単一writerの条件も適用する。
+再開時はworkerと環境別lockを含む構成参照の一致を要求する。
+
+### 検証の範囲
+
+合成入力と推論スタブで、専用workerの二値PNG出力から150結果の受領・
+30件の比較ページまで検証する。入力・重み・worker・lock・依存版の差、
+保存前の期限短縮、OOM・例外、並列D/Eの終了も検証する。
+
+今回のlock確認はuvの依存解決と配布物SHAの固定まで。
+GPUパッケージの実install、コンテナbuild、CUDA ABI、実モデルのimport・
+画像推論・GPUごとのVRAM余裕は実行前の確認として残る。
+Dockerfile中の配備手順を実際に動かす段階でも、ユーザー許可の範囲を照合する。
+
+公式依存宣言は2026-11-18に確認した。
+[SAM3](https://github.com/facebookresearch/sam3/blob/31cb7e624e4fe95301b1be1d4e809111593d2e45/pyproject.toml)、
+[SAM2](https://github.com/facebookresearch/sam2/blob/2b90b9f5ceec907a1c18123530e92e794ad901a4/setup.py)、
+[iopath](https://github.com/facebookresearch/iopath/blob/v0.1.10/setup.py)、
+[FlashAttention](https://github.com/Dao-AILab/flash-attention/blob/v2.8.3/setup.py)、
+[vLLM 0.20.0](https://pypi.org/pypi/vllm/0.20.0/json)。
+
+
+### SSH起動での環境指定
+
+配備先のPythonとコード探索パスはsrc/colorstats/trial_paths.jsonへまとめる。
+Dockerfileも同じJSONから通常環境・SAM3環境を作成し、依存検査へコード探索パスを渡す。
+JSON自体もruntime.code_filesへ含める。
+
+RunPodのprepare/start、通常側の子phase、SAM3 worker、独立した期限監視は、
+python_command()が作る絶対Pythonと明示PYTHONPATHの引数で起動する。
+OpenSSHがセッション環境を作り直した場合も、固定コードの探索先を指定して開始できる。
+起動スタブで、両環境の絶対Python・探索パス・プロセス群・時間上限を照合する。

@@ -1,0 +1,5 @@
+{
+  "CONTROLLER_PYTHON": "/opt/colorstats/controller/bin/python",
+  "SAM3_PYTHON": "/opt/colorstats/sam3/bin/python",
+  "PYTHONPATH": "/opt/colorstats/src"
+}

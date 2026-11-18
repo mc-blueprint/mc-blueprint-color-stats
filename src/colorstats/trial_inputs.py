@@ -1,6 +1,5 @@
 """非本番VLM試行の選定・画像束。DBは明示した読取専用取引で参照する。"""
 
-import hashlib
 import io
 import json
 import os
@@ -19,6 +18,7 @@ from colorstats import image_gate, retention
 from colorstats.api_budget import digest
 from colorstats.rights import combine_license
 from colorstats.schema.models import Asset, AssetDuplicate, Retention, Source
+from colorstats.trial_native_common import private_path, sha, write_private
 
 SEED = 20261116
 SPLITS = {
@@ -27,10 +27,6 @@ SPLITS = {
 }
 SCENES = {"single", "interior", "group", "gate", "closeup", "terrain", "unknown"}
 SHA = re.compile(r"[0-9a-f]{64}")
-
-
-def sha(content):
-    return hashlib.sha256(content).hexdigest()
 
 
 def stamp(value):
@@ -189,21 +185,6 @@ def select_candidates(candidates, legacy, pairs=(), *, now=None):
     ]
 
 
-def private_path(root, relative):
-    """試行root内の通常ファイルだけを解決し、symlink・脱出を拒否する。"""
-    root = Path(root)
-    path = root / relative
-    if (
-        Path(relative).is_absolute()
-        or ".." in Path(relative).parts
-        or "\\" in str(relative)
-        or path.resolve() != path
-        or not path.is_relative_to(root)
-    ):
-        raise ValueError("試行内の相対パスが必要です")
-    return path
-
-
 def new_root(result_root):
     root = Path(result_root)
     if (
@@ -217,11 +198,6 @@ def new_root(result_root):
         raise ValueError("Gitの外にある新規・絶対・書込可能なresult_rootが必要です")
     root.mkdir(mode=0o700)
     return root
-
-
-def write_private(path, content):
-    with os.fdopen(os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as stream:
-        stream.write(content)
 
 
 def encoded(value):
