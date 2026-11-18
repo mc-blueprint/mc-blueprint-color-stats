@@ -116,11 +116,13 @@ def check_candidate(row, now):
         raise PermissionError("選定候補の期限が切れています")
 
 
-def select_candidates(candidates, legacy, pairs=(), *, now=None):
+def select_candidates(candidates, legacy, pairs=(), *, now=None, subject_phases=None):
     """旧108件・SHA/pHash・既知重複を除き、建物単位で6/24件へ固定選定する。
 
     legacyはdelivery-v3の提示SHAと108件の元SHA/pHashを持つ私有記録。
-    不足時は別区分で補充せずValueError。入力一覧の順に結果は依存しない。
+    subject_phasesは全候補のsubject_groupをtune/confirmへ割り当てる私有表。
+    指定時は表のとおり建物を分離し、同じphase内の複数写真は許容する。
+    不完全な表と不足はValueError。入力順に依存せず、元の表は変更しない。
     """
     now = now or datetime.now(UTC)
     if (
@@ -152,7 +154,12 @@ def select_candidates(candidates, legacy, pairs=(), *, now=None):
         parents[group(a)] = group(b)
     forbidden = {group(r["asset_id"]) for r in old}
     used = list(old)
-    phases = {}
+    if subject_phases is not None and (
+        set(subject_phases) != {r["subject_group"] for r in candidates}
+        or any(phase not in {"tune", "confirm"} for phase in subject_phases.values())
+    ):
+        raise ValueError("全候補の建物にtune/confirmを過不足なく指定してください")
+    phases = {} if subject_phases is None else dict(subject_phases)
     pool = sorted(candidates, key=lambda r: r["asset_id"])
     random.Random(SEED).shuffle(pool)
     chosen = []

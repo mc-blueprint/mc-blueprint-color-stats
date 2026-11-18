@@ -99,8 +99,136 @@ def test_固定seedと建物分離を入力順に依存せず再現する(candid
     )
 
 
+@pytest.fixture
+def phase_candidates(tmp_path, candidates, monkeypatch):
+    from colorstats import trial_inputs
+
+    template, legacy, now = candidates
+    splits = {
+        "tune": {"single": 4, "interior": 1, "group": 1},
+        "confirm": {"single": 16, "interior": 3, "group": 2, "closeup": 3},
+    }
+    monkeypatch.setattr(trial_inputs, "SPLITS", splits)
+    capacities = [
+        ("mixed", {"single": 3, "group": 4, "closeup": 1}),
+        ("four", {"single": 4}),
+        ("tune-single", {"single": 1}),
+        ("tune-interior", {"interior": 9}),
+        ("interior", {"interior": 3}),
+        ("cross", {"single": 2, "interior": 1, "group": 1}),
+        ("group", {"group": 1}),
+        ("two", {"single": 2}),
+        ("single-closeup", {"single": 1, "closeup": 1}),
+        *((f"single-{n}", {"single": 1}) for n in range(7)),
+        *((f"closeup-{n}", {"closeup": 1}) for n in range(7)),
+    ]
+    rows = []
+    for n in range(48):
+        path = tmp_path / f"phase-source-{n}.png"
+        Image.new("RGB", (64, 48), (n * 5, 80, 110)).save(path)
+        rows.append(
+            {
+                **template[0],
+                "asset_id": f"synthetic-{n:03}",
+                "source_sha256": sha(path.read_bytes()),
+                "phash": digest(["phase", n])[:16],
+                "path": str(path),
+            }
+        )
+    pool = list(rows)
+    random.Random(SEED).shuffle(pool)
+    for row, (subject, scene) in zip(
+        pool,
+        (
+            (subject, scene)
+            for subject, counts in capacities
+            for scene, count in counts.items()
+            for _ in range(count)
+        ),
+        strict=True,
+    ):
+        row.update(subject_group=subject, scene=scene)
+    phases = {
+        subject: "tune" if subject in {"mixed", "tune-single", "tune-interior"} else "confirm"
+        for subject, _ in capacities
+    }
+    return rows, legacy, now, phases, splits
+
+
+def test_建物別指定で先着選定の不足を解消し同じphaseの複数写真を準備する(
+    phase_candidates, tmp_path
+):
+    rows, legacy, now, phases, splits = phase_candidates
+    before = copy.deepcopy((rows, phases))
+    with pytest.raises(ValueError, match="confirm/single 必要16件・選定13件"):
+        select_candidates(rows, legacy, now=now)
+    selected = select_candidates(rows, legacy, now=now, subject_phases=phases)
+    assert selected == select_candidates(rows[::-1], legacy, now=now, subject_phases=phases)
+    assert (rows, phases) == before
+    assert Counter((r["split"], r["scene"]) for r in selected) == {
+        (phase, scene): count for phase, strata in splits.items() for scene, count in strata.items()
+    }
+    assert [r["trial_id"] for r in selected] == [f"T{i:03}" for i in range(1, 31)]
+    tune, confirm = selected[:6], selected[6:]
+    assert {r["split"] for r in tune} == {"tune"}
+    assert {r["split"] for r in confirm} == {"confirm"}
+    assert not ({r["subject_group"] for r in tune} & {r["subject_group"] for r in confirm})
+    mixed = [r for r in selected if r["subject_group"] == "mixed"]
+    assert Counter(r["scene"] for r in mixed) == {"single": 3, "group": 1}
+    assert all(phases[r["subject_group"]] == r["split"] for r in selected)
+    root = tmp_path / "reserved"
+    manifest = prepare(selected, root, now=now)
+    assert len(validate_package(root, manifest)["images"]) == 30
+
+
+@pytest.mark.parametrize("change", ["missing", "extra", "phase", "empty"])
+def test_不完全な建物phase表は保存前に拒否する(phase_candidates, tmp_path, change):
+    rows, legacy, now, phases, _ = phase_candidates
+    if change == "missing":
+        phases.pop(next(iter(phases)))
+    elif change == "extra":
+        phases["unknown"] = "confirm"
+    elif change == "phase":
+        phases["mixed"] = "unknown"
+    else:
+        phases.clear()
+    root = tmp_path / "invalid"
+    with pytest.raises(ValueError, match="全候補の建物"):
+        prepare(
+            select_candidates(rows, legacy, now=now, subject_phases=phases), root, now=now
+        )
+    assert not root.exists()
+
+
+def test_指定表で不足しても別建物へ割り当て直さない(phase_candidates):
+    rows, legacy, now, phases, _ = phase_candidates
+    phases["tune-single"] = "confirm"
+    before = dict(phases)
+    with pytest.raises(ValueError, match="tune/single 必要4件・選定3件"):
+        select_candidates(rows, legacy, now=now, subject_phases=phases)
+    assert phases == before
+
+
+@pytest.mark.parametrize("kind", ["sha", "phash", "relation"])
+def test_建物指定でも選定内の重複を除外する(candidates, kind):
+    rows, legacy, now = candidates
+    phases = {r["subject_group"]: "tune" if i < 6 else "confirm" for i, r in enumerate(rows)}
+    target = next(r for r in rows if r["scene"] == "gate")
+    other = rows[0]
+    pairs = []
+    if kind == "sha":
+        target["source_sha256"] = other["source_sha256"]
+    elif kind == "phash":
+        target["phash"] = f"{int(other['phash'], 16) ^ 63:016x}"
+    else:
+        pairs = [(target["asset_id"], other["asset_id"])]
+    with pytest.raises(ValueError, match="層不足"):
+        select_candidates(rows, legacy, pairs, now=now, subject_phases=phases)
+
+
 @pytest.mark.parametrize("kind", ["sha", "phash", "relation", "legacy", "subject"])
-def test_重複と建物分離で不足したら補充しない(candidates, kind):
+@pytest.mark.parametrize("reserved", [False, True])
+def test_重複と建物分離で不足したら補充しない(candidates, kind, reserved):
     rows, legacy, now = candidates
     target = next(r for r in rows if r["scene"] == "gate")
     pairs = []
@@ -116,8 +244,13 @@ def test_重複と建物分離で不足したら補充しない(candidates, kind
         for row in rows:
             if row["scene"] == "single":
                 row["subject_group"] = "same-building"
+    phases = (
+        {r["subject_group"]: "tune" if i < 6 else "confirm" for i, r in enumerate(rows)}
+        if reserved
+        else None
+    )
     with pytest.raises(ValueError, match="層不足"):
-        select_candidates(rows, legacy, pairs, now=now)
+        select_candidates(rows, legacy, pairs, now=now, subject_phases=phases)
 
 
 @pytest.mark.parametrize(
