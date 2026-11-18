@@ -68,6 +68,20 @@ def validate_plan(plan):
         d = plan["deployments"][key]
         c = plan["configurations"][key]
         runtime = d["runtime"]
+        registry = d["registry"]
+        version = d["min_cuda_version"]
+        if registry is not None and (
+            not isinstance(registry, str)
+            or not registry
+            or any(char.isspace() for char in registry)
+        ):
+            raise ValueError("registryにはcredential IDまたはnullが必要です")
+        if (
+            not isinstance(version, str)
+            or not re.fullmatch(r"[0-9]+\.[0-9]+", version)
+            or tuple(map(int, version.split("."))) < (13, 0)
+        ):
+            raise ValueError("CUDA下限は13.0以上のmajor.minorで指定してください")
         if (
             runtime["code_files"] != code_files()
             or digest(runtime["code_files"]) != c["code_sha256"]

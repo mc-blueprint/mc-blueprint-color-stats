@@ -147,26 +147,29 @@ class RunPod:
     @bounded
     def create(self, resource, deployment):
         """作成要求を再送しない。応答不明はnameで照合するまで未解決にする。"""
-        return self.request(
-            "POST",
-            "/pods",
-            {
-                "name": resource["name"],
-                "image": deployment["container"],
-                "gpu": {"id": deployment["gpu"], "count": deployment["gpu_count"]},
-                "dataCenterIds": [self.settings["region"]],
-                "cloud": "SECURE",
-                "disk": deployment["disk_gb"],
-                "mounts": {},
-                "env": {"HF_TOKEN": "{{ RUNPOD_SECRET_" + deployment["hf_secret_name"] + " }}"}
-                if deployment.get("hf_secret_name")
-                else {},
-                "ports": ["22/tcp"],
-                "startSsh": True,
-                "startJupyter": False,
-                "globalNetworking": False,
+        body = {
+            "name": resource["name"],
+            "image": deployment["container"],
+            "gpu": {
+                "id": deployment["gpu"],
+                "count": deployment["gpu_count"],
+                "minCudaVersion": deployment["min_cuda_version"],
             },
-        )
+            "dataCenterIds": [self.settings["region"]],
+            "cloud": "SECURE",
+            "disk": deployment["disk_gb"],
+            "mounts": {},
+            "env": {"HF_TOKEN": "{{ RUNPOD_SECRET_" + deployment["hf_secret_name"] + " }}"}
+            if deployment.get("hf_secret_name")
+            else {},
+            "ports": ["22/tcp"],
+            "startSsh": True,
+            "startJupyter": False,
+            "globalNetworking": False,
+        }
+        if deployment["registry"] is not None:
+            body["registry"] = deployment["registry"]
+        return self.request("POST", "/pods", body)
 
     @bounded
     def status(self, resource):

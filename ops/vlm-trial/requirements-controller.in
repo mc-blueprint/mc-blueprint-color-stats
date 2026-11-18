@@ -14,7 +14,7 @@ torchvision==0.26.0
 transformers==4.57.6
 vllm==0.20.0
 numpy>=2,<3
-sam2 @ https://github.com/facebookresearch/sam2/archive/2b90b9f5ceec907a1c18123530e92e794ad901a4.tar.gz#sha256=1f2fbfad3ffa38110368abac76c6ef9df9c282a66d5c2807bc94abf4d2fb30f8
+sam-2 @ https://github.com/facebookresearch/sam2/archive/2b90b9f5ceec907a1c18123530e92e794ad901a4.tar.gz#sha256=1f2fbfad3ffa38110368abac76c6ef9df9c282a66d5c2807bc94abf4d2fb30f8
 accelerate>=1,<2
 timm>=1.0.17
 einops>=0.8,<1
