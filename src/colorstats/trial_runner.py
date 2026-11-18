@@ -33,6 +33,13 @@ from colorstats.trial_inputs import (
     write_private,
 )
 from colorstats.trial_native import LIMITS, MODELS, PROMPT, SAM2
+from colorstats.trial_native_common import (
+    CONTROLLER_LOCK,
+    SAM3_LOCK,
+    SAM3_PYTHON,
+    code_files,
+    environment_reference,
+)
 from colorstats.trial_pages import build_pages
 from colorstats.trial_results import (
     accept_results,
@@ -60,13 +67,38 @@ def validate_plan(plan):
     for key in "ABCDE":
         d = plan["deployments"][key]
         c = plan["configurations"][key]
+        runtime = d["runtime"]
+        if (
+            runtime["code_files"] != code_files()
+            or digest(runtime["code_files"]) != c["code_sha256"]
+            or runtime["lock"]["file"] != CONTROLLER_LOCK
+            or not SHA.fullmatch(runtime["lock"]["sha256"])
+        ):
+            raise ValueError("実行コード・依存lockの固定参照が不正です")
+        if key == "E":
+            worker = runtime["sam3"]
+            if (
+                worker["python"] != SAM3_PYTHON
+                or worker["lock"]["file"] != SAM3_LOCK
+                or not SHA.fullmatch(worker["lock"]["sha256"])
+                or any(
+                    worker["versions"].get(k) != v
+                    for k, v in {
+                        "numpy": "1.26.4",
+                        "torch": "2.11.0",
+                        "torchvision": "0.26.0",
+                        "transformers": "4.57.6",
+                    }.items()
+                )
+            ):
+                raise ValueError("SAM3専用環境の固定参照が不正です")
         if (
             not re.fullmatch(r"[^\s]+@sha256:[0-9a-f]{64}", d["container"])
             or d["gpu_count"] not in {1, 2}
             or type(d["disk_gb"]) is not int
             or d["disk_gb"] < 1
             or not d["versions"]
-            or digest(d["versions"]) != c["environment_sha256"]
+            or digest(environment_reference(d["versions"], runtime)) != c["environment_sha256"]
             or c["processor_sha256"] != digest(LIMITS)
             or c["prompt_sha256"] != sha(PROMPT.encode())
             or not 0 < number(d["memory_fraction"]) < 1
@@ -532,6 +564,7 @@ class Runner:
                     "model",
                     "segmenter",
                     "versions",
+                    "runtime",
                     "memory_fraction",
                     "gpu_count",
                     "image_timeout_seconds",

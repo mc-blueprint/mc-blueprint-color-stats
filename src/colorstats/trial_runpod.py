@@ -14,6 +14,7 @@ from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from colorstats.trial_inputs import encoded, sha, stamp
+from colorstats.trial_native_common import python_command
 
 API = "https://api.runpod.io/v2"
 
@@ -239,9 +240,7 @@ class RunPod:
                     "nohup",
                     "timeout",
                     "1800",
-                    "python",
-                    "-m",
-                    "colorstats.trial_native",
+                    *python_command(),
                     "--directory",
                     remote,
                     "--phase",
@@ -256,9 +255,7 @@ class RunPod:
                     "nohup",
                     "timeout",
                     "120",
-                    "python",
-                    "-m",
-                    "colorstats.trial_native",
+                    *python_command(),
                     "--directory",
                     remote,
                     ">/dev/null",

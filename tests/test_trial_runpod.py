@@ -13,8 +13,9 @@ from PIL import Image
 
 from colorstats.trial_fake import synthetic_plan
 from colorstats.trial_inputs import sha
-from colorstats.trial_native import checked_boxes, provision, qwen, sa2va, sam2, sam3, verify_files
+from colorstats.trial_native import checked_boxes, provision, qwen, sa2va, sam2, verify_files
 from colorstats.trial_runpod import ProviderUnavailable, RunPod
+from colorstats.trial_sam3 import sam3
 
 
 def settings(tmp_path):
@@ -648,3 +649,54 @@ def test_独立期限監視はcontroller停止後も短縮期限を読み直す(
         assert not (job / "deadline.json").exists()
     finally:
         shutil.rmtree(root)
+
+
+@pytest.mark.parametrize("operation", ["prepare", "submit"])
+def test_SAM3専用環境の固定参照をSSH要求JSONへ保持する(tmp_path, operation):
+    captured = []
+
+    def transport(pod, action, remote, local=None):
+        if action == "put" and remote.endswith("request.json"):
+            captured.append(json.loads(local.read_text()))
+        return True
+
+    plan = synthetic_plan(tmp_path / "trial")
+    spec = {
+        "runtime": plan["deployments"]["E"]["runtime"],
+        "contract": plan["configurations"]["E"],
+    }
+    backend = RunPod(settings(tmp_path), audit=lambda event: None, transport=transport)
+    if operation == "prepare":
+        backend.prepare(pod(), resource(), spec)
+    else:
+        backend.submit(pod(), resource(), {"trial_id": "T001"}, b"synthetic", spec)
+    assert captured == [spec]
+
+
+@pytest.mark.parametrize("operation", ["prepare", "start"])
+def test_SSH起動は絶対Pythonと明示コードパスを使う(tmp_path, monkeypatch, operation):
+    from colorstats.trial_native_common import CODE_PATH, CONTROLLER_PYTHON
+
+    calls = []
+    monkeypatch.delenv("PYTHONPATH", raising=False)
+    monkeypatch.setenv("PATH", "/usr/bin:/bin")
+
+    def run(argv, **kwargs):
+        calls.append(argv)
+        return SimpleNamespace(returncode=0, stdout=b"", stderr=b"")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    backend = RunPod(settings(tmp_path), audit=lambda event: None)
+    backend._transport(pod(), operation, resource()["remote"] + "/T001")
+    argv = calls[0]
+    index = argv.index("/usr/bin/env")
+    assert argv[index : index + 5] == [
+        "/usr/bin/env",
+        f"PYTHONPATH={CODE_PATH}",
+        CONTROLLER_PYTHON,
+        "-m",
+        "colorstats.trial_native",
+    ]
+    assert Path(CONTROLLER_PYTHON).is_absolute()
+    assert Path(CODE_PATH).is_absolute()
+    assert "python" not in argv

@@ -1,14 +1,11 @@
 """承認後の専用containerで使うnative推論。通常importはGPUを要求しない。"""
 
 import argparse
-import importlib.metadata
-import io
 import json
 import os
 import re
 import signal
 import subprocess
-import sys
 import threading
 import time
 from datetime import UTC, datetime
@@ -18,7 +15,18 @@ import numpy as np
 from PIL import Image
 
 from colorstats.api_budget import digest
-from colorstats.trial_inputs import SCENES, private_path, sha, write_private
+from colorstats.trial_inputs import SCENES, sha, write_private
+from colorstats.trial_native_common import (
+    TEXT_PROMPTS,
+    box_from_mask,
+    check_environment,
+    environment_reference,
+    failure_code,
+    load_image,
+    python_command,
+    save_phase,
+    verify_files,
+)
 from colorstats.trial_results import PARTS
 
 MODELS = {
@@ -38,14 +46,6 @@ PROMPT = (
     "同じ部位が複数なら個別に答え、合計24領域まで。窓全体と窓ガラス・窓枠の重なりは許します。"
     + " ".join(f"{key}（{label}）は{definition}" for key, (label, definition) in PARTS.items())
 )
-TEXT_PROMPTS = {
-    "wall": "exterior building wall excluding roofs windows and doors",
-    "roof": "visible building roof excluding walls",
-    "window": "whole window including glass and surrounding frame",
-    "window_glass": "window glass excluding the surrounding frame",
-    "window_frame": "frame surrounding window glass excluding glass",
-    "door": "visible entrance door excluding the surrounding wall",
-}
 
 
 def checked_boxes(value):
@@ -69,15 +69,6 @@ def checked_boxes(value):
     return value
 
 
-def verify_files(directory, files):
-    """事前に固定したファイル一覧のSHAを照合する。初回算出値を正解にしない。"""
-    if not files:
-        raise ValueError("重み・設定・remote codeの固定一覧が必要です")
-    for record in files:
-        if sha(private_path(directory, record["file"]).read_bytes()) != record["sha256"]:
-            raise ValueError("取得物のSHAが一致しません")
-
-
 def provision(spec, directory):
     """固定revisionの必要ファイルを画像転送前に取得し、既知のSHAと照合する。"""
     from huggingface_hub import snapshot_download
@@ -92,13 +83,14 @@ def provision(spec, directory):
 
 
 def environment(spec):
-    if any(spec[k]["license_confirmed"] is not True for k in ("model", "segmenter")):
-        raise PermissionError("ライセンス確認が必要です")
-    for name, version in spec["versions"].items():
-        if importlib.metadata.version(name) != version:
-            raise ValueError("固定依存版が一致しません")
-    if sha(Path(__file__).read_bytes()) != spec["contract"]["code_sha256"]:
-        raise ValueError("native実行コードが一致しません")
+    check_environment(spec)
+    if digest(spec["runtime"]["code_files"]) != spec["contract"]["code_sha256"]:
+        raise ValueError("実行コードの固定参照が一致しません")
+    if (
+        digest(environment_reference(spec["versions"], spec["runtime"]))
+        != spec["contract"]["environment_sha256"]
+    ):
+        raise ValueError("実行環境の固定参照が一致しません")
 
 
 def qwen(spec, image):
@@ -225,52 +217,10 @@ def sa2va(spec, image):
     return scene, masks, max(usage)
 
 
-def box_from_mask(mask):
-    y, x = np.nonzero(mask)
-    return [
-        float(x.min() / mask.shape[1]),
-        float(y.min() / mask.shape[0]),
-        float((x.max() + 1) / mask.shape[1]),
-        float((y.max() + 1) / mask.shape[0]),
-    ]
-
-
-def sam3(spec, image):
-    import torch
-    from sam3.model.sam3_image_processor import Sam3Processor
-    from sam3.model_builder import build_sam3_image_model
-
-    model = build_sam3_image_model(
-        checkpoint_path=str(Path(spec["model_path"]) / "sam3.pt"),
-        load_from_HF=False,
-    ).float()
-    processor = Sam3Processor(model, confidence_threshold=0.5)
-    masks = []
-    with torch.inference_mode():
-        for part, prompt in TEXT_PROMPTS.items():
-            output = processor.set_text_prompt(prompt=prompt, state=processor.set_image(image))
-            for predicted in output["masks"]:
-                values = predicted.detach().cpu().numpy().squeeze() != 0
-                if values.shape != (image.height, image.width):
-                    raise ValueError("SAM3の画像座標が一致しません")
-                if values.any():
-                    masks.append((part, box_from_mask(values), values))
-            if len(masks) > 24:
-                raise ValueError("領域数上限です")
-    return "unsupported", masks
-
-
 def phase(spec, directory, name):
     """VLMとSAM2は別プロセスで実行し、CUDA常駐を分離する。"""
-    import torch
-
     environment(spec)
-    image = Image.open(directory / "input.png").convert("RGB")
-    if (
-        max(image.size) > 1024
-        or sha((directory / "input.png").read_bytes()) != spec["input_sha256"]
-    ):
-        raise ValueError("固定入力のSHA・長辺が一致しません")
+    image = load_image(spec, directory)
     tokens = 0
     started = time.monotonic()
     if name == "qwen":
@@ -283,43 +233,8 @@ def phase(spec, directory, name):
     elif name == "sa2va":
         scene, masks, tokens = sa2va(spec, image)
     else:
-        scene, masks = sam3(spec, image)
-    regions = []
-    for i, (part, box, mask) in enumerate(masks):
-        stream = io.BytesIO()
-        Image.fromarray(np.asarray(mask, dtype="uint8") * 255).save(stream, format="PNG")
-        if datetime.fromisoformat(spec["external_deadline"]) <= datetime.now(UTC):
-            raise ValueError("外部保持期限が切れました")
-        name_mask = f"mask-{i:02}.png"
-        write_private(directory / name_mask, stream.getvalue())
-        regions.append(
-            {
-                "part": part,
-                "box": box,
-                "mask": {
-                    "file": name_mask,
-                    "sha256": sha(stream.getvalue()),
-                },
-            }
-        )
-    peaks = [torch.cuda.max_memory_reserved(i) / 1048576 for i in range(torch.cuda.device_count())]
-    if spec["configuration_id"] in "ABC" and any(
-        torch.cuda.get_device_properties(i).total_memory / 1048576 - peak < 4096
-        for i, peak in enumerate(peaks)
-    ):
-        raise ValueError("GPUごとの4GiB余裕が不足しています")
-    write_private(
-        directory / f"{name}-output.json",
-        json.dumps(
-            {
-                "scene": scene,
-                "regions": regions,
-                "input_tokens": tokens,
-                "peak_vram_mib": max(peaks),
-                "elapsed_seconds": time.monotonic() - started,
-            }
-        ).encode(),
-    )
+        raise ValueError("SAM3は専用workerで実行してください")
+    save_phase(spec, directory, name, scene, masks, tokens, started)
 
 
 def run_phases(spec, directory, phases):
@@ -362,13 +277,10 @@ def run_phases(spec, directory, phases):
         for name in phases:
             subprocess.run(
                 [
-                    sys.executable,
-                    "-m",
-                    "colorstats.trial_native",
+                    *python_command(sam3=name == "sam3"),
                     "--directory",
                     str(directory),
-                    "--phase",
-                    name,
+                    *(["--phase", name] if name != "sam3" else []),
                 ],
                 check=True,
                 stdout=subprocess.DEVNULL,
@@ -442,26 +354,6 @@ def expire_job(directory, deadline, group=None):
                 path.unlink()
 
 
-def failure_code(error):
-    """外部へ例外の原文を出さず、停止判断に必要な分類だけを残す。"""
-    if type(error).__name__ == "OutOfMemoryError":
-        return "oom"
-    if isinstance(error, (ImportError, NotImplementedError)):
-        return "unsupported"
-    if isinstance(error, subprocess.TimeoutExpired):
-        return "timeout"
-    message = str(error)
-    for word, code in (
-        ("context", "context_limit"),
-        ("打ち切", "truncated"),
-        ("領域数", "region_limit"),
-        ("GPU", "vram_limit"),
-    ):
-        if word in message:
-            return code
-    return "invalid_output"
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--directory", type=Path, required=True)
@@ -479,9 +371,7 @@ def main():
             os.setsid()
         subprocess.Popen(
             [
-                sys.executable,
-                "-m",
-                "colorstats.trial_native",
+                *python_command(),
                 "--directory",
                 str(directory),
                 "--expire-only",

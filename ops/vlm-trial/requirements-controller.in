@@ -1,0 +1,27 @@
+alembic>=1.13,<2
+jsonschema>=4.23,<5
+duckdb==1.4.3
+ImageHash>=4.3,<5
+Pillow>=11,<13
+colour-science>=0.4.6,<0.5
+opencv-python-headless>=4.13,<5
+psycopg[binary]>=3.2,<4
+pyyaml>=6,<7
+sqlalchemy>=2.0,<2.1
+mcblueprint @ https://github.com/mc-blueprint/mc-blueprint/archive/6ece64ae40b5b2e3b23e0b566135eb0d7c8d5774.tar.gz#sha256=7bbea776efb03e01a7730f7041bdc9e0cd53a4798d1bc70bbdd28066cbe2f3aa
+torch==2.11.0
+torchvision==0.26.0
+transformers==4.57.6
+vllm==0.20.0
+numpy>=2,<3
+sam2 @ https://github.com/facebookresearch/sam2/archive/2b90b9f5ceec907a1c18123530e92e794ad901a4.tar.gz#sha256=1f2fbfad3ffa38110368abac76c6ef9df9c282a66d5c2807bc94abf4d2fb30f8
+accelerate>=1,<2
+timm>=1.0.17
+einops>=0.8,<1
+flash-attn==2.8.3
+ninja>=1.11,<2
+packaging>=24,<27
+psutil>=5,<8
+wheel>=0.45,<1
+setuptools>=77,<82
+hatchling>=1.27,<2

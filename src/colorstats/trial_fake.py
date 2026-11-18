@@ -8,14 +8,17 @@ from PIL import Image
 from colorstats.api_budget import digest
 from colorstats.trial_inputs import sha
 from colorstats.trial_native import LIMITS, MODELS, PROMPT, SAM2
+from colorstats.trial_native_common import (
+    CONTROLLER_LOCK,
+    SAM3_LOCK,
+    SAM3_PYTHON,
+    code_files,
+    environment_reference,
+)
 
 
 def synthetic_plan(root, *, concurrency=1, measurement=False, purpose="trial"):
     """合成検証用の固定形式を作る。ライセンス・重み・環境は実確認として扱わない。"""
-    from pathlib import Path
-
-    from colorstats import trial_native
-
     configurations, deployments = {}, {}
     for key, precision in zip("ABCDE", ["BF16", "BF16", "AWQ4", "BF16", "FP32"], strict=True):
         model = {
@@ -35,12 +38,27 @@ def synthetic_plan(root, *, concurrency=1, measurement=False, purpose="trial"):
         if key in "DE":
             segmenter = model
         versions = {"synthetic-unverified": "0"}
+        runtime = {
+            "code_files": code_files(),
+            "lock": {"file": CONTROLLER_LOCK, "sha256": sha(b"synthetic-controller-lock")},
+        }
+        if key == "E":
+            runtime["sam3"] = {
+                "python": SAM3_PYTHON,
+                "lock": {"file": SAM3_LOCK, "sha256": sha(b"synthetic-sam3-lock")},
+                "versions": {
+                    "numpy": "1.26.4",
+                    "torch": "2.11.0",
+                    "torchvision": "0.26.0",
+                    "transformers": "4.57.6",
+                },
+            }
         configurations[key] = {
             "model_revision": model["revision"],
             "weights_sha256": digest(model["files"]),
             "precision": precision,
-            "environment_sha256": digest(versions),
-            "code_sha256": sha(Path(trial_native.__file__).read_bytes()),
+            "environment_sha256": digest(environment_reference(versions, runtime)),
+            "code_sha256": digest(runtime["code_files"]),
             "prompt_sha256": sha(PROMPT.encode()),
             "processor_sha256": digest(LIMITS),
             "segmenter_revision": segmenter["revision"],
@@ -61,6 +79,7 @@ def synthetic_plan(root, *, concurrency=1, measurement=False, purpose="trial"):
             "image_timeout_seconds": 120,
             "prepare_timeout_seconds": 1800,
             "versions": versions,
+            "runtime": runtime,
             "model": model,
             "segmenter": segmenter,
         }
