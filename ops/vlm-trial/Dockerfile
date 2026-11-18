@@ -19,9 +19,11 @@ WORKDIR /opt/colorstats
 COPY ops/vlm-trial/requirements-tools.lock locks/tools.lock
 COPY ops/vlm-trial/requirements-controller.lock locks/controller.lock
 COPY ops/vlm-trial/requirements-sam3.lock locks/sam3.lock
+COPY ops/vlm-trial/uv.toml locks/uv.toml
 
 COPY src/colorstats/trial_paths.json src/colorstats/trial_paths.json
-RUN python3.12 - <<'PY'
+ENV MAX_JOBS=2 NVCC_THREADS=2 FLASH_ATTN_CUDA_ARCHS=80
+RUN --mount=type=cache,target=/root/.cache/uv python3.12 - <<'PY'
 import json
 import subprocess
 from pathlib import Path
@@ -36,7 +38,8 @@ for executable, lock in (
 ):
     subprocess.run(
         ["tools/bin/uv", "pip", "install", "--python", executable, "--require-hashes",
-         "--require-build-hashes", "--build-constraint", "locks/controller.lock", "-r", lock],
+         "--require-build-hashes", "--config-file", "locks/uv.toml",
+         "--build-constraint", "locks/controller.lock", "-r", lock],
         check=True,
     )
 PY

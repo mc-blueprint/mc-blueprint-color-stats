@@ -66,6 +66,8 @@ def synthetic_plan(root, *, concurrency=1, measurement=False, purpose="trial"):
         }
         deployments[key] = {
             "container": "synthetic/image@sha256:" + sha(b"not-a-container"),
+            "registry": None,
+            "min_cuda_version": "13.0",
             "gpu": "NVIDIA A40",
             "gpu_count": 2 if key in "BC" else 1,
             "disk_gb": 100,

@@ -287,7 +287,7 @@ def test_Dockerの環境作成と検査も共通パスを使用する(tmp_path, 
 
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(subprocess, "run", run)
-    scripts = re.findall(r"RUN python3.12 - <<'PY'\n(.*?)\nPY", docker, re.S)
+    scripts = re.findall(r"RUN (?:--mount=\S+ )?python3.12 - <<'PY'\n(.*?)\nPY", docker, re.S)
     assert len(scripts) == 2
     for script in scripts:
         exec(compile(script, "Dockerfile", "exec"), {})

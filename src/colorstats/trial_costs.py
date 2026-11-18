@@ -160,6 +160,8 @@ def deployment_signature(plan, key):
             **{
                 k: deployment[k]
                 for k in (
+                    "registry",
+                    "min_cuda_version",
                     "gpu",
                     "gpu_count",
                     "container",

@@ -338,9 +338,8 @@ OOM・期限切れ・例外は既存のfailure.jsonへ理由codeを保存し、�
 30件の比較ページまで検証する。入力・重み・worker・lock・依存版の差、
 保存前の期限短縮、OOM・例外、並列D/Eの終了も検証する。
 
-今回のlock確認はuvの依存解決と配布物SHAの固定まで。
-GPUパッケージの実install、コンテナbuild、CUDA ABI、実モデルのimport・
-画像推論・GPUごとのVRAM余裕は実行前の確認として残る。
+lock解決に加え、Issue #149で実install・コンテナbuildとGPU不要範囲のimportを検証する。
+CUDA ABI・画像推論・GPUごとのVRAM余裕は実GPU smokeで確認する。
 Dockerfile中の配備手順を実際に動かす段階でも、ユーザー許可の範囲を照合する。
 
 公式依存宣言は2026-11-18に確認した。
@@ -361,3 +360,50 @@ RunPodのprepare/start、通常側の子phase、SAM3 worker、独立した期限
 python_command()が作る絶対Pythonと明示PYTHONPATHの引数で起動する。
 OpenSSHがセッション環境を作り直した場合も、固定コードの探索先を指定して開始できる。
 起動スタブで、両環境の絶対Python・探索パス・プロセス群・時間上限を照合する。
+
+
+## containerの実buildと非公開registry（Issue #149）
+
+SAM2の配布名は`sam-2`、Pythonのimport名は`sam2`である。
+依存入力・uvの静的metadata・lock・依存版の照合には配布名を使い、
+source archiveの実metadataと照合する。
+
+各deploymentに`registry`と`min_cuda_version`を明示する。
+`registry`は本人がRunPodへ登録したcredential ID、または公開image用のnull。
+IDは空白を含まない空でない文字列とし、認証値は本人管理のRunPodへ登録する。
+`min_cuda_version`はmajor.minor形式で、このimageでは13.0以上を指定する。
+作成要求はIDをbodyの`registry`へ、CUDA下限を`gpu.minCudaVersion`へ渡す。
+nullの場合はregistry項目を省略する。作成前のplan検査で不正値を拒否する。
+
+両項目をdeployment_signatureへ含め、再開・高単価の採用根拠でも照合する。
+未実行の私有planは両項目と修正後のlock・コード・環境参照を再生成し、
+新しい試行として準備する。
+
+Windows Docker Desktopで次の手順を使い、linux/amd64のimageを実buildする。
+
+```sh
+docker buildx build --platform linux/amd64 --load --progress plain -f ops/vlm-trial/Dockerfile -t colorstats-vlm-trial:local .
+```
+
+contextにはDockerfile・lock・src・project metadataだけを含める。
+写真・モデル重み・秘密情報の混入を確認し、公式配布元の固定sourceと配布物SHAを照合する。
+完成image IDとサイズを記録し、ネットワーク無効の検査container内で各Python環境の
+`python -m pip check`、通常環境とSAM3環境のGPU不要範囲のimport、
+ツール環境のuv起動を確認する。Python・コードパスはtrial_paths.jsonの定義を使う。
+依存版とlock SHAを記録して構成参照へ結ぶ。
+GHCRへのpush・可視性設定、Pod作成・実GPU試行はそれぞれの実行許可を得て行う。
+
+
+FlashAttentionとSAM2の隔離buildにはtorchが必要なため、uv.tomlの
+extra-build-dependenciesで通常環境と同じtorch 2.11.0を指定する。
+Dockerfileは同じuv.tomlとhash付きbuild制約を使う。
+BuildKitのcache mountで取得・build用cacheを保持し、完成imageへのsource cache混入を抑える。
+
+今回のA40・L40S向けFlashAttentionはSM 8.0のcubinを生成する。
+同じmajor revisionでminorが高いGPUへのcubin互換性を利用し、
+MAX_JOBS=2・NVCC_THREADS=2で32GB程度のbuild環境の並列数を制限する。
+実GPUでの動作・VRAM確認は合成smokeで行う。
+
+[FlashAttentionの公式build手順](https://github.com/Dao-AILab/flash-attention/blob/v2.8.3/README.md)
+[固定版のbuild設定](https://github.com/Dao-AILab/flash-attention/blob/v2.8.3/setup.py)
+[NVIDIAのAmpere/Ada互換性](https://docs.nvidia.com/cuda/ada-compatibility-guide/index.html)

@@ -53,7 +53,11 @@ def page(key, rows, cursor=None):
 
 
 @pytest.mark.parametrize("hf_secret", [None, "synthetic-hf", "synthetic/hf"])
-def test_v2の作成payloadは地域GPUdigestとSSHだけへ固定する(tmp_path, hf_secret):
+@pytest.mark.parametrize("registry", [None, "synthetic-registry"])
+@pytest.mark.parametrize("cuda_version", ["13.0", "13.10", "14.0"])
+def test_v2の作成payloadへ認証参照CUDA地域GPUdigestとSSHを渡す(
+    tmp_path, hf_secret, registry, cuda_version
+):
     calls = []
     backend = RunPod(
         settings(tmp_path), audit=lambda e: None, request=lambda *args: calls.append(args) or pod()
@@ -61,6 +65,8 @@ def test_v2の作成payloadは地域GPUdigestとSSHだけへ固定する(tmp_pat
     plan = synthetic_plan(tmp_path)
     deployment = plan["deployments"]["A"]
     deployment["hf_secret_name"] = hf_secret
+    deployment["registry"] = registry
+    deployment["min_cuda_version"] = cuda_version
     from colorstats.trial_runner import validate_plan
 
     validate_plan(plan)
@@ -68,6 +74,15 @@ def test_v2の作成payloadは地域GPUdigestとSSHだけへ固定する(tmp_pat
     method, path, payload = calls[0]
     assert (method, path) == ("POST", "/pods")
     assert payload["cloud"] == "SECURE"
+    assert payload["gpu"] == {
+        "id": deployment["gpu"],
+        "count": deployment["gpu_count"],
+        "minCudaVersion": cuda_version,
+    }
+    if registry is None:
+        assert "registry" not in payload
+    else:
+        assert payload["registry"] == registry
     assert payload["dataCenterIds"] == ["US-TX-3"]
     assert payload["ports"] == ["22/tcp"]
     assert payload["startJupyter"] is False

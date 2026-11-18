@@ -159,7 +159,7 @@ def test_保存した実行状態から回収途中を再開できる(trial):
     assert len(replacement.state["resources"]) == 5
 
 
-@pytest.mark.parametrize("kind", ["config", "gpu", "manifest", "checkpoint"])
+@pytest.mark.parametrize("kind", ["config", "gpu", "registry", "cuda", "manifest", "checkpoint"])
 def test_再開時の固定参照変更を拒否する(trial, kind):
     root, plan, _, _ = trial
     runner = runner_for(trial)
@@ -168,6 +168,10 @@ def test_再開時の固定参照変更を拒否する(trial, kind):
         plan["configurations"]["A"]["code_sha256"] = "0" * 64
     elif kind == "gpu":
         plan["deployments"]["A"]["gpu"] = "other"
+    elif kind == "registry":
+        plan["deployments"]["A"]["registry"] = "changed-registry"
+    elif kind == "cuda":
+        plan["deployments"]["A"]["min_cuda_version"] = "14.0"
     elif kind == "manifest":
         path = root / "manifest.json"
         path.write_text(path.read_text() + " ")
@@ -631,7 +635,8 @@ def test_並列起動の一方が拒否されたら他方を新規起動しな�
 
 
 @pytest.mark.parametrize(
-    "variant", ["matching", "different_gpu", "expensive_baseline", "synthetic_inputs"]
+    "variant",
+    ["matching", "different_gpu", "registry", "cuda", "expensive_baseline", "synthetic_inputs"],
 )
 def test_高単価の採用は実測したGPUと低単価の基準へ結ぶ(trial, tmp_path, variant):
     from colorstats.trial_costs import deployment_signature
@@ -684,6 +689,10 @@ def test_高単価の採用は実測したGPUと低単価の基準へ結ぶ(tria
     }
     if variant == "different_gpu":
         plan["deployments"]["A"]["gpu"] = "NVIDIA H100 PCIe"
+    if variant == "registry":
+        plan["deployments"]["A"]["registry"] = "changed-registry"
+    elif variant == "cuda":
+        plan["deployments"]["A"]["min_cuda_version"] = "14.0"
     if variant == "matching":
         validate_plan(plan)
     else:
@@ -945,3 +954,19 @@ def test_元期限72時間から24時間へ短縮しても150件の受領確定�
     masks = [r for r in ledger["files"] if r["file"].startswith("received/")]
     assert len(masks) == 150
     assert all(stamp(mask["expires_at"]) == shorter for mask in masks)
+
+
+@pytest.mark.parametrize("registry", ["", " ", "two words", 1, False, []])
+def test_不正なregistry参照は作成要求前に拒否する(tmp_path, registry):
+    plan = synthetic_plan(tmp_path)
+    plan["deployments"]["A"]["registry"] = registry
+    with pytest.raises(ValueError, match="credential ID"):
+        validate_plan(plan)
+
+
+@pytest.mark.parametrize("version", [None, 13, "13", "12.9", "13.0.1", "13.0\n", "13.-1"])
+def test_不正なCUDA下限は作成要求前に拒否する(tmp_path, version):
+    plan = synthetic_plan(tmp_path)
+    plan["deployments"]["A"]["min_cuda_version"] = version
+    with pytest.raises(ValueError, match="CUDA下限"):
+        validate_plan(plan)
