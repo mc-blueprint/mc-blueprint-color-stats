@@ -82,7 +82,8 @@ def trial(queue, candidates):
     return queue.engine, rows, legacy, now, source_id
 
 
-def test_実DB読取と合成選定準備再検査が本番形式の行を更新しない(trial, tmp_path):
+@pytest.mark.parametrize("reserved", [False, True])
+def test_実DB読取と合成選定準備再検査が本番形式の行を更新しない(trial, tmp_path, reserved):
     engine, reviews, legacy, now, _ = trial
     with Session(engine) as session:
         before = (
@@ -91,8 +92,15 @@ def test_実DB読取と合成選定準備再検査が本番形式の行を更新
             .all()
         )
     rows, pairs = read_candidates(engine, reviews, now=now)
+    phases = (
+        {r["subject_group"]: "tune" if i < 6 else "confirm" for i, r in enumerate(rows)}
+        if reserved
+        else None
+    )
     root = tmp_path / "private"
-    prepare(select_candidates(rows, legacy, pairs, now=now), root, now=now)
+    prepare(
+        select_candidates(rows, legacy, pairs, now=now, subject_phases=phases), root, now=now
+    )
     assert recheck(engine, root, now=now) == now + timedelta(hours=24)
     with Session(engine) as session:
         assert (
