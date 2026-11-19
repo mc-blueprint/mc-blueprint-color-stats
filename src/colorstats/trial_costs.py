@@ -7,7 +7,7 @@ from pathlib import Path
 from colorstats.api_budget import digest
 from colorstats.trial_inputs import sha
 
-RESERVATIONS = {"A": 1.05, "B": 2.80, "C": 4.20, "D": 1.05, "E": 1.95}
+RESERVATIONS = {"A": 1.45, "B": 3.55, "C": 4.95, "D": 1.45, "E": 1.45}
 HOURS = {"A": 1.5, "B": 2, "C": 3, "D": 1.5, "E": 1.5}
 
 

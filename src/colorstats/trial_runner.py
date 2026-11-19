@@ -444,35 +444,28 @@ class Runner:
             used_seconds, leases = self.measurement_usage()
             if spent >= 3.5 or used_seconds >= 1800 or leases >= 4:
                 raise ValueError("測定の5USD・40分枠が不足しています")
+        prior_runs = self.budget.previous(self.state["run_id"]) if self.budget else []
+        resources = self.state["resources"] + [
+            r
+            for run in prior_runs
+            if run["purpose"] != "measurement"
+            for r in run["resources"]
+        ]
+        used = {
+            k: sum(r["estimated_usd"] for r in resources if r["configuration_id"] == k)
+            for k in "ABCDE"
+        }
         held = sum(
-            max(
-                0,
-                RESERVATIONS[k]
-                - sum(
-                    r["estimated_usd"]
-                    for r in self.state["resources"]
-                    if r["configuration_id"] == k
-                ),
-            )
+            max(0, RESERVATIONS[k] - used[k])
             for k in "ABCDE"
             if any(
                 r["configuration_id"] == k and r["status"] != "closed"
                 for r in self.state["resources"]
             )
         )
-        prior_runs = self.budget.previous(self.state["run_id"]) if self.budget else []
-        used = sum(
-            r["estimated_usd"] for r in self.state["resources"] if r["configuration_id"] == key
-        ) + sum(
-            r["estimated_usd"]
-            for run in prior_runs
-            if run["purpose"] != "measurement"
-            for r in run["resources"]
-            if r["configuration_id"] == key
-        )
-        if spent >= soft or spent + held + RESERVATIONS[key] - used > soft:
+        if spent >= soft or spent + held + RESERVATIONS[key] - used[key] > soft:
             raise ValueError("全体または構成別の費用予約が不足しています")
-        return RESERVATIONS[key] - used
+        return RESERVATIONS[key] - used[key]
 
     def measurement_usage(self):
         """共通台帳の過去測定と、現在runの有料資源時間・lease数を合算する。"""
