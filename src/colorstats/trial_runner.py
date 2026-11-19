@@ -64,7 +64,9 @@ def validate_plan(plan):
     ):
         raise ValueError("固定した提供元・地域・実行方式が必要です")
     configurations_valid(plan["configurations"])
-    for key in "ABCDE":
+    if set(plan["deployments"]) != set(plan["configurations"]):
+        raise ValueError("実行環境と構成の集合が一致しません")
+    for key in plan["configurations"]:
         d = plan["deployments"][key]
         c = plan["configurations"][key]
         runtime = d["runtime"]
@@ -254,7 +256,7 @@ class Runner:
                 "results": [],
                 "nonempty_results": [],
                 "active_attempts": {
-                    r["trial_id"]: dict.fromkeys("ABCDE", "not_started")
+                    r["trial_id"]: dict.fromkeys(plan["configurations"], "not_started")
                     for r in self.manifest["images"]
                 },
                 "failures": 0,
@@ -453,11 +455,11 @@ class Runner:
         ]
         used = {
             k: sum(r["estimated_usd"] for r in resources if r["configuration_id"] == k)
-            for k in "ABCDE"
+            for k in self.plan["configurations"]
         }
         held = sum(
             max(0, RESERVATIONS[k] - used[k])
-            for k in "ABCDE"
+            for k in self.plan["configurations"]
             if any(
                 r["configuration_id"] == k and r["status"] != "closed"
                 for r in self.state["resources"]
@@ -866,17 +868,23 @@ class Runner:
             return self.state["status"]
         done = {
             k
-            for k in "ABCDE"
+            for k in self.plan["configurations"]
             if sum(x["configuration_id"] == k for x in self.state["results"]) == 30
         }
-        if len(done) == 5 and all(r["status"] == "closed" for r in self.state["resources"]):
+        if done == set(self.plan["configurations"]) and all(
+            r["status"] == "closed" for r in self.state["resources"]
+        ):
             self.finalize()
             return self.state["status"]
         active = [r["configuration_id"] for r in self.state["resources"] if r["status"] != "closed"]
         allowed = (
             ["A"]
             if "A" not in done
-            else [k for k in ("BC" if not {"B", "C"} <= done else "DE") if k not in done]
+            else [
+                k
+                for k in ("BC" if not {"B", "C"} <= done else "DE")
+                if k in self.plan["configurations"] and k not in done
+            ]
         )
         for key in allowed:
             if len(active) >= self.plan["concurrency"]:

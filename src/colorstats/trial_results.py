@@ -60,8 +60,8 @@ STATUSES = {"success", "missing", "failed", "rejected", "truncated"}
 
 
 def configurations_valid(configurations):
-    if set(configurations) != set("ABCDE"):
-        raise ValueError("A～Eすべての構成が必要です")
+    if set(configurations) not in (set("ABCDE"), set("ABCE")):
+        raise ValueError("構成はABCDEまたはABCEに固定してください")
     for config in configurations.values():
         if (
             set(config) != CONFIG_FIELDS
@@ -73,14 +73,9 @@ def configurations_valid(configurations):
             )
         ):
             raise ValueError("モデル・重み・精度・環境・指示・分割器の固定参照が必要です")
-    if [configurations[k]["precision"] for k in "ABCDE"] != [
-        "BF16",
-        "BF16",
-        "AWQ4",
-        "BF16",
-        "FP32",
-    ]:
-        raise ValueError("承認済みA～Eの精度と一致しません")
+    precisions = {"A": "BF16", "B": "BF16", "C": "AWQ4", "D": "BF16", "E": "FP32"}
+    if any(config["precision"] != precisions[k] for k, config in configurations.items()):
+        raise ValueError("承認済み構成の精度と一致しません")
     if (
         len(
             {
@@ -166,7 +161,8 @@ def validate_result(root, manifest, configurations, row, *, active_attempts):
 
 
 def validate_results(root, manifest, configurations, results, *, active_attempts):
-    """全30×5件を一対一照合する。個々の検査は逐次回収と同じ関数を使う。"""
+    """30件×選択構成を一対一照合する。個々の検査は逐次回収と同じ関数を使う。"""
+    configurations_valid(configurations)
     seen = set()
     for row in results:
         validate_result(root, manifest, configurations, row, active_attempts=active_attempts)
@@ -174,8 +170,8 @@ def validate_results(root, manifest, configurations, results, *, active_attempts
         if key in seen:
             raise ValueError("対象・構成が重複しています")
         seen.add(key)
-    if seen != {(f"T{i:03}", c) for i in range(1, 31) for c in "ABCDE"}:
-        raise ValueError("30件×A～Eの状態に不足があります")
+    if seen != {(f"T{i:03}", c) for i in range(1, 31) for c in configurations}:
+        raise ValueError("30件×選択構成の状態に不足があります")
 
 
 def _pending_masks(manifest, results, ledger, now):

@@ -805,3 +805,73 @@ def test_再読込みとHTML生成も受領時と同じmask登録条件を使う
         with pytest.raises(ValueError, match="mask"):
             operation(root, now=now)
     assert path.read_bytes() == before
+
+@pytest.mark.parametrize("kind", ["selected_out", "missing", "duplicate", "unknown"])
+def test_四構成の選択外不足重複未知構成を受領しない(tmp_path, kind):
+    root = tmp_path / "contract-four"
+    demo(root)
+    manifest, configurations, results = read_results(root)
+    del configurations["D"]
+    if kind == "unknown":
+        configurations["F"] = configurations.pop("E")
+    elif kind == "missing":
+        results = [r for r in results if r["configuration_id"] != "D"][:-1]
+    elif kind == "duplicate":
+        results = [r for r in results if r["configuration_id"] != "D"]
+        results[-1] = results[0]
+    with pytest.raises(ValueError):
+        validate_results(
+            root, manifest, configurations, results, active_attempts=attempts(root)
+        )
+
+
+@pytest.mark.parametrize("operation", ["accept", "render"])
+def test_空構成と空結果を受領もrenderも確定しない(tmp_path, monkeypatch, operation):
+    from colorstats.trial_cli import main, synthetic_inputs
+
+    root = tmp_path / "empty"
+    synthetic_inputs(root)
+    before = (root / "file-ledger.json").read_bytes()
+    if operation == "accept":
+        with pytest.raises(ValueError, match="ABCDEまたはABCE"):
+            accept_results(root, {}, [], active_attempts={})
+    else:
+        paths = {}
+        for name, value in (("configurations", {}), ("results", []), ("active-attempts", {})):
+            paths[name] = tmp_path / f"{name}.json"
+            paths[name].write_text(json.dumps(value))
+        monkeypatch.setattr(
+            "sys.argv",
+            [
+                "trial", "render", "--result-root", str(root),
+                "--configurations", str(paths["configurations"]),
+                "--results", str(paths["results"]),
+                "--active-attempts", str(paths["active-attempts"]),
+            ],
+        )
+        with pytest.raises(ValueError, match="ABCDEまたはABCE"):
+            main()
+    assert (root / "file-ledger.json").read_bytes() == before
+    assert not (root / "results.json").exists()
+    assert not (root / "pages").exists()
+
+
+@pytest.mark.parametrize("operation", [read_results, build_pages])
+def test_保存済みの空構成と空結果も再読込みとHTML生成で拒否する(tmp_path, operation):
+    from colorstats.trial_cli import synthetic_inputs
+    from colorstats.trial_inputs import add_files, encoded, write_private
+
+    root = tmp_path / "empty-saved"
+    manifest = synthetic_inputs(root)
+    expiry = manifest["images"][0]["local_expires_at"]
+    for name, value in (("configurations", {}), ("results", []), ("active-attempts", {})):
+        blob = encoded(value)
+        filename = f"{name}.json"
+        add_files(root, [{"file": filename, "sha256": sha(blob), "expires_at": expiry}])
+        write_private(root / filename, blob)
+    before = (root / "file-ledger.json").read_bytes()
+    with pytest.raises(ValueError, match="ABCDEまたはABCE"):
+        operation(root)
+    assert (root / "file-ledger.json").read_bytes() == before
+    assert not (root / "pages").exists()
+    assert not (root / "number-map.json").exists()
