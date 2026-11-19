@@ -351,6 +351,111 @@ def test_測定40分上限で新規処理を止める(trial):
     assert drive(runner) == "stopped"
 
 
+@pytest.mark.parametrize("key", list("ABCDE"))
+def test_smoke通算後も全構成の本試行時間を確保する(trial, key):
+    _, plan, backend, _ = trial
+    hours = {"A": 1.5, "B": 2, "C": 3, "D": 1.5, "E": 1.5}
+    rates = {k: (0.59 * (2 if k in "BC" else 1) + 200 * 0.10 / 720) * 1.10 for k in hours}
+    smoke = {k: rates[k] * 0.5 for k in hours}
+    nominal = {k: smoke[k] + rates[k] * hours[k] for k in hours}
+    assert all(RESERVATIONS[k] >= nominal[k] * 1.06 for k in hours)
+    assert sum(RESERVATIONS.values()) < 13
+    for k, deployment in plan["deployments"].items():
+        deployment.update(usd_hour=rates[k], time_seconds=hours[k] * 3600, cleanup_seconds=120)
+
+    with Budget(Path(plan["budget_ledger"]), 15) as budget:
+        budget.data["runs"]["smoke"] = {
+            "synthetic": True,
+            "purpose": "smoke",
+            "failures": 0,
+            "resources": [
+                {"configuration_id": k, "status": "closed", "estimated_usd": smoke[k]}
+                for k in hours
+            ],
+        }
+        budget.data["runs"]["previous-main"] = {
+            "synthetic": True,
+            "purpose": "trial",
+            "failures": 0,
+            "resources": [
+                {
+                    "configuration_id": k,
+                    "status": "closed",
+                    "estimated_usd": rates[k] * hours[k],
+                }
+                for k in "ABCDE"[: "ABCDE".index(key)]
+            ],
+        }
+        runner = runner_for(trial, budget=budget)
+        assert runner.reserve(key) == pytest.approx(RESERVATIONS[key] - smoke[key])
+        runner.start(key)
+        assert runner.state["resources"][0]["limit_seconds"] == hours[key] * 3600
+        assert backend.events.count("create") == 1
+        runner.stop("test")
+        assert drive(runner) == "stopped"
+        assert not backend.pods
+
+
+@pytest.mark.parametrize("prior_total,accepted", [(9.92, True), (10.11, False)])
+def test_並列構成のsmoke費用を二重予約しない(trial, prior_total, accepted):
+    _, plan, backend, _ = trial
+    plan["concurrency"] = 2
+    smoke = 0.339778
+    with Budget(Path(plan["budget_ledger"]), 15) as budget:
+        budget.data["runs"]["prior-main"] = {
+            "synthetic": True,
+            "purpose": "trial",
+            "failures": 0,
+            "resources": [
+                {"configuration_id": k, "status": "closed", "estimated_usd": usd}
+                for k, usd in zip("ABC", [1.44, 3.54, prior_total - 4.98], strict=True)
+            ],
+        }
+        budget.data["runs"]["smoke"] = {
+            "synthetic": True,
+            "purpose": "smoke",
+            "failures": 0,
+            "resources": [
+                {"configuration_id": k, "status": "closed", "estimated_usd": smoke}
+                for k in "DE"
+            ],
+        }
+        runner = runner_for(trial, budget=budget)
+        runner.start("D")
+        if accepted:
+            assert prior_total + RESERVATIONS["D"] + RESERVATIONS["E"] == pytest.approx(12.82)
+            runner.start("E")
+            assert backend.events.count("create") == 2
+            assert runner.state["stop_reason"] is None
+            assert all(r["status"] == "running" for r in runner.state["resources"])
+        else:
+            with pytest.raises(ValueError, match="費用予約"):
+                runner.start("E")
+            assert backend.events.count("create") == 1
+        runner.stop("test")
+        assert drive(runner) == "stopped"
+        assert not backend.pods
+
+
+@pytest.mark.parametrize("key", list("ABCDE"))
+def test_smokeで構成別枠を消費したら本試行を起動しない(trial, key):
+    _, plan, backend, _ = trial
+    with Budget(Path(plan["budget_ledger"]), 15) as budget:
+        budget.data["runs"]["smoke"] = {
+            "synthetic": True,
+            "purpose": "smoke",
+            "failures": 0,
+            "resources": [
+                {"configuration_id": key, "status": "closed", "estimated_usd": RESERVATIONS[key]}
+            ],
+        }
+        runner = runner_for(trial, budget=budget)
+        assert runner.reserve(key) == pytest.approx(0)
+        with pytest.raises(ValueError, match="残り時間"):
+            runner.start(key)
+    assert backend.events == []
+
+
 def test_構成別USD予約から高単価の時間上限を逆算する():
     d = {"usd_hour": 3, "fixed_usd": 0.2, "time_seconds": 10800}
     assert time_limit("C", d) == pytest.approx((RESERVATIONS["C"] - 0.2) / 3 * 3600)
