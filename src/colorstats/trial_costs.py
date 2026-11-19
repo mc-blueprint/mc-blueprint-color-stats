@@ -76,7 +76,7 @@ def summary(state):
     """失敗・再試行・固定費込みの構成別USD/予定件数・正常件数を集計する。"""
     rows = []
     nonempty = {tuple(key) for key in state["nonempty_results"]}
-    for key in "ABCDE":
+    for key in sorted(state["active_attempts"]["T001"]):
         expenses = [r for r in state["resources"] if r["configuration_id"] == key]
         total = sum(r["estimated_usd"] for r in expenses)
         success = sum(

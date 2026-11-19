@@ -52,10 +52,11 @@ def _card(root, image, outputs):
     with Image.open(root / image["input"]["file"]) as source:
         uri = jpeg(source)
     photo = image_tag(uri, f"番号{number} もとの写真", "original")
-    order = list("ABCDE")
+    display_labels = "ABCDE"[:len(outputs)]
+    order = sorted(outputs)
     random.Random(SEED + number).shuffle(order)
     parts = [f'<article id="n{number}" style="--photo:url(\'{uri}\')"><h2>番号{number}</h2>{photo}']
-    for label, config in zip("ABCDE", order, strict=True):
+    for label, config in zip(display_labels, order, strict=True):
         row = outputs[config]
         parts.append(
             f"<section><h3>案{label}</h3><p>{STATE_NAMES[row['status']]}／"
@@ -84,7 +85,7 @@ def _card(root, image, outputs):
         "number": number,
         "trial_id": image["trial_id"],
         "split": image["split"],
-        "positions": dict(zip("ABCDE", order, strict=True)),
+        "positions": dict(zip(display_labels, order, strict=True)),
     }
 
 
@@ -105,7 +106,7 @@ content="default-src 'none'; img-src data:; style-src 'unsafe-inline'">
 <title>写真の比較 {phase}</title><style>{STYLE}</style></head><body>
 <h1>写真の比較：{phase}</h1><p>{warning}</p>
 <p>番号ごとに、写真と線を比べてください。線のない場所の色は隠していません。
-案A～Eの並びは番号ごとに違います。同じ文字でも別の番号では同じ方式を指しません。</p>
+案の並びは番号ごとに違います。同じ文字でも別の番号では同じ方式を指しません。</p>
 <p>まず最初の6枚を確認し、どれも使えなければ残りの確認を中止できます。
 続きのファイルを作ったことだけで、確認を終えたとは扱いません。</p>
 <p>返信は「1: A,C」のように使えそうな案を複数書くか、「1: なし」「1: 不明」と書いてください。
@@ -120,13 +121,13 @@ content="default-src 'none'; img-src data:; style-src 'unsafe-inline'">
 
 
 def build_pages(result_root, *, limit=LIMIT, now=None):
-    """受領済み150結果を照合し、6枚と24枚を混ぜずbyte上限内で分割する。
+    """受領済みの30件×選択構成の結果を照合し、6枚と24枚を混ぜずbyte上限内で分割する。
 
     ページSHA・入力manifest SHA・結果SHA・構成SHA・位置表を私有番号表へ結ぶ。
     本番提示登録や旧返信取込みは呼び出さない。既存ページは上書きしない。
     """
     root = Path(result_root)
-    manifest, _, results = read_results(root, now=now)
+    manifest, configurations, results = read_results(root, now=now)
     if not 0 < limit <= LIMIT:
         raise ValueError("HTMLの上限は12,500,000 byte以下です")
     if (root / "pages").exists() or (root / "number-map.json").exists():
@@ -137,7 +138,9 @@ def build_pages(result_root, *, limit=LIMIT, now=None):
         cards, numbers = [], []
         batches = []
         for image in (r for r in manifest["images"] if r["split"] == split):
-            card, row = _card(root, image, {c: outputs[image["trial_id"], c] for c in "ABCDE"})
+            card, row = _card(
+                root, image, {c: outputs[image["trial_id"], c] for c in configurations}
+            )
             mapping.append(row)
             if len(page([card], split, manifest["synthetic"]).encode()) > limit:
                 raise ValueError("1番号分のHTMLが容量上限を超えました")

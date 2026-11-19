@@ -59,22 +59,37 @@ def drive(runner, maximum=500):
 
 
 @pytest.mark.parametrize("concurrency", [1, 2])
-def test_合成30件を起動回収150結果受領比較削除費用記録まで通す(trial, concurrency):
+@pytest.mark.parametrize("configuration_ids", ["ABCDE", "ABCE"])
+def test_合成30件を選択構成で起動回収受領比較削除費用記録まで通す(
+    trial, concurrency, configuration_ids
+):
     root, plan, backend, _ = trial
     plan["concurrency"] = concurrency
+    if configuration_ids == "ABCE":
+        del plan["configurations"]["D"]
+        del plan["deployments"]["D"]
+    count = len(configuration_ids)
     with writer(root):
         runner = runner_for(trial)
         assert drive(runner) == "complete"
-    assert len(read_results(root)[2]) == 150
-    assert len(runner.state["resources"]) == 5
+    assert len(read_results(root)[2]) == 30 * count
+    assert len(runner.state["resources"]) == count
     assert all(r["status"] == "closed" for r in runner.state["resources"])
     assert not backend.pods and not backend.jobs
-    assert len(backend.deleted) == 5
-    assert backend.events.count("submit") == 150
-    assert backend.events.count("remove_image") == 150
+    assert len(backend.deleted) == count
+    assert backend.events.count("submit") == 30 * count
+    assert backend.events.count("remove_image") == 30 * count
     assert len(json.loads((root / "number-map.json").read_text())["rows"]) == 30
     assert all(r["billed_usd"] == 0 for r in runner.state["cost_summary"])
     assert all(r["nonempty_success_count"] == 30 for r in summary(runner.state))
+    assert {r["configuration_id"] for r in runner.state["cost_summary"]} == set(configuration_ids)
+    table = json.loads((root / "number-map.json").read_text())
+    assert all(set(row["positions"].values()) == set(configuration_ids) for row in table["rows"])
+    assert all(set(row["positions"]) == set("ABCDE"[:count]) for row in table["rows"])
+    assert all(
+        set(row) == set(configuration_ids) for row in runner.state["active_attempts"].values()
+    )
+
 
 
 def test_実接続扱いは送信課金許可なしでは起動前に止まる(trial):
@@ -1075,3 +1090,63 @@ def test_不正なCUDA下限は作成要求前に拒否する(tmp_path, version)
     plan["deployments"]["A"]["min_cuda_version"] = version
     with pytest.raises(ValueError, match="CUDA下限"):
         validate_plan(plan)
+
+@pytest.mark.parametrize("missing", list("ABCE"))
+def test_必須構成の省略は起動前に拒否する(trial, missing):
+    _, plan, backend, _ = trial
+    del plan["configurations"][missing]
+    del plan["deployments"][missing]
+    with pytest.raises(ValueError, match="ABCDEまたはABCE"):
+        runner_for(trial)
+    assert backend.events == []
+
+
+def test_実行環境に選択外Dを残したplanを拒否する(trial):
+    _, plan, backend, _ = trial
+    del plan["configurations"]["D"]
+    with pytest.raises(ValueError, match="集合"):
+        runner_for(trial)
+    assert backend.events == []
+
+
+def test_再開時にDの追加省略を拒否する(trial):
+    runner = runner_for(trial)
+    runner.tick()
+    del trial[1]["configurations"]["D"]
+    del trial[1]["deployments"]["D"]
+    with pytest.raises(ValueError):
+        runner_for(trial)
+
+
+def test_四構成smokeと本試行で同一構成と共通USD台帳を維持する(trial):
+    root, plan, backend, clock = trial
+    for field in ("configurations", "deployments"):
+        del plan[field]["D"]
+    plan["purpose"] = "smoke"
+    with Budget(Path(plan["budget_ledger"]), 15) as budget:
+        smoke = runner_for(trial, budget=budget)
+        assert drive(smoke) == "complete"
+        assert len(smoke.state["results"]) == 120
+        assert sum(r["status"] == "success" for r in smoke.state["results"]) == 12
+        for r in smoke.state["resources"]:
+            r["estimated_usd"] = 0.1
+        smoke.save("synthetic_cost")
+        signature = smoke.model_signature()
+
+        second_root = root.parent / "main-four"
+        synthetic_inputs(second_root)
+        second_plan = synthetic_plan(second_root)
+        for field in ("configurations", "deployments"):
+            del second_plan[field]["D"]
+        second_plan["budget_ledger"] = plan["budget_ledger"]
+        second = Runner(
+            second_plan, FakeRunPod(plan["region"]), fake=True,
+            budget=budget, clock=clock.now, monotonic=lambda: clock.seconds,
+        )
+        assert second.model_signature() == signature
+        assert second.spending() == pytest.approx(0.4)
+        assert second.reserve("A") == pytest.approx(RESERVATIONS["A"] - 0.1)
+        assert drive(second) == "complete"
+        assert len(read_results(second_root)[2]) == 120
+        second.plan["configurations"]["D"] = synthetic_plan(second_root)["configurations"]["D"]
+        assert second.model_signature() != signature

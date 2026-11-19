@@ -416,3 +416,16 @@ MAX_JOBS=2・NVCC_THREADS=2で32GB程度のbuild環境の並列数を制限す�
 [FlashAttentionの公式build手順](https://github.com/Dao-AILab/flash-attention/blob/v2.8.3/README.md)
 [固定版のbuild設定](https://github.com/Dao-AILab/flash-attention/blob/v2.8.3/setup.py)
 [NVIDIAのAmpere/Ada互換性](https://docs.nvidia.com/cuda/ada-compatibility-guide/index.html)
+
+
+## 構成Dを省略する試行
+
+実行planのconfigurationsとdeploymentsからDを共に除き、両集合を一致させる。
+受領契約で認める集合・件数・匿名比較は[試行契約](vlm-trial.md#構成dを省略する試行)に従う。
+起動順はA→B/C→Eとなり、Dを起動したりダミー結果を作ったりしない。
+
+既存のplan SHA・model_settings_sha256には構成集合が含まれるため、集合を変えた
+再開やsmoke記録の流用は拒否する。構成を変える場合は新規runと対応する記録を作る。
+smoke・本試行・再試行の共通USD台帳は継続し、Dを省略しても過去runの支出は除外しない。
+A/B/C/Eの共有枠は1.45/3.55/4.95/1.45 USD（計11.40 USD）で、
+新規起動停止13 USD・全体上限15 USDと既存時間制限を変更しない。
