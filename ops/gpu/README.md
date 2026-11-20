@@ -6,6 +6,10 @@
 - PyTorchのCUDA同梱wheelを一時venvに導入する。リポジトリ依存には追加しない。
 - WSL2ではWindows側のNVIDIAドライバーを使い、WSL内にLinux用NVIDIAドライバーを導入しない。
 
+## 現行構成（2026-11-20）
+
+ubuntu-1でRTX 4070、NVIDIA driver `595.99.02`、`nvidia-smi`のCUDA表示`13.2`を確認済みです。PyTorchのCUDA計算はこの移設確認では再試験していません。旧GPUホストの設定をそのまま適用しないでください。
+
 ## Ubuntuホスト
 
 推奨ドライバーを確認して導入する。
@@ -18,20 +22,13 @@ sudo apt-get install -y nvidia-driver-595-open
 
 カーネルモジュールを有効にするため再起動が必要。再起動後に `uptime -s`、`nvidia-smi` で起動時刻、GPU名、VRAM、ドライバー版、CUDA版を確認する。
 
-ホストごとの一時環境:
+Ubuntuの一時確認環境:
 
 ```sh
-# ubuntu-1
 sudo apt-get install -y python3-venv
 sudo mkdir -p /opt/colorstats/venvs
 sudo python3 -m venv /opt/colorstats/venvs/gpucheck
 sudo /opt/colorstats/venvs/gpucheck/bin/pip install torch --index-url https://download.pytorch.org/whl/cu128
-
-# ubuntu-2
-sudo apt-get install -y python3-venv
-sudo mkdir -p /mnt/data/venvs
-sudo python3 -m venv /mnt/data/venvs/gpucheck
-sudo /mnt/data/venvs/gpucheck/bin/pip install torch --index-url https://download.pytorch.org/whl/cu128
 ```
 
 再起動後の確認:
@@ -41,8 +38,6 @@ uptime -s
 nvidia-smi
 /opt/colorstats/venvs/gpucheck/bin/python -c 'import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available(), torch.cuda.get_device_name(0)); x=torch.randn((512,512)).cuda(); y=x@x; torch.cuda.synchronize(); print(y.shape, y.device)'
 ```
-
-ubuntu-2ではvenvのパスを `/mnt/data/venvs/gpucheck/bin/python` に置き換える。
 
 ## WSL2
 
@@ -67,7 +62,7 @@ nvidia-smi
 
 PyTorch wheelはCUDA runtimeと必要ライブラリをvenv内へ含む。`nvidia-smi` のCUDA表示はドライバーがサポートする上限であり、PyTorchの実行runtime版は `torch.version.cuda` で確認する。
 
-## 実施結果（2026-11-01）
+## 初回導入記録（2026-11-01、履歴）
 
 - ubuntu-1: `nvidia-driver-595-open` 595.99.02は前任が導入済み。再起動待ち。
 - ubuntu-2: RTX 4070を確認し、`nvidia-driver-595-open` を導入。再起動待ち。カーネルドライバーは未ロードで、現時点の `nvidia-smi` は失敗。
@@ -76,7 +71,7 @@ PyTorch wheelはCUDA runtimeと必要ライブラリをvenv内へ含む。`nvidi
 - WSL2: PyTorch `2.11.0+cu128`、`torch.version.cuda=12.8`、`torch.cuda.is_available()=True`、GPU名 `NVIDIA GeForce RTX 4070 SUPER`。512×512 CUDA行列積が完了し、結果は `cuda:0` 上。
 - ubuntu-1の `uptime -s` は `2026-11-01 04:27:34`、ubuntu-2は `2026-11-01 04:27:46`。導入後の再起動はまだ。再起動後に `nvidia-smi` と上記PyTorch確認を実施する。
 
-## 再起動後の確認（2026-11-01）
+## 移設前の再起動後確認（2026-11-01、履歴）
 
 | ホスト | GPU | VRAM | Driver | `nvidia-smi` CUDA | PyTorch / runtime CUDA | CUDA演算 |
 | --- | --- | ---: | --- | --- | --- | --- |

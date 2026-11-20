@@ -161,6 +161,8 @@ def main():
         if should_remount_readonly(disk, events):
             BLOCKED.mkdir(parents=True, exist_ok=True)
             (BLOCKED / disk["uuid"]).touch()
+            if disk["mount"] == "/":
+                continue
             try:
                 mounted = run(["findmnt", "-n", "-o", "UUID", "--mountpoint", disk["mount"]])
                 if mounted.strip() != disk["uuid"]:

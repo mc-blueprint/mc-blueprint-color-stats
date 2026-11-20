@@ -64,6 +64,11 @@ def config_hash(stage: str, payload: dict, version: str) -> str:
     ).hexdigest()
 
 
+def derived_mount_available(derived: Path) -> bool:
+    """derivedの親にあたるデータファイルシステムがmount済みか確認する。"""
+    return derived.parent.is_mount()
+
+
 def report(engine, config: dict) -> dict:
     """DBの実績・失敗と参照済みファイルの容量を読み取る。未参照ファイルは含めない。"""
     with Session(engine) as session:
@@ -142,7 +147,7 @@ def main():
                         seed_path.write_text(json.dumps(seed + 1))
                         print(json.dumps({"seed": seed, "planned": len(ids)}), flush=True)
                 # 共有が未整備でも収集は継続し、解析はマウント確認後だけ投入する。
-                if args.derived.is_mount():
+                if derived_mount_available(args.derived):
                     enqueue_analysis(queue, args.derived, args.analysis_version or args.version)
             snapshot = report(engine, config)
             temporary = args.state / "report.tmp"

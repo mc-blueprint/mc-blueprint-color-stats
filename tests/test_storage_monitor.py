@@ -9,6 +9,8 @@ import pytest
 from ops.storage import monitor
 from ops.storage.monitor import abnormal, should_remount_readonly, smart_values
 
+from colorstats.queue import storage as queue_storage
+
 
 class StorageMonitorTests(unittest.TestCase):
     def test_first_sample_establishes_baseline(self):
@@ -111,6 +113,25 @@ def test_failed_medium_is_blocked_and_other_media_are_checked(tmp_path, monkeypa
     state = json.loads((tmp_path / "state.json").read_text())
     assert state["bad"]["error"] and state["good"]["temperature"] == 35
     assert "remount_failed" in (tmp_path / "events.jsonl").read_text()
+
+
+def test_root_raw_disk_is_blocked_without_remount_and_stops_collect_prep(tmp_path, monkeypatch):
+    config = tmp_path / "disks.json"
+    config.write_text(json.dumps({"disks": [{"uuid": "root", "raw": True, "mount": "/"}]}))
+    blocked = tmp_path / "blocked"
+    for name, value in {"CONFIG": config, "STATE": tmp_path / "state.json",
+                        "LOG": tmp_path / "events.jsonl", "BLOCKED": blocked}.items():
+        monkeypatch.setattr(monitor, name, value)
+    monkeypatch.setattr(monitor, "kernel_logs", lambda: "")
+    with patch.object(monitor, "inspect_disk", side_effect=ValueError("smart_health")), \
+            patch.object(monitor, "run") as run:
+        monitor.main()
+    assert (blocked / "root").exists()
+    run.assert_not_called()
+    monkeypatch.setattr(queue_storage, "CONFIG", config)
+    monkeypatch.setattr(queue_storage, "BLOCKED", blocked)
+    assert not queue_storage.storage_available("collect")
+    assert not queue_storage.storage_available("prep")
 
 
 @pytest.mark.parametrize("temperatures,blocked", [

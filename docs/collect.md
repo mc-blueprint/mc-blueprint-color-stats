@@ -329,6 +329,8 @@ DBテストはTEST_DATABASE_URLの専用schemaを使用し、実通信なしで�
 
 #### 2026-11-02の不通再調査（Issue #43）
 
+> 履歴記録：この比較にあるubuntu-2の測定値は当時の記録です。現行の収集先はubuntu-1です。
+
 初回調査ではubuntu-1（pilotと同じホスト）のDNS解決、IPv4/IPv6のTCP接続、TLS 1.3と証明書検証が成功した。匿名の`HEAD https://api.openverse.org/v1/`はHTTP 200だったが、Cloudflareキャッシュ（`age: 144942`）の応答だった。検索GETはTLS確立・送信後に応答待ちになった。
 
 続いて02:50〜02:58 UTCにWindows・ubuntu-1・ubuntu-2から匿名GETを比較した。基準URLは次のとおりで、User-Agentは`configs/source_policy.yaml`の値を使用した。ホストごとの比較要求は再試行せず直列に送り、比較スクリプト内では各要求後に4秒待機した。アダプターの実測は既存の直列化・待機処理を使用した。全体でも観測した20回/分の匿名枠を下回り、429は観測しなかった。

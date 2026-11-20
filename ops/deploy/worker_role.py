@@ -1,4 +1,4 @@
-"""ubuntu-2でSCRAM検証子から専用ロールを新規作成する。平文パスワードは受け取らない。"""
+"""ubuntu-1でSCRAM検証子から専用ロールを新規作成する。平文パスワードは受け取らない。"""
 
 import re
 import subprocess

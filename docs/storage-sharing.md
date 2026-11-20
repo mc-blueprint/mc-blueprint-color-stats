@@ -1,5 +1,7 @@
 # raw共有方式とNFS断・復帰試験（Issue #42）
 
+> 履歴記録：以下は撤去前のubuntu-2を使ったNFS比較・実機試験です。2026-11-20にNFSを廃止し、derivedはubuntu-1のNVMeへ移しました。本書の接続先・コマンドは現行手順ではありません。
+
 2026-11-02。比較・隔離試験の基準は`feature/issue-42` / `4e016c5`、本番配備の基準は`cd70dda`。
 [設計 §4・§4.1](design.md)、[segmentの入力契約](segment.md)、
 [媒体監視](../ops/storage/README.md)を前提とする。
@@ -162,9 +164,9 @@ sudo -n exportfs -i -o rw,sync,no_subtree_check,root_squash \
     192.168.1.85:/mnt/data/work/issue-42/nfs-test
 ```
 
-`ops/deploy/nfs-isolated-test.py`をubuntu-1の専用領域へ転送し、監査付きSSHでsudo実行する。
+当時は後に削除した`nfs-isolated-test.py`をubuntu-1の専用領域へ転送し、監査付きSSHでsudo実行した。
 スクリプトは専用net/mount名前空間を作り、mount伝播をprivateにする。
-実行例は`sudo -n python3 -u /var/tmp/issue-42/nfs-isolated-test.py --durations 15 630`。
+実行した履歴コマンドは`sudo -n python3 -u /var/tmp/issue-42/nfs-isolated-test.py --durations 15 630`。
 名前空間内のloopback:20490を、名前空間作成前に確立した
 ubuntu-1:742→ubuntu-2:2049の専用TCP接続へ中継する。
 予約送信元portでsecure exportの条件を満たす。ホストの経路・firewall・NFS serviceを操作しない。
@@ -212,7 +214,7 @@ export解除やNFS service停止、ホスト全体の通信遮断は断の手段
 親ループからの更新・停止フラグ確認も進まない。ここは実装からの判断であり、
 今回のI/O子プロセス試験を本番Worker全体の停止応答確認とは扱わない。
 
-`ops/deploy/nfs-lease-probe.py`は、localhost:55442のIssue42専用PostgreSQL 16を使う。
+削除済みの`nfs-lease-probe.py`は、当時localhost:55442のIssue42専用PostgreSQL 16を使った。
 本番クラスタと分離し、実Queue・既定600秒のリースを短縮せずに測る。
 片方だけを更新し、更新しない側を期限後に再claimして、旧所有者のcompleteを拒否することを確認する。
 NFS試験と並行する独立のQueue試験であり、NFSによる親停止を直接注入する試験ではない。
@@ -241,7 +243,7 @@ GPU推論・本番DBへの投入、パイロットの再開、自動schedulerと
 - ruff 0.17.3: 追加Pythonスクリプト3本と新規テストで成功。中継修正後も対象ファイルだけ再確認した。
 - pytest 9.2.0: `test_raw_replica.py`・`test_queue.py`・`test_worker_storage.py`の**30件成功**（17.14秒）。
   PostgreSQLを必要とするテストもlocalhost:55442の一時DB・一時schemaで実行した。
-- `derived-client.sh`のbash構文確認成功。Windows作業コピーのCRLFをLinux試験コピーだけLFにして確認した。
+- 当時の`derived-client.sh`でbash構文確認成功。Windows作業コピーのCRLFをLinux試験コピーだけLFにして確認した（同スクリプトは現在削除済み）。
 - 原本2枚の転送前後のSHA一致、GPUノードでの画像復号成功。
 - モデル重み・GPU推論・本番ジョブ投入・複数GPUの同時性能試験・ホスト再起動試験は未実施。
 

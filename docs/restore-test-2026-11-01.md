@@ -1,5 +1,7 @@
 # PostgreSQL復元試験（2026-11-01）
 
+> 履歴記録：この試験はubuntu-2撤去前のものです。現行の復元先・DB配置はubuntu-1です。
+
 - 保存先：ubuntu-0 WD750GB `/srv/colorstats/backup-wd750/daily/`
 - 復元先：ubuntu-2 PostgreSQL 16 の一時DB `colorstats_restore_check`（ubuntu-1にはPostgreSQLクライアント／サーバーがなかったため、別DBで実施）
 - 手順：空の `colorstats` DBに試験テーブルと3行を作成し、日次 `pg_dump -Fc` を生成・転送。別DBへ `pg_restore --exit-on-error --no-owner` で復元して件数と行データ指紋を比較。

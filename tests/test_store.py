@@ -1,4 +1,4 @@
-from pathlib import PurePosixPath, PureWindowsPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 import pytest
 import yaml
@@ -22,8 +22,8 @@ def storage(tmp_path):
                             "serial": "B",
                         },
                     ],
-                    "derived": {"host": "ubuntu-2", "path": "/mnt/data/derived"},
-                    "models": {"host": "ubuntu-2", "path": "/mnt/data/models"},
+                    "derived": {"host": "ubuntu-1", "path": "/mnt/data/derived"},
+                    "models": {"host": "ubuntu-1", "path": "/mnt/data/models"},
                     "work": {"host": "windows", "path": "H:/MCBlueprintColorStats/work"},
                     "backup": {"host": "ubuntu-0", "path": "/srv/backup"},
                 }
@@ -49,6 +49,13 @@ def test_各論理保存先とWindowsパスを解決する(storage):
         assert storage.resolve(f"{name}/result/file").path.name == "file"
     result = storage.resolve("work/result.parquet")
     assert result.path == PureWindowsPath("H:/MCBlueprintColorStats/work/result.parquet")
+
+
+def test_リポジトリ設定のraw保存先を解決する():
+    storage = Storage(Path(__file__).resolve().parents[1] / "configs/storage.yaml")
+    result = storage.resolve(f"raw/aa/{'a' * 64}.png")
+    assert result.host == "ubuntu-1"
+    assert result.path == PurePosixPath("/srv/colorstats/raw-orico/aa/" + "a" * 64 + ".png")
 
 
 @pytest.mark.parametrize(

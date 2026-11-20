@@ -147,7 +147,7 @@ prepare時間にJSON自身の書出しとDB確定は含めない。
 `mask_bytes`と`cvat_bytes`はPNG合計とXMLの容量。GPUテストのreportにはJSONを含む
 公開ファイル合計の`output_bytes`も記録する。GPU名・torch/runtime CUDA版も保持する。
 
-2026-11-02、ubuntu-2 RTX 4070（12,282MiB）、torch 2.11.0+cu128、
+2026-11-02の移設前記録：ubuntu-2 RTX 4070（12,282MiB）、torch 2.11.0+cu128、
 torchvision 0.26.0+cu128、Transformers 4.57.6で実行した。
 自作CC0家屋画像512×384、door・grass・roof・building wallの4句、threshold=0.25。
 同一の自作画像による動作確認の最終実行値であり、精度・代表的なスループットの評価ではない。

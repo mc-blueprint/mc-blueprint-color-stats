@@ -51,6 +51,8 @@ modern-houseは適切な候補が少なく1枚で、完全な層均等ではな�
 
 ### 下書きの生成先と後日の本番登録
 
+> 履歴記録：この節のホスト・実行結果は2026-11-02時点のものです。ubuntu-2は撤去済みです。
+
 本番DBは選定用にREAD ONLYで参照した。収集元ubuntu-1では3サービスが稼働中で、
 既存配備Pythonにはtorchがなかった。収集環境の依存追加を避け、ubuntu-2の既存RTX 4070・
 SAM 2.1 tiny＋Grounding DINO tinyを使った。一時DBは `issue41_gold100`、Unix socketは

@@ -20,67 +20,57 @@
 
 | # | 論点 | 判断 |
 |---|---|---|
-| R1 | ホスト対応 | 2026-11-01の読み取り確認で確定（§3）。ubuntu-0は別用途PC、ubuntu-1＝i5-8400、ubuntu-2＝i7-8700K。**ubuntu-1/2はGPUを認識しているがNVIDIAドライバー未導入**のため、M0で導入する |
-| R2 | ジョブキューの置き場所 | Windowsは停止し得るため、キューとメタデータDBはUbuntu側に置く。SQLiteはLAN越しの複数ライターに不向きなので不採用。**PostgreSQLをubuntu-2のNVMeに置く** |
-| R3 | 両1TB SSD | SUNEAST／ORICOは監視付きの暫定候補なので、**再取得可能な原本キャッシュ専用**とし、DB・正解データ・集計結果は置かない |
+| R1 | ホスト対応 | 2026-11-01時点の初期構成判断（§3）。2026-11-20にGPU・DB・derivedをubuntu-1へ集約し、ubuntu-2は撤去 |
+| R2 | ジョブキューの置き場所 | 初期配置はubuntu-2のNVMe。2026-11-20にubuntu-1のNVMe `/mnt/data/postgres` へ移行し、PostgreSQLはlocalhostのみで待ち受ける |
+| R3 | 両1TB SSD | 初期案ではSUNEAST／ORICOを原本キャッシュに使う計画だった。rawデータはubuntu-1のOSディスク上の`/srv/colorstats/raw-orico`・`/srv/colorstats/raw-suneast`へ移行済み |
 | R4 | Windowsの使用範囲 | **H:のみ**使用（空き769GB）。WSL2のディストリビューション、集計用Parquet、CVAT、パックのビルドをH:に置く。C・F・Gは使わない |
 | R5 | 処理順序 | 分類体系とスキーマを先に確定し、収集は1,000枚MVPに限定。大量取得は品質・権利ゲートとベンチマーク後 |
 | R6 | ライセンス | mc-blueprintはMITで無料公開されるため、同梱パックは**商用利用も許すライセンスと両立する入力だけ**から作る（§8） |
 | R7 | 統計の単位 | 画像単位ではなく`subject`（同一建築・場所・作品）単位で重み付けする。収集時に撮影地点・タイトル・作者・作品ページを必ず保存 |
 | R8 | ブロック色 | mc-blueprintの`colors.json`はプレビュー用のキーワード単位の代表色で粒度が足りない。本リポジトリで、ユーザーが所有するバニラjarから面ごとのOKLab分位点をローカル抽出し、テクスチャ画像は保存・配布しない |
 
-## 3. 実機構成（2026-11-01 読み取り確認）
+## 3. 実機構成
 
 | ホスト | CPU | RAM | GPU（ドライバー） | OS | 保存（空き） |
 |---|---|---:|---|---|---|
 | Windows（メイン） | Ryzen 7 5700X | 64GB | RTX 4070 SUPER（導入済み） | Windows 11 | **H: NVMe 769GB（使用）** |
 | ubuntu-0（別用途） | 8スレッド | 31GiB | ドライバー不通・使用しない | Ubuntu 24.04.4 | OS CT500MX500 410GB、稼働中バックアップ：WD 750GB（ext4）、ST3500 500GB×2（ext4）。増設ディスク6台は未マウント・監視対象外 |
-| ubuntu-1（収集） | i5-8400 | 15GiB | RTX 4060（未導入） | Ubuntu 24.04.5 | OS CSSD 200GB、ORICO 1TB（ext4・未マウント）、SUNEAST 1TB（NTFS・未マウント）、TOSHIBA 240GB（NTFS・未マウント） |
-| ubuntu-2（GPU推論） | i7-8700K | 31GiB | RTX 4070（未導入） | Ubuntu 24.04.5 | OS 980Plus 210GB、NVMe `/mnt/data` 891GB |
+| ubuntu-1（収集・DB・GPU） | i5-8400 | 15GiB | RTX 4070、driver 595.99.02 | Ubuntu 24.04.5 | OS CSSD 223.6GB、BIWIN NVMe 953.9GB（`/mnt/data`） |
 
-全UbuntuでPython 3.12.3、Docker未導入。
+この表は2026-11-20の切替後の運用構成です。ubuntu-2は撤去済みです。BIWIN NVMeはUUID `f153f9af-eb33-48ee-8567-a088b5036076`で`/mnt/data`へmountし、`nofail`を指定しています。ubuntu-1のPostgreSQL 16は`/mnt/data/postgres`、derivedはローカル`/mnt/data/derived`です。別ホストからDBへ接続するときはSSHトンネルを使います。
 
 ## 4. システム構成
 
 ```
-            ┌──────────── ubuntu-1（収集） ─────────────────────┐
- Web/API ─▶ │ collector ─▶ blob store（ORICO+SUNEAST, 原本キャッシュ）│
-            │ cpu-worker（重複・品質・色抽出）、RTX4060 軽量推論     │
-            └──────────────▲───────────────────────┬──────────────┘
-                           │ ジョブ取得/結果登録   │ 必要原本の事前複製
-            ┌──────────────┴─────────┐ ┌──────────▼──────────────┐
-            │ ubuntu-2                │ │ Windows H:（WSL2）       │
-            │ PostgreSQL・モデル重み  │ │ gpu-worker（任意参加）   │
-            │ gpu-worker 分割・陰影   │ │ 集計(DuckDB)・CVAT       │
-            └──────────┬──────────────┘ │ 配色パックのビルド       │
-                       │                └──────────┬──────────────┘
-                       ▼ 日次バックアップ          ▼
-            ubuntu-0 HDD（DB・正解・集計）   配色パック → mc-blueprint
+            ┌──────────── ubuntu-1 ────────────────────────────┐
+ Web/API ─▶ │ PostgreSQL 16・derived・GPU worker（RTX 4070）   │
+            │ 配色統計の収集・解析pilotは停止中                 │
+            └─────────────────┬────────────────────────────────┘
+                              │ 日次バックアップ
+                              ▼
+                   ubuntu-0 HDD（3媒体）
+            Windows H:（WSL2）で集計・CVAT・配色パックを作成
 ```
 
 ### 4.1 保存先の割当て
 
 | 論理名 | 実体 | 内容 | 失った場合 |
 |---|---|---|---|
-| `db` | ubuntu-2 `/mnt/data/postgres` | メタデータ・ジョブ・小さい解析値 | バックアップから復元 |
-| `models` | ubuntu-2 `/mnt/data/models`（各GPUノードへ複製） | モデル重み | 再取得 |
-| `raw` | ubuntu-1 ORICO・SUNEAST（ext4） | 原本画像（SHA-256で内容アドレス） | URLから再取得。消失ソースは欠損として記録 |
-| `derived` | ubuntu-2 `/mnt/data/derived` | マスク・縮小画像・特徴量・Parquet | 再計算 |
+| `db` | ubuntu-1 `/mnt/data/postgres` | メタデータ・ジョブ・小さい解析値 | ubuntu-0のバックアップから復元 |
+| `models` | ubuntu-1 `/mnt/data/models` | モデル重み | 再取得 |
+| `raw` | ubuntu-1 OSディスク上の`/srv/colorstats/raw-orico`・`/srv/colorstats/raw-suneast` | 原本画像（SHA-256で内容アドレス） | URLから再取得。消失ソースは欠損として記録 |
+| `derived` | ubuntu-1 `/mnt/data/derived` | マスク・縮小画像・特徴量・Parquet | 再計算 |
 | `work` | Windows H: | 集計用Parquetの複製、CVAT、パックのビルド | `derived`から再生成 |
 | `backup` | ubuntu-0 HDD | DBダンプ、正解データ、分類体系、集計結果、パック | — |
 
 - `raw`の論理パスは`raw/<sha256[0:2]>/<sha256>.<ext>`。ORICO／SUNEASTへの振り分けは設定で行い、媒体の交換・追加時に設定だけ変える。
 - 正解データ（CVAT）と評価セットの原本は再取得できない可能性があるため、`backup`にも置く。
-- M1パイロットはubuntu-1からrawを読み、ubuntu-2のderivedをNFS共有している暫定配置。
-  M2でrawは必要原本の検証付き事前複製を採用し、derivedのNFS共有は継続している。
-  再取得・再計算と障害時の制御は[配備手順](../ops/deploy/README.md)に従う。
-  Issue #42の[方式比較・隔離試験と本番配備記録](storage-sharing.md)に従い、
-  転送・SHA-256検証・GPUノードへの公開と読取り、保持削除の手順は配備・確認済み。
-  HTTP原本配信APIは採用・実装していない。本番GPUジョブの投入・推論と自動scheduler連携は未実施で、
-  原本入力の後段DB登録契約はIssue #66で扱う。
+- 旧構成ではderivedをNFS共有していましたが、2026-11-20にNFSを廃止しubuntu-1のNVMe上へローカル化しました。過去の比較・実行記録は[共有方式の履歴](storage-sharing.md)にあります。
+- pilotは停止中です。rawデータはubuntu-1のOSディスクへ移行済みで、pilot再開は別途扱います。
 
 ### 4.2 バックアップ
 
+- ubuntu-1を送信元、ubuntu-0の3媒体を受信先とする。既存timerは有効で、手動転送とSHA-256照合を確認済み。
 - 現在の稼働構成はWD 750GBを主バックアップ、ST3500 500GB×2を世代バックアップとし、**同じデータを2台以上のHDDに置く**。媒体の健康状態と移行予定は[2026-11-16のストレージ調査](storage-audit-2026-11-16.md)を参照する。
 - 日次：`pg_dump`（カスタム形式）、正解データ、集計結果をrsyncで転送し、7日分＋週次4世代を保持。
 - 月次で別ホストへの復元試験を行い、結果を記録する。
@@ -98,7 +88,7 @@
 
 ### 5.1 採用方針
 
-- PostgreSQL 16をubuntu-2に置き、ジョブは**`FOR UPDATE SKIP LOCKED`＋リース期限**で取得する。
+- PostgreSQL 16をubuntu-1に置き、ジョブは**`FOR UPDATE SKIP LOCKED`＋リース期限**で取得する。
 - Procrastinateの適合性はIssue #6で確認済み。旧試行による結果更新を防ぐ所有権境界に別のjob行が必要になるため、既存SQLAlchemyとPostgreSQLによる単一の`job`テーブルを採用した（[調査と選定](queue.md)）。Ray Dataは、実測でスループットが足りないと判明した場合だけ検討する。
 
 ### 5.2 キュー
@@ -343,9 +333,9 @@ mc-blueprint-color-stats/
 - 1.0.0までは開発版（0.y.z）とし、最初の配色パックをmc-blueprintへ同梱する時点で1.0.0にする。
 - パックには`schema_version`（準拠したmc-blueprintのスキーマのバージョン）、`taxonomy_version`、生成した本パッケージのバージョンを記録する。
 
-## 12. マイルストーンとIssue案
+## 12. マイルストーンとIssue案（初期計画の履歴）
 
-### M0 基盤
+### M0 基盤（初期計画・履歴）
 
 | Issue | 内容 | 完成条件 |
 |---|---|---|

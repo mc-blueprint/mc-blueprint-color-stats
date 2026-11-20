@@ -225,7 +225,7 @@ python -m colorstats.analyze.shade_evaluation bench/issue46/sol/samples.json --o
 1行目は初回#46の互換性、判定hash、同定群、各領域のverdict、領域選別後の部位平均と
 比較集計を照合する。2行目の出力は`bench/issue46/sol/comparison.json`とバイト比較できる。
 
-GPUからの再実行はubuntu-2の既存評価venvで、DBを使わず以下を実行する。
+以下は移設前にubuntu-2の既存評価venvで実行した履歴手順です。現行GPUノードはubuntu-1であり、この旧環境の再利用可否は未確認です。
 作業場所は`/mnt/data/work/issue-46/sol-evaluation`。`PYTHONPATH=src`を設定する。
 
 ```sh

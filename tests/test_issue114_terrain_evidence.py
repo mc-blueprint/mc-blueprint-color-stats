@@ -200,7 +200,7 @@ def test_rollback後の新規リンク清掃が終わるまで別実行の保持
             retention.lock(session)
             if not target.exists():
                 link(source, target)
-            retention.register_file(session, asset, "ubuntu-2", target, "replica")
+            retention.register_file(session, asset, "ubuntu-1", target, "replica")
 
     monkeypatch.setattr(media.retention, "register_file", fail_register)
     monkeypatch.setattr(Path, "unlink", cleanup)
@@ -224,7 +224,7 @@ def test_rollback後の新規リンク清掃が終わるまで別実行の保持
     assert target.stat().st_ino == source.stat().st_ino
     with Session(queue.engine) as session:
         registered = session.scalar(select(RetentionFile).where(
-            RetentionFile.asset_id == asset, RetentionFile.host == "ubuntu-2",
+            RetentionFile.asset_id == asset, RetentionFile.host == "ubuntu-1",
             RetentionFile.path == str(target)))
         assert registered is not None and registered.deleted_at is None
         assert session.scalar(text("SELECT pg_try_advisory_xact_lock(88, 1)"))

@@ -24,7 +24,7 @@ def create(directory: Path) -> None:
     verifier = f"SCRAM-SHA-256$4096:{encoded(salt)}${encoded(stored)}:{encoded(server)}"
     values = {
         "database.json": json.dumps({
-            "url": f"postgresql+psycopg://colorstats_worker:{password}@192.168.1.86/colorstats"
+            "url": f"postgresql+psycopg://colorstats_worker:{password}@127.0.0.1/colorstats"
         }) + "\n",
         "worker.scram": verifier + "\n",
     }
