@@ -10,11 +10,10 @@ rawの異常時はremountより先に `/var/lib/colorstats-storage/blocked/<UUID
 
 ## ホスト別ディスク設定
 
-`disks/ubuntu-0.json`、`disks/ubuntu-1.json`、`disks/ubuntu-2.json` は各ホストで照合した全ディスクのUUID・serialを記録します。設定を更新するときは `lsblk -o NAME,FSTYPE,UUID,SERIAL,MOUNTPOINTS` と `smartctl -i /dev/<device>` の両方で対応を確認し、`/dev`名からserialやUUIDを推測しないでください。設定中のUUIDは `/dev/disk/by-uuid/` からSMARTを読むために使います。
+`disks/ubuntu-0.json`、`disks/ubuntu-1.json` は各ホストの監視対象ディスクのUUID・serialを記録します。設定を更新するときは `lsblk -o NAME,FSTYPE,UUID,SERIAL,MOUNTPOINTS` と `smartctl -i /dev/<device>` の両方で対応を確認し、`/dev`名からserialやUUIDを推測しないでください。設定中のUUIDは `/dev/disk/by-uuid/` からSMARTを読むために使います。
 
 - ubuntu-0: OSディスク、WD 750GB、ext4のST3500×2が稼働中です。増設ディスク6台はファイルシステム未作成または旧NTFSのままで、未マウント・監視対象外です。移行予定とディスクの健康状態は[2026-11-16のストレージ調査](../../docs/storage-audit-2026-11-16.md)を参照してください。STはIssue #23で消去承認後にフォーマットし、新UUIDへ更新しました。`previous_uuids` はバックアップ判定が旧UUIDの異常履歴を引き継ぐための対応です。バックアップHDDはすべて `raw: false` で、この監視によるreadonly化は行いません。`ops/backup/` の転送処理が監視状態と異常記録を読み、該当媒体への転送を停止します。媒体のmount・書込み・フォーマットはこの監視設定では行いません。
-- ubuntu-1: ORICO、TOSHIBA、CSSD、SUNEAST。ORICOとSUNEASTだけ `raw: true` でmount先を指定します。
-- ubuntu-2: OSディスクとNVMeデータディスク。どちらも `raw: false` です。
+- ubuntu-1: CSSDのOSディスク（UUID `d9270676-73c7-4538-b498-948825e96d62`、serial `2G3620019305`）、TOSHIBAディスク、BIWIN NVMe（UUID `f153f9af-eb33-48ee-8567-a088b5036076`、serial `2440009301477`）。CSSDは`raw: true`・`mount: /`で監視し、異常時はblocked markerでcollect/prepを止めます。root filesystemはreadonly remountしません。ORICOとSUNEASTのデータはこのOSディスク上の`/srv/colorstats/raw-orico`・`/srv/colorstats/raw-suneast`にあります。
 
 ## 配置と有効化
 
@@ -28,6 +27,8 @@ systemctl list-timers colorstats-storage.timer --no-pager
 systemctl show colorstats-storage.service -p Result -p ExecMainStatus
 ```
 
+既に稼働中のホストでディスク定義だけを更新するときは、該当ホストのJSONを `/etc/colorstats-storage/disks.json` へ配置し、`colorstats-storage.service`を1回実行して状態を確認します。既存timerを再enable・再起動する必要はありません。
+
 `/var/lib/colorstats-storage/state.json` に全UUIDのSMART値または取得失敗の `error` が記録され、`/var/lib/colorstats-storage/kernel.cursor` にkernel journalの読取位置が保存され、serviceの `Result=success`、timerが `active` であることを確認します。serviceの成功は全媒体が健全という意味ではありません。異常は状態・イベントとblockedファイルも確認します。
 
 ## readonly動作の安全な確認
@@ -39,6 +40,8 @@ readonlyからの通常復帰は自動化せず、原因確認後に手動で行
 異常判定はPython標準ライブラリのみで実装しています。監視は `smartctl` と `journalctl` を利用します。
 
 ## 作業確認記録
+
+以下は2026-11-20より前の履歴です。旧媒体・ホスト・mount構成を現行設定として扱わないでください。
 
 - 2026-11-01: ubuntu-0・ubuntu-1に続き、ubuntu-2も増分カーソル対応版へ更新しました。`colorstats-storage.service` を手動起動し、`Result=success`・`ExecMainStatus=0`、timerの `active`、`/var/lib/colorstats-storage/kernel.cursor`（122 bytes）とSMART状態ファイルの作成を確認しました。OSディスクUUID `1b655df6-20ea-4fb5-944d-0518d96aef98` は `/dev/sda2` の980Plus SSD、serial `20ZYB12143975`、NVMeデータディスクUUID `f153f9af-eb33-48ee-8567-a088b5036076` は `/dev/nvme0n1p1`、serial `2440009301477` と一致しました。記録された温度はそれぞれ40°C・41°Cで、SMART CRC・代替セクタ値はいずれも0でした。
 

@@ -245,7 +245,7 @@ def test_DB障害ではopenerを呼ばない(queue, policy):
 
 
 def test_別hostではprovider_workerが通信もclaimもしない(queue, tmp_path, monkeypatch):
-    monkeypatch.setattr("colorstats.queue.worker.socket.gethostname", lambda: "ubuntu-2")
+    monkeypatch.setattr("colorstats.queue.worker.socket.gethostname", lambda: "ubuntu-0")
     worker = Worker(queue, {"collect": "colorstats.collect.stage"}, tmp_path / "stop",
                     provider="openverse")
     with pytest.raises(ValueError, match="ubuntu-1"):

@@ -4,6 +4,9 @@ set -euo pipefail
 release=$(realpath "$1")
 analysis_version=${2:-$(basename "$release")}
 test -f "$release/uv.lock"
+for disk in /srv/colorstats/raw-orico /srv/colorstats/raw-suneast; do
+    test -d "$disk" || { echo "raw保存先がありません: $disk" >&2; exit 1; }
+done
 sudo -n install -d -m 700 -o toumokorosi -g toumokorosi /var/lib/colorstats/pilot
 sudo -n chown -R toumokorosi:toumokorosi "$release"
 python3 -m venv "$release/bootstrap"
@@ -15,7 +18,6 @@ if [ ! -e /var/lib/colorstats/pilot/database.json ]; then
 fi
 test -f /var/lib/colorstats/pilot/targets.yaml || cp configs/collection_targets.yaml /var/lib/colorstats/pilot/targets.yaml
 for disk in /srv/colorstats/raw-orico /srv/colorstats/raw-suneast; do
-    mountpoint -q "$disk"
     # 既存ファイル・lost+foundには触れず、画像配置に必要な媒体ルートだけを委譲する。
     sudo -n chown toumokorosi:toumokorosi "$disk"
 done
@@ -23,8 +25,8 @@ for stage in collect analysis scheduler; do
     mounts='/srv/colorstats/raw-orico /srv/colorstats/raw-suneast'
     condition=''
     if [ "$stage" = analysis ]; then
-        mounts="$mounts /mnt/data/derived"
-        condition='ConditionPathIsMountPoint=/mnt/data/derived'
+        mounts="$mounts /mnt/data"
+        condition='ConditionPathIsMountPoint=/mnt/data'
     fi
     case "$stage" in
         collect) command="-m colorstats.queue --handler collect=colorstats.collect.bias --handler review=colorstats.collect.quality --stop-file /var/lib/colorstats/pilot/collect.stop" ;;

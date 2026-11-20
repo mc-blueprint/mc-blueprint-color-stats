@@ -1,18 +1,22 @@
-# M1パイロットの配備
+# ubuntu-1上のパイロット配置
 
-Issue #27。ubuntu-1で単一のcollectとprep/colorを動かし、ubuntu-2にDBとderivedを置く。
-既存のuv.lock、Alembic、層別計画器、Queue/Worker、prep/color、網羅率集計を使用する。
-追加のPython依存はない。systemdをプロセス管理に使い、`pilot.py`は既存APIをつなぐ投入・実測だけを担当する。
-実行結果と実際の配備版は[実行記録](../../docs/pilot-m1.md)を参照。
-停止・再配置・fstab変更は、実施を許可された作業枠で以下の手順に従う。
+現在の運用先はubuntu-1。PostgreSQL 16とderivedは同じホストにあり、DBはlocalhost、derivedはNVMe上の`/mnt/data/derived`を使う。リモートDB接続はSSHトンネルを使う。旧DB接続やNFS共有の手順は使わない。
 
-## 固定版とDB
+収集・解析pilotは現在停止・無効で、`license_class`の確認が別途必要なため、この手順では起動しない。rawデータはOSディスク上の`/srv/colorstats/raw-orico`と`/srv/colorstats/raw-suneast`にあり、独立したraw媒体のmountはありません。`install.sh`は両ディレクトリの存在を確認します。
+
+過去の実行・転送・NFS検証の記録は本書の後半と[実行記録](../../docs/pilot-m1.md)、[共有方式の記録](../../docs/storage-sharing.md)に残す。これらは過去のubuntu-2構成を記録するもので、現行の配備手順ではない。
+
+## 旧パイロット配備手順（履歴）
+
+以下は過去のubuntu-2構成を使った配備記録です。現在のホスト構成へそのまま適用しないでください。
+
+### 固定版とDB
 
 1. 対象のコード・設定・taxonomy・`uv.lock`・`pyproject.toml`・`alembic.ini`を、
    `/opt/colorstats/releases/<版>/`に展開する。アーカイブのSHA-256と基準commitを記録する。
    未コミット修正を含む場合はcommit版と呼ばずスナップショットとする。
 2. 初回は`uv run alembic upgrade head --sql`で0001〜0005のSQLを生成し、空のDBを確認してから
-   ubuntu-2で`sudo -u postgres psql -v ON_ERROR_STOP=1 -d colorstats -f <SQL>`を実行する。
+   ubuntu-1で`sudo -u postgres psql -v ON_ERROR_STOP=1 -d colorstats -f <SQL>`を実行する。
    既存DBは`alembic_version`を確認し、例えば0003なら
    `uv run alembic upgrade 0003:head --sql`で未適用分だけを生成する。
    適用後は0005を確認する。0005は既存jobに再取得可能時刻を追加し、既存ジョブはすぐ取得できる。
@@ -28,26 +32,20 @@ Issue #27。ubuntu-1で単一のcollectとprep/colorを動かし、ubuntu-2にDB
    サービスはまだ起動しない。
 4. 初回だけ`credentials.py`がubuntu-1内でランダムなパスワードとSCRAM-SHA-256検証子を生成する。
    `/var/lib/colorstats/pilot/database.json`（mode 600）を他ホストへ転送・表示しない。
-   同ディレクトリの`worker.scram`だけをubuntu-2へ転送し、
-   `python3 <版>/ops/deploy/worker_role.py <検証子ファイル>`でロールを作る。
+    `python3 <版>/ops/deploy/worker_role.py <検証子ファイル>`もubuntu-1上で実行しロールを作る。
    新設時も同梱の`worker_grants.sql`で同じ権限を付与する。
    既存ロールや認証ファイルは上書きしない。再配備は既存の所有者専用ファイルを利用する。
-5. ubuntu-2のpg_hba.confに次の1行を追加し、`SELECT pg_reload_conf()`で反映する。
-   `host colorstats colorstats_worker 192.168.1.85/32 scram-sha-256`
+ 5. PostgreSQLはlocalhostのみで待ち受ける。リモート作業にはSSHトンネルを使い、LAN向けpg_hba規則は追加しない。
    平文パスワードをコマンド引数・SQL・ログへ出さない。
    `launch.py`は所有者専用ファイルから読み、子プロセスの環境だけへ渡す。
 
-## derivedの共有
+### derivedの配置
 
-stageとQueueはローカルの同一ファイルシステム内で一時ファイルと不変出力をrenameする。
-共有マウントのない環境では、配備担当の承認を得てから`derived-server.sh`をubuntu-2、
-`derived-client.sh`をubuntu-1で実行する。既存のファイル契約・保存パスは変更しない。
-NFSのexportはubuntu-1のIPだけ、root_squash・同期書込みとする。
-fstabに`_netdev,nofail`付きで登録し、サーバー停止時にもubuntu-1の起動を妨げない。
-共有が未整備でもcollect/schedulerは実行できる。schedulerはマウント確認後だけ解析を投入し、
-analysisはマウント条件で起動を拒否する。ローカルの空ディレクトリへ代替出力しない。
+stage、Queue、derivedはubuntu-1上のローカルファイルシステムを使う。derivedの実体はNVMe上の`/mnt/data/derived`。NFS export、client mount、fstab登録は行わない。解析サービスはNVMeのmountpoint `/mnt/data` がmount済みであることを条件とし、別の空ディレクトリへ出力しない。
 
-### NFS断時の待機と復帰
+### 過去のNFS障害・復旧記録
+
+次の記録は旧構成のNFS試験結果です。現在NFSは使いません。
 
 Issue #42でsoft化しない方針を確定した。配備案も現行の
 `vers=4.2,proto=tcp,rw,hard,timeo=600,retrans=2,nosuid,nodev,_netdev,nofail`へ揃える。
@@ -61,7 +59,9 @@ scheduler継続を実機確認した。NFSのhard→soft変更は自動権限審
 既存のhard・`_netdev,nofail`を維持している。その後の隔離試験は上記Issue #42の記録を参照する。
 現在は3サービスとも停止フラグを残して停止している。詳細は[最終記録](../../docs/pilot-m1.md)を参照。
 
-## 実行と停止
+## 旧pilotの実行・停止記録（履歴）
+
+以下のbudget・service操作は過去の実行記録であり、現行pilotの再開手順ではありません。pilotは停止・無効のままです。
 
 Issue #44では総予算を10,000枚、ソース上限を80%に保ち、Commonsだけで既存画像を含む
 8,000枚まで収集する。Openverseは使用しない。層の`images`は画像配分の目標で、
@@ -148,7 +148,9 @@ rawの件数は検索機会ごとのasset数とユニークSHA-256数を併記�
 取得不能なら欠損として記録を残す。derivedはraw復旧後、新しい解析版を明示してprep/colorを再投入する。
 成功runと既存ジョブを初期化せず、不変参照を上書きしない。旧版だけが参照する欠損は履歴として残す。
 
-## raw事前複製の本番運用
+## ubuntu-2へのraw事前複製記録（履歴）
+
+以下は撤去前のubuntu-2に対する過去の実行手順・確認記録です。転送先ホストは撤去済みのため実行しないでください。
 
 ユーザー判断（2026-11-02、#42）に基づく手動配備。原本の正本はubuntu-1。
 両ホストの固定スナップショットは`/opt/colorstats/releases/raw-replica-cd70dda-20261102a/`。
@@ -260,15 +262,6 @@ ubuntu-2の同releaseに次の新規`raw-cache.json`を配置した。
 配置のSHA・確認結果・監査ログは[本番配置の記録](../../docs/storage-sharing.md#本番配置と確認2026-11-02)を参照する。
 本番DBへの書込み、GPU推論、パイロット起動は行っていない。
 
-## 次回再配置の確認順序
+## 今後のpilot変更
 
-1. この修正版と#30を含む固定スナップショットを作り、停止を許可された作業枠で旧3サービスの終了を確認する。
-2. #30の`ops/storage/`・`ops/backup/`の手順に従って監視設定・サービスを更新する。
-   `/etc/colorstats-storage/disks.json`のraw指定・UUID・mountと停止記録を確認する。
-   新版collect/prepは異常媒体・欠落・readonly中に取得を止め、処理中は試行数を消費せず保留する。
-3. 現行NFS設定と読戻しを確認し、`install.sh <新版> <既存の解析版>`で3サービスを更新する。
-   新版キューを使い、prep/colorに`--storage-path ...=/mnt/data/derived`があることを確認する。
-   解析ロジックを変更する場合だけ新しい解析版を選ぶ。
-4. 停止理由と媒体復旧を確認して対象の停止フラグだけを解除し、1 collect・1解析スロットで再開する。
-   journalとレポートで保留中に試行数が増えないこと、復旧後の再取得・解析、障害後の自動再起動を確認する。
-   容量欠損記録とM1最終件数・全件解析・実測値を保存する。
+pilotの再開は別件の`license_class`確認後に扱います。NFS設定とubuntu-1のstorage timer変更は不要です。

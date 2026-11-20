@@ -28,7 +28,7 @@
 ```sh
 python -m colorstats.retention_cli stop --source-url https://example.test/item/1 --request-url https://github.com/mc-blueprint/mc-blueprint-color-stats/issues/123 --ledger /private/deletion-ledger.json
 python -m colorstats.retention_cli audit
-python -m colorstats.retention_cli cleanup --host ubuntu-2
+python -m colorstats.retention_cli cleanup --host ubuntu-1
 python -m colorstats.retention_cli export-stops --output /private/deletion-ledger.json
 ```
 
@@ -44,9 +44,8 @@ DB未指定時は収集を開始しません。`prepare-draft`もDATABASE_URL（
 
 画像処理は認可された内部worker/管理者のOSアカウントだけで実行してください。
 新規の一時ファイル・確定ファイルは0600、確定ディレクトリは0700です。
-保存root・NFS・CVATは公開HTTPへマウントせず、既存の内部専用権限で利用します。
-WindowsのACL・既存NFS設定・CVAT認証は変更しません。POSIX modeだけでWindows ACLや
-NFSサーバーの認可を代替できません。画像パスを外部利用者へ返すAPIはありません。
+保存root・CVATは公開HTTPへマウントせず、既存の内部専用権限で利用します。
+WindowsのACL・CVAT認証は変更しません。画像パスを外部利用者へ返すAPIはありません。
 
 `retention.review_privacy`で自動判定または目視結果、採否、building/terrainの主体を記録します。
 自動判定は版を含むmethod、閾値、固定入力の根拠とauto:方式名のreviewerを保存します。

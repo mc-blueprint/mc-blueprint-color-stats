@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 import pytest
-from ops.deploy.pilot import enqueue_analysis, report
+from ops.deploy.pilot import derived_mount_available, enqueue_analysis, report
 from PIL import Image
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -23,6 +23,18 @@ from tests.test_queue import queue as queue
 pytestmark = pytest.mark.skipif(
     not os.environ.get("TEST_DATABASE_URL"), reason="CIのPostgreSQL専用"
 )
+
+
+def test_derivedの親filesystemをmount判定する(tmp_path, monkeypatch):
+    checked = []
+
+    def is_mount(path):
+        checked.append(path)
+        return True
+
+    monkeypatch.setattr(Path, "is_mount", is_mount)
+    assert derived_mount_available(Path("/mnt/data/derived"))
+    assert checked == [Path("/mnt/data")]
 
 
 def test_analysis_waits_for_prep_and_keeps_immutable_input(queue, asset, tmp_path):

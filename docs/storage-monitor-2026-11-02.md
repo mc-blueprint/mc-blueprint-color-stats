@@ -1,5 +1,7 @@
 # ストレージ監視・保持処理の修正確認（Issue #30）
 
+> 履歴記録：以下のubuntu-2に関する確認結果は当時の記録です。現在はubuntu-1のNVMeを含む構成で監視しています。
+
 ## 配置と実機確認
 
 ubuntu-0・ubuntu-1・ubuntu-2の `/usr/local/lib/colorstats-storage/monitor.py` を更新し、
