@@ -7,8 +7,10 @@ from pathlib import Path
 from colorstats.api_budget import digest
 from colorstats.trial_inputs import sha
 
-RESERVATIONS = {"A": 1.45, "B": 3.55, "C": 4.95, "D": 1.45, "E": 1.45}
-HOURS = {"A": 1.5, "B": 2, "C": 3, "D": 1.5, "E": 1.5}
+RESERVATIONS = {"A": 3.20, "B": 3.70, "C": 4.80, "D": 1.45, "E": 1.30}
+HOURS = {"A": 2, "B": 2.75, "C": 3.5, "D": 1.5, "E": 1.75}
+IMAGE_TIMEOUTS = {"A": 240, "B": 420, "C": 600, "D": 360, "E": 240}
+IMAGE_RECEIVE_GRACE_SECONDS = 180
 
 
 def number(value):
@@ -49,6 +51,16 @@ def select_candidate(baseline, candidate, count=30):
     faster = candidate["elapsed_seconds"] < baseline["elapsed_seconds"]
     exact_equal = base_low == base_high == cand_low == cand_high
     return cand_high < base_low or (exact_equal and faster)
+
+
+def reservation_spent(resources, key):
+    """台帳費目を変えず、今回の診断・共有smokeをA枠へ算入する。"""
+    return math.fsum(
+        r["estimated_usd"]
+        for r in resources
+        if r["configuration_id"] == key
+        or (key == "A" and r["configuration_id"] in {"diagnosis", "smoke_shared"})
+    )
 
 
 def time_limit(config_id, deployment):

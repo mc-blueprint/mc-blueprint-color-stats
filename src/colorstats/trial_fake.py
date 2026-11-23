@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 
 from colorstats.api_budget import digest
+from colorstats.trial_costs import IMAGE_TIMEOUTS
 from colorstats.trial_inputs import sha
 from colorstats.trial_native import LIMITS, MODELS, PROMPT, SAM2
 from colorstats.trial_native_common import (
@@ -78,7 +79,7 @@ def synthetic_plan(root, *, concurrency=1, measurement=False, purpose="trial"):
             "time_seconds": 3600,
             "cleanup_seconds": 30,
             "memory_fraction": 0.85,
-            "image_timeout_seconds": 120,
+            "image_timeout_seconds": IMAGE_TIMEOUTS[key],
             "prepare_timeout_seconds": 1800,
             "versions": versions,
             "runtime": runtime,
