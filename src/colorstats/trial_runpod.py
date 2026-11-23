@@ -230,6 +230,8 @@ class RunPod:
             operands = [str(local), address] if operation == "put" else [address, str(local)]
             argv = ["scp", "-O", "-P", str(port), *options, *operands]
         else:
+            native_command = python_command()
+            native_command.insert(1, "VLLM_WORKER_MULTIPROC_METHOD=spawn")
             commands = {
                 "mkdir": ["mkdir", "-p", "-m", "700", remote],
                 "ready": ["test", "-f", remote + "/prepared.json"],
@@ -246,7 +248,7 @@ class RunPod:
                     "nohup",
                     "timeout",
                     "1800",
-                    *python_command(),
+                    *native_command,
                     "--directory",
                     remote,
                     "--phase",
@@ -261,7 +263,7 @@ class RunPod:
                     "nohup",
                     "timeout",
                     "120",
-                    *python_command(),
+                    *native_command,
                     "--directory",
                     remote,
                     ">/dev/null",

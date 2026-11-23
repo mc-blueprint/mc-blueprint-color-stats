@@ -443,3 +443,8 @@ SSHの時間超過は監査のerror_kind=timeout、プロセス実行のOSエラ
 error_kind=os_errorとerrnoで区別する。例外原文と出力内容は記録しない。
 接続途中の時間超過は、遠隔操作が未実行であったことを保証しないため、
 既存の停止・削除確認を行ってから再開する。
+
+controllerはprepare/startのSSHコマンドで、nativeのPython起動前に
+`VLLM_WORKER_MULTIPROC_METHOD=spawn`を明示する。CUDA初期化後のforkを避け、
+子phaseにも同じ設定を引き継ぐ。SSHセッションやcontrollerの環境変数には依存しない。
+この指定はcontroller側に限定し、image同梱コード・依存・digestは変更しない。
