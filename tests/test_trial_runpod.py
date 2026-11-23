@@ -172,7 +172,7 @@ def test_SSHはhost_key照合と非対話を必須にして出力値を記録し
     assert backend._transport(pod(), "done", resource()["remote"] + "/T001")
     argv, kwargs = calls[0]
     assert "StrictHostKeyChecking=yes" in argv
-    assert "BatchMode=yes" in argv and kwargs["timeout"] <= 3
+    assert "BatchMode=yes" in argv and kwargs["timeout"] == 12
     assert not any("private" in json.dumps(event) for event in events)
     assert events[-1]["stdout_sha256"] == sha(b"private")
 
@@ -715,3 +715,121 @@ def test_SSH起動は絶対Pythonと明示コードパスを使う(tmp_path, mon
     assert Path(CONTROLLER_PYTHON).is_absolute()
     assert Path(CODE_PATH).is_absolute()
     assert "python" not in argv
+
+@pytest.mark.parametrize("operation", ["prepare", "submit"])
+def test_SSHの初回接続と複数操作が共有期限内で三秒を超えて完了する(
+    tmp_path, monkeypatch, operation
+):
+    from colorstats import trial_runpod
+
+    clock = [100.0]
+    calls = []
+
+    def run(argv, **kwargs):
+        assert kwargs["timeout"] == 12
+        clock[0] += 11
+        calls.append(argv)
+        return SimpleNamespace(returncode=0, stdout=b"", stderr=b"")
+
+    monkeypatch.setattr(trial_runpod.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(subprocess, "run", run)
+    backend = RunPod(settings(tmp_path), audit=lambda event: None)
+    if operation == "prepare":
+        backend.prepare(pod(), resource(), {})
+    else:
+        backend.submit(pod(), resource(), {"trial_id": "T001"}, b"synthetic", {})
+    assert len(calls) == (3 if operation == "prepare" else 4)
+    assert backend.deadline is None
+
+
+def test_SSHの残り総枠を次の接続へ引き継ぎ不足時は実行しない(tmp_path, monkeypatch):
+    from colorstats import trial_runpod
+
+    clock = [100.0]
+    waits = []
+
+    def run(argv, **kwargs):
+        waits.append(kwargs["timeout"])
+        clock[0] += kwargs["timeout"]
+        return SimpleNamespace(returncode=0, stdout=b"", stderr=b"")
+
+    monkeypatch.setattr(trial_runpod.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(subprocess, "run", run)
+    backend = RunPod(settings(tmp_path), audit=lambda event: None)
+    backend.deadline = 117
+    assert backend._transport(pod(), "mkdir", resource()["remote"])
+    assert backend._transport(pod(), "mkdir", resource()["remote"])
+    with pytest.raises(ProviderUnavailable, match="時間枠"):
+        backend._transport(pod(), "mkdir", resource()["remote"])
+    assert waits == [12, 5]
+
+
+@pytest.mark.parametrize(
+    ("error", "kind", "message"),
+    [
+        (subprocess.TimeoutExpired(["synthetic-secret"], 12, b"synthetic-secret"),
+         "timeout", "待機上限"),
+        (OSError(13, "synthetic-secret", "synthetic-secret"), "os_error", "実行できません"),
+    ],
+)
+def test_SSH例外を分類して秘密の原文と出力を記録しない(
+    tmp_path, monkeypatch, error, kind, message
+):
+    events = []
+
+    def run(*args, **kwargs):
+        raise error
+
+    monkeypatch.setattr(subprocess, "run", run)
+    backend = RunPod(settings(tmp_path), audit=events.append)
+    with pytest.raises(ProviderUnavailable, match=message) as caught:
+        backend._transport(pod(), "mkdir", resource()["remote"])
+    assert events[-1]["error_kind"] == kind
+    if kind == "os_error":
+        assert events[-1]["errno"] == 13
+    assert "synthetic-secret" not in json.dumps(events)
+    assert "synthetic-secret" not in str(caught.value)
+
+
+def test_SSH全体期限とHTTPの単回待機上限を分離する(tmp_path, monkeypatch):
+    import signal
+
+    from colorstats import trial_runpod
+
+    timers = []
+    clock = [100.0]
+    monkeypatch.setattr(trial_runpod.time, "monotonic", lambda: clock[0])
+    monkeypatch.setattr(signal, "getitimer", lambda *args: (0, 0))
+    monkeypatch.setattr(signal, "signal", lambda *args: None)
+    monkeypatch.setattr(signal, "setitimer", lambda *args: timers.append(args))
+    backend = RunPod(settings(tmp_path), audit=lambda event: None)
+
+    def transport(*args):
+        assert backend.deadline == 160
+        assert backend.timeout() == 3
+        assert backend.timeout(12) == 12
+        return True
+
+    backend.transport = transport
+    backend.prepare(pod(), resource(), {})
+    assert timers == [(signal.ITIMER_REAL, 60), (signal.ITIMER_REAL, 0)]
+    assert backend.deadline is None
+
+
+def test_SSH操作中の全体期限は残りの転送を中断しタイマーを復元する(
+    tmp_path, monkeypatch
+):
+    from colorstats import trial_runpod
+
+    calls = []
+
+    def run(*args, **kwargs):
+        calls.append(args)
+        trial_runpod._deadline_expired(None, None)
+
+    monkeypatch.setattr(subprocess, "run", run)
+    backend = RunPod(settings(tmp_path), audit=lambda event: None)
+    with pytest.raises(ProviderUnavailable, match="総時間枠"):
+        backend.prepare(pod(), resource(), {})
+    assert len(calls) == 1
+    assert backend.deadline is None

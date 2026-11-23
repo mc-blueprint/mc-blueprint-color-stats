@@ -40,7 +40,10 @@ def _deadline_expired(signum, frame):
     raise ProviderUnavailable("監視・回収操作の総時間枠です")
 
 
-def bounded(method):
+def bounded(method=None, *, seconds=14):
+    if method is None:
+        return lambda wrapped: bounded(wrapped, seconds=seconds)
+
     @wraps(method)
     def call(self, *args, **kwargs):
         outer = self.deadline is None
@@ -48,8 +51,8 @@ def bounded(method):
             if any(signal.getitimer(signal.ITIMER_REAL)):
                 raise ProviderUnavailable("既存の時間監視と併用できません")
             previous = signal.signal(signal.SIGALRM, _deadline_expired)
-            self.deadline = time.monotonic() + 14
-            signal.setitimer(signal.ITIMER_REAL, 14)
+            self.deadline = time.monotonic() + seconds
+            signal.setitimer(signal.ITIMER_REAL, seconds)
         try:
             return method(self, *args, **kwargs)
         finally:
@@ -77,11 +80,11 @@ class RunPod:
         self.request = request or self._request
         self.transport = transport or self._transport
 
-    def timeout(self):
-        remaining = self.deadline - time.monotonic() if self.deadline is not None else 3
+    def timeout(self, limit=3):
+        remaining = self.deadline - time.monotonic() if self.deadline is not None else limit
         if remaining <= 0:
             raise ProviderUnavailable("監視・回収操作の時間枠です")
-        return min(3, remaining)
+        return min(limit, remaining)
 
     @bounded
     def _request(self, method, path, body=None):
@@ -271,9 +274,15 @@ class RunPod:
             argv = ["ssh", "-p", str(port), *options, user + "@" + host, *commands[operation]]
         self.audit({"operation": operation, "argv": argv, "phase": "requested"})
         try:
-            result = subprocess.run(argv, capture_output=True, timeout=self.timeout(), check=False)
-        except (OSError, subprocess.TimeoutExpired):
-            raise ProviderUnavailable("SSH操作の完了を確認できません") from None
+            result = subprocess.run(
+                argv, capture_output=True, timeout=self.timeout(12), check=False
+            )
+        except subprocess.TimeoutExpired:
+            self.audit({"operation": operation, "error_kind": "timeout"})
+            raise ProviderUnavailable("SSH操作が待機上限に達しました") from None
+        except OSError as error:
+            self.audit({"operation": operation, "error_kind": "os_error", "errno": error.errno})
+            raise ProviderUnavailable("SSHプロセスを実行できません") from None
         self.audit(
             {
                 "operation": operation,
@@ -288,7 +297,7 @@ class RunPod:
             raise ProviderUnavailable("SSH操作が完了していません")
         return True
 
-    @bounded
+    @bounded(seconds=60)
     def prepare(self, pod, resource, spec):
         remote = resource["remote"] + "/prepare"
         self.transport(pod, "mkdir", remote)
@@ -301,11 +310,11 @@ class RunPod:
             path.write_bytes(encoded(value))
             self.transport(pod, "put", remote + "/" + filename, path)
 
-    @bounded
+    @bounded(seconds=60)
     def prepared(self, pod, resource):
         return self.transport(pod, "ready", resource["remote"] + "/prepare")
 
-    @bounded
+    @bounded(seconds=60)
     def submit(self, pod, resource, image, content, spec):
         remote = resource["remote"] + "/" + image["trial_id"]
         self.transport(pod, "mkdir", remote)
@@ -316,7 +325,7 @@ class RunPod:
             self.transport(pod, "put", remote + "/input.png", path)
         self.transport(pod, "start", remote)
 
-    @bounded
+    @bounded(seconds=60)
     def collect(self, pod, resource, trial_id):
         remote = resource["remote"] + "/" + trial_id
         if not self.transport(pod, "done", remote):
@@ -337,13 +346,13 @@ class RunPod:
                     blobs[filename] = (path / filename).read_bytes()
             return value, blobs
 
-    @bounded
+    @bounded(seconds=60)
     def shorten_deadline(self, pod, resource, trial_id, deadline):
         remote = resource["remote"] + "/" + trial_id
         self._put_json(pod, remote, {"external_deadline": deadline}, "deadline-next.json")
         self.transport(pod, "deadline", remote)
 
-    @bounded
+    @bounded(seconds=60)
     def remove_image(self, pod, resource, trial_id):
         self.transport(pod, "remove", resource["remote"] + "/" + trial_id)
 
