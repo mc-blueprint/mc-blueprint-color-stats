@@ -3,7 +3,7 @@
 import json
 import subprocess
 import sys
-from contextlib import nullcontext
+from contextlib import contextmanager, nullcontext
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -360,8 +360,30 @@ def test_Sa2VAは著者predict_forwardと内蔵maskを使う(monkeypatch):
     assert all("segment" in value for value in calls[2:])
 
 
-def test_SAM3は単体FP32で6部位を照会し場面は非対応(monkeypatch):
+@pytest.mark.parametrize("failure", [None, "image", "text"])
+def test_SAM3はFP32初期化とCUDA_BF16_autocastで6部位を照会する(monkeypatch, failure):
     calls = []
+    active = set()
+    contexts = []
+    seen = {"image": 0, "text": 0}
+
+    @contextmanager
+    def inference_mode():
+        active.add("inference")
+        try:
+            yield
+        finally:
+            active.remove("inference")
+
+    @contextmanager
+    def autocast(**kwargs):
+        assert kwargs == {"device_type": "cuda", "dtype": "bf16"}
+        contexts.append(kwargs)
+        active.add("autocast")
+        try:
+            yield
+        finally:
+            active.remove("autocast")
 
     class Tensor:
         def detach(self):
@@ -375,15 +397,30 @@ def test_SAM3は単体FP32で6部位を照会し場面は非対応(monkeypatch):
 
     class Processor:
         def __init__(self, model, **kwargs):
+            assert model == "fp32" and not active
             calls.append(kwargs)
 
         def set_image(self, image):
-            return {}
+            assert "inference" in active
+            if "autocast" not in active:
+                raise RuntimeError("mat1 and mat2 must have the same dtype: BFloat16 and Float")
+            seen["image"] += 1
+            if failure == "image":
+                raise RuntimeError("合成forward失敗")
+            return {"features_dtype": "bf16"}
 
         def set_text_prompt(self, **kwargs):
+            assert active == {"inference", "autocast"}
+            assert kwargs["state"]["features_dtype"] == "bf16"
+            seen["text"] += 1
+            if failure == "text":
+                raise RuntimeError("合成forward失敗")
             return {"masks": [Tensor()]}
 
-    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace(inference_mode=nullcontext))
+    monkeypatch.setitem(
+        sys.modules, "torch",
+        SimpleNamespace(inference_mode=inference_mode, autocast=autocast, bfloat16="bf16"),
+    )
     monkeypatch.setitem(
         sys.modules, "sam3.model.sam3_image_processor", SimpleNamespace(Sam3Processor=Processor)
     )
@@ -394,8 +431,15 @@ def test_SAM3は単体FP32で6部位を照会し場面は非対応(monkeypatch):
             build_sam3_image_model=lambda **kwargs: SimpleNamespace(float=lambda: "fp32")
         ),
     )
-    scene, masks = sam3({"model_path": "/fixed"}, Image.new("RGB", (64, 48)))
-    assert scene == "unsupported" and len(masks) == 6
+    if failure:
+        with pytest.raises(RuntimeError, match="合成forward失敗"):
+            sam3({"model_path": "/fixed"}, Image.new("RGB", (64, 48)))
+    else:
+        scene, masks = sam3({"model_path": "/fixed"}, Image.new("RGB", (64, 48)))
+        assert scene == "unsupported" and len(masks) == 6
+        assert seen == {"image": 6, "text": 6}
+    assert not active
+    assert contexts == [{"device_type": "cuda", "dtype": "bf16"}]
     assert calls[0]["confidence_threshold"] == 0.5
 
 

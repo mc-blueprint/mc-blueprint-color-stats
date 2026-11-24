@@ -21,7 +21,9 @@ from colorstats.trial_native_common import (
 def synthetic_plan(root, *, concurrency=1, measurement=False, purpose="trial"):
     """合成検証用の固定形式を作る。ライセンス・重み・環境は実確認として扱わない。"""
     configurations, deployments = {}, {}
-    for key, precision in zip("ABCDE", ["BF16", "BF16", "AWQ4", "BF16", "FP32"], strict=True):
+    for key, precision in zip(
+        "ABCDE", ["BF16", "BF16", "AWQ4", "BF16", "FP32+BF16-autocast"], strict=True
+    ):
         model = {
             "repo": MODELS[key][0],
             "revision": MODELS[key][1],

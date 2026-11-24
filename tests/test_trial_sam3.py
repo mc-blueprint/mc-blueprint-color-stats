@@ -17,6 +17,7 @@ from colorstats.api_budget import digest
 from colorstats.trial_fake import synthetic_plan
 from colorstats.trial_inputs import sha
 from colorstats.trial_native_common import code_files, environment_reference
+from colorstats.trial_runner import validate_plan
 from tests.test_trial_runner import drive, runner_for
 from tests.test_trial_runner import trial as trial
 
@@ -55,6 +56,7 @@ def worker(tmp_path, monkeypatch):
     spec = {
         **deployment,
         "configuration_id": "E",
+        "contract": plan["configurations"]["E"],
         "model_path": str(model),
         "input_sha256": sha((directory / "input.png").read_bytes()),
         "external_deadline": (datetime.now(UTC) + timedelta(hours=1)).isoformat(),
@@ -76,7 +78,19 @@ def test_専用workerは同寸法二値PNGと既存phase形式を返す(worker):
         assert image.mode == "L" and set(np.unique(image)) == {0, 255}
 
 
-@pytest.mark.parametrize("kind", ["input", "model", "worker", "lock", "version", "deadline"])
+@pytest.mark.parametrize("precision", ["FP32", "BF16"])
+def test_Eの混合精度を純粋FP32やBF16として固定しない(tmp_path, precision):
+    plan = synthetic_plan(tmp_path)
+    validate_plan(plan)
+    assert plan["configurations"]["E"]["precision"] == "FP32+BF16-autocast"
+    plan["configurations"]["E"]["precision"] = precision
+    with pytest.raises(ValueError):
+        validate_plan(plan)
+
+
+@pytest.mark.parametrize(
+    "kind", ["input", "model", "worker", "lock", "version", "deadline", "precision"]
+)
 def test_入力重みworker_lock版期限の不一致を推論前に拒否する(worker, kind):
     directory, spec = worker
     if kind == "input":
@@ -89,6 +103,8 @@ def test_入力重みworker_lock版期限の不一致を推論前に拒否する
         spec["runtime"]["sam3"]["lock"]["sha256"] = "0" * 64
     elif kind == "version":
         spec["runtime"]["sam3"]["versions"]["numpy"] = "2.0.0"
+    elif kind == "precision":
+        spec["contract"]["precision"] = "FP32"
     else:
         spec["external_deadline"] = (datetime.now(UTC) - timedelta(seconds=1)).isoformat()
     with pytest.raises(ValueError):
