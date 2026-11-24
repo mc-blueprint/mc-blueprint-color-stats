@@ -53,6 +53,7 @@ from colorstats.trial_results import (
     validate_result,
 )
 from colorstats.trial_runpod import ProviderRejected, ProviderUnavailable
+from colorstats.trial_smoke import settings_signature, verify_smokes
 
 
 def validate_plan(plan):
@@ -371,20 +372,7 @@ class Runner:
             if not self.manifest["synthetic"]:
                 raise PermissionError("事前smoke・測定は合成入力だけを使います")
         else:
-            reference = self.plan["smoke_record"]
-            content = Path(reference["file"]).read_bytes()
-            if sha(content) != reference["sha256"]:
-                raise ValueError("実GPUsmoke記録のSHAが一致しません")
-            smoke = json.loads(content)
-            if (
-                smoke["purpose"] not in {"smoke", "measurement"}
-                or smoke["synthetic"] is not False
-                or smoke["synthetic_inputs"] is not True
-                or smoke["status"] != "complete"
-                or smoke["model_settings_sha256"] != self.model_signature()
-            ):
-                raise PermissionError("同じ構成の実GPU合成smoke成功記録が必要です")
-            self.budget.verify_smoke(smoke)
+            verify_smokes(self.plan, self.budget, now=self.clock())
             if self.manifest["synthetic"] or self.engine is None:
                 raise PermissionError("実写真manifestと権利の読取専用再確認が必要です")
             self.shorten_retention(recheck(self.engine, self.root, now=self.clock()))
@@ -891,7 +879,11 @@ class Runner:
             if "A" not in done
             else [
                 k
-                for k in ("BC" if not {"B", "C"} <= done else "DE")
+                for k in (
+                    "E"
+                    if set(self.plan["configurations"]) == set("AE")
+                    else "BC" if not {"B", "C"} <= done else "DE"
+                )
                 if k in self.plan["configurations"] and k not in done
             ]
         )
@@ -1029,6 +1021,10 @@ class Runner:
             build_pages(self.root, now=self.clock())
         self.state["status"] = "complete"
         self.state["model_settings_sha256"] = self.model_signature()
+        self.state["configuration_settings_sha256"] = {
+            key: settings_signature(self.plan, key) for key in self.plan["configurations"]
+        }
+        self.state["results_sha256"] = sha((self.root / "results.json").read_bytes())
         self.state["cost_summary"] = summary(self.state)
         self.save("complete")
 

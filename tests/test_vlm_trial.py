@@ -29,6 +29,33 @@ def attempts(root):
     return json.loads((root / "active-attempts.json").read_text())
 
 
+@pytest.mark.parametrize("change", [None, "empty", "missing", "old_attempt", "expired"])
+def test_AE60結果の受領再読込み描画と不正結果の拒否(bundle, completed, change):
+    root, _, configurations, results, active, now = incoming(bundle, completed)
+    configurations = {k: v for k, v in configurations.items() if k in "AE"}
+    results = [r for r in results if r["configuration_id"] in "AE"]
+    active = {trial_id: {k: v for k, v in row.items() if k in "AE"}
+              for trial_id, row in active.items()}
+    if change == "empty":
+        results = []
+    elif change == "missing":
+        results.pop()
+    elif change == "old_attempt":
+        results[0]["attempt"] = "old"
+    elif change == "expired":
+        now += timedelta(days=4)
+    if change:
+        with pytest.raises((ValueError, PermissionError)):
+            accept_results(root, configurations, results, active_attempts=active, now=now)
+        assert not (root / "results.json").exists()
+    else:
+        accept_results(root, configurations, results, active_attempts=active, now=now)
+        assert len(read_results(root, now=now)[2]) == 60
+        table = build_pages(root, now=now)
+        assert len(table["rows"]) == 30
+        assert all(set(row["positions"].values()) == set("AE") for row in table["rows"])
+
+
 @pytest.fixture
 def candidates(tmp_path):
     now = datetime.now(UTC)

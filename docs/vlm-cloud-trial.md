@@ -57,7 +57,8 @@ synthetic_plan関数はテスト用の形式例であり、仮の重み・環境
 | concurrency | 既定1、選択時2。A終了後B/C、その後D/E |
 | configurations | #141のA～E固定参照 |
 | deployments | A～Eそれぞれの下表の実行設定 |
-| smoke_record | 実GPU合成smokeまたは測定の確定checkpointのfileとsha256。本体で必須 |
+| smoke_records | 選択構成IDごとの実GPU合成smokeまたは測定の確定checkpointのfileとsha256。本体で必須 |
+| smoke_record | 全選択構成で同じcheckpointを使う場合の単一参照。smoke_recordsとの併記はしない |
 | measurement_record | 終了確認済み測定checkpointのfileとsha256。測定あり本体・smokeで必須 |
 | api_key_file | 既存のRunPod専用秘密ファイルへの参照。要求時だけ読む |
 | ssh_key_file / known_hosts | 専用SSH鍵・事前照合したhost keyの参照。値を設定・ログへ転記しない |
@@ -184,7 +185,7 @@ provider障害中の消去やbackupの消去を保証しない。通常の回収
 | 測定あり全体 | hard 20 USD、soft 18 USD |
 | 測定省略全体 | hard 15 USD、soft 13 USD |
 | 測定だけ | 5 USD・全run合計40分・最大4 lease・1 lease 20分・6 USD/h以下。3.5 USDまたは30分で新規起動停止、4.5 USDで終了へ |
-| A / B / C / D / Eのsmoke・本体・再試行の共有予約 | 3.20 / 3.70 / 4.80 / 1.45 / 1.30 USD |
+| A / B / C / D / Eのsmoke・本体・再試行の共有予約 | 3.20 / 3.70 / 3.60 / 1.45 / 2.50 USD |
 | 同じ構成の再起動 | 旧資源の終了・請求確認後に最大1回、残USD・時間内 |
 | 全体の設備障害 | 2回で新規処理停止 |
 | 管理・回収監視失敗 | 2回で新規処理停止・終了へ |
@@ -423,12 +424,48 @@ MAX_JOBS=2・NVCC_THREADS=2で32GB程度のbuild環境の並列数を制限す�
 受領契約で認める集合・件数・匿名比較は[試行契約](vlm-trial.md#構成dを省略する試行)に従う。
 起動順はA→B/C→Eとなり、Dを起動したりダミー結果を作ったりしない。
 
-既存のplan SHA・model_settings_sha256には構成集合が含まれるため、集合を変えた
-再開やsmoke記録の流用は拒否する。構成を変える場合は新規runと対応する記録を作る。
+plan SHAには構成集合が含まれるため、集合を変えた再開は拒否する。
+構成を変える場合は新規runを作り、smoke証明は下記の構成単位で照合する。
 smoke・本試行・再試行の共通USD台帳は継続し、Dを省略しても過去runの支出は除外しない。
-A/B/C/Eの共有枠は、2026-11-23のユーザー承認「13に上げる」により、
-3.20/3.70/4.80/1.30 USD（計13.00 USD）へ変更した。
+A/B/C/Eの共有枠は、2026-11-24 16:4x JSTのユーザー判断「B/C枠をEへ回す」により、
+CからEへ1.20 USDを移し、3.20/3.70/3.60/2.50 USD（計13.00 USD）とする。Bの移管は0。
 新規起動停止13 USD・全体上限15 USDは維持する。lease時間上限は後述の配分へ変更する。
+
+## A/E先行本番と構成別smoke証明（Issue #163）
+
+configurationsとdeploymentsをともにAEへ限定する。起動順はA→Eで、B/C/Dの
+作成要求は行わない。30件×2構成の60結果を受領し、有効attempt・保持期限・
+比較ページ・再開の照合にも同じ集合を使う。任意の構成集合には対応しない。
+A 3.20/E 2.50 USD、ABCE全体の予約13 USD、新規停止13 USD・総上限15 USD、
+診断・共通費用・過去runの集計は変更しない。
+
+本番planのsmoke_recordsは次の形式で、選択構成すべてを指定する。
+参照は同じcheckpointでも、別runのcheckpointでもよい。
+
+```json
+{
+  "A": {"file": "/private/smoke-a/execution/000123.json", "sha256": "<checkpointのSHA256>"},
+  "E": {"file": "/private/smoke-e/execution/000123.json", "sha256": "<checkpointのSHA256>"}
+}
+```
+
+checkpointには構成ごとのconfiguration_settings_sha256とresults_sha256を記録する。
+構成設定・deployment全体・提供元・地域・ローカルcontrollerのSHAを構成単位で固定し、
+別構成を追加・省略しただけでは選択した構成の証明を無効にしない。
+元のmanifest・受領結果・実行台帳・共通USD台帳のrun/resource・費用を読み取り照合する。
+対象構成のT001〜T003がすべて非空領域を持つ成功で、同じ有効attemptの
+削除確認済み資源へ結び付いている必要がある。fake、欠測、失敗、空領域、
+設定差、未削除、期限切れ、未実行の構成は証明にならない。
+smoke完了だけで全構成の成功を仮定しない。smokeと本番は新しい別Podで実行する。
+
+構成別参照や元の受領結果を持たない旧summaryは変更・補完しない。
+今回の証明を満たさない既存smokeは再実行が必要で、実Podでの再smokeは別途許可範囲に従う。
+
+prepare/startはtrial_native.mainを起動し、Aはqwen→sam2のphase、Eは
+trial_sam3.main/runへ進む。期限監視もtrial_nativeで動く。
+trial_nativeがtrial_resultsから使うPARTSは変更しない。
+native本体・trial_native_common・trial_sam3・trial_paths.jsonおよびコードSHA契約は
+今回変更しないため、Pod側の挙動とimage digestは維持できる。
 
 ## controllerのSSH待機時間
 
@@ -492,20 +529,20 @@ lease全体の時間上限・構成別金額と13/15 USDの停止は優先され
 起動前に既使用額も含めて再見積もりし、不足時は開始せず判断を戻す。
 
 
-### 13 USD承認後の配分と共通費用
+### 13 USD内でのCからEへの再配分と共通費用
 
 | 構成 | smoke・本体・再試行の通算USD | lease時間上限 |
 |---|---:|---:|
 | A | 3.20 | 2時間 |
 | B | 3.70 | 2.75時間 |
-| C | 4.80 | 3.5時間 |
-| E | 1.30 | 1.75時間 |
+| C | 3.60 | 3.5時間 |
+| E | 2.50 | 1.75時間 |
 
 Dの1.45 USD・1.5時間は変更しない。既存deploymentのtime_secondsも上表へ
 明示的に合わせる必要があり、HOURSだけを変えて古いplanの時間を暗黙に延長しない。
 
-今回の既使用はA本体約1.13156 USDと、Aの診断・再試行に由来する共通費目
-diagnosis約0.29048 USD、smoke_shared約0.33891 USD。
+従来のAの診断・再試行に由来する共通費目は、diagnosis約0.29048 USDと
+smoke_shared約0.33891 USD。
 この2共通費目はA枠の消費額へ算入し、元の台帳行・費目は書き換えない。
 予約時と清掃時の超過判定で同じ集計を使う。測定用の費用区分は従来どおり分ける。
 
@@ -517,6 +554,14 @@ diagnosis約0.29048 USD、smoke_shared約0.33891 USD。
 実使用が13 USDへ達した場合の停止と総上限15 USDも維持し、残り2 USDを
 通常処理へ移さない。計13 USDの予約は全額を先に課金する意味ではない。
 
-名目見積もりは既使用込み約12.2546 USDで、13 USDへの余裕は約0.7454 USD。
-上表はこの仮定で33件/構成と、最終の受領枠・終了余裕を確保できる配分。
-B/C/Eは未実測で、長い照合待ち・再試行・長い出力では完了できない場合がある。
+新しいEの診断はconfiguration_id=E、purpose=diagnosisとしてE枠へ算入する。
+従来のdiagnosis・smoke_sharedの費目や過去使用額は付け替えない。
+
+単価0.62 USD/hを仮定すると、Eの診断・再smoke・本番・既使用の通算見積は
+通常約1.85864 USD、最大の照合待ちを含む場合も約2.32364 USDで、E枠2.50 USD内となる。
+本番30件は準備900秒＋150秒×30件の90分、終了余裕120秒を含め92分を想定する。
+単回leaseの105分以内のためHOURS[E]=1.75は維持し、枠の増額でleaseを延長しない。
+これは未計測の速度・完了を保証するものではなく、実測後に再確認する。
+
+B/Cは保留中で、Cを3.60 USDへ減らした後の完走や、Bの残枠での本番完了を保証しない。
+B/C再開時は、既使用とsmoke・本番・終了余裕を再見積もりし、必要な配分判断を行う。

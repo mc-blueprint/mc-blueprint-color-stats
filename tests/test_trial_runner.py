@@ -68,21 +68,21 @@ def drive(runner, maximum=500):
 
 
 @pytest.mark.parametrize("concurrency", [1, 2])
-@pytest.mark.parametrize("configuration_ids", ["ABCDE", "ABCE"])
+@pytest.mark.parametrize("configuration_ids", ["ABCDE", "ABCE", "AE"])
 def test_合成30件を選択構成で起動回収受領比較削除費用記録まで通す(
     trial, concurrency, configuration_ids
 ):
     root, plan, backend, _ = trial
     plan["concurrency"] = concurrency
-    if configuration_ids == "ABCE":
-        del plan["configurations"]["D"]
-        del plan["deployments"]["D"]
+    for field in ("configurations", "deployments"):
+        plan[field] = {k: v for k, v in plan[field].items() if k in configuration_ids}
     count = len(configuration_ids)
     with writer(root):
         runner = runner_for(trial)
         assert drive(runner) == "complete"
     assert len(read_results(root)[2]) == 30 * count
     assert len(runner.state["resources"]) == count
+    assert {r["configuration_id"] for r in runner.state["resources"]} == set(configuration_ids)
     assert all(r["status"] == "closed" for r in runner.state["resources"])
     assert not backend.pods and not backend.jobs
     assert len(backend.deleted) == count
@@ -172,7 +172,10 @@ def test_同時writerを拒否し解放後に再取得できる(trial):
         pass
 
 
-def test_保存した実行状態から回収途中を再開できる(trial):
+@pytest.mark.parametrize("configuration_ids", ["ABCDE", "AE"])
+def test_保存した実行状態から回収途中を再開できる(trial, configuration_ids):
+    for field in ("configurations", "deployments"):
+        trial[1][field] = {k: v for k, v in trial[1][field].items() if k in configuration_ids}
     runner = runner_for(trial)
     for _ in range(10):
         runner.tick()
@@ -180,7 +183,7 @@ def test_保存した実行状態から回収途中を再開できる(trial):
     replacement = runner_for(trial)
     assert len(replacement.state["results"]) == count
     assert drive(replacement) == "complete"
-    assert len(replacement.state["resources"]) == 5
+    assert len(replacement.state["resources"]) == len(configuration_ids)
 
 
 @pytest.mark.parametrize(
@@ -381,7 +384,7 @@ def test_測定40分上限で新規処理を止める(trial):
     assert drive(runner) == "stopped"
 
 
-@pytest.mark.parametrize("key", list("ABCE"))
+@pytest.mark.parametrize("key", list("AB"))
 def test_既使用とsmoke通算後も本試行30件と終了余裕を確保する(trial, key):
     _, plan, backend, clock = trial
     del plan["configurations"]["D"]
@@ -442,11 +445,71 @@ def test_ABCE承認枠は13でDの定義は変更しない():
     import math
 
     assert math.fsum(RESERVATIONS[k] for k in "ABCE") == 13
+    assert RESERVATIONS == {"A": 3.20, "B": 3.70, "C": 3.60, "D": 1.45, "E": 2.50}
     assert RESERVATIONS["D"] == 1.45
     assert HOURS["D"] == 1.5
+    assert HOURS["E"] == 1.75
 
 
-@pytest.mark.parametrize("prior_total,accepted", [(10.07, True), (10.26, False)])
+def test_縮小したC枠では従来の保守的完走見積を保証しない():
+    deployment = {"usd_hour": 1.222, "fixed_usd": 0, "time_seconds": HOURS["C"] * 3600}
+    assert time_limit("C", deployment) < 900 + 30 * 350 + 120
+
+
+@pytest.mark.parametrize("diagnosis", [0.51666667, 0.98166667])
+def test_E増枠で診断smoke既使用を通算し30件と終了余裕を確保する(trial, diagnosis):
+    _, plan, backend, clock = trial
+    for field in ("configurations", "deployments"):
+        plan[field] = {k: v for k, v in plan[field].items() if k in "AE"}
+    deployment = plan["deployments"]["E"]
+    deployment.update(usd_hour=0.62, time_seconds=HOURS["E"] * 3600, cleanup_seconds=120)
+    rows = [
+        {"configuration_id": key, "status": "closed", "estimated_usd": value}
+        for key, value in (
+            ("A", 1.54611274), ("B", 2.28609408), ("C", 0), ("E", 0.17947338),
+            ("diagnosis", 0.29047930), ("smoke_shared", 0.33891427),
+        )
+    ]
+    with Budget(Path(plan["budget_ledger"]), 15) as budget:
+        budget.data["runs"]["previous"] = {
+            "synthetic": True, "purpose": "trial", "failures": 0,
+            "resources": copy.deepcopy(rows),
+        }
+        for run_id, purpose, value in (
+            ("diagnosis-E", "diagnosis", diagnosis), ("smoke-E", "smoke", 0.2325),
+        ):
+            budget.data["runs"][run_id] = {
+                "synthetic": True, "purpose": purpose, "failures": 0,
+                "resources": [{"configuration_id": "E", "status": "closed",
+                               "estimated_usd": value}],
+            }
+        runner = runner_for(trial, budget=budget)
+        assert runner.reserve("E") == pytest.approx(2.50 - 0.17947338 - diagnosis - 0.2325)
+        runner.start("E")
+        resource = runner.state["resources"][0]
+        assert resource["limit_seconds"] == 1.75 * 3600
+        assert resource["limit_seconds"] >= 900 + 30 * 150 + 120
+        clock.seconds += 900
+        runner.advance(resource)
+        runner.advance(resource)
+        for _ in range(30):
+            runner.advance(resource)
+            assert resource["current"]
+            clock.seconds += 150
+            runner.advance(resource)
+            assert runner.state["stop_reason"] is None
+        runner.advance(resource)
+        clock.seconds += 120
+        runner.cleanup(resource)
+        assert resource["status"] == "closed"
+        assert len(runner.state["results"]) == backend.events.count("submit") == 30
+        assert resource["estimated_usd"] + 0.17947338 + diagnosis + 0.2325 <= 2.50
+        assert runner.spending() < 13
+        assert budget.cap == 15
+        assert budget.data["runs"]["previous"]["resources"] == rows
+
+
+@pytest.mark.parametrize("prior_total,accepted", [(8.87, True), (9.06, False)])
 def test_並列構成のsmoke費用を二重予約しない(trial, prior_total, accepted):
     _, plan, backend, _ = trial
     plan["concurrency"] = 2
@@ -1037,6 +1100,7 @@ def test_権利再確認の戻り値を外部期限へ適用する(trial, monkey
         return latest
 
     monkeypatch.setattr(trial_runner, "recheck", recheck)
+    monkeypatch.setattr(trial_runner, "verify_smokes", lambda *args, **kwargs: None)
     runner.authorize()
     assert calls == [(runner.engine, root, clock.now())]
     assert runner.expiry == latest
@@ -1293,7 +1357,7 @@ def test_共通費目をA枠から差し引き13ちょうどの予約を拒否�
             ("A", 1.1315571648626563),
             ("diagnosis", 0.2904793008611111),
             ("smoke_shared", 0.3389142743611111),
-            ("B", 3.7), ("C", 4.8), ("E", 1.3),
+            ("B", 3.7), ("C", 3.6), ("E", 2.5),
         ]
     ]
     with Budget(Path(plan["budget_ledger"]), 15) as budget:

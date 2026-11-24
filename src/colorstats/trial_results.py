@@ -60,8 +60,8 @@ STATUSES = {"success", "missing", "failed", "rejected", "truncated"}
 
 
 def configurations_valid(configurations):
-    if set(configurations) not in (set("ABCDE"), set("ABCE")):
-        raise ValueError("構成はABCDEまたはABCEに固定してください")
+    if set(configurations) not in (set("ABCDE"), set("ABCE"), set("AE")):
+        raise ValueError("構成はABCDEまたはABCEまたはAEに固定してください")
     for config in configurations.values():
         if (
             set(config) != CONFIG_FIELDS
@@ -80,7 +80,7 @@ def configurations_valid(configurations):
         len(
             {
                 (configurations[c]["segmenter_revision"], configurations[c]["segmenter_sha256"])
-                for c in "ABC"
+                for c in "ABC" if c in configurations
             }
         )
         != 1
