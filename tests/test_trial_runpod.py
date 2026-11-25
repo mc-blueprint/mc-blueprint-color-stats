@@ -670,13 +670,14 @@ def test_独立期限監視はcontroller停止後も短縮期限を読み直す(
 def test_SAM3専用環境の固定参照をSSH要求JSONへ保持する(tmp_path, operation):
     captured = []
 
-    def transport(pod, action, remote, local=None):
+    def transport(pod, action, remote, local=None, *, native_timeout=None):
         if action == "put" and remote.endswith("request.json"):
             captured.append(json.loads(local.read_text()))
         return True
 
     plan = synthetic_plan(tmp_path / "trial")
     spec = {
+        "image_timeout_seconds": plan["deployments"]["E"]["image_timeout_seconds"],
         "runtime": plan["deployments"]["E"]["runtime"],
         "contract": plan["configurations"]["E"],
     }
@@ -711,7 +712,10 @@ def test_SSH起動はspawnと絶対Pythonと明示コードパスを使う(
 
     monkeypatch.setattr(subprocess, "run", run)
     backend = RunPod(settings(tmp_path), audit=lambda event: None)
-    backend._transport(pod(), operation, resource()["remote"] + "/T001")
+    backend._transport(
+        pod(), operation, resource()["remote"] + "/T001",
+        native_timeout=240 if operation == "start" else None,
+    )
     argv = calls[0]
     index = argv.index("/usr/bin/env")
     assert argv[index : index + 6] == [
@@ -748,7 +752,10 @@ def test_SSHの初回接続と複数操作が共有期限内で三秒を超え�
     if operation == "prepare":
         backend.prepare(pod(), resource(), {})
     else:
-        backend.submit(pod(), resource(), {"trial_id": "T001"}, b"synthetic", {})
+        backend.submit(
+            pod(), resource(), {"trial_id": "T001"}, b"synthetic",
+            {"image_timeout_seconds": 240},
+        )
     assert len(calls) == (3 if operation == "prepare" else 4)
     assert backend.deadline is None
 
@@ -844,3 +851,37 @@ def test_SSH操作中の全体期限は残りの転送を中断しタイマー�
         backend.prepare(pod(), resource(), {})
     assert len(calls) == 1
     assert backend.deadline is None
+
+
+@pytest.mark.parametrize("key", list("ABCDE"))
+def test_submitは要求JSONと同じ構成別時間をSSHのtimeoutへ渡す(tmp_path, monkeypatch, key):
+    from colorstats.trial_costs import IMAGE_TIMEOUTS
+
+    requested, commands = [], []
+
+    def run(argv, **kwargs):
+        commands.append(argv)
+        if argv[0] == "scp" and argv[-1].endswith("/request.json"):
+            requested.append(json.loads(Path(argv[-2]).read_text()))
+        return SimpleNamespace(returncode=0, stdout=b"", stderr=b"")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    backend = RunPod(settings(tmp_path), audit=lambda e: None)
+    spec = {"image_timeout_seconds": IMAGE_TIMEOUTS[key]}
+    backend.submit(pod(), resource(), {"trial_id": "T001"}, b"synthetic", spec)
+    start = next(argv for argv in commands if "colorstats.trial_native" in argv)
+    assert start[start.index("timeout") + 1] == str(requested[0]["image_timeout_seconds"])
+    assert requested == [spec]
+    assert "VLLM_WORKER_MULTIPROC_METHOD=spawn" in start
+
+
+@pytest.mark.parametrize("limit", [None, 0, -1, True, float("nan"), float("inf"), 601, "240;bad"])
+def test_native起動の不正な時間枠はSSH実行前に拒否する(tmp_path, monkeypatch, limit):
+    calls = []
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: calls.append(a))
+    backend = RunPod(settings(tmp_path), audit=lambda e: None)
+    with pytest.raises(ValueError):
+        backend._transport(
+            pod(), "start", resource()["remote"] + "/T001", native_timeout=limit
+        )
+    assert calls == []

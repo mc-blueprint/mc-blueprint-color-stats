@@ -13,6 +13,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from colorstats.trial_costs import IMAGE_TIMEOUTS, number
 from colorstats.trial_inputs import encoded, sha, stamp
 from colorstats.trial_native_common import python_command
 
@@ -191,7 +192,7 @@ class RunPod:
             pod = detail
         return pod
 
-    def _transport(self, pod, operation, remote, local=None):
+    def _transport(self, pod, operation, remote, local=None, *, native_timeout=None):
         endpoint = pod["ssh"].get("direct")
         if not endpoint:
             raise ProviderUnavailable("ファイル転送用の公開IP経由SSHが未準備です")
@@ -213,6 +214,10 @@ class RunPod:
             r"/tmp/colorstats-[a-f0-9-]+/[A-E]_[a-f0-9]+/T[0-9]{3}", remote
         ):
             raise ValueError("削除対象は当試行の1画像分に限ります")
+        if operation == "start":
+            native_timeout = number(native_timeout)
+            if not 0 < native_timeout <= max(IMAGE_TIMEOUTS.values()):
+                raise ValueError("nativeの画像時間枠が不正です")
         options = [
             "-o",
             "BatchMode=yes",
@@ -262,7 +267,7 @@ class RunPod:
                 "start": [
                     "nohup",
                     "timeout",
-                    "120",
+                    str(native_timeout),
                     *native_command,
                     "--directory",
                     remote,
@@ -325,7 +330,7 @@ class RunPod:
             path = Path(name) / "input.png"
             path.write_bytes(content)
             self.transport(pod, "put", remote + "/input.png", path)
-        self.transport(pod, "start", remote)
+        self.transport(pod, "start", remote, native_timeout=spec["image_timeout_seconds"])
 
     @bounded(seconds=60)
     def collect(self, pod, resource, trial_id):

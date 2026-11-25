@@ -10,7 +10,16 @@ import pytest
 
 from colorstats.api_budget import digest
 from colorstats.trial_cli import synthetic_inputs
-from colorstats.trial_costs import RESERVATIONS, cost, select_candidate, summary, time_limit
+from colorstats.trial_costs import (
+    HOURS,
+    IMAGE_RECEIVE_GRACE_SECONDS,
+    IMAGE_TIMEOUTS,
+    RESERVATIONS,
+    cost,
+    select_candidate,
+    summary,
+    time_limit,
+)
 from colorstats.trial_fake import FakeRunPod, synthetic_plan
 from colorstats.trial_inputs import sha
 from colorstats.trial_ledger import Budget
@@ -140,10 +149,10 @@ def test_ライセンス未確認なら合成GPU_smokeも拒否する(trial, req
     "field,value",
     [
         ("container", "mutable:latest"),
-        ("image_timeout_seconds", 121),
+        ("image_timeout_seconds", 241),
         ("gpu_count", 3),
         ("usd_hour", 0),
-        ("fixed_usd", 2),
+        ("fixed_usd", RESERVATIONS["A"]),
     ],
 )
 def test_固定値や予約に不一致があれば起動前に拒否する(trial, field, value):
@@ -174,7 +183,9 @@ def test_保存した実行状態から回収途中を再開できる(trial):
     assert len(replacement.state["resources"]) == 5
 
 
-@pytest.mark.parametrize("kind", ["config", "gpu", "registry", "cuda", "manifest", "checkpoint"])
+@pytest.mark.parametrize(
+    "kind", ["config", "gpu", "registry", "cuda", "timeout", "manifest", "checkpoint"]
+)
 def test_再開時の固定参照変更を拒否する(trial, kind):
     root, plan, _, _ = trial
     runner = runner_for(trial)
@@ -187,6 +198,8 @@ def test_再開時の固定参照変更を拒否する(trial, kind):
         plan["deployments"]["A"]["registry"] = "changed-registry"
     elif kind == "cuda":
         plan["deployments"]["A"]["min_cuda_version"] = "14.0"
+    elif kind == "timeout":
+        plan["deployments"]["A"]["image_timeout_seconds"] -= 1
     elif kind == "manifest":
         path = root / "manifest.json"
         path.write_text(path.read_text() + " ")
@@ -218,11 +231,13 @@ def test_旧attemptや参照差を受領確定へ混ぜない(trial, field):
     assert not backend.pods
 
 
-def test_未回収2分で次の入力を止め新設資源を終了する(trial):
+def test_受領枠を過ぎた未回収で次の入力を止め新設資源を終了する(trial):
     runner = runner_for(trial)
     until_sent(runner)
     trial[2].jobs.clear()
-    trial[3].seconds += 121
+    trial[3].seconds += (
+        trial[1]["deployments"]["A"]["image_timeout_seconds"] + IMAGE_RECEIVE_GRACE_SECONDS
+    )
     assert drive(runner) == "stopped"
     assert runner.state["stop_reason"] == "unrecovered"
     assert trial[2].events.count("submit") == 1
@@ -366,52 +381,72 @@ def test_測定40分上限で新規処理を止める(trial):
     assert drive(runner) == "stopped"
 
 
-@pytest.mark.parametrize("key", list("ABCDE"))
-def test_smoke通算後も全構成の本試行時間を確保する(trial, key):
-    _, plan, backend, _ = trial
-    hours = {"A": 1.5, "B": 2, "C": 3, "D": 1.5, "E": 1.5}
-    rates = {k: (0.59 * (2 if k in "BC" else 1) + 200 * 0.10 / 720) * 1.10 for k in hours}
-    smoke = {k: rates[k] * 0.5 for k in hours}
-    nominal = {k: smoke[k] + rates[k] * hours[k] for k in hours}
-    assert all(RESERVATIONS[k] >= nominal[k] * 1.06 for k in hours)
-    assert sum(RESERVATIONS.values()) < 13
-    for k, deployment in plan["deployments"].items():
-        deployment.update(usd_hour=rates[k], time_seconds=hours[k] * 3600, cleanup_seconds=120)
-
-    with Budget(Path(plan["budget_ledger"]), 15) as budget:
-        budget.data["runs"]["smoke"] = {
-            "synthetic": True,
-            "purpose": "smoke",
-            "failures": 0,
-            "resources": [
-                {"configuration_id": k, "status": "closed", "estimated_usd": smoke[k]}
-                for k in hours
-            ],
+@pytest.mark.parametrize("key", list("ABCE"))
+def test_既使用とsmoke通算後も本試行30件と終了余裕を確保する(trial, key):
+    _, plan, backend, clock = trial
+    del plan["configurations"]["D"]
+    del plan["deployments"]["D"]
+    rates = {"A": 0.62, "B": 1.222, "C": 1.222, "E": 0.62}
+    seconds = {"A": 170, "B": 260, "C": 350, "E": 150}
+    smoke = {k: rates[k] * (900 + 3 * seconds[k]) / 3600 for k in rates}
+    prior_rows = [
+        {"configuration_id": k, "status": "closed", "estimated_usd": value}
+        for k, value in [
+            ("A", 1.1315571648626563),
+            ("diagnosis", 0.2904793008611111),
+            ("smoke_shared", 0.3389142743611111),
+        ]
+    ]
+    prior_rows += [
+        {"configuration_id": k, "status": "closed", "estimated_usd": smoke[k]}
+        for k in rates
+    ]
+    prior_rows += [
+        {
+            "configuration_id": k, "status": "closed",
+            "estimated_usd": rates[k] * (900 + 30 * seconds[k]) / 3600,
         }
-        budget.data["runs"]["previous-main"] = {
-            "synthetic": True,
-            "purpose": "trial",
-            "failures": 0,
-            "resources": [
-                {
-                    "configuration_id": k,
-                    "status": "closed",
-                    "estimated_usd": rates[k] * hours[k],
-                }
-                for k in "ABCDE"[: "ABCDE".index(key)]
-            ],
+        for k in "ABCE"[: "ABCE".index(key)]
+    ]
+    for k, deployment in plan["deployments"].items():
+        deployment.update(
+            usd_hour=rates[k], time_seconds=HOURS[k] * 3600, cleanup_seconds=120
+        )
+    with Budget(Path(plan["budget_ledger"]), 15) as budget:
+        budget.data["runs"]["previous"] = {
+            "synthetic": True, "purpose": "smoke", "failures": 0,
+            "resources": copy.deepcopy(prior_rows),
         }
         runner = runner_for(trial, budget=budget)
-        assert runner.reserve(key) == pytest.approx(RESERVATIONS[key] - smoke[key])
         runner.start(key)
-        assert runner.state["resources"][0]["limit_seconds"] == hours[key] * 3600
-        assert backend.events.count("create") == 1
-        runner.stop("test")
-        assert drive(runner) == "stopped"
-        assert not backend.pods
+        resource = runner.state["resources"][0]
+        clock.seconds += 900
+        runner.advance(resource)
+        runner.advance(resource)
+        for _ in range(30):
+            runner.advance(resource)
+            assert resource["current"]
+            clock.seconds += seconds[key]
+            runner.advance(resource)
+            assert runner.state["stop_reason"] is None
+        runner.advance(resource)
+        runner.cleanup(resource)
+        assert resource["status"] == "closed"
+        assert len(runner.state["results"]) == 30
+        assert backend.events.count("submit") == 30
+        assert runner.spending() < 13
+        assert budget.data["runs"]["previous"]["resources"] == prior_rows
 
 
-@pytest.mark.parametrize("prior_total,accepted", [(9.92, True), (10.11, False)])
+def test_ABCE承認枠は13でDの定義は変更しない():
+    import math
+
+    assert math.fsum(RESERVATIONS[k] for k in "ABCE") == 13
+    assert RESERVATIONS["D"] == 1.45
+    assert HOURS["D"] == 1.5
+
+
+@pytest.mark.parametrize("prior_total,accepted", [(10.07, True), (10.26, False)])
 def test_並列構成のsmoke費用を二重予約しない(trial, prior_total, accepted):
     _, plan, backend, _ = trial
     plan["concurrency"] = 2
@@ -423,7 +458,7 @@ def test_並列構成のsmoke費用を二重予約しない(trial, prior_total, 
             "failures": 0,
             "resources": [
                 {"configuration_id": k, "status": "closed", "estimated_usd": usd}
-                for k, usd in zip("ABC", [1.44, 3.54, prior_total - 4.98], strict=True)
+                for k, usd in zip("ABC", [3.19, 3.69, prior_total - 6.88], strict=True)
             ],
         }
         budget.data["runs"]["smoke"] = {
@@ -651,7 +686,7 @@ def test_終了時の遅延請求が構成別予約を超えたら次を起動�
 
     def expensive(resource):
         receipt = original(resource)
-        receipt["billed_usd"] = 2
+        receipt["billed_usd"] = RESERVATIONS["A"] + 0.01
         return receipt
 
     monkeypatch.setattr(backend, "close", expensive)
@@ -660,7 +695,7 @@ def test_終了時の遅延請求が構成別予約を超えたら次を起動�
     assert runner.state["stop_reason"] == "configuration_budget_exceeded"
     assert drive(runner) == "stopped"
     assert backend.events.count("create") == 1
-    assert resource["estimated_usd"] == 2
+    assert resource["estimated_usd"] == RESERVATIONS["A"] + 0.01
 
 
 def test_並列の一方が請求未確認なら全Podを終了し確認後に残りだけ再開する(trial, monkeypatch):
@@ -1150,3 +1185,155 @@ def test_四構成smokeと本試行で同一構成と共通USD台帳を維持す
         assert len(read_results(second_root)[2]) == 120
         second.plan["configurations"]["D"] = synthetic_plan(second_root)["configurations"]["D"]
         assert second.model_signature() != signature
+
+
+@pytest.mark.parametrize("key", list("ABCDE"))
+def test_構成別時間上限を認め短縮は許可し上限超過を拒否する(trial, key):
+    plan = trial[1]
+    plan["deployments"][key]["image_timeout_seconds"] = IMAGE_TIMEOUTS[key]
+    validate_plan(plan)
+    plan["deployments"][key]["image_timeout_seconds"] = 120
+    validate_plan(plan)
+    plan["deployments"][key]["image_timeout_seconds"] = IMAGE_TIMEOUTS[key] + 1
+    with pytest.raises(ValueError, match="時間枠"):
+        validate_plan(plan)
+
+
+@pytest.mark.parametrize("key", list("ABCDE"))
+@pytest.mark.parametrize("near_deadline", [False, True])
+def test_120秒を超えても送受信余裕を含む受領枠内なら回収する(trial, key, near_deadline):
+    runner = runner_for(trial)
+    runner.start(key)
+    resource = until_sent(runner)
+    limit = trial[1]["deployments"][key]["image_timeout_seconds"]
+    trial[3].seconds += limit + IMAGE_RECEIVE_GRACE_SECONDS - 1 if near_deadline else 127
+    runner.advance(resource)
+    assert runner.state["stop_reason"] is None
+    assert len(runner.state["results"]) == 1
+    assert runner.state["results"][0]["configuration_id"] == key
+
+
+@pytest.mark.parametrize("key", ["A", "C"])
+def test_受領期限ちょうどの結果は採用せず停止する(trial, key):
+    runner = runner_for(trial)
+    runner.start(key)
+    resource = until_sent(runner)
+    trial[3].seconds += (
+        trial[1]["deployments"][key]["image_timeout_seconds"] + IMAGE_RECEIVE_GRACE_SECONDS
+    )
+    runner.advance(resource)
+    assert runner.state["stop_reason"] == "unrecovered"
+    assert not runner.state["results"]
+    runner.cleanup_only()
+    assert not trial[2].pods
+
+
+@pytest.mark.parametrize("offset,accepted", [(1, True), (0, False)])
+def test_回収中に受領期限へ到達した結果は採用しない(trial, monkeypatch, offset, accepted):
+    runner = runner_for(trial)
+    resource = until_sent(runner)
+    clock = trial[3]
+    limit = trial[1]["deployments"]["A"]["image_timeout_seconds"] + IMAGE_RECEIVE_GRACE_SECONDS
+    clock.seconds += limit - 60 - offset
+    collect = trial[2].collect
+
+    def delayed(*args):
+        response = collect(*args)
+        clock.seconds += 60
+        return response
+
+    monkeypatch.setattr(trial[2], "collect", delayed)
+    runner.advance(resource)
+    assert bool(runner.state["results"]) == accepted
+    assert runner.state["stop_reason"] == (None if accepted else "unrecovered")
+
+
+@pytest.mark.parametrize("remaining", [-1, 0])
+def test_受領枠と終了余裕を確保できる場合だけ新規送信する(trial, remaining):
+    runner = runner_for(trial)
+    runner.start("A")
+    resource = runner.state["resources"][0]
+    runner.advance(resource)
+    runner.advance(resource)
+    deployment = trial[1]["deployments"]["A"]
+    resource["limit_seconds"] = (
+        deployment["image_timeout_seconds"] + IMAGE_RECEIVE_GRACE_SECONDS
+        + deployment["cleanup_seconds"] + remaining
+    )
+    runner.advance(resource)
+    assert ("submit" in trial[2].events) == (remaining == 0)
+    assert runner.state["stop_reason"] == (None if remaining == 0 else "time_limit")
+
+
+@pytest.mark.parametrize("remaining", [-1, 0])
+def test_受領枠と終了余裕に足りないleaseではPodも作らない(trial, remaining):
+    deployment = trial[1]["deployments"]["A"]
+    deployment["time_seconds"] = (
+        deployment["image_timeout_seconds"] + IMAGE_RECEIVE_GRACE_SECONDS
+        + deployment["cleanup_seconds"] + remaining
+    )
+    runner = runner_for(trial)
+    if remaining < 0:
+        with pytest.raises(ValueError, match="画像の受領と終了"):
+            runner.start("A")
+        assert not trial[2].events
+        assert not runner.state["resources"]
+    else:
+        runner.start("A")
+        assert trial[2].events == ["create"]
+
+
+def test_共通費目をA枠から差し引き13ちょうどの予約を拒否しない(trial):
+    _, plan, backend, _ = trial
+    del plan["configurations"]["D"]
+    del plan["deployments"]["D"]
+    rows = [
+        {"configuration_id": key, "status": "closed", "estimated_usd": value}
+        for key, value in [
+            ("A", 1.1315571648626563),
+            ("diagnosis", 0.2904793008611111),
+            ("smoke_shared", 0.3389142743611111),
+            ("B", 3.7), ("C", 4.8), ("E", 1.3),
+        ]
+    ]
+    with Budget(Path(plan["budget_ledger"]), 15) as budget:
+        budget.data["runs"]["prior"] = {
+            "synthetic": True, "purpose": "smoke", "failures": 0,
+            "resources": copy.deepcopy(rows),
+        }
+        runner = runner_for(trial, budget=budget)
+        assert runner.reserve("A") == pytest.approx(3.2 - 1.7609507400848785)
+        runner.start("A")
+        assert backend.events == ["create"]
+        assert budget.data["runs"]["prior"]["resources"] == rows
+        runner.cleanup_only()
+
+
+def test_実使用13USDに達したら予約に空きがあっても新規起動しない(trial):
+    _, plan, backend, _ = trial
+    with Budget(Path(plan["budget_ledger"]), 15) as budget:
+        budget.data["runs"]["prior"] = {
+            "synthetic": True, "purpose": "trial", "failures": 0,
+            "resources": [
+                {"configuration_id": "diagnosis", "status": "closed", "estimated_usd": 13}
+            ],
+        }
+        runner = runner_for(trial, budget=budget)
+        with pytest.raises(ValueError, match="費用予約"):
+            runner.start("B")
+        assert backend.events == []
+
+
+def test_清掃時のA枠超過にも共通費目を含める(trial):
+    _, plan, _, _ = trial
+    with Budget(Path(plan["budget_ledger"]), 15) as budget:
+        runner = runner_for(trial, budget=budget)
+        runner.start("A")
+        budget.data["runs"]["prior"] = {
+            "synthetic": True, "purpose": "trial", "failures": 0,
+            "resources": [
+                {"configuration_id": "diagnosis", "status": "closed", "estimated_usd": 3.21}
+            ],
+        }
+        runner.cleanup(runner.state["resources"][0])
+        assert runner.state["stop_reason"] == "configuration_budget_exceeded"

@@ -2,6 +2,7 @@
 
 import copy
 import json
+import math
 import re
 import time
 from contextlib import contextmanager
@@ -11,11 +12,14 @@ from uuid import uuid4
 
 from colorstats.api_budget import digest
 from colorstats.trial_costs import (
+    IMAGE_RECEIVE_GRACE_SECONDS,
+    IMAGE_TIMEOUTS,
     RESERVATIONS,
     charged,
     deployment_signature,
     measured_profile,
     number,
+    reservation_spent,
     select_candidate,
     summary,
     time_limit,
@@ -126,7 +130,7 @@ def validate_plan(plan):
             raise ValueError("既存HF Secretの名前が不正です")
         time_limit(key, d)
         if (
-            not 0 < number(d["image_timeout_seconds"]) <= 120
+            not 0 < number(d["image_timeout_seconds"]) <= IMAGE_TIMEOUTS[key]
             or not 0 < number(d["prepare_timeout_seconds"]) <= 1800
             or not 0 < number(d["cleanup_seconds"]) <= 300
         ):
@@ -453,11 +457,8 @@ class Runner:
             if run["purpose"] != "measurement"
             for r in run["resources"]
         ]
-        used = {
-            k: sum(r["estimated_usd"] for r in resources if r["configuration_id"] == k)
-            for k in self.plan["configurations"]
-        }
-        held = sum(
+        used = {k: reservation_spent(resources, k) for k in self.plan["configurations"]}
+        held = math.fsum(
             max(0, RESERVATIONS[k] - used[k])
             for k in self.plan["configurations"]
             if any(
@@ -465,7 +466,8 @@ class Runner:
                 for r in self.state["resources"]
             )
         )
-        if spent >= soft or spent + held + RESERVATIONS[key] - used[key] > soft:
+        reserved = math.fsum((spent, held, RESERVATIONS[key], -used[key]))
+        if spent >= soft or reserved > soft:
             raise ValueError("全体または構成別の費用予約が不足しています")
         return RESERVATIONS[key] - used[key]
 
@@ -513,8 +515,10 @@ class Runner:
                 - sum(max(0, r["limit_seconds"] - r["elapsed_seconds"]) for r in active),
                 (5 - self.spending() - d["fixed_usd"]) / d["usd_hour"] * 3600,
             )
-        if limit <= d["cleanup_seconds"]:
-            raise ValueError("終了処理を含む残り時間が不足しています")
+        if limit < (
+            d["image_timeout_seconds"] + IMAGE_RECEIVE_GRACE_SECONDS + d["cleanup_seconds"]
+        ):
+            raise ValueError("画像の受領と終了処理を含む残り時間が不足しています")
         attempt = key + "_" + uuid4().hex
         r = {
             "configuration_id": key,
@@ -672,6 +676,7 @@ class Runner:
     def advance(self, r):
         key = r["configuration_id"]
         d = self.plan["deployments"][key]
+        receive_timeout = d["image_timeout_seconds"] + IMAGE_RECEIVE_GRACE_SECONDS
         elapsed = self.elapsed(r)
         if elapsed + d["cleanup_seconds"] >= r["limit_seconds"]:
             self.stop("time_limit")
@@ -712,9 +717,12 @@ class Runner:
         if r["current"]:
             current = r["current"]
             image = next(x for x in self.manifest["images"] if x["trial_id"] == current["trial_id"])
-            if (self.clock() - stamp(current["sent_at"])).total_seconds() >= 120 and not any(
-                x["trial_id"] == image["trial_id"] and x["configuration_id"] == key
-                for x in self.state["results"]
+            if (
+                (self.clock() - stamp(current["sent_at"])).total_seconds() >= receive_timeout
+                and not any(
+                    x["trial_id"] == image["trial_id"] and x["configuration_id"] == key
+                    for x in self.state["results"]
+                )
             ):
                 self.stop("unrecovered")
                 return
@@ -727,9 +735,10 @@ class Runner:
                 self.save("remote_image_deleted")
                 return
             response = self.backend.collect(pod, r, image["trial_id"])
+            if (self.clock() - stamp(current["sent_at"])).total_seconds() >= receive_timeout:
+                self.stop("unrecovered")
+                return
             if response is None:
-                if (self.clock() - stamp(current["sent_at"])).total_seconds() >= 120:
-                    self.stop("unrecovered")
                 return
             if self.clock() >= stamp(current["deadline"]):
                 self.stop("external_expired")
@@ -770,6 +779,9 @@ class Runner:
         if not pending:
             r["status"] = "cleanup"
             self.save("configuration_finished")
+            return
+        if self.elapsed(r) + receive_timeout + d["cleanup_seconds"] > r["limit_seconds"]:
+            self.stop("time_limit")
             return
         self.authorize()
         image = pending[0]
@@ -812,16 +824,13 @@ class Runner:
                 r["estimated_usd"] = r["billed_usd"]
             key = r["configuration_id"]
             prior = self.budget.previous(self.state["run_id"]) if self.budget else []
-            spent = sum(
-                x["estimated_usd"] for x in self.state["resources"] if x["configuration_id"] == key
-            )
-            spent += sum(
-                x["estimated_usd"]
+            resources = self.state["resources"] + [
+                x
                 for run in prior
                 if run["purpose"] != "measurement"
                 for x in run["resources"]
-                if x["configuration_id"] == key
-            )
+            ]
+            spent = reservation_spent(resources, key)
             if self.plan["purpose"] != "measurement" and spent > RESERVATIONS[key]:
                 self.stop("configuration_budget_exceeded")
         else:
