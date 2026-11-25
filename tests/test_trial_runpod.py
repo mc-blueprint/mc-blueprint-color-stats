@@ -689,12 +689,21 @@ def test_SAM3専用環境の固定参照をSSH要求JSONへ保持する(tmp_path
 
 
 @pytest.mark.parametrize("operation", ["prepare", "start"])
-def test_SSH起動は絶対Pythonと明示コードパスを使う(tmp_path, monkeypatch, operation):
+@pytest.mark.parametrize("parent_method", [None, "fork"])
+def test_SSH起動はspawnと絶対Pythonと明示コードパスを使う(
+    tmp_path, monkeypatch, operation, parent_method
+):
+    import os
+
     from colorstats.trial_native_common import CODE_PATH, CONTROLLER_PYTHON
 
     calls = []
     monkeypatch.delenv("PYTHONPATH", raising=False)
     monkeypatch.setenv("PATH", "/usr/bin:/bin")
+    if parent_method is None:
+        monkeypatch.delenv("VLLM_WORKER_MULTIPROC_METHOD", raising=False)
+    else:
+        monkeypatch.setenv("VLLM_WORKER_MULTIPROC_METHOD", parent_method)
 
     def run(argv, **kwargs):
         calls.append(argv)
@@ -705,8 +714,9 @@ def test_SSH起動は絶対Pythonと明示コードパスを使う(tmp_path, mon
     backend._transport(pod(), operation, resource()["remote"] + "/T001")
     argv = calls[0]
     index = argv.index("/usr/bin/env")
-    assert argv[index : index + 5] == [
+    assert argv[index : index + 6] == [
         "/usr/bin/env",
+        "VLLM_WORKER_MULTIPROC_METHOD=spawn",
         f"PYTHONPATH={CODE_PATH}",
         CONTROLLER_PYTHON,
         "-m",
@@ -715,6 +725,7 @@ def test_SSH起動は絶対Pythonと明示コードパスを使う(tmp_path, mon
     assert Path(CONTROLLER_PYTHON).is_absolute()
     assert Path(CODE_PATH).is_absolute()
     assert "python" not in argv
+    assert os.environ.get("VLLM_WORKER_MULTIPROC_METHOD") == parent_method
 
 @pytest.mark.parametrize("operation", ["prepare", "submit"])
 def test_SSHの初回接続と複数操作が共有期限内で三秒を超えて完了する(
