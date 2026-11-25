@@ -17,8 +17,10 @@ from colorstats.queue import RunInfo
 from colorstats.queue.worker import Prepared
 from colorstats.schema.models import Asset, Job, ProcessingRun, ProcessingRunInput
 
-POLICY = {"version": "privacy-review-v1", "real_people": "pending",
-          "uncertain": "pending", "disagreement": "pending", "mask_rescue": False}
+POLICY = {"version": "privacy-review-v2", "real_people": "pending",
+          "uncertain": "pending", "disagreement": "pending", "mask_rescue": False,
+          "decision_source": "user", "decided_on": "2026-11-25",
+          "people_handling": "temporary_hold"}
 FIELDS = ("image_gate_run_id", "image_gate_hash", "image_gate_input_sha256",
           "analysis_domain", "privacy_review_run_id", "privacy_review_hash",
           "region_policy_run_id", "region_policy_hash", "input_sha256", "size",

@@ -1,9 +1,16 @@
 # 新しい人物確認契約
 
-`privacy-review-v1` は実在人物あり・不明・画像判定と画素判定の不一致を保留する。
+`privacy-review-v2` は2026-11-25のユーザー判断「一時保留」を固定し、
+実在人物あり・不明・画像判定と画素判定の不一致を保留する。
 像・絵・装飾を実在人物へ変換せず、semantic personだけが陽性でも保留する。
 両方陰性は採用の必要条件であり、人物見落としの安全性保証ではない。
 mask救済・永久除外・migrationは追加していない。
+
+policyには`people_handling: temporary_hold`、`decision_source: user`、
+`decided_on: 2026-11-25`を記録し、版を含むpolicy全体のhashをreviewの根拠へ保存する。
+v1のrunや旧snapshotは書き換えない。v1の承認は現在のpolicyでは使えず、
+新しい解析・snapshotにはv2のprivacy reviewと、それを参照するshade/colorの再生成が必要になる。
+同じ入力に対する人の訂正・保留はpolicy更新でも引き継ぎ、再生成で解除しない。
 
 ## review writer
 
@@ -23,8 +30,9 @@ row = privacy_review.selection(session, asset_id, run_id)
 `write`は同じ画像の成功済みA/B・prep jobを検証してreview jobを同期完了する。
 `selection`は採用可能な明示runだけを返し、保留・改変・人の訂正後の旧runは拒否する。
 画素根拠が欠落・改変している場合は採用可能なrunを作らず、例外で停止する。
-prep runには取得画像SHAを新たに保存する。SHA記録のない旧prepを新版へ流用する場合は
-prepから再生成する。旧保存データの移行や既存runへの追記は行わない。
+prep runには取得画像SHAを保存する。SHA記録のない旧prepは、既知の前処理条件で
+取得画像から再現した出力SHAが一致する場合だけ検証できる。それ以外はprepから再生成する。
+旧保存データの移行や既存runへの追記は行わない。
 新旧の入力画像はサイズも符号化も異なるため、次のSHAを別々に保持する。
 
 - `image_gate_input_sha256`：#117で1024px以下へ正規化した画像。
