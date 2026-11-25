@@ -98,6 +98,7 @@ class Budget:
         pending.replace(self.path)
 
     def verify_smoke(self, state):
+        """削除済み実smokeのrun・資源・費用が同じ台帳にあることを照合する。"""
         run = self.data["runs"].get(state["run_id"])
         if (
             not run
@@ -105,5 +106,14 @@ class Budget:
             or run["status"] not in {"complete", "stopped"}
             or any(r["status"] != "closed" for r in run["resources"])
             or run["purpose"] not in {"smoke", "measurement"}
+            or any(run[k] != state[k] for k in (
+                "plan_sha256", "provider", "product", "region", "purpose", "status"
+            ))
+            or len(run["resources"]) != len(state["resources"])
+            or any(
+                saved != {k: resource[k] for k in saved}
+                for saved, resource in zip(run["resources"], state["resources"], strict=True)
+            )
         ):
             raise ValueError("実GPUsmokeの費用を同じUSD台帳へ引き継いでください")
+        return run

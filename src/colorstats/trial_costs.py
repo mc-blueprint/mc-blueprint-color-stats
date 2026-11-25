@@ -7,7 +7,7 @@ from pathlib import Path
 from colorstats.api_budget import digest
 from colorstats.trial_inputs import sha
 
-RESERVATIONS = {"A": 3.20, "B": 3.70, "C": 4.80, "D": 1.45, "E": 1.30}
+RESERVATIONS = {"A": 3.20, "B": 3.70, "C": 3.60, "D": 1.45, "E": 2.50}
 HOURS = {"A": 2, "B": 2.75, "C": 3.5, "D": 1.5, "E": 1.75}
 IMAGE_TIMEOUTS = {"A": 240, "B": 420, "C": 600, "D": 360, "E": 240}
 IMAGE_RECEIVE_GRACE_SECONDS = 180
