@@ -212,7 +212,8 @@ def test_人物承認を解析とsnapshotへ固定する(
                 code_version="test")
         if change == "human":
             privacy.record_hold(queue, asset, rid, code_version="mobile", reviewer="確認者",
-                                presented_source_sha256=review_source[2], note="番号返信での問題指摘")
+                                presented_source_sha256=review_source[2],
+                                note="番号返信での問題指摘")
         else:
             monkeypatch.setattr(privacy, "POLICY", {**privacy.POLICY, "version": "next-policy"})
         with pytest.raises(PermissionError):
