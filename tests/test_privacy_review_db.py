@@ -40,7 +40,8 @@ pytestmark = pytest.mark.skipif(not os.environ.get("TEST_DATABASE_URL"), reason=
 
 
 @pytest.fixture
-def review_source(queue, asset, policy_source, tmp_path):
+def review_source(queue, asset, policy_source, tmp_path, request):
+    people, pixels, error = getattr(request, "param", ("absent", 0, None))
     raw = tmp_path / "acquired.png"
     Image.new("RGB", (128, 64), "red").save(raw)
     sha = hashlib.sha256(raw.read_bytes()).hexdigest()
@@ -60,15 +61,25 @@ def review_source(queue, asset, policy_source, tmp_path):
             path = Path(segment.output_paths[ref["path"]])
             with Image.open(path) as image:
                 array = np.zeros((image.height, image.width), dtype=np.uint8)
+            array.flat[:pixels] = 12 if name == "semantic" else 255
             Image.fromarray(array).save(path)
             ref["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+        if pixels:
+            for ref in contract["roles"].values():
+                path = Path(segment.output_paths[ref["path"]])
+                with Image.open(path) as image:
+                    array = np.array(image)
+                array.flat[:pixels] = 0
+                Image.fromarray(array).save(path)
+                ref["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
         segment.parameters = {**segment.parameters, "region_policy": contract}
         policy_source["region_policy"] = region_policy.reference(segment)
     result = tmp_path / "gate.json"
-    result.write_text(json.dumps({"result": verdict(), "error": None}), encoding="utf-8")
+    gate_result = verdict(real_people=people)
+    result.write_text(json.dumps({"result": gate_result, "error": error}), encoding="utf-8")
     parameters = {"kind": "image_gate", "asset_id": str(asset),
                   "source_sha256": sha, "identity": image_gate.identity(image_gate.normalize(
-                      raw.read_bytes())), "verdict": image_gate.decision(verdict()),
+                      raw.read_bytes())), "verdict": image_gate.decision(gate_result),
                   "result_path": str(result), "result_sha256": hashlib.sha256(
                       result.read_bytes()).hexdigest(), "method": "api", "input_run_id": None}
     job = queue.enqueue("review", asset, digest(parameters), parameters)
@@ -84,8 +95,95 @@ def write(queue, asset, source, *, code_version="test", **kwargs):
                          code_version=code_version, **kwargs)
 
 
-@pytest.mark.parametrize("stage", ["color", "shade"])
-def test_人物承認を解析とsnapshotへ固定する(queue, asset, review_source, stage, tmp_path):
+@pytest.mark.parametrize("review_source,reason", [
+    (("present", 0, None), "disagreement"),
+    (("present", 1, None), "real_people"),
+    (("present", 32, None), "real_people"),
+    (("absent", 2, None), "disagreement"),
+    (("uncertain", 0, None), "unknown_evidence"),
+    (("absent", 0, "invalid_response"), "unknown_evidence"),
+], indirect=["review_source"], ids=["empty-mask", "tiny-person", "crowd",
+                                    "statue-or-art", "uncertain", "api-error"])
+def test_片方の陰性では採用せず評価入力に保留を残す(queue, asset, review_source, reason):
+    rid = write(queue, asset, review_source)
+    with Session(queue.engine) as session:
+        run = session.get(ProcessingRun, rid)
+        assert run.parameters["verdict"] == {"decision": "pending", "reason": reason}
+        with pytest.raises(PermissionError):
+            privacy.selection(session, asset, rid)
+        manifest = privacy.evaluation_input(session, [(asset, rid, "challenge")])
+        assert manifest["policy"] == run.parameters["evidence"]["policy"]
+        assert manifest["samples"][0]["review"]["verdict"]["decision"] == "pending"
+
+
+@pytest.mark.parametrize("group", ["random_old", "random_new", "challenge"])
+def test_ユーザー判断を版付きで保存し入力と旧qualityを変更しない(
+        queue, asset, review_source, group):
+    source, _, _ = review_source
+    with Session(queue.engine) as session:
+        quality = copy.deepcopy(session.get(Asset, asset).quality)
+        segment = session.get(ProcessingRun, source["region_run_id"])
+        paths = [Path(p) for p in segment.output_paths.values()]
+        paths.append(Path(session.get(Asset, asset).storage_path))
+        original = {p: p.read_bytes() for p in paths}
+    rid = write(queue, asset, review_source)
+    with Session(queue.engine) as session:
+        data = session.get(ProcessingRun, rid).parameters["evidence"]
+        assert data["policy"]["version"] == "privacy-review-v2"
+        assert data["policy"]["people_handling"] == "temporary_hold"
+        assert data["policy"]["decision_source"] == "user"
+        assert data["policy"]["decided_on"] == "2026-11-25"
+        assert data["policy"]["mask_rescue"] is False
+        assert data["policy_hash"] == digest(data["policy"])
+        manifest = privacy.evaluation_input(session, [(asset, rid, group)])
+        assert manifest["policy_hash"] == data["policy_hash"]
+        assert manifest["samples"][0]["group"] == group
+        assert session.get(Asset, asset).quality == quality
+        assert privacy.selection(session, asset, rid)["privacy_review_run_id"] == str(rid)
+    assert original == {p: p.read_bytes() for p in paths}
+
+
+@pytest.mark.parametrize("hold", [False, True])
+def test_policy更新は旧承認を拒否し人の保留を引き継ぐ(
+        queue, asset, review_source, monkeypatch, hold):
+    legacy = {"version": "privacy-review-v1", "real_people": "pending",
+              "uncertain": "pending", "disagreement": "pending", "mask_rescue": False}
+    with monkeypatch.context() as patch:
+        patch.setattr(privacy, "POLICY", legacy)
+        old = write(queue, asset, review_source)
+        with Session(queue.engine) as session:
+            old_row = privacy.selection(session, asset, old)
+        if hold:
+            old = privacy.record_hold(queue, asset, old, code_version="test", reviewer="確認者",
+                                      presented_source_sha256=review_source[2], note="要再確認")
+        with Session(queue.engine) as session:
+            saved = copy.deepcopy(session.get(ProcessingRun, old).parameters)
+    with Session(queue.engine) as session:
+        with pytest.raises(PermissionError):
+            retention.check_privacy(session, asset, old_row)
+        with pytest.raises(PermissionError, match="policy"):
+            privacy.evaluation_input(session, [(asset, old, "random_old")])
+    current = write(queue, asset, review_source)
+    with Session(queue.engine) as session:
+        run = session.get(ProcessingRun, current)
+        assert current != old
+        assert run.parameters["evidence"]["policy_hash"] != saved["evidence"]["policy_hash"]
+        assert run.parameters["evidence"]["human_hold"] is hold
+        assert session.get(ProcessingRun, old).parameters == saved
+        if hold:
+            assert run.parameters["verdict"] == {"decision": "pending", "reason": "human_hold"}
+            assert session.get(ProcessingRunInput, (current, old))
+            with pytest.raises(PermissionError):
+                privacy.selection(session, asset, current)
+        else:
+            assert privacy.selection(session, asset, current)["privacy_review_hash"] != (
+                old_row["privacy_review_hash"])
+
+
+@pytest.mark.parametrize("stage,change", [("color", "human"), ("shade", "human"),
+                                        ("color", "policy")])
+def test_人物承認を解析とsnapshotへ固定する(
+        queue, asset, review_source, stage, change, tmp_path, monkeypatch):
     rid = write(queue, asset, review_source)
     source, _, _ = review_source
     with Session(queue.engine) as session:
@@ -112,9 +210,12 @@ def test_人物承認を解析とsnapshotへ固定する(queue, asset, review_so
             "color_run_id": str(run_id)}]}
         execute(queue.engine, selection, tmp_path / "snapshot", quality=quality,
                 code_version="test")
-        privacy.record_hold(queue, asset, rid, code_version="mobile", reviewer="確認者",
-                            presented_source_sha256=review_source[2], note="番号返信での問題指摘")
-        with pytest.raises(PermissionError, match="失効"):
+        if change == "human":
+            privacy.record_hold(queue, asset, rid, code_version="mobile", reviewer="確認者",
+                                presented_source_sha256=review_source[2], note="番号返信での問題指摘")
+        else:
+            monkeypatch.setattr(privacy, "POLICY", {**privacy.POLICY, "version": "next-policy"})
+        with pytest.raises(PermissionError):
             execute(queue.engine, selection, tmp_path / "stale", quality=quality,
                     code_version="test")
         from colorstats.stats.aggregate import register
@@ -124,7 +225,7 @@ def test_人物承認を解析とsnapshotへ固定する(queue, asset, review_so
             stage="aggregate", config_hash="unused", taxonomy_version="0.1.0",
             parameters={"payload": {"snapshot": str(tmp_path / "snapshot")}},
         )
-        with Session(queue.engine) as session, pytest.raises(PermissionError, match="失効"):
+        with Session(queue.engine) as session, pytest.raises(PermissionError):
             register(session, pending_run, {"snapshot_id": manifest["snapshot_id"]})
 
 
