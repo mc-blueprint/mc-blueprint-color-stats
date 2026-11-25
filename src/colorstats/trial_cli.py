@@ -84,7 +84,9 @@ def demo(result_root):
     root = Path(result_root)
     (root / "masks").mkdir(mode=0o700)
     configurations = {}
-    for config, precision in zip("ABCDE", ["BF16", "BF16", "AWQ4", "BF16", "FP32"], strict=True):
+    for config, precision in zip(
+        "ABCDE", ["BF16", "BF16", "AWQ4", "BF16", "FP32+BF16-autocast"], strict=True
+    ):
         row = {key: sha((config + key).encode()) for key in CONFIG_FIELDS}
         for key in ("model_revision", "segmenter_revision"):
             row[key] = row[key][:40]

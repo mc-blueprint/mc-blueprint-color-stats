@@ -464,8 +464,34 @@ smoke完了だけで全構成の成功を仮定しない。smokeと本番は新�
 prepare/startはtrial_native.mainを起動し、Aはqwen→sam2のphase、Eは
 trial_sam3.main/runへ進む。期限監視もtrial_nativeで動く。
 trial_nativeがtrial_resultsから使うPARTSは変更しない。
-native本体・trial_native_common・trial_sam3・trial_paths.jsonおよびコードSHA契約は
-今回変更しないため、Pod側の挙動とimage digestは維持できる。
+Issue #163ではnative本体・trial_native_common・trial_sam3・trial_paths.jsonおよび
+コードSHA契約を変更しないため、Pod側の挙動とimage digestを維持した。
+
+## SAM3のCUDA BF16 autocast（Issue #165）
+
+Eは重みをFP32で初期化し、画像encoderのset_imageとset_text_promptをともに
+torch.inference_mode()とtorch.autocast(device_type="cuda", dtype=torch.bfloat16)で囲む。
+固定SAM3のfused演算が内部でBF16を返すため、autocastのない次段のFP32 Linearで
+型不一致になる問題を、PyTorch標準のAMPで修正する。依存lock・重みは変更しない。
+
+EのprecisionはFP32+BF16-autocastへ固定する。純粋FP32またはBF16表記への置き換えは
+受領せず、構成SHAとcode_filesのSHAも再生成する。processorの入力制限は変更しない。
+[PyTorch AMP](https://docs.pytorch.org/docs/2.11/amp.html)に従い、入力・重みを手動で
+BF16へ変換する処理は追加しない。
+
+Pod内のtrial_sam3.pyを変更するため、imageの再ビルドと新digestへの固定が必要。
+新imageを使う設定ではruntime.code_files、configurationsのcode_sha256・precision、
+container digest、controller固定物とplan/authorization参照を再照合する。
+code_filesは全workerの束なので、新imageを使う場合はAのコード参照にも影響する。
+進行中の旧image/controllerのAは変更せず、その記録と新Eの記録を無条件に混ぜない。
+新しい固定物に対応するsmoke証明を用意し、既存の証明を補完・書き換えない。
+
+WindowsのcheckoutがCRLFの場合は、専用の配備contextのみLFへ統一し、元worktreeと
+配備byteのSHAを両方記録する。entrypointの改行と、controller・imageのcode_filesの
+byte一致を検査し、構成参照はLFの配備物から作る。進行中のcontrollerは変更しない。
+
+地域・GPU・30件・費用上限と単回leaseは変更しない。
+実GPUでの修正確認は新imageによるEの合成smokeで実施し、スタブ検証を実GPU成功扱いにしない。
 
 ## controllerのSSH待機時間
 

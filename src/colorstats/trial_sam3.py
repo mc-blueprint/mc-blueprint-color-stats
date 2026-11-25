@@ -31,7 +31,7 @@ def sam3(spec, image):
     ).float()
     processor = Sam3Processor(model, confidence_threshold=0.5)
     masks = []
-    with torch.inference_mode():
+    with torch.inference_mode(), torch.autocast(device_type="cuda", dtype=torch.bfloat16):
         for part, prompt in TEXT_PROMPTS.items():
             output = processor.set_text_prompt(prompt=prompt, state=processor.set_image(image))
             for predicted in output["masks"]:
@@ -50,6 +50,7 @@ def run(spec, directory):
     if (
         spec["configuration_id"] != "E"
         or (spec["model"]["repo"], spec["model"]["revision"]) != SAM3_MODEL
+        or spec["contract"]["precision"] != "FP32+BF16-autocast"
     ):
         raise ValueError("固定SAM3構成が一致しません")
     check_environment(spec, sam3=True)

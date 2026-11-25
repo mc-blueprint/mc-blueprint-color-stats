@@ -114,7 +114,8 @@ configurationsはA～Eの5キー。各構成は次の項目をすべて持ち、
 - model_revision、segmenter_revision：固定commit（40桁）。
 - weights_sha256、environment_sha256、code_sha256、prompt_sha256、
   processor_sha256、segmenter_sha256：固定物のSHA-256。
-- precision：A/B/DはBF16、CはAWQ4、EはFP32。
+- precision：A/B/DはBF16、CはAWQ4、EはFP32+BF16-autocast。
+  EはFP32初期化した重みを使い、CUDA BF16 autocast下で画像・text promptを処理する。
 - A/B/Cのsegmenter_revision・segmenter_sha256は同一。
   D/Eは独立方式として、使用する分割器自身の参照を記録する。
 

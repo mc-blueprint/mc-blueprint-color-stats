@@ -65,7 +65,7 @@ def configurations_valid(configurations):
     for config in configurations.values():
         if (
             set(config) != CONFIG_FIELDS
-            or config["precision"] not in {"BF16", "AWQ4", "FP32"}
+            or config["precision"] not in {"BF16", "AWQ4", "FP32+BF16-autocast"}
             or any(not SHA.fullmatch(config[k]) for k in CONFIG_FIELDS if k.endswith("sha256"))
             or any(
                 not re.fullmatch(r"[0-9a-f]{40}", config[k])
@@ -73,7 +73,9 @@ def configurations_valid(configurations):
             )
         ):
             raise ValueError("モデル・重み・精度・環境・指示・分割器の固定参照が必要です")
-    precisions = {"A": "BF16", "B": "BF16", "C": "AWQ4", "D": "BF16", "E": "FP32"}
+    precisions = {
+        "A": "BF16", "B": "BF16", "C": "AWQ4", "D": "BF16", "E": "FP32+BF16-autocast"
+    }
     if any(config["precision"] != precisions[k] for k, config in configurations.items()):
         raise ValueError("承認済み構成の精度と一致しません")
     if (
