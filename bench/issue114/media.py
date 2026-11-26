@@ -6,8 +6,9 @@ from contextlib import contextmanager
 from pathlib import Path
 from uuid import UUID
 
-from bench.issue114.production import CODE, ROOT, database, output_identity
+from bench.issue114.production import CODE, ROOT, database
 from bench.issue122 import media
+from bench.issue122.runtime import HOST, new_root
 from sqlalchemy import text
 
 from colorstats import retention
@@ -59,7 +60,7 @@ def legacy(db):
                             created = True
                         assert _hash(target) == row["sha256"]
                         for origin in origins:
-                            retention.register_file(session, UUID(origin["asset_id"]), "ubuntu-2",
+                            retention.register_file(session, UUID(origin["asset_id"]), HOST,
                                                     target, "replica")
                 except BaseException:
                     if created:
@@ -75,9 +76,10 @@ def legacy(db):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("raw", "prep", "check", "legacy"))
+    parser.add_argument("--root", type=Path, required=True)
     args = parser.parse_args()
+    ROOT = new_root(args.root)
     os.umask(0o077)
-    output_identity()
     media.CODE, media.ROOT = CODE, ROOT
     media.MEDIA = ROOT / "media"
     media.MIRROR = media.MEDIA / "root"

@@ -3,16 +3,14 @@
 import argparse
 import hashlib
 import os
-import pwd
-import socket
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
 from uuid import UUID
 
-import psycopg
 from bench.issue122 import production as runner
-from sqlalchemy import create_engine, select, text
+from bench.issue122 import runtime
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from colorstats import image_gate, privacy_review, retention
@@ -23,31 +21,14 @@ CODE = Path(__file__).resolve().parents[2]
 ROOT = Path("/mnt/data/derived/issue114-terrain-20261110")
 ORIGINAL = Path("/mnt/data/derived/issue114-batch1-20261106")
 GATE = runner.GATE
+LEGACY_HUMAN_HOLDS = {
+    "path": "/mnt/data/derived/issue114-terrain-20261110/human/holds-private.json",
+    "sha256": "39d94cd87895b1edd2885bbe4051f38cc40fce4c043ab350c2fbad649ced2e5d"}
 read, save = runner.read, runner.save
 
 
 def database():
-    """ubuntu-2では既存peer接続だけpostgres権限に切り替え、ファイルは匿名UIDで作る。"""
-    if socket.gethostname() != "ubuntu-2":
-        return runner.database()
-
-    def connect():
-        previous = os.geteuid()
-        os.seteuid(0)
-        os.seteuid(pwd.getpwnam("postgres").pw_uid)
-        try:
-            return psycopg.connect(dbname="colorstats")
-        finally:
-            os.seteuid(0)
-            os.seteuid(previous)
-
-    return create_engine("postgresql+psycopg://", creator=connect, hide_parameters=True)
-
-
-def output_identity():
-    if socket.gethostname() == "ubuntu-2":
-        os.setegid(65534)
-        os.seteuid(65534)
+    return runtime.database()
 
 
 def implementation():
@@ -63,10 +44,11 @@ def configure():
     runner.implementation = implementation
 
 
-def freeze(db):
+def freeze(db, *, human_sampling, reuse_from=None, models=None):
+    runtime.new_root(ROOT)
     if (ROOT / "plan.json").exists():
         raise FileExistsError("固定計画は作成済みです")
-    ROOT.mkdir(mode=0o700, parents=True, exist_ok=True)
+    ROOT.mkdir(mode=0o700, parents=True, exist_ok=False)
     decision = read(CODE / "bench/issue121/decision.json")
     handoff = read(CODE / "bench/issue121/handoff.json")
     decision_sha = hashlib.sha256((CODE / "bench/issue121/decision.json").read_text().encode())
@@ -124,30 +106,45 @@ def freeze(db):
             planned.append(row)
     assert sum(row["original_hold"] for row in planned) == 993
     ready = [row for row in planned if row["status"] == "ready"]
-    split = len(ready) * 2 // 5
-    partitions = {"ubuntu1": ready[:split], "ubuntu2": ready[split:]}
+    partitions = {runtime.PARTITION: ready}
     for host, rows in partitions.items():
         assert len(rows) >= 3
         save(ROOT / host / "inputs.json", rows)
+        for directory in ("tmp", "cache"):
+            (ROOT / host / directory).mkdir(mode=0o700)
     settings = read(CODE / "bench/issue73/plan.json")["source_settings"]["ade"]
+    settings = {"method": region_policy.METHOD, "threshold": 0.35,
+                "text_threshold": 0.25, "prompts": settings["prompts"]}
+    reused = {}
+    if reuse_from is not None:
+        runner.check_models(models)
+        with Session(db) as session:
+            reused = runtime.reused_segments(session, reuse_from, ready, settings, models)
     save(ROOT / "plan.json", {
-        "version": "issue114-terrain-v1", "rows": planned, "counts": counts,
-        "settings": {"method": region_policy.METHOD, "threshold": 0.35,
-                     "text_threshold": 0.25, "prompts": settings["prompts"]},
+        "version": runtime.VERSION, "partitions": [runtime.PARTITION],
+        "reused_segments": reused, "human_sampling": human_sampling,
+        "rows": planned, "counts": counts, "settings": settings,
         "decision_sha256": decision_sha.hexdigest(), "policy_hash": region_policy.policy_hash(),
         "gate_plan_sha256": segment._hash(GATE / "plan.json"),
         "original_manifests": {host: segment._hash(ORIGINAL / host / "manifest.json")
-                               for host in partitions},
+                               for host in ("ubuntu1", "ubuntu2")},
         "created_at": datetime.now(UTC).isoformat(), "api_requests": 0,
+        "legacy_human_holds": LEGACY_HUMAN_HOLDS,
     })
+    save(ROOT / "execution.json", {"plan_sha256": segment._hash(ROOT / "plan.json"),
+                                   "implementation": implementation(),
+                                   "implementation_hash": segment._digest(implementation())})
     print({"counts": counts, "partitions": {k: len(v) for k, v in partitions.items()}}, flush=True)
 
 
 def audit(db, host, limit):
     """全担当入力と成功stage・人物根拠を照合し、件数だけを出力する。"""
-    if host not in {"ubuntu1", "ubuntu2"}:
+    if host != runtime.PARTITION:
         raise ValueError("監査対象hostが必要です")
+    plan = runtime.read_plan(ROOT)
     inputs = read(ROOT / host / "inputs.json")
+    if inputs != [row for row in plan["rows"] if row["status"] == "ready"]:
+        raise ValueError("監査入力が固定manifestと一致しません")
     records = read(ROOT / host / "records.json")
     expected = inputs[:limit] if limit else inputs
     assert set(records) == {row["asset_id"] for row in expected}
@@ -158,7 +155,7 @@ def audit(db, host, limit):
             aid = row["asset_id"]
             record = records[aid]
             assert record.get("terminal")
-            review = privacy_review._review(session, aid, record["privacy_review_run_id"])
+            review = privacy_review.review(session, aid, record["privacy_review_run_id"])
             assert review.parameters["evidence"]["region_policy_run_id"] == record["segment_run_id"]
             assert review.parameters["evidence"]["image_gate_run_id"] == row["image_gate_run_id"]
             assert review.parameters["verdict"] == record["privacy_verdict"]
@@ -188,35 +185,30 @@ def audit(db, host, limit):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("freeze", "bind", "run", "check-models", "audit"))
-    parser.add_argument("--host", choices=("ubuntu1", "ubuntu2"))
+    parser.add_argument("action", choices=("freeze", "run", "check-models", "audit"))
+    parser.add_argument("--host", choices=(runtime.PARTITION,), default=runtime.PARTITION)
+    parser.add_argument("--root", type=Path, required=True)
+    parser.add_argument("--sampling", type=Path)
+    parser.add_argument("--reuse-from", type=Path)
     parser.add_argument("--models", type=Path, default=Path("/mnt/data/work/issue-40/models"))
     parser.add_argument("--limit", type=int)
-    parser.add_argument("--execution-name", default="execution-r3.json")
+    parser.add_argument("--execution-name", default="execution.json")
     args = parser.parse_args()
+    global ROOT
+    ROOT = runtime.new_root(args.root)
+    if args.action == "freeze" and args.sampling is None:
+        parser.error("freezeには表示前に固定した--samplingが必要です")
     os.umask(0o077)
     configure()
     if args.action == "check-models":
         runner.check_models(args.models)
         print("fixed_models_policy_verified", flush=True)
         return
-    output_identity()
     db = database()
     try:
         if args.action == "freeze":
-            freeze(db)
-        elif args.action == "bind":
-            path = ROOT / args.execution_name
-            assert not path.exists()
-            with db.connect() as connection:
-                for table in runner.BASELINE_TABLES:
-                    before = read(ROOT / ("before-" + table + ".json"))
-                    after = runner.baseline(connection, table)
-                    assert all(after.get(k) == v for k, v in before.items())
-            files = implementation()
-            save(path, {"plan_sha256": segment._hash(ROOT / "plan.json"),
-                        "implementation": files, "implementation_hash": segment._digest(files)})
-            print("execution_bound", flush=True)
+            freeze(db, human_sampling=runtime.sampling(args.sampling),
+                   reuse_from=args.reuse_from, models=args.models)
         elif args.action == "audit":
             audit(db, args.host, args.limit)
         else:

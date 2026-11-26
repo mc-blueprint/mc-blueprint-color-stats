@@ -27,11 +27,8 @@ def main():
              "bench/issue121/decision.json", "bench/issue121/handoff.json",
              "bench/issue121/freeze.json"]
     tracked = subprocess.check_output(
-        ["git", "ls-files", "--", *paths, "bench/issue122/*.py"], cwd=root,
+        ["git", "ls-files", "--", *paths, "bench/issue122/*.py", "bench/issue114/*.py"], cwd=root,
     ).decode().splitlines()
-    if args.issue == "114":
-        tracked.extend(str(path.relative_to(root)).replace("\\", "/")
-                       for path in (root / "bench/issue114").glob("*.py"))
     subprocess.run(["git", "rev-parse", "--verify", args.revision], cwd=root, check=True)
     if not tracked:
         raise ValueError("Git管理下の転送対象がありません")
@@ -60,13 +57,7 @@ def main():
     print(json.dumps({"archive": archive.name, "sha256": checksum, "files": len(tracked)}),
           flush=True)
     targets = json.loads((root / ".ssh-targets.json").read_text())
-    destinations = {
-        "ubuntu-1": "/opt/colorstats/work/issue114-" + args.name,
-        "ubuntu-2": "/mnt/data/work/issue114-" + args.name,
-    } if args.issue == "114" else {
-        "ubuntu-1": "/opt/colorstats/work/issue122-20261109/" + args.name,
-        "ubuntu-2": "/mnt/data/work/issue-122/code-20261109/" + args.name,
-    }
+    destinations = {"ubuntu-1": "/opt/colorstats/work/issue" + args.issue + "-" + args.name}
     for host, destination in destinations.items():
         temporary = "/tmp/colorstats-" + args.name + "-" + checksum[:16] + ".tar"
         result = run_logged([

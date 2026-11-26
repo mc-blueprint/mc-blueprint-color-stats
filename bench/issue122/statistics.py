@@ -1,5 +1,6 @@
 """旧7,607件の地形限定snapshot・統計・比較を私有領域へ別版生成する。"""
 
+import argparse
 import hashlib
 import json
 from collections import Counter
@@ -8,6 +9,7 @@ from pathlib import Path
 from uuid import UUID, uuid4
 
 import duckdb
+from bench.issue122 import runtime
 from bench.issue122.production import (
     BASELINE_TABLES,
     CODE,
@@ -34,6 +36,7 @@ OUTPUT = Path("/mnt/data/derived/stats/issue122-terrain-20261109-v1")
 OLD = Path("/mnt/data/derived/stats/issue105-corrected-20261105T105836Z")
 OLD_SNAPSHOT = "a8384373192d930df952190433d5d346393549b87c941ef157ea93380c714864"
 REVIEW_SHA256 = "6dec63d6a6d0a93ec31969b8bbaaa5023aeb4037aa20df3e8195ad2e452a4fbf"
+POLICY = "issue122-terrain-v1"
 
 
 def preservation(db):
@@ -51,9 +54,9 @@ def preservation(db):
 
 
 def selection(db):
-    plan = read(ROOT / "plan.json")
+    plan = runtime.read_plan(ROOT)
     records = {}
-    for host in ("ubuntu1", "ubuntu2"):
+    for host in runtime.partitions(plan):
         subset = read(ROOT / host / "records.json")
         assert not records.keys() & subset.keys()
         records.update(subset)
@@ -67,6 +70,7 @@ def selection(db):
     human_holds = {row["asset_id"] for row in review["records"]}
     rows, counts, stages = [], Counter(), Counter()
     with Session(db) as session:
+        human = runtime.human_reviews(session, ROOT, plan)
         for row in plan["rows"]:
             aid = row["asset_id"]
             item = {"asset_id": aid, "status": row["status"]}
@@ -83,9 +87,11 @@ def selection(db):
                     item["status"] = "privacy_pending"
                 elif row["analysis_domain"] != "real_terrain":
                     item["status"] = "building_not_aggregated"
-                elif aid in human_holds:
+                elif aid in human_holds and aid not in human:
                     item["status"] = "human_reference_pending"
                 else:
+                    if aid in human and human[aid] != record["privacy_review_run_id"]:
+                        raise ValueError("人確認後の新しいshade/colorが必要です")
                     item.update(privacy_review.selection(session, aid,
                                                          record["privacy_review_run_id"]))
                     item.update({key: record[key] for key in (
@@ -98,7 +104,7 @@ def selection(db):
     assert {row["asset_id"] for row in rows} == {row["asset_id"] for row in original["assets"]}
     return {"taxonomy_version": original["taxonomy_version"], "assets": rows,
             "subject_attribute_run_ids": original.get("subject_attribute_run_ids", []),
-            "policy_version": "issue122-terrain-v1"}, {"states": counts, "stages": stages,
+            "policy_version": POLICY}, {"states": counts, "stages": stages,
             "human_review": {"successor_issue": 114,
                              "held_missing_new_reference": counts["human_reference_pending"],
                              "file_sha256": REVIEW_SHA256,
@@ -115,7 +121,7 @@ def summary(data, manifest):
                 "n_eff": row["effective_sample_size"],
                 **{key: row["quality"][key] for key in (
                     "status", "correction_rate", "no_information_rate", "flags")}}
-    return {"snapshot_id": manifest["snapshot_id"], "policy": "issue122-terrain-v1",
+    return {"snapshot_id": manifest["snapshot_id"], "policy": POLICY,
             "counts": manifest["counts"], "exclusions": manifest["exclusions"],
             "statistics_rows": len(data["rows"]), "statuses": statuses,
             "supported": sum(statuses.get(key, 0) for key in ("direct", "smoothed")),
@@ -146,6 +152,7 @@ def ensure_snapshot(db, selected, quality, *, policy="issue122-terrain-v1"):
 
 def main(*, policy="issue122-terrain-v1", baseline_registration=None,
          scope_key="issue122_scope", heading="#122 地形側の訂正版基準"):
+    runtime.prepare_output(ROOT, OUTPUT, policy)
     db = database()
     try:
         OUTPUT.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -237,4 +244,13 @@ def main(*, policy="issue122-terrain-v1", baseline_registration=None,
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--policy", required=True)
+    args = parser.parse_args()
+    ROOT, OUTPUT = runtime.new_root(args.root), runtime.new_root(args.output)
+    if args.policy == "issue122-terrain-v1":
+        parser.error("旧統計と異なるpolicyが必要です")
+    POLICY = args.policy
+    main(policy=POLICY)

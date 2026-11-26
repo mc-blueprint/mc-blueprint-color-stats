@@ -11,7 +11,7 @@ import pytest
 
 pytest.importorskip("pwd")
 
-from bench.issue122 import media, statistics
+from bench.issue122 import media, runtime, statistics
 
 
 def test_changed_review_freeze_stops_selection(tmp_path, monkeypatch):
@@ -24,8 +24,13 @@ def test_changed_review_freeze_stops_selection(tmp_path, monkeypatch):
     monkeypatch.setattr(statistics, "REVIEW_SHA256", hashlib.sha256(frozen).hexdigest(),
                         raising=False)
     monkeypatch.setattr(statistics, "Session", lambda db: nullcontext(None))
-    (tmp_path / "plan.json").write_text('{"rows":[]}')
-    for host in ("ubuntu1", "ubuntu2"):
+    plan = {"version": runtime.VERSION, "partitions": [runtime.PARTITION], "rows": [],
+            "human_sampling": {"seed": 169}}
+    (tmp_path / "plan.json").write_text(json.dumps(plan))
+    (tmp_path / "execution.json").write_text(json.dumps({
+        "plan_sha256": hashlib.sha256((tmp_path / "plan.json").read_bytes()).hexdigest()}))
+    monkeypatch.setattr(runtime, "human_reviews", lambda *a: {})
+    for host in (runtime.PARTITION,):
         (tmp_path / host).mkdir()
         (tmp_path / host / "records.json").write_text('{}')
     (tmp_path / "selection.json").write_text('{"assets":[],"taxonomy_version":"test"}')

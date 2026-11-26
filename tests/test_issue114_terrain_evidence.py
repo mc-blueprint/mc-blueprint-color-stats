@@ -117,7 +117,7 @@ def test_旧媒体は全由来の利用確認後にリンクし失敗時は新�
     def register(session, asset_id, host, path, kind):
         assert target.exists()
         assert events[:4] == ["begin", "lock", "usable", "usable"]
-        assert host == "ubuntu-2" and path == target and kind == "replica"
+        assert host == "ubuntu-1" and path == target and kind == "replica"
         events.append("register")
         if asset_id == UUID(int=2) and failure == "register":
             raise RuntimeError("register")
