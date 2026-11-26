@@ -29,6 +29,17 @@ def jpeg(image):
     return "data:image/jpeg;base64," + base64.b64encode(stream.getvalue()).decode()
 
 
+def file_uri(path):
+    """取得画像のbyteと解像度を変えず、単体HTMLへ埋め込む。PNG/JPEG以外は拒否する。"""
+    raw = path.read_bytes()
+    with Image.open(io.BytesIO(raw)) as image:
+        if image.format not in {"PNG", "JPEG"}:
+            raise ValueError("取得画像にはPNG/JPEGが必要です")
+        media = image.format.lower()
+        image.verify()
+    return f"data:image/{media};base64," + base64.b64encode(raw).decode()
+
+
 def mask_uri(mask, size):
     """座標を維持した単独maskのdata URIを返す。"""
     values = np.asarray(mask)
@@ -110,18 +121,10 @@ class _PageCheck(HTMLParser):
             self.numbers.append(int(match[1]))
         if tag == "img":
             uri = attrs.get("src", "")
-            if not re.fullmatch(r"data:image/(?:jpeg|png);base64,[A-Za-z0-9+/=]+", uri):
-                raise ValueError("埋込PNG/JPEG以外の画像です")
-            raw = base64.b64decode(uri.split(",", 1)[1], validate=True)
-            if hashlib.sha256(raw).hexdigest() != attrs.get("data-sha256"):
-                raise ValueError("埋込画像SHAが一致しません")
-            with Image.open(io.BytesIO(raw)) as image:
-                if image.format not in {"PNG", "JPEG"}:
-                    raise ValueError("埋込画像の実形式が不正です")
-                image.verify()
+            _check_image(uri, attrs.get("data-sha256"))
             self.images.add(uri)
         if "style" in attrs:
-            self.inline_styles.append(attrs["style"])
+            self.inline_styles.append((attrs["style"], attrs.get("data-photo-sha256")))
         if tag == "style":
             self.in_style = True
 
@@ -134,7 +137,19 @@ class _PageCheck(HTMLParser):
             self.styles.append(data)
 
 
-def validate_html(content, numbers, *, limit=12_500_000):
+def _check_image(uri, sha):
+    if not re.fullmatch(r"data:image/(?:jpeg|png);base64,[A-Za-z0-9+/=]+", uri):
+        raise ValueError("埋込PNG/JPEG以外の画像です")
+    raw = base64.b64decode(uri.split(",", 1)[1], validate=True)
+    if hashlib.sha256(raw).hexdigest() != sha:
+        raise ValueError("埋込画像SHAが一致しません")
+    with Image.open(io.BytesIO(raw)) as image:
+        if image.format not in {"PNG", "JPEG"}:
+            raise ValueError("埋込画像の実形式が不正です")
+        image.verify()
+
+
+def validate_html(content, numbers, *, limit=12_500_000, style=TRIAL_STYLE):
     """試行用HTMLの実byte上限・番号・埋込SHA・外部参照0を検査する。"""
     if len(content.encode()) > limit:
         raise ValueError("HTMLが容量上限を超えました")
@@ -143,11 +158,15 @@ def validate_html(content, numbers, *, limit=12_500_000):
     parser.close()
     if parser.numbers != list(numbers):
         raise ValueError("ページの連番が一致しません")
-    if any(style != TRIAL_STYLE for style in parser.styles):
+    if any(css != style for css in parser.styles):
         raise ValueError("生成ページの固定CSSが必要です")
-    for style in parser.inline_styles:
+    for inline, sha in parser.inline_styles:
         match = re.fullmatch(
-            r"--photo:url\('(?P<uri>data:image/(?:jpeg|png);base64,[A-Za-z0-9+/=]+)'\)", style
+            r"--photo:url\('(?P<uri>data:image/(?:jpeg|png);base64,[A-Za-z0-9+/=]+)'\)", inline
         )
-        if match is None or match["uri"] not in parser.images:
+        if match is None:
+            raise ValueError("写真用の埋込画像指定が必要です")
+        if sha is not None:
+            _check_image(match["uri"], sha)
+        elif match["uri"] not in parser.images:
             raise ValueError("写真用の埋込画像指定が必要です")

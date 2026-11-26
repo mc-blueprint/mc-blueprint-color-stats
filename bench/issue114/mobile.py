@@ -7,6 +7,7 @@ import json
 import os
 import re
 import socket
+import tarfile
 from pathlib import Path
 from uuid import UUID
 
@@ -21,10 +22,10 @@ from colorstats import privacy_review, retention
 from colorstats.analyze import region_policy as region_policy_contract
 from colorstats.api_budget import digest as contract_digest
 from colorstats.queue import Queue
+from colorstats.review_html import file_uri, jpeg, mask_uri, outline_uri, validate_html
 from colorstats.review_html import image_tag as _image
-from colorstats.review_html import jpeg, mask_uri, outline_uri
 from colorstats.review_html import uri_sha as _uri_sha
-from colorstats.schema.models import ProcessingRun, Region
+from colorstats.schema.models import Asset, ProcessingRun, Region
 
 LIMIT = 12_500_000
 REASONS = {**CODE_NAMES,
@@ -37,7 +38,7 @@ article{border-top:2px solid #777;
 padding:12px 0}p{line-height:1.6}h2{font-size:1.3rem}figure{margin:0 0 16px}
 figcaption{font-weight:bold} .legend{border:1px solid #777;padding:8px} .raw{border:3px solid #222}
 .mask{border:3px dashed #176b35}.outline{border:3px dotted #174ea6}
-.comparison-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:start}
+.comparison-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-items:start}
 .comparison-grid figure{min-width:0;margin:0}.comparison-grid img{width:100%;margin:0}
 .comparison-grid figcaption{line-height:1.4;min-height:2.8em}
 .photo{background-image:var(--photo);background-size:100% 100%;background-repeat:no-repeat;
@@ -60,7 +61,7 @@ def explain(value):
 
 
 def mask_section(label, mask, size, *, number, kind, pattern="solid"):
-    """同じ座標の写真＋透明な輪郭と二値maskを、一つの2列区画にする。"""
+    """同じ座標の写真＋透明な輪郭と二値maskを、縦1列の区画にする。"""
     name, definition = mask_description(label, kind)
     safe_label = html.escape(label)
     category = {"raw": "最初に見つけた部分", "effective": "今回選ばれた部分",
@@ -92,14 +93,17 @@ def _legend(cards):
     return '<table><caption>示している部分の名前と説明</caption>' + "".join(rows) + '</table>'
 
 
-def page(cards, first, last, total, groups=None, *, legend=None):
+def page(cards, first, last, total, groups=None, *, legend=None, view="comparison"):
     counts = groups or {}
+    mode = ("もとの写真だけの確認です。自動で調べた結果は載せていません。"
+            if view == "raw" else "自動で調べた結果と写真を比較する確認です。")
     return f'''<!doctype html><html lang="ja"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy"
 content="default-src 'none'; img-src data:; style-src 'unsafe-inline'">
 <title>#114 写真の確認 {first}–{last}</title><style>{STYLE}</style>
 <h1>#114 写真の確認 {first}–{last}／全{total}枚</h1>
+<p>{mode}ほかの提示で結果をすでに見た場合、その影響のない確認とは扱いません。</p>
 <p>もとの写真は{counts.get('population', total)}枚です。
 確認用に無作為に選んだ写真は{counts.get('random', 0)}枚、
 間違いやすい点を確かめるために選んだ写真は{counts.get('challenge', 0)}枚です。
@@ -110,7 +114,7 @@ content="default-src 'none'; img-src data:; style-src 'unsafe-inline'">
 全件確認後、最初の行に「全{total}枚確認済み」、次の行に「問題なし」と返信してください。
 問題がある場合は「問題なし」の代わりに「7: 人の見落とし」のように、1行に1件ずつ書いてください。
 途中の確認は完了扱いにしません。別のファイルを作って送る必要はありません。</p>
-<p class="legend">各区画の左は写真と輪郭線、右は同じ場所を白く示した図です。
+<p class="legend">比較区画の上は写真と輪郭線、下は同じ場所を白く示した図です。
 線の場所以外は写真の色を隠しません。
 「最初に見つけた部分」は、周りとの関係を確かめる前の表示です。
 「今回選ばれた部分」は、その関係を確かめ、空・人や、別の部位と重なって決められない部分を取り除いた表示です。
@@ -122,20 +126,22 @@ content="default-src 'none'; img-src data:; style-src 'unsafe-inline'">
 {''.join(cards)}</html>'''
 
 
-def write_pages(cards, output, limit=LIMIT, group_counts=None):
+def write_pages(cards, output, limit=LIMIT, group_counts=None, *, view="comparison"):
     """UTF-8の実byte数で上限を守り、通し番号を維持して分割する。"""
     groups, current, first = [], [], 1
     legend = _legend(cards)
     sizes = [len(card.encode()) for card in cards]
     total = sum(sizes)
-    header = len(page([], 1, len(cards), len(cards), group_counts, legend=legend).encode())
+    header = len(page([], 1, len(cards), len(cards), group_counts,
+                      legend=legend, view=view).encode())
     if header + total > limit:
         candidates, prefix = [], 0
         for cut, size in enumerate(sizes[:-1], 1):
             prefix += size
-            left = prefix + len(page([], 1, cut, len(cards), group_counts, legend=legend).encode())
+            left = prefix + len(page([], 1, cut, len(cards), group_counts,
+                                     legend=legend, view=view).encode())
             right = total - prefix + len(page(
-                [], cut + 1, len(cards), len(cards), group_counts, legend=legend,
+                [], cut + 1, len(cards), len(cards), group_counts, legend=legend, view=view,
             ).encode())
             if max(left, right) <= limit:
                 candidates.append((abs(left - right), cut))
@@ -144,7 +150,7 @@ def write_pages(cards, output, limit=LIMIT, group_counts=None):
             groups = [(1, cut, cards[:cut]), (cut + 1, len(cards), cards[cut:])]
     for number, card in enumerate([] if groups else cards, 1):
         if len(page(current + [card], first, number, len(cards), group_counts,
-                    legend=legend).encode()) > limit:
+                    legend=legend, view=view).encode()) > limit:
             if not current:
                 raise ValueError("1画像分のHTMLが容量上限を超えました")
             groups.append((first, number - 1, current))
@@ -154,7 +160,8 @@ def write_pages(cards, output, limit=LIMIT, group_counts=None):
         groups.append((first, len(cards), current))
     files = []
     for part, (first, last, group) in enumerate(groups, 1):
-        content = page(group, first, last, len(cards), group_counts, legend=legend).encode()
+        content = page(group, first, last, len(cards), group_counts,
+                       legend=legend, view=view).encode()
         if len(content) > limit:
             raise ValueError("HTMLが容量上限を超えました")
         path = output / f"review-{part:02}.html"
@@ -184,7 +191,7 @@ def _selection_for(decisions, asset_id):
 def validate_presentation_run(session, asset_id, selection):
     """閲覧対象のprivacy run/hashとA/B参照を照合する。保留verdictも提示可能。"""
     run_id = selection.get("privacy_review_run_id")
-    run = session.get(ProcessingRun, UUID(run_id)) if run_id else None
+    run = privacy_review.review(session, asset_id, run_id) if run_id else None
     parameters = run.parameters if run else {}
     evidence = parameters.get("evidence", {})
     if (run is None or run.stage != "review" or not run.finished_at
@@ -197,8 +204,17 @@ def validate_presentation_run(session, asset_id, selection):
     return run
 
 
-def build(db, bundle, execution, output, taxonomy, *, host=None, require_contracts=True):
+def _private_output(output):
+    if output.resolve().is_relative_to(Path(__file__).resolve().parents[2]):
+        raise ValueError("確認用ファイルは公開リポジトリ外のprivate領域へ保存してください")
+
+
+def build(db, bundle, execution, output, taxonomy, *, host=None, require_contracts=True,
+          view="comparison"):
     """保持ロック下で利用可否を確認し、画像入りHTMLと番号表を保持登録する。"""
+    _private_output(output)
+    if view not in {"raw", "comparison"}:
+        raise ValueError("確認方法はrawまたはcomparisonを指定してください")
     manifest = json.loads((bundle / "manifest.json").read_text())
     created = False
     try:
@@ -209,7 +225,7 @@ def build(db, bundle, execution, output, taxonomy, *, host=None, require_contrac
             output.mkdir(mode=0o700, exist_ok=False)
             created = True
             _build(session, manifest, bundle, execution, output, taxonomy,
-                   host or socket.gethostname(), require_contracts)
+                   host or socket.gethostname(), require_contracts, view)
     except BaseException:
         if created:
             for path in output.iterdir():
@@ -218,7 +234,7 @@ def build(db, bundle, execution, output, taxonomy, *, host=None, require_contrac
         raise
 
 
-def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
+def _render(session, manifest, bundle, execution, taxonomy, require_contracts, view="comparison"):
     if manifest["decisions_sha256"] != digest(execution / "privacy-decisions.json"):
         raise ValueError("閲覧manifestと自動判定が一致しません")
     decisions = {row["asset_id"]: row for row in json.loads(
@@ -229,6 +245,7 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
     regions = {}
     policy_views = {}
     gate_views = {}
+    privacy_views = {}
     region_run_ids = {}
     for aid in ids:
         row = decisions[aid]
@@ -276,7 +293,12 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
                      or selection.get("region_policy_hash") != contract_digest(policy))):
             raise ValueError("image-review-v1とregion-policy-v1の参照が一致しません")
         if require_contracts:
-            validate_presentation_run(session, UUID(aid), selection)
+            privacy_run = validate_presentation_run(session, UUID(aid), selection)
+            privacy_views[aid] = privacy_run.parameters
+            evidence = privacy_run.parameters["evidence"]
+            if (row["input_sha256"] != evidence["input_sha256"]
+                    or row["mask_sha256"] != evidence["person_mask_sha256"]):
+                raise ValueError("提示する入力・人物maskとprivacy根拠が一致しません")
         payload = {"region_policy": policy, "region_run_id": str(run.id),
                    "input_path": row["input_path"], "input_sha256": row["input_sha256"]}
         role_masks = region_policy_contract.load_masks(payload)
@@ -303,6 +325,8 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
     challenge_ids = set(ids) - random_ids
     groups = {"population": manifest.get("population", len(ids)),
               "random": len(random_ids), "challenge": len(challenge_ids)}
+    ids = sorted(random_ids) + sorted(challenge_ids)
+    seen_sources = set()
     for number, aid in enumerate(ids, 1):
         row = decisions[aid]
         selection = _selection_for(decisions, aid)
@@ -312,8 +336,15 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
         if aid in overlap:
             labels.append("無作為群から重複除外")
             display_labels.append("両方の選び方に当てはまるので一度だけ表示")
-        with Image.open(bundle / "images" / f"{aid}-raw.png") as raw:
-            raw_uri = jpeg(raw)
+        raw_path = (Path(session.get(Asset, UUID(aid)).storage_path) if require_contracts
+                    else bundle / "images" / f"{aid}-raw.png")
+        raw_uri = file_uri(raw_path)
+        source_sha256 = _uri_sha(raw_uri)
+        if source_sha256 in seen_sources:
+            raise ValueError("取得画像SHAが重複しています。標本の重複を除いて再固定してください")
+        seen_sources.add(source_sha256)
+        if require_contracts and source_sha256 != gate_views[aid]["source_sha256"]:
+            raise ValueError("提示する取得画像と原画像SHAが一致しません")
         if digest(row["input_path"]) != row["input_sha256"] or digest(
                 row["mask_path"]) != row["mask_sha256"]:
             raise ValueError("固定した解析画像・人物maskが変わっています")
@@ -334,6 +365,9 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
         gate_decision = gate.get("result") or {}
         gate_state = row.get("gate_state", gate_decision.get("decision", "未記録"))
         gate_reason = gate_decision.get("reason", "未記録")
+        privacy = privacy_views.get(aid, {})
+        privacy_policy = privacy.get("evidence", {}).get("policy", {})
+        privacy_verdict = privacy.get("verdict", {})
         reasons = '・'.join(explain(code) for code in verdict.get('reason_codes') or ['未記録'])
         extras = [f"人物：{explain(people)}",
                   f"対象：{explain(verdict.get('target', '未記録'))}",
@@ -344,6 +378,15 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts):
                   f"何が中心に写っているか：{explain(verdict.get('subject', '未記録'))}",
                   f"判断の理由：{reasons}"
                   ]
+        if privacy:
+            extras.append(f"人物の採否：{explain(privacy_verdict['decision'])}／"
+                          f"{explain(privacy_verdict['reason'])}。"
+                          f"人の確認を含む人物の記録："
+                          f"{explain(privacy['evidence']['real_people'])}")
+        versions = ["image-review-v1", row.get("region_policy_version"),
+                    privacy_policy.get("version")]
+        version_text = '／'.join(f'<small><code>{html.escape(v)}</code></small>'
+                                for v in versions if v)
         parts = [mask_section("person", person_mask, input_size, number=number, kind="person")]
         effective = policy_views.get(aid)
         if effective:
@@ -378,11 +421,16 @@ data-photo-sha256="{_uri_sha(prepared_uri)}"><h2>番号 {number}：{'・'.join(d
 人と判定された広さは写真の {row['person_ratio']:.4%}（人として示す広さ {row['mask_ratio']:.4%}）、
 中心に写っているもの：{subject}。</p>
 <p>{'／'.join(extras)}</p>
+<p>判定の版：{version_text}</p>
 <details><summary>もとの写真を開く（自動で調べる前の写真）</summary>
 <figure><figcaption>もとの写真</figcaption>
 {_image(raw_uri, f'番号{number} もとの写真', 'raw')}</figure></details>
-<p>以下は自動で調べた写真です。左右で同じ場所を比べられます。</p>
+<p>以下は自動で調べた写真です。上下で同じ場所を比べられます。</p>
 {''.join(parts)}</article>''')
+        if view == "raw":
+            cards[-1] = (f'<article id="n{number}"><h2>番号 {number}：'
+                         f'{"・".join(display_labels)}</h2><figure><figcaption>もとの写真</figcaption>'
+                         f'{_image(raw_uri, f"番号{number} もとの写真", "raw")}</figure></article>')
         rows.append({"number": number, "asset_id": aid, "groups": labels,
                      "input_sha256": row["input_sha256"],
                      **{key: row[key] for key in ("decision", "subject", "reason",
@@ -394,6 +442,9 @@ data-photo-sha256="{_uri_sha(prepared_uri)}"><h2>番号 {number}：{'・'.join(d
                      "image_gate_reason": gate_reason,
                      "image_gate_subject": verdict.get("subject"),
                      "real_people": people,
+                     "privacy_review_hash": selection.get("privacy_review_hash"),
+                     "privacy_policy_version": privacy_policy.get("version"),
+                     "view": view,
                      "black_and_white": verdict.get("black_and_white"),
                      "dark": verdict.get("dark"),
                      "region_policy_version": row.get("region_policy_version"),
@@ -401,9 +452,13 @@ data-photo-sha256="{_uri_sha(prepared_uri)}"><h2>番号 {number}：{'・'.join(d
     return cards, rows, groups
 
 
-def _build(session, manifest, bundle, execution, output, taxonomy, host, require_contracts):
-    cards, rows, groups = _render(session, manifest, bundle, execution, taxonomy, require_contracts)
-    files = write_pages(cards, output, group_counts=groups)
+def _build(session, manifest, bundle, execution, output, taxonomy, host, require_contracts, view):
+    cards, rows, groups = _render(session, manifest, bundle, execution, taxonomy, require_contracts,
+                                view)
+    files = write_pages(cards, output, group_counts=groups, view=view)
+    for item in files:
+        validate_html((output / item["file"]).read_text(encoding="utf-8"),
+                      range(item["first"], item["last"] + 1), limit=LIMIT, style=STYLE)
     save(output / "number-map.json", {
         "format": "issue114-mobile-v1", "review_manifest_sha256": digest(bundle / "manifest.json"),
         "decisions_sha256": manifest["decisions_sha256"], "groups": groups,
@@ -418,6 +473,69 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
         retention.register_file(session, UUID(aid), host,
                                 output / "number-map.json", "image_bundle")
     print(json.dumps({"total": len(rows), "files": files}, ensure_ascii=False))
+
+
+def validate_delivery(mapping, directory):
+    """固定番号表と送付HTMLの実byte・SHA・連番・埋込画像を照合する。"""
+    expected = 1
+    for item in mapping["files"]:
+        if (not re.fullmatch(r"review-[0-9]+\.html", item["file"])
+                or item["first"] != expected or item["last"] < expected):
+            raise ValueError("提示HTMLのファイル名・番号範囲が一致しません")
+        raw = (directory / item["file"]).read_bytes()
+        if len(raw) != item["bytes"] or hashlib.sha256(raw).hexdigest() != item["sha256"]:
+            raise ValueError("提示HTMLのbyte数・SHAが一致しません")
+        validate_html(raw.decode("utf-8"), range(item["first"], item["last"] + 1),
+                      limit=LIMIT, style=STYLE)
+        expected = item["last"] + 1
+    if expected != len(mapping["rows"]) + 1 or not mapping["files"]:
+        raise ValueError("提示HTMLの全番号が揃っていません")
+
+
+def share(db, source, output, *, host=None):
+    """新しい私有HTMLコピー・番号表・送付tarを、既存保持台帳へ登録する。
+
+    tarに入れるのはHTMLだけ。画像のいずれかが失効したら共有束全体が削除対象になる。
+    出力は未使用のリポジトリ外ディレクトリ。失敗時は今回の新規出力だけを取り除く。
+    """
+    _private_output(output)
+    mapping = json.loads((source / "number-map.json").read_text(encoding="utf-8"))
+    created = False
+    try:
+        with Session(db) as session, session.begin():
+            retention.lock(session)
+            for row in mapping["rows"]:
+                retention.assert_usable(session, UUID(row["asset_id"]), images=True)
+            validate_delivery(mapping, source)
+            output.mkdir(mode=0o700, exist_ok=False)
+            created = True
+            save(output / "number-map.json", mapping)
+            for item in mapping["files"]:
+                path = output / item["file"]
+                with path.open("xb") as stream:
+                    stream.write((source / item["file"]).read_bytes())
+                path.chmod(0o600)
+            validate_delivery(mapping, output)
+            archive = output / "review.tar"
+            with tarfile.open(archive, "x") as stream:
+                for item in mapping["files"]:
+                    stream.add(output / item["file"], arcname=item["file"], recursive=False)
+            archive.chmod(0o600)
+            for row in mapping["rows"]:
+                aid = UUID(row["asset_id"])
+                paths = [output / "number-map.json", archive]
+                paths.extend(output / item["file"] for item in mapping["files"]
+                             if item["first"] <= row["number"] <= item["last"])
+                for path in paths:
+                    retention.register_file(session, aid, host or socket.gethostname(),
+                                            path, "image_bundle")
+    except BaseException:
+        if created:
+            for path in output.iterdir():
+                path.unlink()
+            output.rmdir()
+        raise
+    return mapping
 
 
 def parse_chat_reply(text, total):
@@ -444,17 +562,21 @@ def parse_chat_reply(text, total):
     return {"all_reviewed": True, "reply_text": text, "problems": problems}
 
 
-def reply_reviews(mapping, manifest, decisions_sha256, reply):
+def reply_reviews(mapping, manifest, decisions_sha256, reply, *, directory=None):
     """定型テキストだけを解析して変換する。辞書入力・未確認・参照変更はValueError。"""
     if (mapping["format"] != "issue114-mobile-v1"
             or mapping["decisions_sha256"] != decisions_sha256
             or mapping["review_manifest_sha256"] != digest(manifest)):
         raise ValueError("番号表と固定した閲覧対象が一致しません")
     review = json.loads(manifest.read_text())
+    if directory is not None:
+        validate_delivery(mapping, directory)
     required = set(review["required_ids"])
     rows = mapping["rows"]
     if ([row["number"] for row in rows] != list(range(1, len(rows) + 1))
-            or [row["asset_id"] for row in rows] != sorted(required)):
+            or [row["asset_id"] for row in rows] != (
+                sorted(set(review.get("random_ids", [])))
+                + sorted(required - set(review.get("random_ids", []))))):
         raise ValueError("番号表の対象・連番が一致しません")
     originals = {row["asset_id"]: row for row in review["rows"]}
     for row in rows:
@@ -513,22 +635,26 @@ def apply_privacy_reply(queue, data):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("build", "reply"))
-    parser.add_argument("--execution", type=Path, required=True)
+    parser.add_argument("action", choices=("build", "reply", "share"))
+    parser.add_argument("--execution", type=Path)
     parser.add_argument("--bundle", type=Path)
     parser.add_argument("--taxonomy", type=Path)
     parser.add_argument("--mapping", type=Path)
     parser.add_argument("--input", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--view", choices=("raw", "comparison"), default="comparison")
     parser.add_argument("--host", help="保持台帳へ登録する生成先host（省略時は実行host）")
     args = parser.parse_args()
+    if args.action != "share" and args.execution is None:
+        parser.error("build/replyには--executionが必要です")
+    _private_output(args.output)
     os.umask(0o077)
     if args.action == "reply":
         data = reply_reviews(json.loads(args.mapping.read_text()),
                              args.execution / "review-manifest.json",
                              digest(args.execution / "privacy-decisions.json"),
-                             args.input.read_text(encoding="utf-8"))
+                             args.input.read_text(encoding="utf-8"), directory=args.mapping.parent)
         if not args.apply:
             save(args.output, data)
             print("番号返信を変換しました。DB接続・書込みなし。")
@@ -548,7 +674,13 @@ def main():
 
     db = engine(False)
     try:
-        build(db, args.bundle, args.execution, args.output, args.taxonomy, host=args.host)
+        if args.action == "share":
+            if args.bundle is None:
+                parser.error("shareには生成済み提示物の--bundleが必要です")
+            share(db, args.bundle, args.output, host=args.host)
+        else:
+            build(db, args.bundle, args.execution, args.output, args.taxonomy, host=args.host,
+                  view=args.view)
     finally:
         db.dispose()
 
