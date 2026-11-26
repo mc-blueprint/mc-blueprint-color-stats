@@ -90,7 +90,8 @@ def test_両freezeから再開と目視を経て旧のみと比較の実統計�
         segment = session.get(ProcessingRun, UUID(rows[-1]["region_run_id"]))
         parameters = copy.deepcopy(segment.parameters)
     frozen = production.read(code / "bench/issue121/freeze.json")
-    frozen.update(oneformer=parameters["models"]["oneformer"],
+    frozen.update(policy_hash=parameters["region_policy_hash"],
+                  oneformer=parameters["models"]["oneformer"],
                   models={k: parameters["models"][k]["files"] for k in ("sam2", "dino")})
     production.save(code / "bench/issue121/freeze.json", frozen)
     monkeypatch.setattr(region_quality, "FREEZE_DIGEST", snapshot.digest(frozen))
