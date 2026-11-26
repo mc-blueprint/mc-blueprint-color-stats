@@ -179,11 +179,11 @@ def test_分割HTMLは各ページの対象だけを保持登録し番号表は�
     bundle, execution, output, other_id, raw = shared_mobile
     write = mobile.write_pages
 
-    def split(cards, output, *, group_counts):
+    def split(cards, output, *, group_counts, view):
         header = len(mobile.page([], 1, 2, 2, group_counts,
                                  legend=mobile._legend(cards)).encode())
         return write(cards, output, limit=header + max(len(c.encode()) for c in cards) + 20,
-                     group_counts=group_counts)
+                     group_counts=group_counts, view=view)
 
     monkeypatch.setattr(mobile, "write_pages", split)
     build(queue.engine, bundle, execution, output, ROOT / "taxonomy", host="review-test",

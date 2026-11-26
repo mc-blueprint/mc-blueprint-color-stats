@@ -257,13 +257,13 @@ def test_写真上の輪郭は輪郭以外の画素を隠さず座標を保つ()
     assert np.count_nonzero(alpha) < np.count_nonzero(mask)
 
 
-def test_比較区画は写真とmaskを2列で対にし日本語名と定義とSHAを持つ():
+def test_比較区画は写真とmaskを縦1列で対にし日本語名と定義とSHAを持つ():
     mask = np.zeros((20, 20), dtype=bool)
     mask[:5] = True
     card = mobile.mask_section("real_building/window_frame", mask, (20, 20),
                                number=1, kind="effective")
     page = mobile.page([card], 1, 1, 1)
-    assert "repeat(2,minmax(0,1fr))" in page and 'class="photo"' in card
+    assert "grid-template-columns:minmax(0,1fr)" in page and 'class="photo"' in card
     assert "窓枠" in card and "ガラスと重なる部分は含みません" in card
     assert page.index("示している部分の名前と説明") < page.index('class="mask-comparison"')
     for uri, sha in re.findall(r'src="([^"]+)" data-sha256="([^"]+)"', card):

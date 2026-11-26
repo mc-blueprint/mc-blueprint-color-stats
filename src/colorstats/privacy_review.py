@@ -180,7 +180,7 @@ def write(queue, asset_id, gate_id, segment_id, *, code_version, input_run_id=No
         correction = _latest_correction(session, data)
         _apply_correction(data, correction)
         if input_run_id:
-            original = _review(session, asset_id, input_run_id)
+            original = review(session, asset_id, input_run_id)
             before = original.parameters["evidence"]
             if (any(before[k] != data[k] for k in data if k not in {"real_people", "human_hold"})
                     or not reviewer or not note or real_people not in {
@@ -228,7 +228,7 @@ def record_hold(queue, asset_id, run_id, *, code_version, reviewer,
     戻り値は新しいreview run ID。API通信は行わない。
     """
     with queue._transaction() as session:
-        run = _review(session, asset_id, run_id)
+        run = review(session, asset_id, run_id)
         data = run.parameters["evidence"]
     return write(queue, asset_id, data["image_gate_run_id"], data["region_policy_run_id"],
                  code_version=code_version, input_run_id=run_id, reviewer=reviewer,
@@ -256,7 +256,7 @@ def register(session, run, data):
         raise PermissionError("人の訂正により処理中の承認は失効しています")
     _apply_correction(current, correction)
     if p["input_run_id"]:
-        _review(session, data["asset_id"], p["input_run_id"])
+        review(session, data["asset_id"], p["input_run_id"])
         current.update(real_people=saved["real_people"], human_hold=saved["human_hold"])
     if current != saved or p["verdict"] != _verdict(current):
         raise PermissionError("人物reviewの入力が変更されています")
@@ -268,7 +268,12 @@ def register(session, run, data):
     session.add_all(ProcessingRunInput(run_id=run.id, input_run_id=parent) for parent in parents)
 
 
-def _review(session, asset_id, run_id):
+def review(session, asset_id, run_id):
+    """現行policyと実入力を再検証してreview runを返す。保留runも目視提示できる。
+
+    読取りのみ。訂正前・旧policy・根拠改変のrunはPermissionErrorで拒否する。
+    採用可能性の判定にはselectionを使う。
+    """
     asset_id = uuid.UUID(str(asset_id))
     run = _run(session, asset_id, run_id, "review", "privacy_review")
     _not_corrected(session, run)
@@ -293,7 +298,7 @@ def _review(session, asset_id, run_id):
 
 def selection(session, asset_id, run_id):
     """採用可能な明示privacy runを共有selectionへ変換する。訂正済みrunは拒否する。"""
-    run = _review(session, asset_id, run_id)
+    run = review(session, asset_id, run_id)
     p = run.parameters
     data = p["evidence"]
     if p["verdict"]["decision"] != "accepted":
@@ -315,7 +320,7 @@ def evaluation_input(session, samples):
     for asset_id, run_id, group in samples:
         if group not in {"random_old", "random_new", "challenge"}:
             raise ValueError("無作為cohortと難例を区別してください")
-        run = _review(session, asset_id, run_id)
+        run = review(session, asset_id, run_id)
         sha = run.parameters["evidence"]["source_sha256"]
         if sha in seen:
             raise ValueError("評価入力の画像SHAが重複しています")
