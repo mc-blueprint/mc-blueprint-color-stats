@@ -8,9 +8,8 @@ from collections import Counter
 from pathlib import Path
 from uuid import UUID
 
-from bench.issue114.output_directories import anonymous_directories
 from bench.issue114.production import CODE, ROOT, database, read
-from bench.issue122 import statistics
+from bench.issue122 import runtime, statistics
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -24,15 +23,19 @@ HUMAN_HOLDS_SHA256 = "39d94cd87895b1edd2885bbe4051f38cc40fce4c043ab350c2fbad649c
 
 
 def human_holds():
-    raw = (ROOT / "human/holds-private.json").read_bytes()
-    if hashlib.sha256(raw).hexdigest() != HUMAN_HOLDS_SHA256:
+    reference = (runtime.read_plan(ROOT).get("legacy_human_holds")
+                 if (ROOT / "plan.json").exists() else None)
+    path = Path(reference["path"]) if reference else ROOT / "human/holds-private.json"
+    raw = path.read_bytes()
+    expected = reference["sha256"] if reference else HUMAN_HOLDS_SHA256
+    if hashlib.sha256(raw).hexdigest() != expected:
         raise ValueError("人確認の保留一覧が固定SHAと一致しません")
     return json.loads(raw)
 
 
 def selection(db, *, old_only=False):
     old = read(OLD / "selection.json")
-    plan = read(ROOT / "plan.json")
+    plan = runtime.read_plan(ROOT)
     fixed = verify(OLD / "snapshot", OLD_SNAPSHOT)
     normalized = {**old, "assets": sorted(old["assets"], key=lambda row: row["asset_id"])}
     if "subject_attribute_run_ids" in old:
@@ -44,24 +47,32 @@ def selection(db, *, old_only=False):
     assert proof["proof"]["missing_references"] == 110
     held = set(proof["asset_ids"])
     assert len(held) == 110
-    old_rows, old_counts = [], Counter()
-    for original in old["assets"]:
-        row = dict(original)
-        if row["asset_id"] in held:
-            row = {"asset_id": row["asset_id"], "status": "human_reference_pending"}
-        old_counts["old/" + row["status"]] += 1
-        old_rows.append(row)
     human = {"held_missing_new_reference": 110, "human_runs_written": 0,
              "proof_hash": digest(proof["proof"]),
              "reason": "当時のprivacy/region run・提示SHA参照不足"}
+    with Session(db) as session:
+        confirmed = runtime.human_reviews(session, ROOT, plan)
+    held -= confirmed.keys()
+    old_rows, old_counts = [], Counter()
+    for original in old["assets"]:
+        row = dict(original)
+        aid = row["asset_id"]
+        if aid in held:
+            row = {"asset_id": aid, "status": "human_reference_pending"}
+        elif (aid in confirmed and row["status"] == "terrain_selected"
+              and row.get("privacy_review_run_id") != confirmed[aid]):
+            raise ValueError("旧基準を人確認後のrunで再生成してください")
+        old_counts["old/" + row["status"]] += 1
+        old_rows.append(row)
+    human.update(held_missing_new_reference=len(held), human_runs_written=len(confirmed))
     base = {"taxonomy_version": old["taxonomy_version"],
             "subject_attribute_run_ids": old.get("subject_attribute_run_ids", []),
-            "policy_version": "issue114-terrain-v1"}
+            "policy_version": statistics.POLICY}
     if old_only:
         return {**base, "assets": old_rows}, {"states": old_counts, "stages": {},
                                               "human_review": human, "diagnostic_old_only": True}
     records = {}
-    for host in ("ubuntu1", "ubuntu2"):
+    for host in runtime.partitions(plan):
         subset = read(ROOT / host / "records.json")
         assert not records.keys() & subset.keys()
         records.update(subset)
@@ -85,6 +96,8 @@ def selection(db, *, old_only=False):
                 elif original["analysis_domain"] != "real_terrain":
                     row["status"] = "building_not_aggregated"
                 else:
+                    if aid in confirmed and record["privacy_review_run_id"] != confirmed[aid]:
+                        raise ValueError("人確認後の新しいshade/colorが必要です")
                     row.update(privacy_review.selection(session, aid,
                                                         record["privacy_review_run_id"]))
                     row.update({key: record[key] for key in (
@@ -110,26 +123,63 @@ def selection(db, *, old_only=False):
     return selected, execution
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--old-only", action="store_true")
+    parser.add_argument("--root", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--baseline", type=Path, required=True)
+    parser.add_argument("--baseline-snapshot", required=True)
+    parser.add_argument("--old-only-output", type=Path)
+    parser.add_argument("--policy", required=True)
     args = parser.parse_args()
+    if not args.old_only and args.old_only_output is None:
+        parser.error("比較には新しい旧のみ統計の--old-only-outputが必要です")
+    global ROOT, OLD, OLD_SNAPSHOT
+    ROOT = runtime.new_root(args.root)
+    OLD, OLD_SNAPSHOT = args.baseline, args.baseline_snapshot
+    if args.policy in {"issue114-terrain-v1", "issue122-terrain-v1"}:
+        parser.error("新しいpolicyが必要です")
+    if not args.old_only:
+        held_output = runtime.new_root(args.old_only_output)
+        marker = read(held_output / "restart.json")
+        if marker != {"root": str(ROOT), "policy": args.policy, "version": runtime.VERSION}:
+            raise ValueError("旧のみ統計は同じ新root・policyが必要です")
+        held_comparison = read(held_output / "comparison.json")
+        if held_comparison["old_snapshot_id"] != OLD_SNAPSHOT:
+            raise ValueError("旧のみ統計の基準snapshotが今回の指定と一致しません")
+        held_selection = read(held_output / "selection.json")
+        old_selection = read(OLD / "selection.json")
+        held_execution = held_comparison["execution"]
+        if (held_execution.get("diagnostic_old_only") is not True
+                or any(not key.startswith("old/") for key in held_execution["states"])
+                or {row["asset_id"] for row in held_selection["assets"]}
+                != {row["asset_id"] for row in old_selection["assets"]}):
+            raise ValueError("比較基準は新cohortを含まない旧のみの統計が必要です")
+        held_snapshot = held_comparison["new"]["snapshot_id"]
+        held_manifest = verify(held_output / "snapshot", held_snapshot)
+        normalized = {**held_selection, "assets": sorted(
+            held_selection["assets"], key=lambda row: row["asset_id"])}
+        if "subject_attribute_run_ids" in normalized:
+            normalized["subject_attribute_run_ids"] = sorted(
+                normalized["subject_attribute_run_ids"])
+        if held_manifest["selection_hash"] != digest(normalized):
+            raise ValueError("旧のみ統計のsnapshotとselectionが一致しません")
     os.umask(0o077)
     statistics.CODE, statistics.ROOT = CODE, ROOT
-    statistics.OUTPUT = ROOT / ("old-held-baseline" if args.old_only else "statistics")
+    statistics.OUTPUT = runtime.new_root(args.output)
+    statistics.POLICY = args.policy
     statistics.OLD, statistics.OLD_SNAPSHOT = OLD, OLD_SNAPSHOT
     statistics.database = database
     statistics.selection = lambda db: selection(db, old_only=args.old_only)
     old_summary = read(OLD / "summary.json")
-    with anonymous_directories():
-        heading = ("#114 人確認保留を揃えた旧のみの比較基準" if args.old_only
-                   else "#114 新cohort追加・地形側比較")
-        statistics.main(policy="issue114-terrain-v1", scope_key="issue114_scope", heading=heading,
-                        baseline_registration={"supported": old_summary["supported"],
-                                               "condition4": old_summary["roles"]})
+    heading = ("#114 人確認を揃えた旧のみの比較基準" if args.old_only
+               else "#114 新cohort追加・地形側比較")
+    statistics.main(policy=args.policy, scope_key="issue114_scope", heading=heading,
+                    baseline_registration={"supported": old_summary["supported"],
+                                           "condition4": old_summary["roles"]})
     if not args.old_only:
         combined = read(statistics.OUTPUT / "comparison.json")
-        held_comparison = read(ROOT / "old-held-baseline/comparison.json")
         combined["image_addition_only"] = {
             "old": held_comparison["new"], "new": combined["new"],
             "condition4": {"old": held_comparison["condition4"]["new"],
@@ -139,3 +189,7 @@ if __name__ == "__main__":
             "fixed_old": old_summary, "old_with_holds": held_comparison["new"]}
         statistics.save(statistics.OUTPUT / "comparison.json", combined)
     print(json.dumps({"statistics_complete": True}, ensure_ascii=False), flush=True)
+
+
+if __name__ == "__main__":
+    main()

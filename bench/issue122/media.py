@@ -10,6 +10,7 @@ from pathlib import Path
 from uuid import UUID, uuid4
 
 from bench.issue122.production import CODE, ROOT, database, read, save
+from bench.issue122.runtime import HOST, new_root
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -96,7 +97,7 @@ def raw(db):
             retention.lock(session)
             for origin in record["origins"]:
                 for path in (target, staging / record["name"]):
-                    retention.register_file(session, UUID(origin["asset_id"]), "ubuntu-2",
+                    retention.register_file(session, UUID(origin["asset_id"]), HOST,
                                             path, "replica")
     save(MEDIA / "raw-complete.json", {"files": len(manifest["files"]),
                                        "manifest_sha256": _hash(staging / "manifest.json")})
@@ -121,7 +122,7 @@ def prep(db):
                         "copy": str(target), "sha256": row["input_sha256"]})
         with queue._transaction() as session:
             retention.lock(session)
-            retention.register_file(session, UUID(row["asset_id"]), "ubuntu-2", target, "replica")
+            retention.register_file(session, UUID(row["asset_id"]), HOST, target, "replica")
     save(MEDIA / "prep-complete.json", {"records": records, "bind_roots": sorted(roots)})
     print("prep_replica_complete assets=" + str(len(records)), flush=True)
 
@@ -150,7 +151,11 @@ def check(db):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=("raw", "prep", "check"))
+    parser.add_argument("--root", type=Path, required=True)
     args = parser.parse_args()
+    global ROOT, MEDIA, MIRROR
+    ROOT = new_root(args.root)
+    MEDIA, MIRROR = ROOT / "media", ROOT / "media/root"
     os.umask(0o077)
     db = database()
     try:

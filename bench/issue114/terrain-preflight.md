@@ -1,5 +1,8 @@
 # #114 地形側バッチ1の実行準備
 
+以下は移設前の記録である。現在の再開は[単独GPUの手順](../../docs/production-restart.md)
+に従い、新root・新しい人物確認・別版出力を使う。
+
 2026-11-10 JST。担当ブランチは`feature/issue-114`。
 指定されたfast-forwardで`535e84f`から`29c7ab08cdf013dc4e8dc95ec3f43064cd16d444`へ進めた。
 開始時の未コミット変更は0件。公開・commit・push・PR作成は行っていない。
