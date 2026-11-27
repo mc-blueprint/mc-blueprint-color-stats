@@ -78,14 +78,18 @@ def presentation(queue, asset, review_source, tmp_path, request):
 @pytest.mark.parametrize("view", ["raw", "comparison"])
 def test_固定原画像と版を提示し予測比較を区別する(queue, asset, presentation, view):
     bundle, execution, output, rid = presentation
+    manifest = json.loads((bundle / "manifest.json").read_text())
+    manifest["view"] = view
+    (bundle / "manifest.json").write_text(json.dumps(manifest))
+    (execution / "review-manifest.json").write_text(json.dumps(manifest))
     mobile.build(queue.engine, bundle, execution, output, Path("taxonomy"), view=view)
     mapping = json.loads((output / "number-map.json").read_text())
-    mobile.validate_delivery(mapping, output)
+    rows = mobile.validate_delivery(mapping, output, db=queue.engine)
     content = (output / "review-01.html").read_text()
-    assert mapping["groups"] == {"population": 10, "random": 1, "challenge": 0,
-                                 "sample_items": 1, "nonpresented_holds": 0}
-    assert mapping["rows"][0]["view"] == view
-    assert mapping["rows"][0]["privacy_policy_version"] == "privacy-review-v2"
+    assert "もとの写真は10枚" in content
+    assert set(mapping["rows"][0]) == {"number", "asset_id"}
+    assert rows[0]["view"] == view
+    assert rows[0]["privacy_policy_version"] == "privacy-review-v2"
     if view == "raw":
         assert "もとの写真だけの確認" in content
         assert "privacy-review-v2" not in content and 'class="mask-comparison"' not in content
@@ -94,7 +98,7 @@ def test_固定原画像と版を提示し予測比較を区別する(queue, ass
         assert "比較する確認" in content and "privacy-review-v2" in content
         assert 'class="mask-comparison"' in content
     with Session(queue.engine) as session:
-        assert mapping["rows"][0]["presented_source_sha256"] == session.get(Asset, asset).sha256
+        assert rows[0]["presented_source_sha256"] == session.get(Asset, asset).sha256
         evidence = session.get(ProcessingRun, rid).parameters["evidence"]
         assert evidence["policy"]["mask_rescue"] is False
 
@@ -112,7 +116,7 @@ def test_提示画像だけを追記確認し保留と人物方針を解除し�
     reply = mobile.reply_reviews(
         mapping, execution / "review-manifest.json", digest(execution / "privacy-decisions.json"),
         "全1枚確認済み\n" + ("1: 人物の見落とし" if problem else "問題なし"), directory=output,
-    )
+     db=queue.engine)
     result = mobile.apply_privacy_reply(queue, reply)
     new_id = UUID(result["rows"][0]["recorded_privacy_review_run_id"])
     with Session(queue.engine) as session:
@@ -151,7 +155,7 @@ def test_提示物と固定対象が変わった返信は取り込まない(queu
         reply = "全1枚未確認\n問題なし"
     with pytest.raises(ValueError):
         mobile.reply_reviews(mapping, manifest, digest(execution / "privacy-decisions.json"),
-                             reply, directory=output)
+                             reply, directory=output, db=queue.engine)
 
 
 def test_共有HTMLとtarと番号表も保持登録し失効で削除する(queue, asset, presentation, tmp_path):
@@ -166,7 +170,8 @@ def test_共有HTMLとtarと番号表も保持登録し失効で削除する(que
     with Session(queue.engine) as session, session.begin():
         files = list(session.scalars(select(RetentionFile).where(RetentionFile.asset_id == asset)))
         assert {Path(f.path).name for f in files if Path(f.path).parent == shared} == {
-            "review-01.html", "number-map.json", "review.tar"}
+            "review-01.html", "number-map.json", "review-manifest.json",
+            "privacy-decisions.json", "review.tar"}
         assert all(f.kind == "image_bundle" for f in files if Path(f.path).parent == shared)
         session.scalar(select(Retention).where(Retention.asset_id == asset)).expires_at = (
             datetime.now(UTC) - timedelta(seconds=1))
@@ -232,15 +237,18 @@ def test_標本群を重複せず群ごとに表示し母数と件数を保持�
     (execution / "review-manifest.json").write_bytes(path.read_bytes())
     mobile.build(queue.engine, bundle, execution, output, Path("taxonomy"), require_contracts=False)
     mapping = json.loads((output / "number-map.json").read_text())
-    assert mapping["groups"] == {"population": 20, "random": 1, "challenge": 1,
-                                 "sample_items": 2, "nonpresented_holds": 0}
+    with Session(queue.engine) as session:
+        _, rows, groups = mobile._render(session, manifest, bundle, execution,
+                                         Path("taxonomy"), False)
+    assert groups == {"population": 20, "random": 1, "challenge": 1,
+                      "sample_items": 2, "nonpresented_holds": 0}
     assert [r["asset_id"] for r in mapping["rows"]] == list(reversed(ids))
     assert [r["number"] for r in mapping["rows"]] == [1, 2]
-    assert "無作為群から重複除外" in mapping["rows"][0]["groups"]
-    assert mapping["rows"][1]["groups"] == ["目的抽出challenge群"]
+    assert "無作為群から重複除外" in rows[0]["groups"]
+    assert rows[1]["groups"] == ["目的抽出challenge群"]
     reply = mobile.reply_reviews(mapping, execution / "review-manifest.json",
                                  digest(execution / "privacy-decisions.json"),
-                                 "全2枚確認済み\n問題なし", directory=output)
+                                 "全2枚確認済み\n問題なし", directory=output, db=queue.engine)
     assert [r["asset_id"] for r in reply["rows"]] == list(reversed(ids))
 
 
@@ -248,12 +256,16 @@ def test_別assetでも同じ取得画像を重複して提示しない(queue, s
     bundle, execution, output, _, _ = shared_mobile
     paths = list((bundle / "images").glob("*-raw.png"))
     paths[1].write_bytes(paths[0].read_bytes())
+    with Session(queue.engine) as session, session.begin():
+        first = session.get(Asset, UUID(paths[0].name.removesuffix("-raw.png")))
+        other = session.get(Asset, UUID(paths[1].name.removesuffix("-raw.png")))
+        other.storage_path, other.sha256 = first.storage_path, first.sha256
     mobile.build(queue.engine, bundle, execution, output, Path("taxonomy"),
                  require_contracts=False)
     mapping = json.loads((output / "number-map.json").read_text())
     assert [r["number"] for r in mapping["rows"]] == [1, 1]
     assert (output / "review-01.html").read_text().count('class="raw"') == 1
-    mobile.validate_delivery(mapping, output)
+    mobile.validate_delivery(mapping, output, db=queue.engine)
 
 
 def test_同一SHAでも取得byteが異なればまとめない(queue, shared_mobile, monkeypatch):

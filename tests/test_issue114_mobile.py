@@ -4,6 +4,7 @@ import io
 import json
 import re
 from contextlib import nullcontext
+from functools import partial
 from types import SimpleNamespace
 
 import numpy as np
@@ -15,13 +16,27 @@ from bench.issue114.mobile import (
     mask_uri,
     outline_uri,
     parse_chat_reply,
-    reply_reviews,
     write_pages,
 )
 from bench.issue114.privacy import digest
 from PIL import Image
 
 from colorstats import privacy_review, retention
+
+UNIT_DB = object()
+reply_reviews = partial(mobile.reply_reviews, db=UNIT_DB)
+pytestmark = pytest.mark.usefixtures("synthetic_renderer")
+
+
+@pytest.fixture
+def synthetic_renderer(monkeypatch):
+    def render(session, manifest, bundle, execution, taxonomy, require_contracts, view,
+               *, frozen=False):
+        assert session.get_bind() is UNIT_DB
+        data = json.loads((execution / "test-render.json").read_text())
+        return mobile._cards(data["rows"]), data["rows"], data["groups"]
+
+    monkeypatch.setattr(mobile, "_render", render)
 
 
 def delivery(mapping, directory, sources=None):
@@ -41,8 +56,13 @@ def delivery(mapping, directory, sources=None):
             "privacy": {}, "versions": [], "has_policy": False, "masks": [],
         }
     groups = {"population": len(mapping["rows"])}
-    mapping.update(template=mobile.TEMPLATE, groups=groups)
+    mapping.update(template=mobile.TEMPLATE)
     mapping["files"] = write_pages(mobile._cards(mapping["rows"]), directory, group_counts=groups)
+    (directory / "test-render.json").write_text(json.dumps({"rows": mapping["rows"],
+                                                          "groups": groups}))
+    rows = mapping["rows"]
+    mapping["rows"] = [{"number": r["number"], "asset_id": r["asset_id"]} for r in rows]
+    return rows
 
 
 def sample(tmp_path):
@@ -52,13 +72,14 @@ def sample(tmp_path):
              "presented_source_sha256": "b" * 64}]
     manifest = tmp_path / "review-manifest.json"
     manifest.write_text(json.dumps({"required_ids": ["accepted", "pending"], "rows": rows}))
-    mapping = {"format": "issue114-mobile-v2", "decisions_sha256": "a" * 64,
+    mapping = {"format": "issue114-mobile-v3", "decisions_sha256": "a" * 64,
                "review_manifest_sha256": digest(manifest),
                "rows": [row | {"number": i} for i, row in enumerate(rows, 1)]}
-    delivery(mapping, tmp_path)
-    for row, numbered in zip(rows, mapping["rows"], strict=True):
+    rendered = delivery(mapping, tmp_path)
+    for row, numbered in zip(rows, rendered, strict=True):
         row["presented_source_sha256"] = numbered["presented_source_sha256"]
-    manifest.write_text(json.dumps({"required_ids": ["accepted", "pending"], "rows": rows}))
+    manifest.write_text(json.dumps({"required_ids": ["accepted", "pending"], "rows": rows,
+                                    "decisions_sha256": "a" * 64}))
     mapping["review_manifest_sha256"] = digest(manifest)
     reply = "全2枚確認済み\n問題なし"
     return manifest, mapping, reply
@@ -149,13 +170,13 @@ def test_未完了返信や変更された番号表を拒否する(tmp_path):
         reply_reviews(mapping, manifest, "a" * 64, "全2枚未確認\n問題なし")
     altered = copy.deepcopy(mapping)
     altered["rows"][0]["subject"] = "terrain"
-    with pytest.raises(ValueError, match="自動判定"):
+    with pytest.raises(ValueError, match="固定根拠"):
         reply_reviews(altered, manifest, "a" * 64, reply)
     altered = copy.deepcopy(mapping)
     altered["rows"].reverse()
     for number, row in enumerate(altered["rows"], 1):
         row["number"] = number
-    with pytest.raises(ValueError, match="対象・連番"):
+    with pytest.raises(ValueError, match="固定根拠"):
         reply_reviews(altered, manifest, "a" * 64, reply)
     with pytest.raises(ValueError, match="一致"):
         reply_reviews(mapping, manifest, "b" * 64, reply)

@@ -22,6 +22,7 @@ from colorstats.pack_boundary import validate_public
 from colorstats.queue import Claim, RunInfo
 from colorstats.schema.models import Asset, Retention, RetentionFile, RetentionStop, Source
 from tests.test_collect import claim_for, payload_for
+from tests.test_issue114_mobile import synthetic_renderer as synthetic_renderer
 from tests.test_queue import asset as asset
 from tests.test_queue import database as database
 from tests.test_queue import queue as queue
@@ -317,7 +318,9 @@ def test_分割目視の再取込は別画像の判定変更を承認で見落�
 
 
 @DB
-def test_会話の問題番号は人の履歴を残し統計承認を取り消す(queue, legacy_managed, tmp_path):
+def test_会話の問題番号は人の履歴を残し統計承認を取り消す(
+    queue, legacy_managed, tmp_path, synthetic_renderer,
+):
     from bench.issue114.mobile import reply_reviews
     from bench.issue114.privacy import digest, import_reviews, save
 
@@ -330,10 +333,14 @@ def test_会話の問題番号は人の履歴を残し統計承認を取り消�
     manifest = execution / "review-manifest.json"
     save(manifest, {"required_ids": [str(aid)], "rows": [{
         "asset_id": str(aid), "decision": "accepted", "subject": "building"}]})
-    mapping = {"format": "issue114-mobile-v2", "review_manifest_sha256": digest(manifest),
+    mapping = {"format": "issue114-mobile-v3", "review_manifest_sha256": digest(manifest),
                "decisions_sha256": digest(execution / "privacy-decisions.json"),
                "rows": [row | {"number": 1, "presented_source_sha256": digest(image)}]}
-    from tests.test_issue114_mobile import delivery
+    fixed = json.loads(manifest.read_text())
+    fixed["decisions_sha256"] = mapping["decisions_sha256"]
+    manifest.write_text(json.dumps(fixed))
+    mapping["review_manifest_sha256"] = digest(manifest)
+    from tests.test_issue114_mobile import UNIT_DB, delivery
 
     delivery(mapping, execution, {str(aid): image})
     with Session(queue.engine) as session, session.begin():
@@ -344,7 +351,7 @@ def test_会話の問題番号は人の履歴を残し統計承認を取り消�
     for body in ("問題なし", "1: 人物の見落とし"):
         reply = "全1枚確認済み\n" + body
         source.write_text(json.dumps(reply_reviews(
-            mapping, manifest, mapping["decisions_sha256"], reply)))
+            mapping, manifest, mapping["decisions_sha256"], reply, db=UNIT_DB)))
         import_reviews(queue.engine, execution, source)
         approval = json.loads((execution / "privacy-validation.json").read_text())
         assert approval["approved"] == (body == "問題なし")

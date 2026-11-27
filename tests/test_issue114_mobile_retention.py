@@ -75,12 +75,13 @@ def test_HTMLと番号表は保持台帳へ登録され期限後の管理対象�
     for text in ("画像ゲート", "使用mask", "目的抽出challenge群", "raw候補", "region-policy hash"):
         assert text not in page
     mapping = json.loads((output / "number-map.json").read_text())
-    assert mapping['rows'][0]['groups'] == ["固定無作為群"]
+    assert set(mapping['rows'][0]) == {"number", "asset_id"}
     with Session(queue.engine) as session, session.begin():
         files = session.scalars(select(RetentionFile).where(
             RetentionFile.path.in_([str(p.resolve()) for p in output.iterdir()]),
         )).all()
-        assert {Path(file.path).name for file in files} == {"review-01.html", "number-map.json"}
+        assert {Path(file.path).name for file in files} == {
+            "review-01.html", "number-map.json", "review-manifest.json", "privacy-decisions.json"}
         assert all(file.asset_id == managed[0] and file.kind == "image_bundle" for file in files)
         host = files[0].host
         session.scalar(select(Retention)).expires_at = datetime.now(UTC) - timedelta(seconds=1)

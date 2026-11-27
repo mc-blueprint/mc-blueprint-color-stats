@@ -170,7 +170,7 @@ def human_reviews(session, root, plan):
     held = nonpresented_reviews(session, manifest)
     expected = reply_reviews(mapping, directory / "review-manifest.json",
                              manifest["decisions_sha256"], applied["chat_reply"],
-                             directory=directory)
+                             directory=directory, db=session.get_bind())
     if any(applied.get(k) != v for k, v in expected.items() if k != "rows"):
         raise ValueError("目視返信と固定番号表が一致しません")
     if len(applied["rows"]) != len(expected["rows"]):

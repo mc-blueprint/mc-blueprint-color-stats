@@ -74,7 +74,8 @@ HTMLの生成・配信検証・番号変換・返信登録は
 [mobile-review.md](mobile-review.md) の既存手順を使う。
 全件確認の返信を、同じ番号表と提示manifestで変換して既存writerへ追記する。
 統計に渡すrootの `human/` には、配信済みHTMLと `number-map.json`、
-`review-manifest.json`、適用結果の `converted-review.json` を揃える。
+`review-manifest.json`、SHAで束縛された `privacy-decisions.json`、
+適用結果の `converted-review.json` を揃える。
 適用結果には各行の `recorded_privacy_review_run_id` が必要である。
 旧側・新側で共通の提示を使う場合も、この同じ参照一式を使う。
 別の判定台帳は作らない。
@@ -83,7 +84,9 @@ HTMLの生成・配信検証・番号変換・返信登録は
 確認者・所見を照合する。未確認や問題ありでは統計を開始しない。
 番号への判定は全構成項目へ展開するが、未提示保留へは確認runを作らない。
 未提示保留は統計でも除外し、旧recordsに採用が残っていても採用へ戻さない。
-新しい番号表はv2。生成・返信・統計側を同じ版へ配置し、旧提示物は再生成する。
+新しい番号表はv3で、番号と項目の対応だけを持つ。描画入力は番号表から受け取らず、
+固定manifest・自動判定artifactとDBのA/B/C・原画像・maskから読み取り専用で導出する。
+配信・返信・P6はこの根拠を参照できる側で実行する。生成・返信・統計側を同じ版へ配置し、旧提示物は再生成する。
 確認後に同じrunコマンドで再開すると、Bを維持して新C参照へ切り替え、
 旧recordsをhistoryへ残し、shade/colorを作り直す。出力ファイルはCごとに分ける。
 旧Cを参照した統計や色をそのまま使わない。

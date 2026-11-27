@@ -141,7 +141,7 @@ def confirm(queue, data):
         data.manifest["decisions_sha256"],
         f"全{total}枚確認済み\n問題なし",
         directory=data.human,
-    )
+     db=queue.engine)
     applied = mobile.apply_privacy_reply(queue, reply)
     production.save(data.human / "converted-review.json", applied)
     return mapping, applied
@@ -161,7 +161,7 @@ def test_同一SHAを一番号にまとめ全項目の比較と保持参照を�
         assert {str(r.asset_id) for r in refs} == set(grouped.ids[:2])
     shared = grouped.human.parent / "delivery"
     mobile.share(queue.engine, grouped.human, shared, host="fixture")
-    mobile.validate_delivery(mapping, shared)
+    mobile.validate_delivery(mapping, shared, db=queue.engine)
 
 
 def test_共有番号の問題を全項目へ展開し未提示には確認を書かない(queue, grouped):
@@ -172,7 +172,7 @@ def test_共有番号の問題を全項目へ展開し未提示には確認を�
         grouped.manifest["decisions_sha256"],
         "全1枚確認済み\n1: 輪郭の過不足",
         directory=grouped.human,
-    )
+     db=queue.engine)
     assert len(reply["rows"]) == 2 and all(r["error_found"] for r in reply["rows"])
     assert {r["asset_id"] for r in reply["rows"]} == set(grouped.ids[:2])
     applied = mobile.apply_privacy_reply(queue, reply)
@@ -290,7 +290,7 @@ def test_番号表の欠落余分重複SHA分割混同と未提示追加を拒�
             grouped.manifest["decisions_sha256"],
             "全1枚確認済み\n問題なし",
             directory=grouped.human,
-        )
+         db=queue.engine)
 
 
 def test_番号表とHTMLの項目対応を消してファイルSHAを付け直しても拒否する(queue, grouped):
@@ -302,7 +302,7 @@ def test_番号表とHTMLの項目対応を消してファイルSHAを付け直�
     )
     mapping["files"][0].update(bytes=path.stat().st_size, sha256=mobile.digest(path))
     with pytest.raises(ValueError, match="項目区画"):
-        mobile.validate_delivery(mapping, grouped.human)
+        mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
 
 
 @pytest.mark.parametrize("entry", ["delivery", "reply"])
@@ -339,7 +339,7 @@ def test_属性とファイルSHAを残した比較の欠落や差替えを拒�
     mapping["files"][0].update(bytes=path.stat().st_size, sha256=mobile.digest(path))
     with pytest.raises(ValueError, match="比較内容"):
         if entry == "delivery":
-            mobile.validate_delivery(mapping, grouped.human)
+            mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
         else:
             mobile.reply_reviews(
                 mapping,
@@ -347,7 +347,7 @@ def test_属性とファイルSHAを残した比較の欠落や差替えを拒�
                 grouped.manifest["decisions_sha256"],
                 "全1枚確認済み\n問題なし",
                 directory=grouped.human,
-            )
+             db=queue.engine)
 
 
 @pytest.mark.parametrize("entry", ["delivery", "reply"])
@@ -371,13 +371,13 @@ def test_比較区画の外側を非表示にしたら拒否する(queue, groupe
     mapping["files"][0].update(bytes=path.stat().st_size, sha256=mobile.digest(path))
     with pytest.raises(ValueError):
         if entry == "delivery":
-            mobile.validate_delivery(mapping, grouped.human)
+            mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
         else:
             mobile.reply_reviews(
                 mapping, grouped.human / "review-manifest.json",
                 grouped.manifest["decisions_sha256"], "全1枚確認済み\n問題なし",
                 directory=grouped.human,
-            )
+             db=queue.engine)
 
 
 @pytest.mark.parametrize("separator", ["\u2028", "\u2029", "\x85", "\v", "\f"])
@@ -392,12 +392,12 @@ def test_文字位置と異なる改行を含む正規の比較表示を受理�
         row["reason"] = "合成" + separator + "説明"
     production.save(grouped.bundle / "manifest.json", grouped.manifest)
     mapping = build(queue, grouped)
-    mobile.validate_delivery(mapping, grouped.human)
+    mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
     converted = mobile.reply_reviews(
         mapping, grouped.human / "review-manifest.json",
         grouped.manifest["decisions_sha256"], "全1枚確認済み\n問題なし",
         directory=grouped.human,
-    )
+     db=queue.engine)
     assert len(converted["rows"]) == 2
 
 
@@ -418,16 +418,16 @@ def test_自己終了タグと一byteの改変をファイルSHA更新後も拒�
     mapping["files"][0].update(bytes=path.stat().st_size, sha256=mobile.digest(path))
     with pytest.raises(ValueError):
         if entry == "delivery":
-            mobile.validate_delivery(mapping, grouped.human)
+            mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
         else:
             mobile.reply_reviews(
                 mapping, grouped.human / "review-manifest.json",
                 grouped.manifest["decisions_sha256"], "全1枚確認済み\n問題なし",
                 directory=None if entry == "reply_default" else grouped.human,
-            )
+             db=queue.engine)
 
 
-def test_同じ入力から全体のbyteを再現し元画像なしでも返信を照合できる(queue, grouped):
+def test_同じ根拠からbyteを再現し根拠が消えたら返信を拒否する(queue, grouped):
     first = build(queue, grouped)
     first_directory = grouped.human
     grouped.human = first_directory.parent / "human-repeat"
@@ -437,14 +437,19 @@ def test_同じ入力から全体のbyteを再現し元画像なしでも返信�
         assert (first_directory / item["file"]).read_bytes() == (
             grouped.human / item["file"]
         ).read_bytes()
-    for source in first_directory.parent.glob("source-*"):
-        source.rename(source.with_name("unavailable-" + source.name))
-    mobile.validate_delivery(second, grouped.human)
+    mobile.validate_delivery(second, grouped.human, db=queue.engine)
     result = mobile.reply_reviews(
         second, grouped.human / "review-manifest.json", grouped.manifest["decisions_sha256"],
         "全1枚確認済み\n問題なし",
-    )
+     db=queue.engine)
     assert len(result["rows"]) == 2
+    for source in first_directory.parent.glob("source-*"):
+        source.rename(source.with_name("unavailable-" + source.name))
+    with pytest.raises(FileNotFoundError):
+        mobile.reply_reviews(
+            second, grouped.human / "review-manifest.json", grouped.manifest["decisions_sha256"],
+            "全1枚確認済み\n問題なし", db=queue.engine,
+        )
 
 
 @pytest.mark.parametrize("change", ["template", "raw", "binary", "markup"])
@@ -453,13 +458,88 @@ def test_再生成のテンプレート版と画像SHAを照合する(queue, gro
     if change == "template":
         mapping["template"] = "unrecognized"
     elif change == "raw":
-        mapping["rows"][0]["presentation"]["raw_sha256"] = "0" * 64
+        with Session(queue.engine) as session:
+            path = Path(session.get(Asset, UUID(mapping["rows"][0]["asset_id"])).storage_path)
+        path.write_bytes(path.read_bytes() + b"x")
     elif change == "markup":
-        mapping["rows"][0]["presentation"]["raw"] += '"><template/>'
+        mapping["rows"][0]["presentation"] = {"raw": '"><template/>'}
     else:
-        mapping["rows"][0]["presentation"]["masks"][0]["binary_sha256"] = "0" * 64
+        source = grouped.originals[mapping["rows"][0]["asset_id"]]["source"]
+        path = Path(source["region_policy"]["exclusions"]["person"]["path"])
+        path.write_bytes(path.read_bytes() + b"x")
+    with pytest.raises((ValueError, PermissionError)):
+        mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
+
+
+@pytest.mark.parametrize("entry", ["delivery", "reply"])
+@pytest.mark.parametrize("change", ["missing_masks", "prediction", "population"])
+@pytest.mark.parametrize("payload", [True, False])
+def test_番号表の描画入力とHTMLを一緒に変更しても固定根拠と照合する(
+    queue, grouped, entry, change, payload,
+):
+    mapping = build(queue, grouped)
+    with Session(queue.engine) as session:
+        _, rows, groups = mobile._render(
+            session, grouped.manifest, grouped.bundle, grouped.execution, Path("taxonomy"), True
+        )
+    if change == "missing_masks":
+        rows[1]["presentation"]["masks"] = []
+    elif change == "prediction":
+        part = rows[1]["presentation"]["masks"][0]
+        part["binary"] = rows[0]["presentation"]["raw"]
+        part["binary_sha256"] = rows[0]["presentation"]["raw_sha256"]
+    else:
+        groups["population"] = '<style>article{display:none}</style>'
+    if payload:
+        mapping.update(rows=rows, groups=groups)
+    cards = mobile._cards(rows)
+    for item in mapping["files"]:
+        path = grouped.human / item["file"]
+        path.write_bytes(mobile.page(
+            cards[item["first"] - 1:item["last"]], item["first"], item["last"], len(cards),
+            groups, legend=mobile._legend(cards),
+        ).encode())
+        item.update(bytes=path.stat().st_size, sha256=mobile.digest(path))
     with pytest.raises(ValueError):
+        if entry == "delivery":
+            mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
+        else:
+            mobile.reply_reviews(
+                mapping, grouped.human / "review-manifest.json",
+                grouped.manifest["decisions_sha256"], "全1枚確認済み\n問題なし",
+                directory=grouped.human,
+             db=queue.engine)
+
+
+def test_DB根拠なしや固定artifact改変では返信を作らない(queue, grouped):
+    mapping = build(queue, grouped)
+    with pytest.raises(ValueError, match="DB"):
         mobile.validate_delivery(mapping, grouped.human)
+    with pytest.raises(ValueError, match="DB"):
+        mobile.reply_reviews(
+            mapping, grouped.human / "review-manifest.json",
+            grouped.manifest["decisions_sha256"], "全1枚確認済み\n問題なし",
+        )
+    path = grouped.human / "privacy-decisions.json"
+    path.write_bytes(path.read_bytes() + b" ")
+    with pytest.raises(ValueError, match="自動判定"):
+        mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
+
+
+def test_提示時Cの再現は後続の保留を採用へ戻さない(queue, grouped):
+    mapping, applied = confirm(queue, grouped)
+    mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
+    with pytest.raises(PermissionError):
+        mobile.build(queue.engine, grouped.bundle, grouped.execution,
+                     grouped.human.parent / "stale", Path("taxonomy"))
+    row = applied["rows"][0]
+    privacy_review.record_hold(
+        queue, row["asset_id"], row["recorded_privacy_review_run_id"],
+        code_version="after-presentation", reviewer="ユーザー",
+        presented_source_sha256=row["presented_source_sha256"], note="提示後の保留",
+    )
+    with Session(queue.engine) as session, pytest.raises(PermissionError):
+        runtime.human_reviews(session, grouped.human.parent, {"human_sampling": grouped.sampling})
 
 
 @pytest.mark.parametrize(
@@ -557,7 +637,7 @@ def test_標本項目数を提示枚数として返信すると拒否する(queu
             grouped.human / "review-manifest.json",
             grouped.manifest["decisions_sha256"],
             "全2枚確認済み\n問題なし",
-        )
+         db=queue.engine)
 
 
 def test_未提示項目を返信へ混ぜてもwriterへ渡さない(queue, grouped):
@@ -567,7 +647,7 @@ def test_未提示項目を返信へ混ぜてもwriterへ渡さない(queue, gro
         grouped.human / "review-manifest.json",
         grouped.manifest["decisions_sha256"],
         "全1枚確認済み\n問題なし",
-    )
+     db=queue.engine)
     reply["rows"].append({**reply["rows"][0], "asset_id": grouped.ids[2]})
     with pytest.raises(ValueError, match="未提示"):
         mobile.apply_privacy_reply(queue, reply)
