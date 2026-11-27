@@ -330,9 +330,9 @@ def test_会話の問題番号は人の履歴を残し統計承認を取り消�
     manifest = execution / "review-manifest.json"
     save(manifest, {"required_ids": [str(aid)], "rows": [{
         "asset_id": str(aid), "decision": "accepted", "subject": "building"}]})
-    mapping = {"format": "issue114-mobile-v1", "review_manifest_sha256": digest(manifest),
+    mapping = {"format": "issue114-mobile-v2", "review_manifest_sha256": digest(manifest),
                "decisions_sha256": digest(execution / "privacy-decisions.json"),
-               "rows": [row | {"number": 1}]}
+               "rows": [row | {"number": 1, "presented_source_sha256": digest(image)}]}
     with Session(queue.engine) as session, session.begin():
         retention.review_privacy(session, aid, reviewer="auto:v2", subject="building",
                                  method="person-v2", thresholds={"mask_max": .01},

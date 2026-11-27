@@ -25,11 +25,13 @@ from colorstats import privacy_review, retention
 
 
 def sample(tmp_path):
-    rows = [{"asset_id": "accepted", "decision": "accepted", "subject": "building"},
-            {"asset_id": "pending", "decision": "pending", "subject": None}]
+    rows = [{"asset_id": "accepted", "decision": "accepted", "subject": "building",
+             "presented_source_sha256": "a" * 64},
+            {"asset_id": "pending", "decision": "pending", "subject": None,
+             "presented_source_sha256": "b" * 64}]
     manifest = tmp_path / "review-manifest.json"
     manifest.write_text(json.dumps({"required_ids": ["accepted", "pending"], "rows": rows}))
-    mapping = {"format": "issue114-mobile-v1", "decisions_sha256": "a" * 64,
+    mapping = {"format": "issue114-mobile-v2", "decisions_sha256": "a" * 64,
                "review_manifest_sha256": digest(manifest),
                "rows": [row | {"number": i} for i, row in enumerate(rows, 1)]}
     reply = "全2枚確認済み\n問題なし"

@@ -66,7 +66,11 @@ runは既存のappend-only writerで新しいCを作る。中断後は新rootの
 
 #120の `bench.issue114.mobile` で、現行A/B/Cと原画像SHAからprivate HTMLを作る。
 既存のbundle manifestとexecutionのreview manifestには同じ `sampling` と
-`required_ids` を入れる。HTMLの生成・配信検証・番号変換・返信登録は
+提示項目の `required_ids` を入れる。元の固定標本は `sampling.required_ids` に残す。
+未提示項目は `nonpresented_holds` に同一assetの現行human hold runの参照を付け、
+固定標本＝提示項目と未提示保留の非交和を検証する。自動のpolicy保留、古い訂正や採用runは代用できない。
+同一取得SHA・byteの項目は1番号へまとめ、各項目のA/B/C・mask比較はすべて残す。
+HTMLの生成・配信検証・番号変換・返信登録は
 [mobile-review.md](mobile-review.md) の既存手順を使う。
 全件確認の返信を、同じ番号表と提示manifestで変換して既存writerへ追記する。
 統計に渡すrootの `human/` には、配信済みHTMLと `number-map.json`、
@@ -77,6 +81,9 @@ runは既存のappend-only writerで新しいCを作る。中断後は新rootの
 
 消費時に固定条件・番号・全件返信・HTML・原画像SHA・同じ対象/A/B/訂正元C・
 確認者・所見を照合する。未確認や問題ありでは統計を開始しない。
+番号への判定は全構成項目へ展開するが、未提示保留へは確認runを作らない。
+未提示保留は統計でも除外し、旧recordsに採用が残っていても採用へ戻さない。
+新しい番号表はv2。生成・返信・統計側を同じ版へ配置し、旧提示物は再生成する。
 確認後に同じrunコマンドで再開すると、Bを維持して新C参照へ切り替え、
 旧recordsをhistoryへ残し、shade/colorを作り直す。出力ファイルはCごとに分ける。
 旧Cを参照した統計や色をそのまま使わない。

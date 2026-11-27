@@ -14,7 +14,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from colorstats import privacy_review
-from colorstats.schema.models import Job
+from colorstats.schema.models import Job, ProcessingRun
 from colorstats.stats.snapshot import digest, verify
 
 OLD = Path("/mnt/data/derived/stats/issue122-terrain-20261109-v1")
@@ -52,12 +52,17 @@ def selection(db, *, old_only=False):
              "reason": "当時のprivacy/region run・提示SHA参照不足"}
     with Session(db) as session:
         confirmed = runtime.human_reviews(session, ROOT, plan)
+        pending = {aid for aid, rid in confirmed.items()
+                   if session.get(ProcessingRun, UUID(rid)).parameters["verdict"]["decision"]
+                   != "accepted"}
     held -= confirmed.keys()
     old_rows, old_counts = [], Counter()
     for original in old["assets"]:
         row = dict(original)
         aid = row["asset_id"]
-        if aid in held:
+        if aid in pending:
+            row = {"asset_id": aid, "status": "privacy_pending"}
+        elif aid in held:
             row = {"asset_id": aid, "status": "human_reference_pending"}
         elif (aid in confirmed and row["status"] == "terrain_selected"
               and row.get("privacy_review_run_id") != confirmed[aid]):
@@ -87,7 +92,9 @@ def selection(db, *, old_only=False):
         for original in plan["rows"]:
             aid = original["asset_id"]
             row = {"asset_id": aid, "status": original["status"]}
-            if aid in held:
+            if aid in pending:
+                row["status"] = "privacy_pending"
+            elif aid in held:
                 row["status"] = "human_reference_pending"
             elif row["status"] == "ready":
                 record = records[aid]

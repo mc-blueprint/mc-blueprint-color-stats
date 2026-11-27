@@ -152,7 +152,7 @@ def sampling(path):
 
 def human_reviews(session, root, plan):
     """#120の固定提示と追記済み確認runを照合し、参照だけを返す。DB更新はしない。"""
-    from bench.issue114.mobile import reply_reviews
+    from bench.issue114.mobile import nonpresented_reviews, reply_reviews
 
     from colorstats import privacy_review
 
@@ -167,8 +167,7 @@ def human_reviews(session, root, plan):
                                   for name in names]
     if manifest.get("sampling") != sampling:
         raise ValueError("目視の母集団・seed・合格条件が固定計画と一致しません")
-    if set(manifest["required_ids"]) != set(sampling["required_ids"]):
-        raise ValueError("目視の提示集合が固定計画と一致しません")
+    held = nonpresented_reviews(session, manifest)
     expected = reply_reviews(mapping, directory / "review-manifest.json",
                              manifest["decisions_sha256"], applied["chat_reply"],
                              directory=directory)
@@ -193,4 +192,5 @@ def human_reviews(session, root, plan):
         references[row["asset_id"]] = str(run.id)
     if not expected["confirm_no_errors"]:
         raise PermissionError("目視の問題が未解決です。合格条件を緩めて統計へ進めません")
+    references.update(held)
     return references

@@ -82,7 +82,8 @@ def test_固定原画像と版を提示し予測比較を区別する(queue, ass
     mapping = json.loads((output / "number-map.json").read_text())
     mobile.validate_delivery(mapping, output)
     content = (output / "review-01.html").read_text()
-    assert mapping["groups"] == {"population": 10, "random": 1, "challenge": 0}
+    assert mapping["groups"] == {"population": 10, "random": 1, "challenge": 0,
+                                 "sample_items": 1, "nonpresented_holds": 0}
     assert mapping["rows"][0]["view"] == view
     assert mapping["rows"][0]["privacy_policy_version"] == "privacy-review-v2"
     if view == "raw":
@@ -231,7 +232,8 @@ def test_標本群を重複せず群ごとに表示し母数と件数を保持�
     (execution / "review-manifest.json").write_bytes(path.read_bytes())
     mobile.build(queue.engine, bundle, execution, output, Path("taxonomy"), require_contracts=False)
     mapping = json.loads((output / "number-map.json").read_text())
-    assert mapping["groups"] == {"population": 20, "random": 1, "challenge": 1}
+    assert mapping["groups"] == {"population": 20, "random": 1, "challenge": 1,
+                                 "sample_items": 2, "nonpresented_holds": 0}
     assert [r["asset_id"] for r in mapping["rows"]] == list(reversed(ids))
     assert [r["number"] for r in mapping["rows"]] == [1, 2]
     assert "無作為群から重複除外" in mapping["rows"][0]["groups"]
@@ -246,10 +248,20 @@ def test_別assetでも同じ取得画像を重複して提示しない(queue, s
     bundle, execution, output, _, _ = shared_mobile
     paths = list((bundle / "images").glob("*-raw.png"))
     paths[1].write_bytes(paths[0].read_bytes())
-    with pytest.raises(ValueError, match="重複"):
+    mobile.build(queue.engine, bundle, execution, output, Path("taxonomy"),
+                 require_contracts=False)
+    mapping = json.loads((output / "number-map.json").read_text())
+    assert [r["number"] for r in mapping["rows"]] == [1, 1]
+    assert (output / "review-01.html").read_text().count('class="raw"') == 1
+    mobile.validate_delivery(mapping, output)
+
+
+def test_同一SHAでも取得byteが異なればまとめない(queue, shared_mobile, monkeypatch):
+    bundle, execution, output, _, _ = shared_mobile
+    monkeypatch.setattr(mobile, "_uri_sha", lambda uri: "a" * 64)
+    with pytest.raises(ValueError, match="byte"):
         mobile.build(queue.engine, bundle, execution, output, Path("taxonomy"),
                      require_contracts=False)
-    assert not output.exists()
 
 
 def test_保持登録に失敗した共有コピーだけを取り除く(queue, presentation, tmp_path, monkeypatch):

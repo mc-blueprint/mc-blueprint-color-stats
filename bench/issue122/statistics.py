@@ -71,6 +71,9 @@ def selection(db):
     rows, counts, stages = [], Counter(), Counter()
     with Session(db) as session:
         human = runtime.human_reviews(session, ROOT, plan)
+        pending = {aid for aid, rid in human.items()
+                   if session.get(ProcessingRun, UUID(rid)).parameters["verdict"]["decision"]
+                   != "accepted"}
         for row in plan["rows"]:
             aid = row["asset_id"]
             item = {"asset_id": aid, "status": row["status"]}
@@ -83,7 +86,7 @@ def selection(db):
                                 or job.stage != stage):
                             raise ValueError("本番の成功stageとassetが一致しません")
                         stages[stage] += 1
-                if record["privacy_verdict"]["decision"] != "accepted":
+                if aid in pending or record["privacy_verdict"]["decision"] != "accepted":
                     item["status"] = "privacy_pending"
                 elif row["analysis_domain"] != "real_terrain":
                     item["status"] = "building_not_aggregated"

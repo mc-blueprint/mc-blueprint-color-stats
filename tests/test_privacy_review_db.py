@@ -455,7 +455,7 @@ def test_issue120番号返信は新privacy契約を失効させ旧writerを使�
                     "reason": "person_not_detected", "person_ratio": 0.0, "mask_ratio": 0.0}]
     manifest = tmp_path / "review-manifest.json"
     manifest.write_text(json.dumps({"required_ids": [str(asset)], "rows": review_rows}))
-    mapping = {"format": "issue114-mobile-v1", "decisions_sha256": "a" * 64,
+    mapping = {"format": "issue114-mobile-v2", "decisions_sha256": "a" * 64,
                "review_manifest_sha256": digest(manifest),
                "rows": [review_rows[0] | {"number": 1,
                    "image_gate_run_id": str(gate_id),

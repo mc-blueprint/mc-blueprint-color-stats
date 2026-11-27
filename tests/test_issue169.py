@@ -164,7 +164,10 @@ def test_新しい旧基準は確認後の地形参照を要し建物を昇格�
     monkeypatch.setattr(stats, "human_holds", lambda: {
         "asset_ids": [str(i) for i in range(110)],
         "proof": {"human_runs_written": 0, "missing_references": 110}})
-    monkeypatch.setattr(stats, "Session", lambda *a: nullcontext(None))
+    session = SimpleNamespace(get=lambda *a: SimpleNamespace(
+        parameters={"verdict": {"decision": "accepted"}}))
+    monkeypatch.setattr(stats, "Session", lambda *a: nullcontext(session))
+    monkeypatch.setattr(stats, "UUID", lambda value: value)
     monkeypatch.setattr(runtime, "human_reviews", lambda *a: {
         "150": "building-confirmed", "200": "confirmed"})
     if stale:
