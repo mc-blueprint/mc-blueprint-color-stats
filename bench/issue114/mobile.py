@@ -8,7 +8,6 @@ import os
 import re
 import socket
 import tarfile
-from html.parser import HTMLParser
 from pathlib import Path
 from uuid import UUID
 
@@ -23,13 +22,21 @@ from colorstats import privacy_review, retention
 from colorstats.analyze import region_policy as region_policy_contract
 from colorstats.api_budget import digest as contract_digest
 from colorstats.queue import Queue
-from colorstats.review_html import file_uri, jpeg, mask_uri, outline_uri, validate_html
+from colorstats.review_html import (
+    _check_image,
+    file_uri,
+    jpeg,
+    mask_uri,
+    outline_uri,
+    validate_html,
+)
 from colorstats.review_html import image_tag as _image
 from colorstats.review_html import uri_sha as _uri_sha
 from colorstats.schema.models import Asset, ProcessingRun, Region
 
 LIMIT = 12_500_000
 FORMAT = "issue114-mobile-v2"
+TEMPLATE = "issue173-mobile-v1"
 REASONS = {**CODE_NAMES,
            "再提示待ち（自動採用しない）": "人の確認待ち。確認だけで採用に変わることはありません",
            "追加解析後の再提示待ち（統計へ自動採用しない）": "追加の確認作業が済み、人の確認待ち"}
@@ -62,8 +69,22 @@ def explain(value):
     return html.escape(code)
 
 
+def _mask_input(label, mask, size, *, kind, pattern="solid"):
+    outline = outline_uri(mask, size, pattern=pattern, transparent=True)
+    binary = mask_uri(mask, size)
+    return {"label": label, "kind": kind, "pattern": pattern,
+            "outline": outline, "outline_sha256": _uri_sha(outline),
+            "binary": binary, "binary_sha256": _uri_sha(binary)}
+
+
 def mask_section(label, mask, size, *, number, kind, pattern="solid"):
     """同じ座標の写真＋透明な輪郭と二値maskを、縦1列の区画にする。"""
+    return _mask_card(_mask_input(label, mask, size, kind=kind, pattern=pattern),
+                      number)
+
+
+def _mask_card(data, number):
+    label, kind, pattern = data["label"], data["kind"], data["pattern"]
     name, definition = mask_description(label, kind)
     safe_label = html.escape(label)
     category = {"raw": "最初に見つけた部分", "effective": "今回選ばれた部分",
@@ -71,9 +92,10 @@ def mask_section(label, mask, size, *, number, kind, pattern="solid"):
                 "person": "人のいる場所の確認"}[kind]
     line = {"solid": "つながった線", "dash": "途切れた線", "dot": "点のある線",
             "dashdot": "途切れた線と点"}[pattern]
-    outline = _image(outline_uri(mask, size, pattern=pattern, transparent=True),
+    outline = _image(_presentation_image(data, "outline"),
                      f"番号{number} {name} 写真上の輪郭", "outline")
-    binary = _image(mask_uri(mask, size), f"番号{number} {name} 白く示した部分", "mask")
+    binary = _image(_presentation_image(data, "binary"),
+                    f"番号{number} {name} 白く示した部分", "mask")
     return f'''<section class="mask-comparison" data-label="{safe_label}" data-kind="{kind}">
 <h3>{html.escape(name)} <small><code>{safe_label}</code></small></h3><p>{category}</p>
 <p>{html.escape(definition)}</p><div class="comparison-grid">
@@ -262,77 +284,90 @@ def _numbered_rows(rows):
     return groups
 
 
-class _Markup(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self.events = []
+def _item_card(row, first_source):
+    data = row["presentation"]
+    number, view = row["number"], row["view"]
+    labels = '・'.join(html.escape(label) for label in data["display_labels"])
+    raw_uri = _presentation_image(data, "raw")
+    if _uri_sha(raw_uri) != row["presented_source_sha256"]:
+        raise ValueError("提示する原画像SHAが番号表と一致しません")
+    prepared_uri = _presentation_image(data, "prepared")
+    gate_state, gate_reason = data["gate_state"], row["image_gate_reason"]
+    verdict, people = data["verdict"], row["real_people"]
+    privacy = data["privacy"]
+    privacy_verdict = privacy.get("verdict", {})
+    decision = "採用" if row["decision"] == "accepted" else "確認待ち"
+    subject = {"building": "建物", "terrain": "地形", "mixed": "建物と地形が混じっている",
+               "other": "確認の対象外", "unknown": "不明", None: "まだ決まっていない"}.get(
+                   row["subject"], "まだ決まっていない")
+    reasons = '・'.join(explain(code) for code in verdict.get('reason_codes') or ['未記録'])
+    extras = [f"人物：{explain(people)}",
+              f"対象：{explain(verdict.get('target', '未記録'))}",
+              f"白黒：{explain(verdict.get('black_and_white', '未記録'))}",
+              f"暗所：{explain(verdict.get('dark', '未記録'))}",
+              f"室内：{explain(verdict.get('interior', '未記録'))}",
+              f"上空写真：{explain(verdict.get('aerial_view', '未記録'))}",
+              f"何が中心に写っているか：{explain(verdict.get('subject', '未記録'))}",
+              f"判断の理由：{reasons}"
+              ]
+    if privacy:
+        extras.append(f"人物の採否：{explain(privacy_verdict['decision'])}／"
+                      f"{explain(privacy_verdict['reason'])}。"
+                      f"人の確認を含む人物の記録："
+                      f"{explain(privacy['real_people'])}")
+    versions = data["versions"]
+    version_text = '／'.join(f'<small><code>{html.escape(v)}</code></small>'
+                            for v in versions if v)
+    if not data["has_policy"]:
+        extras.append("周りとの関係を確かめた記録がありません。以下は最初に見つけた場所の表示だけです")
+    card = f'''<article id="n{number}" style="--photo:url('{prepared_uri}')"
+data-photo-sha256="{_uri_sha(prepared_uri)}"><h2>番号 {number}：{labels}</h2>
+<p>これまでの判断：{decision}／{html.escape(REASONS.get(row['reason'], str(row['reason'])))}。
+写真全体を見た判断：{explain(gate_state)}／{explain(gate_reason)}。
+人と判定された広さは写真の {row['person_ratio']:.4%}（人として示す広さ {row['mask_ratio']:.4%}）、
+中心に写っているもの：{subject}。</p>
+<p>{'／'.join(extras)}</p>
+<p>判定の版：{version_text}</p>
+<details><summary>もとの写真を開く（自動で調べる前の写真）</summary>
+<figure><figcaption>もとの写真</figcaption>
+{_image(raw_uri, f'番号{number} もとの写真', 'raw')}</figure></details>
+<p>以下は自動で調べた写真です。上下で同じ場所を比べられます。</p>
+{''.join(_mask_card(part, number) for part in data['masks'])}</article>'''
+    if view == "raw":
+        card = (f'<article id="n{number}"><h2>番号 {number}：'
+                     f'{labels}</h2><figure><figcaption>もとの写真</figcaption>'
+                     f'{_image(raw_uri, f"番号{number} もとの写真", "raw")}</figure></article>')
 
-    def handle_starttag(self, tag, attrs):
-        self.events.append(("start", tag, sorted(
-            (key, value) for key, value in attrs if key != "data-sample-sha256"
-        )))
-
-    def handle_endtag(self, tag):
-        self.events.append(("end", tag))
-
-    def handle_data(self, data):
-        self.events.append(("text", data))
-
-    def handle_comment(self, data):
-        self.events.append(("comment", data))
+    if not first_source:
+        pattern = r"<figure>.*?</figure>" if view == "raw" else r"<details>.*?</details>"
+        card = re.sub(pattern, "", card, flags=re.S)
+    card = card.replace(f'<article id="n{number}"', '<section', 1)
+    card = card.replace("</article>", "</section>")
+    card = f'<section>{card}</section>'
+    token = contract_digest(row)
+    card = card.replace('<section>', f'<section data-sample-sha256="{token}">', 1)
+    return card
 
 
-def _presentation_digest(content):
-    parser = _Markup()
-    parser.feed(content)
-    parser.close()
-    return contract_digest(parser.events)
+def _cards(rows):
+    cards = []
+    for row in rows:
+        number = row["number"]
+        first = number > len(cards)
+        card = _item_card(row, first)
+        if first:
+            cards.append(f'<article id="n{number}">{card}</article>')
+        else:
+            cards[number - 1] = (cards[number - 1].removesuffix("</article>")
+                                 + '<p>同じ原画像に対応する別の確認項目です。</p>'
+                                 + card + "</article>")
+    return cards
 
 
-class _PresentedItems(_Markup):
-    def __init__(self):
-        super().__init__()
-        self.number = None
-        self.items, self.sources, self.contents = {}, {}, {}
-        self.stack = []
-        self.sample = None
-
-    def handle_starttag(self, tag, attrs):
-        start = len(self.events)
-        super().handle_starttag(tag, attrs)
-        attrs = dict(attrs)
-        if tag == "html" and (self.stack or attrs != {"lang": "ja"}):
-            raise ValueError("比較内容の外側が生成時の構造と一致しません")
-        if tag == "article":
-            if self.number is not None or self.stack != ["html"]:
-                raise ValueError("比較内容の番号を別の要素で囲めません")
-            self.number = int(attrs["id"][1:])
-            if attrs != {"id": f"n{self.number}"}:
-                raise ValueError("比較内容の番号に表示属性を追加できません")
-            self.items[self.number], self.sources[self.number] = [], []
-            self.contents[self.number] = []
-        if self.number is not None:
-            if token := attrs.get("data-sample-sha256"):
-                if tag != "section" or self.stack != ["html", "article"]:
-                    raise ValueError("比較内容の項目を別の要素で囲めません")
-                self.items[self.number].append(token)
-                self.sample = (len(self.stack), start)
-            if tag == "img" and "raw" in attrs.get("class", "").split():
-                self.sources[self.number].append(attrs["data-sha256"])
-        if tag not in {"meta", "img", "br"}:
-            self.stack.append(tag)
-
-    def handle_endtag(self, tag):
-        super().handle_endtag(tag)
-        if not self.stack or self.stack.pop() != tag:
-            raise ValueError("比較内容の要素の対応が一致しません")
-        if self.sample is not None and len(self.stack) == self.sample[0]:
-            self.contents[self.number].append(contract_digest(self.events[self.sample[1]:]))
-            self.sample = None
-        if tag == "article":
-            if self.sample is not None:
-                raise ValueError("提示項目の比較内容が閉じられていません")
-            self.number = None
+def _presentation_image(data, key):
+    uri = data[key]
+    _check_image(uri, data[key + "_sha256"])
+    return uri
 
 
 def _private_output(output):
@@ -449,7 +484,7 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts, v
     )):
         if region.mask_path:
             regions.setdefault(str(region.asset_id), []).append((region.label, region.mask_path))
-    cards, rows = [], []
+    rows = []
     random_ids, boundary_ids = set(manifest["random_ids"]), set(manifest["boundary_ids"])
     if (not random_ids <= set(ids) or not boundary_ids <= set(ids)
             or type(manifest.get("population", len(ids))) is not int
@@ -485,10 +520,6 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts, v
         if digest(row["input_path"]) != row["input_sha256"] or digest(
                 row["mask_path"]) != row["mask_sha256"]:
             raise ValueError("固定した解析画像・人物maskが変わっています")
-        decision = "採用" if row["decision"] == "accepted" else "確認待ち"
-        subject = {"building": "建物", "terrain": "地形", "mixed": "建物と地形が混じっている",
-                   "other": "確認の対象外", "unknown": "不明", None: "まだ決まっていない"}.get(
-                       row["subject"], "まだ決まっていない")
         with Image.open(row["input_path"]) as prepared:
             input_size = prepared.size
             prepared_uri = jpeg(prepared)
@@ -505,40 +536,21 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts, v
         privacy = privacy_views.get(aid, {})
         privacy_policy = privacy.get("evidence", {}).get("policy", {})
         privacy_verdict = privacy.get("verdict", {})
-        reasons = '・'.join(explain(code) for code in verdict.get('reason_codes') or ['未記録'])
-        extras = [f"人物：{explain(people)}",
-                  f"対象：{explain(verdict.get('target', '未記録'))}",
-                  f"白黒：{explain(verdict.get('black_and_white', '未記録'))}",
-                  f"暗所：{explain(verdict.get('dark', '未記録'))}",
-                  f"室内：{explain(verdict.get('interior', '未記録'))}",
-                  f"上空写真：{explain(verdict.get('aerial_view', '未記録'))}",
-                  f"何が中心に写っているか：{explain(verdict.get('subject', '未記録'))}",
-                  f"判断の理由：{reasons}"
-                  ]
-        if privacy:
-            extras.append(f"人物の採否：{explain(privacy_verdict['decision'])}／"
-                          f"{explain(privacy_verdict['reason'])}。"
-                          f"人の確認を含む人物の記録："
-                          f"{explain(privacy['evidence']['real_people'])}")
         versions = ["image-review-v1", row.get("region_policy_version"),
                     privacy_policy.get("version")]
-        version_text = '／'.join(f'<small><code>{html.escape(v)}</code></small>'
-                                for v in versions if v)
-        parts = [mask_section("person", person_mask, input_size, number=number, kind="person")]
+        parts = [_mask_input("person", person_mask, input_size, kind="person")]
         effective = policy_views.get(aid)
         if effective:
             for role, mask in sorted(effective["roles"].items()):
                 pattern = "dash" if role.startswith("real_terrain/") else "solid"
-                parts.append(mask_section(role, mask, input_size, number=number,
+                parts.append(_mask_input(role, mask, input_size,
                                           kind="effective", pattern=pattern))
             exclusion_styles = {"sky": "dash", "person": "dot", "conflict": "dashdot",
                                 "semantic_mismatch": "solid", "void": "dot"}
             for reason, mask in sorted(effective["exclusions"].items()):
                 pattern = exclusion_styles.get(reason, "dashdot")
-                parts.append(mask_section(reason, mask, input_size, number=number,
+                parts.append(_mask_input(reason, mask, input_size,
                                           kind="exclusion", pattern=pattern))
-        else:
-            extras.append("周りとの関係を確かめた記録がありません。以下は最初に見つけた場所の表示だけです")
         for index, label in enumerate(sorted({label for label, _ in regions.get(aid, [])})
                                       if not effective else []):
             union = np.zeros((input_size[1], input_size[0]), dtype=bool)
@@ -549,7 +561,7 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts, v
                     if values.shape != union.shape:
                         raise ValueError("部位maskと原画像の座標が一致しません")
                     union |= values
-            parts.append(mask_section(label, union, input_size, number=number, kind="raw",
+            parts.append(_mask_input(label, union, input_size, kind="raw",
                                       pattern='dash' if index % 2 else 'solid'))
         rows.append({"number": number, "asset_id": aid, "groups": labels,
                      "input_sha256": row["input_sha256"],
@@ -570,39 +582,17 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts, v
                      "region_policy_version": row.get("region_policy_version"),
                      "region_policy_hash": row.get("region_policy_hash")})
         rows[-1]["presented_source_sha256"] = source_sha256
-        card = f'''<article id="n{number}" style="--photo:url('{prepared_uri}')"
-data-photo-sha256="{_uri_sha(prepared_uri)}"><h2>番号 {number}：{'・'.join(display_labels)}</h2>
-<p>これまでの判断：{decision}／{html.escape(REASONS.get(row['reason'], str(row['reason'])))}。
-写真全体を見た判断：{explain(gate_state)}／{explain(gate_reason)}。
-人と判定された広さは写真の {row['person_ratio']:.4%}（人として示す広さ {row['mask_ratio']:.4%}）、
-中心に写っているもの：{subject}。</p>
-<p>{'／'.join(extras)}</p>
-<p>判定の版：{version_text}</p>
-<details><summary>もとの写真を開く（自動で調べる前の写真）</summary>
-<figure><figcaption>もとの写真</figcaption>
-{_image(raw_uri, f'番号{number} もとの写真', 'raw')}</figure></details>
-<p>以下は自動で調べた写真です。上下で同じ場所を比べられます。</p>
-{''.join(parts)}</article>'''
-        if view == "raw":
-            card = (f'<article id="n{number}"><h2>番号 {number}：'
-                         f'{"・".join(display_labels)}</h2><figure><figcaption>もとの写真</figcaption>'
-                         f'{_image(raw_uri, f"番号{number} もとの写真", "raw")}</figure></article>')
-
-        if not first_source:
-            pattern = r"<figure>.*?</figure>" if view == "raw" else r"<details>.*?</details>"
-            card = re.sub(pattern, "", card, flags=re.S)
-        card = card.replace(f'<article id="n{number}"', '<section', 1)
-        card = card.replace("</article>", "</section>")
-        card = f'<section>{card}</section>'
-        rows[-1]["presentation_sha256"] = _presentation_digest(card)
-        token = contract_digest(rows[-1])
-        card = card.replace('<section>', f'<section data-sample-sha256="{token}">', 1)
-        if first_source:
-            cards.append(f'<article id="n{number}">{card}</article>')
-        else:
-            cards[number - 1] = (cards[number - 1].removesuffix("</article>")
-                                 + '<p>同じ原画像に対応する別の確認項目です。</p>'
-                                 + card + "</article>")
+        rows[-1]["presentation"] = {
+            "raw": raw_uri, "raw_sha256": source_sha256,
+            "prepared": prepared_uri, "prepared_sha256": _uri_sha(prepared_uri),
+            "display_labels": display_labels, "gate_state": gate_state,
+            "verdict": verdict, "versions": versions, "masks": parts,
+            "has_policy": effective is not None,
+            "privacy": {"verdict": privacy_verdict,
+                        "real_people": privacy.get("evidence", {}).get("real_people")}
+                       if privacy else {},
+        }
+    cards = _cards(rows)
     random_numbers = {row["number"] for row in rows if row["asset_id"] in random_ids}
     groups.update(random=len(random_numbers), challenge=len(cards) - len(random_numbers),
                   sample_items=len(rows),
@@ -618,7 +608,8 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
         validate_html((output / item["file"]).read_text(encoding="utf-8"),
                       range(item["first"], item["last"] + 1), limit=LIMIT, style=STYLE)
     save(output / "number-map.json", {
-        "format": FORMAT, "review_manifest_sha256": digest(bundle / "manifest.json"),
+        "format": FORMAT, "template": TEMPLATE,
+        "review_manifest_sha256": digest(bundle / "manifest.json"),
         "decisions_sha256": manifest["decisions_sha256"], "groups": groups,
         "rows": rows, "files": files,
     })
@@ -637,33 +628,33 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
 
 
 def validate_delivery(mapping, directory):
-    """固定番号表と送付HTMLの実byte・SHA・連番・埋込画像を照合する。"""
-    if mapping["format"] != FORMAT:
-        raise ValueError("提示番号表を現行形式で再生成してください")
+    """固定描画入力から各HTML全体を再生成し、送付byteと完全一致することを確かめる。"""
+    if mapping["format"] != FORMAT or mapping.get("template") != TEMPLATE:
+        raise ValueError("提示番号表を現行テンプレートで再生成してください")
     groups = _numbered_rows(mapping["rows"])
-    expected = 1
+    cards = _cards(mapping["rows"])
+    views = {row["view"] for row in mapping["rows"]}
+    if len(views) != 1 or not views <= {"raw", "comparison"}:
+        raise ValueError("提示方法が一致しません")
+    view = views.pop()
+    legend = _legend(cards)
+    first = 1
     for item in mapping["files"]:
         if (not re.fullmatch(r"review-[0-9]+\.html", item["file"])
-                or item["first"] != expected or item["last"] < expected
+                or item["first"] != first or item["last"] < first
                 or item["last"] > len(groups)):
             raise ValueError("提示HTMLのファイル名・番号範囲が一致しません")
+        expected = page(cards[first - 1:item["last"]], first, item["last"], len(cards),
+                        mapping["groups"], legend=legend, view=view).encode()
         raw = (directory / item["file"]).read_bytes()
+        if raw != expected:
+            raise ValueError("提示HTMLの項目区画・比較内容が全体の再生成byteと一致しません")
         if len(raw) != item["bytes"] or hashlib.sha256(raw).hexdigest() != item["sha256"]:
             raise ValueError("提示HTMLのbyte数・SHAが一致しません")
-        validate_html(raw.decode("utf-8"), range(item["first"], item["last"] + 1),
-                      limit=LIMIT, style=STYLE)
-        presented = _PresentedItems()
-        presented.feed(raw.decode("utf-8"))
-        presented.close()
-        for number in range(item["first"], item["last"] + 1):
-            rows = groups[number]
-            if (presented.items[number] != [contract_digest(row) for row in rows]
-                    or presented.sources[number] != [rows[0]["presented_source_sha256"]]):
-                raise ValueError("提示HTMLと番号表の原画像・項目区画が一致しません")
-            if presented.contents[number] != [row["presentation_sha256"] for row in rows]:
-                raise ValueError("提示HTMLと番号表の比較内容SHAが一致しません")
-        expected = item["last"] + 1
-    if expected != len(groups) + 1 or not mapping["files"]:
+        if len(expected) > LIMIT:
+            raise ValueError("HTMLが容量上限を超えました")
+        first = item["last"] + 1
+    if first != len(groups) + 1 or not mapping["files"]:
         raise ValueError("提示HTMLの全番号が揃っていません")
 
 
@@ -744,8 +735,6 @@ def reply_reviews(mapping, manifest, decisions_sha256, reply, *, directory=None)
             or mapping["review_manifest_sha256"] != digest(manifest)):
         raise ValueError("番号表と固定した閲覧対象が一致しません")
     review = json.loads(manifest.read_text())
-    if directory is not None:
-        validate_delivery(mapping, directory)
     holds = review_partition(review)
     required = set(review["required_ids"])
     rows = mapping["rows"]
@@ -760,6 +749,7 @@ def reply_reviews(mapping, manifest, decisions_sha256, reply, *, directory=None)
     for row in rows:
         if any(row[key] != value for key, value in originals[row["asset_id"]].items()):
             raise ValueError("番号表の自動判定が閲覧原本と一致しません")
+    validate_delivery(mapping, directory if directory is not None else manifest.parent)
     reply = parse_chat_reply(reply, len(groups))
     problems = {problem["number"]: problem["reason"] for problem in reply["problems"]}
     return {"reviewer": "ユーザー", "confirm_no_errors": not problems,

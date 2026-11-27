@@ -24,6 +24,27 @@ from PIL import Image
 from colorstats import privacy_review, retention
 
 
+def delivery(mapping, directory, sources=None):
+    """手作りの番号表にも、固定テンプレートによる合成の提示物を用意する。"""
+    for index, row in enumerate(mapping["rows"]):
+        uri = (mobile.file_uri(sources[row["asset_id"]]) if sources
+               else jpeg(Image.new("RGB", (2, 2), (index * 255, 100, 200))))
+        sha = mobile._uri_sha(uri)
+        row["presented_source_sha256"] = sha
+        for key, value in {"reason": "合成", "person_ratio": 0.0, "mask_ratio": 0.0,
+                           "image_gate_reason": "未記録", "real_people": "absent",
+                           "view": "comparison"}.items():
+            row.setdefault(key, value)
+        row["presentation"] = {
+            "raw": uri, "raw_sha256": sha, "prepared": uri, "prepared_sha256": sha,
+            "display_labels": ["合成"], "gate_state": "未記録", "verdict": {},
+            "privacy": {}, "versions": [], "has_policy": False, "masks": [],
+        }
+    groups = {"population": len(mapping["rows"])}
+    mapping.update(template=mobile.TEMPLATE, groups=groups)
+    mapping["files"] = write_pages(mobile._cards(mapping["rows"]), directory, group_counts=groups)
+
+
 def sample(tmp_path):
     rows = [{"asset_id": "accepted", "decision": "accepted", "subject": "building",
              "presented_source_sha256": "a" * 64},
@@ -34,6 +55,11 @@ def sample(tmp_path):
     mapping = {"format": "issue114-mobile-v2", "decisions_sha256": "a" * 64,
                "review_manifest_sha256": digest(manifest),
                "rows": [row | {"number": i} for i, row in enumerate(rows, 1)]}
+    delivery(mapping, tmp_path)
+    for row, numbered in zip(rows, mapping["rows"], strict=True):
+        row["presented_source_sha256"] = numbered["presented_source_sha256"]
+    manifest.write_text(json.dumps({"required_ids": ["accepted", "pending"], "rows": rows}))
+    mapping["review_manifest_sha256"] = digest(manifest)
     reply = "全2枚確認済み\n問題なし"
     return manifest, mapping, reply
 

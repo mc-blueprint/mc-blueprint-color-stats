@@ -401,6 +401,67 @@ def test_文字位置と異なる改行を含む正規の比較表示を受理�
     assert len(converted["rows"]) == 2
 
 
+@pytest.mark.parametrize("entry", ["delivery", "reply", "reply_default"])
+@pytest.mark.parametrize("change", ["style", "template", "byte"])
+def test_自己終了タグと一byteの改変をファイルSHA更新後も拒否する(queue, grouped, entry, change):
+    mapping = build(queue, grouped)
+    path = grouped.human / mapping["files"][0]["file"]
+    content = path.read_text()
+    if change == "byte":
+        # UTF-8の1 byteだけを変え、復号できるままにする。
+        raw = path.read_bytes().replace(b"<title>", b"<Title>", 1)
+        assert sum(a != b for a, b in zip(raw, path.read_bytes(), strict=True)) == 1
+        path.write_bytes(raw)
+    else:
+        content = content.replace('<article id="n1">', f'<{change}/><article id="n1">', 1)
+        path.write_text(content)
+    mapping["files"][0].update(bytes=path.stat().st_size, sha256=mobile.digest(path))
+    with pytest.raises(ValueError):
+        if entry == "delivery":
+            mobile.validate_delivery(mapping, grouped.human)
+        else:
+            mobile.reply_reviews(
+                mapping, grouped.human / "review-manifest.json",
+                grouped.manifest["decisions_sha256"], "全1枚確認済み\n問題なし",
+                directory=None if entry == "reply_default" else grouped.human,
+            )
+
+
+def test_同じ入力から全体のbyteを再現し元画像なしでも返信を照合できる(queue, grouped):
+    first = build(queue, grouped)
+    first_directory = grouped.human
+    grouped.human = first_directory.parent / "human-repeat"
+    second = build(queue, grouped)
+    assert first == second
+    for item in first["files"]:
+        assert (first_directory / item["file"]).read_bytes() == (
+            grouped.human / item["file"]
+        ).read_bytes()
+    for source in first_directory.parent.glob("source-*"):
+        source.rename(source.with_name("unavailable-" + source.name))
+    mobile.validate_delivery(second, grouped.human)
+    result = mobile.reply_reviews(
+        second, grouped.human / "review-manifest.json", grouped.manifest["decisions_sha256"],
+        "全1枚確認済み\n問題なし",
+    )
+    assert len(result["rows"]) == 2
+
+
+@pytest.mark.parametrize("change", ["template", "raw", "binary", "markup"])
+def test_再生成のテンプレート版と画像SHAを照合する(queue, grouped, change):
+    mapping = build(queue, grouped)
+    if change == "template":
+        mapping["template"] = "unrecognized"
+    elif change == "raw":
+        mapping["rows"][0]["presentation"]["raw_sha256"] = "0" * 64
+    elif change == "markup":
+        mapping["rows"][0]["presentation"]["raw"] += '"><template/>'
+    else:
+        mapping["rows"][0]["presentation"]["masks"][0]["binary_sha256"] = "0" * 64
+    with pytest.raises(ValueError):
+        mobile.validate_delivery(mapping, grouped.human)
+
+
 @pytest.mark.parametrize(
     "change", ["missing", "duplicate", "released", "stale", "expired", "policy"]
 )

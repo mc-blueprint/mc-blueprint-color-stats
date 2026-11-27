@@ -463,6 +463,11 @@ def test_issue120番号返信は新privacy契約を失効させ旧writerを使�
                    "privacy_review_run_id": str(original),
                    "presented_source_sha256": source_sha256,
                    "confirmed_real_people": "absent"}]}
+    from tests.test_issue114_mobile import delivery
+
+    with Session(queue.engine) as session:
+        raw = Path(session.get(Asset, asset).storage_path)
+    delivery(mapping, tmp_path, {str(asset): raw})
     reply = reply_reviews(mapping, manifest, "a" * 64,
                           "全1枚確認済み\n1: 確認内容の誤り")
 
