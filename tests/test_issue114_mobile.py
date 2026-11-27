@@ -4,7 +4,9 @@ import io
 import json
 import re
 from contextlib import nullcontext
+from functools import partial
 from types import SimpleNamespace
+from uuid import UUID, uuid4
 
 import numpy as np
 import pytest
@@ -15,7 +17,6 @@ from bench.issue114.mobile import (
     mask_uri,
     outline_uri,
     parse_chat_reply,
-    reply_reviews,
     write_pages,
 )
 from bench.issue114.privacy import digest
@@ -23,15 +24,91 @@ from PIL import Image
 
 from colorstats import privacy_review, retention
 
+UNIT_DB = object()
+UNIT_RUNS = {}
+reply_reviews = partial(mobile.reply_reviews, db=UNIT_DB)
+pytestmark = pytest.mark.usefixtures("synthetic_renderer")
+
+
+@pytest.fixture
+def synthetic_renderer(monkeypatch):
+    original_session = mobile.Session
+
+    def session(db):
+        if db is UNIT_DB:
+            return nullcontext(SimpleNamespace(get=lambda model, rid: UNIT_RUNS.get(rid),
+                                               get_bind=lambda: UNIT_DB))
+        return original_session(db)
+
+    def render(session, manifest, bundle, execution, taxonomy, require_contracts, view,
+               *, frozen=False, decisions_raw=None):
+        assert session.get_bind() is UNIT_DB
+        data = json.loads((execution / "test-render.json").read_text())
+        return mobile._cards(data["rows"]), data["rows"], data["groups"]
+
+    monkeypatch.setattr(mobile, "_render", render)
+    monkeypatch.setattr(mobile, "Session", session)
+
+
+def freeze_delivery(mapping, directory):
+    mapping.setdefault("presentation_run_id", str(uuid4()))
+    (directory / "number-map.json").write_text(
+        json.dumps(mapping, ensure_ascii=False, indent=2) + "\n")
+    if not (directory / "privacy-decisions.json").exists():
+        (directory / "privacy-decisions.json").write_text("[]")
+    names = ["review-manifest.json", "privacy-decisions.json", "number-map.json"]
+    names.extend(item["file"] for item in mapping["files"])
+    UNIT_RUNS[UUID(mapping["presentation_run_id"])] = SimpleNamespace(
+        stage="review", finished_at=True, failure_reason=None,
+        parameters={"kind": "mobile_presentation",
+                    "files": {name: digest(directory / name) for name in names}},
+    )
+
+
+def delivery(mapping, directory, sources=None):
+    """手作りの番号表にも、固定テンプレートによる合成の提示物を用意する。"""
+    for index, row in enumerate(mapping["rows"]):
+        uri = (mobile.file_uri(sources[row["asset_id"]]) if sources
+               else jpeg(Image.new("RGB", (2, 2), (index * 255, 100, 200))))
+        sha = mobile._uri_sha(uri)
+        row["presented_source_sha256"] = sha
+        for key, value in {"reason": "合成", "person_ratio": 0.0, "mask_ratio": 0.0,
+                           "image_gate_reason": "未記録", "real_people": "absent",
+                           "view": "comparison"}.items():
+            row.setdefault(key, value)
+        row["presentation"] = {
+            "raw": uri, "raw_sha256": sha, "prepared": uri, "prepared_sha256": sha,
+            "display_labels": ["合成"], "gate_state": "未記録", "verdict": {},
+            "privacy": {}, "versions": [], "has_policy": False, "masks": [],
+        }
+    groups = {"population": len(mapping["rows"])}
+    mapping.update(template=mobile.TEMPLATE)
+    mapping["files"] = write_pages(mobile._cards(mapping["rows"]), directory, group_counts=groups)
+    (directory / "test-render.json").write_text(json.dumps({"rows": mapping["rows"],
+                                                          "groups": groups}))
+    rows = mapping["rows"]
+    mapping["rows"] = [{"number": r["number"], "asset_id": r["asset_id"]} for r in rows]
+    freeze_delivery(mapping, directory)
+    return rows
+
 
 def sample(tmp_path):
-    rows = [{"asset_id": "accepted", "decision": "accepted", "subject": "building"},
-            {"asset_id": "pending", "decision": "pending", "subject": None}]
+    rows = [{"asset_id": "accepted", "decision": "accepted", "subject": "building",
+             "presented_source_sha256": "a" * 64},
+            {"asset_id": "pending", "decision": "pending", "subject": None,
+             "presented_source_sha256": "b" * 64}]
     manifest = tmp_path / "review-manifest.json"
     manifest.write_text(json.dumps({"required_ids": ["accepted", "pending"], "rows": rows}))
-    mapping = {"format": "issue114-mobile-v1", "decisions_sha256": "a" * 64,
+    mapping = {"format": "issue114-mobile-v3", "decisions_sha256": "a" * 64,
                "review_manifest_sha256": digest(manifest),
                "rows": [row | {"number": i} for i, row in enumerate(rows, 1)]}
+    rendered = delivery(mapping, tmp_path)
+    for row, numbered in zip(rows, rendered, strict=True):
+        row["presented_source_sha256"] = numbered["presented_source_sha256"]
+    manifest.write_text(json.dumps({"required_ids": ["accepted", "pending"], "rows": rows,
+                                    "decisions_sha256": "a" * 64}))
+    mapping["review_manifest_sha256"] = digest(manifest)
+    freeze_delivery(mapping, tmp_path)
     reply = "全2枚確認済み\n問題なし"
     return manifest, mapping, reply
 
@@ -77,7 +154,7 @@ def test_番号返信はproblemを保留し他画像をprivacy_review_writeで�
     monkeypatch.setattr(privacy_review, "record_hold", record_hold)
     monkeypatch.setattr(privacy_review, "write", write)
     monkeypatch.setattr(retention, "review_privacy", old_writer)
-    data = {"reviewer": "ユーザー", "rows": [
+    data = {"reviewer": "ユーザー", "presentation_run_id": "presentation", "rows": [
         {"asset_id": "flagged", "error_found": True, "note": "人物の見落とし",
          "privacy_review_run_id": "privacy-1", "presented_source_sha256": "a" * 64},
         {"asset_id": "clear", "error_found": False, "note": "問題なし",
@@ -95,6 +172,7 @@ def test_番号返信はproblemを保留し他画像をprivacy_review_writeで�
     result = apply_privacy_reply(queue, data)
 
     assert [call[0] for call in calls] == ["hold", "write"]
+    assert all(call[2]["presentation_run_id"] == "presentation" for call in calls)
     assert calls[0][1][1:3] == ("flagged", "privacy-1")
     assert calls[0][2]["note"] == "人物の見落とし"
     assert calls[1][1][1:4] == ("clear", "gate-2", "region-2")
@@ -121,18 +199,18 @@ def test_未完了返信や変更された番号表を拒否する(tmp_path):
         reply_reviews(mapping, manifest, "a" * 64, "全2枚未確認\n問題なし")
     altered = copy.deepcopy(mapping)
     altered["rows"][0]["subject"] = "terrain"
-    with pytest.raises(ValueError, match="自動判定"):
+    with pytest.raises(ValueError, match="固定値"):
         reply_reviews(altered, manifest, "a" * 64, reply)
     altered = copy.deepcopy(mapping)
     altered["rows"].reverse()
     for number, row in enumerate(altered["rows"], 1):
         row["number"] = number
-    with pytest.raises(ValueError, match="対象・連番"):
+    with pytest.raises(ValueError, match="固定値"):
         reply_reviews(altered, manifest, "a" * 64, reply)
     with pytest.raises(ValueError, match="一致"):
         reply_reviews(mapping, manifest, "b" * 64, reply)
     manifest.write_text(manifest.read_text() + " ")
-    with pytest.raises(ValueError, match="固定した閲覧対象"):
+    with pytest.raises(ValueError, match="固定値"):
         reply_reviews(mapping, manifest, "a" * 64, reply)
 
 
@@ -180,7 +258,7 @@ def test_定型に合わない返信や重複範囲外理由なしを拒否す�
 def test_正しい返信もmanifest変更時には拒否する(tmp_path, reply):
     manifest, mapping, _ = sample(tmp_path)
     manifest.write_text(manifest.read_text() + "\n")
-    with pytest.raises(ValueError, match="固定した閲覧対象"):
+    with pytest.raises(ValueError, match="固定値"):
         reply_reviews(mapping, manifest, "a" * 64, reply)
 
 

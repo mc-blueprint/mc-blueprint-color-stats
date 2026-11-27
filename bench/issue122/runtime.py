@@ -152,9 +152,12 @@ def sampling(path):
 
 def human_reviews(session, root, plan):
     """#120の固定提示と追記済み確認runを照合し、参照だけを返す。DB更新はしない。"""
-    from bench.issue114.mobile import reply_reviews
+    from bench.issue114.mobile import nonpresented_reviews, reply_reviews
+    from sqlalchemy import select
 
     from colorstats import privacy_review
+    from colorstats.api_budget import digest
+    from colorstats.schema.models import ProcessingRun, ProcessingRunInput
 
     sampling = plan.get("human_sampling")
     if not sampling:
@@ -163,15 +166,27 @@ def human_reviews(session, root, plan):
     names = ["number-map.json", "review-manifest.json", "converted-review.json"]
     if not all((directory / name).is_file() for name in names):
         raise PermissionError("新しい目視確認の提示・返信・runが揃っていません")
-    mapping, manifest, applied = [json.loads((directory / name).read_text(encoding="utf-8"))
-                                  for name in names]
+    raw = [(directory / name).read_bytes() for name in names]
+    mapping, manifest, applied = [json.loads(value) for value in raw]
     if manifest.get("sampling") != sampling:
         raise ValueError("目視の母集団・seed・合格条件が固定計画と一致しません")
-    if set(manifest["required_ids"]) != set(sampling["required_ids"]):
-        raise ValueError("目視の提示集合が固定計画と一致しません")
+    if manifest.get("view", "comparison") != "comparison":
+        raise PermissionError("統計には比較表示を確認した提示runが必要です")
+    presentation_id = session.scalar(select(ProcessingRun.id).where(
+        ProcessingRun.stage == "review", ProcessingRun.finished_at.is_not(None),
+        ProcessingRun.failure_reason.is_(None),
+        ProcessingRun.parameters["kind"].astext == "mobile_presentation",
+        ProcessingRun.parameters["view"].astext == "comparison",
+        ProcessingRun.parameters["sampling_sha256"].astext == digest(sampling),
+    ).order_by(ProcessingRun.finished_at.desc(), ProcessingRun.id.desc()).limit(1))
+    if presentation_id is None or str(presentation_id) != mapping.get("presentation_run_id"):
+        raise ValueError("固定標本の最新の比較提示runが必要です")
+    held = nonpresented_reviews(session, manifest)
     expected = reply_reviews(mapping, directory / "review-manifest.json",
                              manifest["decisions_sha256"], applied["chat_reply"],
-                             directory=directory)
+                             directory=directory, db=session.get_bind())
+    if hashlib.sha256(raw[1]).hexdigest() != mapping["review_manifest_sha256"]:
+        raise ValueError("P6のmanifestがDBに固定した提示と一致しません")
     if any(applied.get(k) != v for k, v in expected.items() if k != "rows"):
         raise ValueError("目視返信と固定番号表が一致しません")
     if len(applied["rows"]) != len(expected["rows"]):
@@ -182,6 +197,13 @@ def human_reviews(session, root, plan):
             raise ValueError("目視返信の対象・提示参照が一致しません")
         run = privacy_review.review(session, row["asset_id"], row["recorded_privacy_review_run_id"])
         p, evidence = run.parameters, run.parameters["evidence"]
+        presentations = set(session.scalars(select(ProcessingRunInput.input_run_id).join(
+            ProcessingRun, ProcessingRun.id == ProcessingRunInput.input_run_id).where(
+            ProcessingRunInput.run_id == run.id,
+            ProcessingRun.parameters["kind"].astext == "mobile_presentation")))
+        if (p.get("presentation_run_id") != str(presentation_id)
+                or presentations != {presentation_id}):
+            raise ValueError("確認runが今回の提示runに結び付いていません")
         if (p["method"] != "human" or p["reviewer"] != "ユーザー"
                 or p["input_run_id"] != row["privacy_review_run_id"]
                 or p["presented_source_sha256"] != row["presented_source_sha256"]
@@ -193,4 +215,5 @@ def human_reviews(session, root, plan):
         references[row["asset_id"]] = str(run.id)
     if not expected["confirm_no_errors"]:
         raise PermissionError("目視の問題が未解決です。合格条件を緩めて統計へ進めません")
+    references.update(held)
     return references

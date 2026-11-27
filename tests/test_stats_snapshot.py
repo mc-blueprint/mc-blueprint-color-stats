@@ -1,12 +1,48 @@
 import copy
 import json
 from pathlib import Path
+from uuid import uuid4
 
 import duckdb
 import pytest
 
 from colorstats.stats.licenses import exclusion_reasons
-from colorstats.stats.snapshot import TABLES, canonical, digest, verify
+from colorstats.stats.snapshot import TABLES, _inputs, canonical, digest, verify
+
+
+@pytest.mark.parametrize("change", [None, "asset", "source", "unfinished", "failed", "kind"])
+def test_提示依存は確認元Cと同じ画像の由来を維持する(change):
+    aid, original, confirmed, proof, other = (uuid4() for _ in range(5))
+    common = {"stage": "review", "finished_at": True, "failure_reason": None,
+              "taxonomy_version": "test"}
+    records = {
+        original: {**common, "parameters": {"kind": "privacy_review"}, "input_run_ids": []},
+        confirmed: {**common, "parameters": {"kind": "privacy_review", "method": "human",
+                    "input_run_id": str(original), "presentation_run_id": str(proof)},
+                    "input_run_ids": [proof, original]},
+        proof: {**common, "parameters": {"kind": "mobile_presentation", "asset_ids": [str(aid)]},
+                "input_run_ids": [original, other]},
+    }
+    jobs = {rid: {"asset_id": aid, "status": "succeeded"} for rid in (original, confirmed)}
+    if change == "asset":
+        records[proof]["parameters"]["asset_ids"] = [str(other)]
+    elif change == "source":
+        records[proof]["input_run_ids"] = [other]
+    elif change == "unfinished":
+        records[proof]["finished_at"] = None
+    elif change == "failed":
+        records[proof]["failure_reason"] = "failure"
+    elif change == "kind":
+        records[proof]["parameters"]["kind"] = "privacy_review"
+    adopted = {}
+    if change:
+        with pytest.raises(ValueError, match="提示依存"):
+            _inputs(confirmed, aid, "test", records, jobs, adopted, set())
+    else:
+        _inputs(confirmed, aid, "test", records, jobs, adopted, set())
+        assert set(adopted) == {original, confirmed, proof}
+        with pytest.raises(ValueError, match="由来"):
+            _inputs(proof, aid, "test", records, jobs, adopted, set())
 
 
 @pytest.fixture

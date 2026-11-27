@@ -193,7 +193,7 @@ def test_新しい人確認と提示の対応だけを消費し元runを保存�
     mapping = production.read(human / "number-map.json")
     reply = mobile.reply_reviews(mapping, human / "review-manifest.json",
                                  manifest["decisions_sha256"], "全1枚確認済み\n問題なし",
-                                 directory=human)
+                                 directory=human, db=queue.engine)
     applied = mobile.apply_privacy_reply(queue, reply)
     new_id = UUID(applied["rows"][0]["recorded_privacy_review_run_id"])
     path = human / "converted-review.json"

@@ -5,6 +5,7 @@ import os
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import UUID
 
 import numpy as np
 import pytest
@@ -28,6 +29,7 @@ from colorstats.schema.models import (
 )
 from colorstats.stats.snapshot import execute
 from tests.test_image_gate import verdict
+from tests.test_issue114_mobile import synthetic_renderer as synthetic_renderer
 from tests.test_queue import asset as asset
 from tests.test_queue import database as database
 from tests.test_queue import queue as queue
@@ -93,6 +95,21 @@ def write(queue, asset, source, *, code_version="test", **kwargs):
     payload, gate_id, _ = source
     return privacy.write(queue, asset, gate_id, payload["region_run_id"],
                          code_version=code_version, **kwargs)
+
+
+def presentation(queue, asset, original, run_id=None):
+    with Session(queue.engine) as session, session.begin():
+        row = session.get(Asset, asset)
+        parameters = {"kind": "mobile_presentation", "asset_ids": [str(asset)]}
+        run = ProcessingRun(stage="review", parameters=parameters, config_hash=digest(parameters),
+                            license_class=row.license_class, taxonomy_version=row.taxonomy_version,
+                            code_version="test", node="fixture", finished_at=datetime.now(UTC))
+        if run_id:
+            run.id = UUID(run_id)
+        session.add(run)
+        session.flush()
+        session.add(ProcessingRunInput(run_id=run.id, input_run_id=original))
+        return str(run.id)
 
 
 @pytest.mark.parametrize("review_source,reason", [
@@ -442,7 +459,7 @@ def test_番号返信の保留は別runに保存され全承認と新版runを�
 
 
 def test_issue120番号返信は新privacy契約を失効させ旧writerを使わない(
-    queue, asset, review_source, monkeypatch, tmp_path,
+    queue, asset, review_source, monkeypatch, tmp_path, synthetic_renderer,
 ):
     from bench.issue114.mobile import apply_privacy_reply, reply_reviews
     from bench.issue114.privacy import digest
@@ -454,8 +471,9 @@ def test_issue120番号返信は新privacy契約を失効させ旧writerを使�
     review_rows = [{"asset_id": str(asset), "decision": "accepted", "subject": "building",
                     "reason": "person_not_detected", "person_ratio": 0.0, "mask_ratio": 0.0}]
     manifest = tmp_path / "review-manifest.json"
-    manifest.write_text(json.dumps({"required_ids": [str(asset)], "rows": review_rows}))
-    mapping = {"format": "issue114-mobile-v1", "decisions_sha256": "a" * 64,
+    manifest.write_text(json.dumps({"required_ids": [str(asset)], "rows": review_rows,
+                                    "decisions_sha256": "a" * 64}))
+    mapping = {"format": "issue114-mobile-v3", "decisions_sha256": "a" * 64,
                "review_manifest_sha256": digest(manifest),
                "rows": [review_rows[0] | {"number": 1,
                    "image_gate_run_id": str(gate_id),
@@ -463,8 +481,14 @@ def test_issue120番号返信は新privacy契約を失効させ旧writerを使�
                    "privacy_review_run_id": str(original),
                    "presented_source_sha256": source_sha256,
                    "confirmed_real_people": "absent"}]}
+    from tests.test_issue114_mobile import UNIT_DB, delivery
+
+    with Session(queue.engine) as session:
+        raw = Path(session.get(Asset, asset).storage_path)
+    delivery(mapping, tmp_path, {str(asset): raw})
+    presentation(queue, asset, original, mapping["presentation_run_id"])
     reply = reply_reviews(mapping, manifest, "a" * 64,
-                          "全1枚確認済み\n1: 確認内容の誤り")
+                          "全1枚確認済み\n1: 確認内容の誤り", db=UNIT_DB)
 
     def old_writer(*args, **kwargs):
         raise AssertionError("旧privacy writerを呼び出しました")
@@ -551,7 +575,10 @@ def test_issue120正規selectionでHTMLを生成しpolicy定義hashへの差替�
         build(queue.engine, bundle, execution, output, Path("taxonomy"))
         assert (output / "review-01.html").exists()
         mapping = json.loads((output / "number-map.json").read_text())
-        assert mapping["rows"][0]["privacy_review_run_id"] == str(rid)
+        from bench.issue114.mobile import validate_delivery
+
+        rows, _ = validate_delivery(mapping, output, db=queue.engine)
+        assert rows[0]["privacy_review_run_id"] == str(rid)
 
 
 @pytest.mark.parametrize("state", [
@@ -585,7 +612,8 @@ def test_issue120問題なし返信は既存の人物訂正と保留を変更し
         original = write(queue, asset, review_source, code_version="uncertain")
     with Session(queue.engine) as session:
         before = copy.deepcopy(session.get(ProcessingRun, original).parameters)
-    data = {"reviewer": "ユーザー", "rows": [{
+    data = {"reviewer": "ユーザー", "presentation_run_id": presentation(queue, asset, original),
+            "rows": [{
         "asset_id": str(asset), "error_found": False, "note": "提示画像を確認済み・問題なし",
         "privacy_review_run_id": str(original), "presented_source_sha256": review_source[2],
         "image_gate_run_id": str(review_source[1]),

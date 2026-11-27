@@ -210,7 +210,7 @@ def test_両freezeから再開と目視を経て旧のみと比較の実統計�
     production.save(human / "review-manifest.json", manifest)
     reply = mobile.reply_reviews(production.read(human / "number-map.json"),
                                  human / "review-manifest.json", manifest["decisions_sha256"],
-                                 "全6枚確認済み\n問題なし", directory=human)
+                                 "全6枚確認済み\n問題なし", directory=human, db=queue.engine)
     production.save(human / "converted-review.json", mobile.apply_privacy_reply(queue, reply))
     for cohort in cohorts:
         (roots[cohort] / "human").symlink_to(human, target_is_directory=True)
