@@ -14,7 +14,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from colorstats import privacy_review, retention
-from colorstats.schema.models import Asset, ProcessingRun, Retention, RetentionFile
+from colorstats.schema.models import (
+    Asset,
+    ProcessingRun,
+    ProcessingRunInput,
+    Retention,
+    RetentionFile,
+)
 from tests import test_privacy_review_db as privacy_fixtures
 from tests import test_region_policy as region_fixtures
 from tests import test_region_policy_db as policy_fixtures
@@ -155,6 +161,16 @@ def test_同一SHAを一番号にまとめ全項目の比較と保持参照を�
     assert page.count('class="raw"') == 1 and page.count("data-sample-sha256=") == 2
     assert "合成比較0" in page and "合成比較1" in page
     with Session(queue.engine) as session:
+        run = session.get(ProcessingRun, UUID(mapping["presentation_run_id"]))
+        assert run.parameters["kind"] == "mobile_presentation"
+        assert run.parameters["files"] == {
+            path.name: mobile.digest(path) for path in grouped.human.iterdir()
+        }
+        parents = set(session.scalars(select(ProcessingRunInput.input_run_id).where(
+            ProcessingRunInput.run_id == run.id)))
+        assert parents == {UUID(grouped.originals[aid]["run"]) for aid in grouped.ids[:2]} | {
+            UUID(grouped.manifest["nonpresented_holds"][0]["privacy_review_run_id"])
+        }
         refs = session.scalars(
             select(RetentionFile).where(RetentionFile.path == str(grouped.human / "review-01.html"))
         ).all()
@@ -301,7 +317,7 @@ def test_番号表とHTMLの項目対応を消してファイルSHAを付け直�
         path.read_text().replace('data-sample-sha256="' + token, 'data-removed="' + token)
     )
     mapping["files"][0].update(bytes=path.stat().st_size, sha256=mobile.digest(path))
-    with pytest.raises(ValueError, match="項目区画"):
+    with pytest.raises(ValueError, match="固定値"):
         mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
 
 
@@ -337,7 +353,7 @@ def test_属性とファイルSHAを残した比較の欠落や差替えを拒�
     assert count == 1 and token in content
     path.write_text(content)
     mapping["files"][0].update(bytes=path.stat().st_size, sha256=mobile.digest(path))
-    with pytest.raises(ValueError, match="比較内容"):
+    with pytest.raises(ValueError, match="固定値"):
         if entry == "delivery":
             mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
         else:
@@ -432,7 +448,10 @@ def test_同じ根拠からbyteを再現し根拠が消えたら返信を拒否�
     first_directory = grouped.human
     grouped.human = first_directory.parent / "human-repeat"
     second = build(queue, grouped)
-    assert first == second
+    assert first["presentation_run_id"] != second["presentation_run_id"]
+    assert {k: v for k, v in first.items() if k != "presentation_run_id"} == {
+        k: v for k, v in second.items() if k != "presentation_run_id"
+    }
     for item in first["files"]:
         assert (first_directory / item["file"]).read_bytes() == (
             grouped.human / item["file"]
@@ -511,6 +530,125 @@ def test_番号表の描画入力とHTMLを一緒に変更しても固定根拠�
              db=queue.engine)
 
 
+@pytest.mark.parametrize("entry", ["delivery", "pipeline"])
+@pytest.mark.parametrize("change", ["view", "description", "all_hashes"])
+def test_manifestと全ファイルのSHAを更新してもDBの固定値は変わらない(
+    queue, grouped, entry, change,
+):
+    mapping = build(queue, grouped)
+    path = grouped.human / "review-manifest.json"
+    manifest = production.read(path)
+    if change in {"view", "all_hashes"}:
+        manifest["view"] = "raw"
+    if change in {"description", "all_hashes"}:
+        decisions = production.read(grouped.human / "privacy-decisions.json")
+        decisions[0]["reason"] = "差し替えた説明"
+        for row in manifest["rows"]:
+            if row["asset_id"] == decisions[0]["asset_id"]:
+                row["reason"] = decisions[0]["reason"]
+        production.save(grouped.human / "privacy-decisions.json", decisions)
+        manifest["decisions_sha256"] = mobile.digest(grouped.human / "privacy-decisions.json")
+    if change == "all_hashes":
+        manifest["population"] += 1
+    production.save(path, manifest)
+    view = manifest.get("view", "comparison")
+    with Session(queue.engine) as session:
+        cards, rows, groups = mobile._render(
+            session, manifest, grouped.human, grouped.human, Path("taxonomy"), True, view
+        )
+    mapping.update(review_manifest_sha256=mobile.digest(path),
+                   decisions_sha256=manifest["decisions_sha256"])
+    for item in mapping["files"]:
+        target = grouped.human / item["file"]
+        target.write_bytes(mobile.page(
+            cards[item["first"] - 1:item["last"]], item["first"], item["last"], len(cards),
+            groups, legend=mobile._legend(cards), view=view,
+        ).encode())
+        item.update(bytes=target.stat().st_size, sha256=mobile.digest(target))
+    production.save(grouped.human / "number-map.json", mapping)
+    with Session(queue.engine) as session:
+        before = set(session.scalars(select(ProcessingRun.id)))
+        proof_id = mapping.get("presentation_run_id")
+        fixed = (copy.deepcopy(session.get(ProcessingRun, UUID(proof_id)).parameters)
+                 if proof_id else None)
+    with pytest.raises(ValueError):
+        if entry == "delivery":
+            mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
+        else:
+            converted = mobile.reply_reviews(
+                mapping, path, manifest["decisions_sha256"], "全1枚確認済み\n問題なし",
+                directory=grouped.human, db=queue.engine,
+            )
+            production.save(grouped.human / "converted-review.json",
+                            mobile.apply_privacy_reply(queue, converted))
+            with Session(queue.engine) as session:
+                runtime.human_reviews(session, grouped.human.parent,
+                                      {"human_sampling": grouped.sampling})
+    with Session(queue.engine) as session:
+        assert set(session.scalars(select(ProcessingRun.id))) == before
+        if proof_id:
+            assert session.get(ProcessingRun, UUID(proof_id)).parameters == fixed
+
+
+@pytest.mark.parametrize("entry", ["delivery", "reply"])
+def test_DB照合した一式のbyteを再読込みせずに使う(queue, grouped, monkeypatch, entry):
+    mapping = build(queue, grouped)
+    paths = {path for path in grouped.human.iterdir()}
+    reads = dict.fromkeys(paths, 0)
+    original_bytes, original_text = Path.read_bytes, Path.read_text
+
+    def read_bytes(path):
+        if path in reads:
+            reads[path] += 1
+            assert reads[path] == 1
+        return original_bytes(path)
+
+    def read_text(path, *args, **kwargs):
+        assert path not in paths
+        return original_text(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_bytes", read_bytes)
+    monkeypatch.setattr(Path, "read_text", read_text)
+    if entry == "delivery":
+        mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
+    else:
+        mobile.reply_reviews(
+            mapping, grouped.human / "review-manifest.json", grouped.manifest["decisions_sha256"],
+            "全1枚確認済み\n問題なし", db=queue.engine,
+        )
+    assert set(reads.values()) == {1}
+
+
+@pytest.mark.parametrize("invalid", ["missing", "unknown", "privacy"])
+def test_DBに固定した提示runがなければ拒否する(queue, grouped, invalid):
+    mapping = build(queue, grouped)
+    if invalid == "missing":
+        mapping.pop("presentation_run_id")
+    else:
+        mapping["presentation_run_id"] = (
+            str(uuid4()) if invalid == "unknown" else grouped.originals[grouped.ids[0]]["run"]
+        )
+    production.save(grouped.human / "number-map.json", mapping)
+    with pytest.raises(ValueError, match="提示run"):
+        mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
+
+
+def test_DBへ固定したraw提示でも比較なしではP6に進めない(queue, grouped):
+    grouped.manifest["view"] = "raw"
+    production.save(grouped.bundle / "manifest.json", grouped.manifest)
+    mobile.build(queue.engine, grouped.bundle, grouped.execution, grouped.human,
+                 Path("taxonomy"), view="raw")
+    mapping = production.read(grouped.human / "number-map.json")
+    reply = mobile.reply_reviews(
+        mapping, grouped.human / "review-manifest.json", grouped.manifest["decisions_sha256"],
+        "全1枚確認済み\n問題なし", db=queue.engine,
+    )
+    production.save(grouped.human / "converted-review.json",
+                    mobile.apply_privacy_reply(queue, reply))
+    with Session(queue.engine) as session, pytest.raises(PermissionError, match="比較表示"):
+        runtime.human_reviews(session, grouped.human.parent, {"human_sampling": grouped.sampling})
+
+
 def test_DB根拠なしや固定artifact改変では返信を作らない(queue, grouped):
     mapping = build(queue, grouped)
     with pytest.raises(ValueError, match="DB"):
@@ -522,7 +660,7 @@ def test_DB根拠なしや固定artifact改変では返信を作らない(queue,
         )
     path = grouped.human / "privacy-decisions.json"
     path.write_bytes(path.read_bytes() + b" ")
-    with pytest.raises(ValueError, match="自動判定"):
+    with pytest.raises(ValueError, match="固定値"):
         mobile.validate_delivery(mapping, grouped.human, db=queue.engine)
 
 

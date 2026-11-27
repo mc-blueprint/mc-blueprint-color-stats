@@ -6,6 +6,7 @@ import re
 from contextlib import nullcontext
 from functools import partial
 from types import SimpleNamespace
+from uuid import UUID, uuid4
 
 import numpy as np
 import pytest
@@ -24,19 +25,44 @@ from PIL import Image
 from colorstats import privacy_review, retention
 
 UNIT_DB = object()
+UNIT_RUNS = {}
 reply_reviews = partial(mobile.reply_reviews, db=UNIT_DB)
 pytestmark = pytest.mark.usefixtures("synthetic_renderer")
 
 
 @pytest.fixture
 def synthetic_renderer(monkeypatch):
+    original_session = mobile.Session
+
+    def session(db):
+        if db is UNIT_DB:
+            return nullcontext(SimpleNamespace(get=lambda model, rid: UNIT_RUNS.get(rid),
+                                               get_bind=lambda: UNIT_DB))
+        return original_session(db)
+
     def render(session, manifest, bundle, execution, taxonomy, require_contracts, view,
-               *, frozen=False):
+               *, frozen=False, decisions_raw=None):
         assert session.get_bind() is UNIT_DB
         data = json.loads((execution / "test-render.json").read_text())
         return mobile._cards(data["rows"]), data["rows"], data["groups"]
 
     monkeypatch.setattr(mobile, "_render", render)
+    monkeypatch.setattr(mobile, "Session", session)
+
+
+def freeze_delivery(mapping, directory):
+    mapping.setdefault("presentation_run_id", str(uuid4()))
+    (directory / "number-map.json").write_text(
+        json.dumps(mapping, ensure_ascii=False, indent=2) + "\n")
+    if not (directory / "privacy-decisions.json").exists():
+        (directory / "privacy-decisions.json").write_text("[]")
+    names = ["review-manifest.json", "privacy-decisions.json", "number-map.json"]
+    names.extend(item["file"] for item in mapping["files"])
+    UNIT_RUNS[UUID(mapping["presentation_run_id"])] = SimpleNamespace(
+        stage="review", finished_at=True, failure_reason=None,
+        parameters={"kind": "mobile_presentation",
+                    "files": {name: digest(directory / name) for name in names}},
+    )
 
 
 def delivery(mapping, directory, sources=None):
@@ -62,6 +88,7 @@ def delivery(mapping, directory, sources=None):
                                                           "groups": groups}))
     rows = mapping["rows"]
     mapping["rows"] = [{"number": r["number"], "asset_id": r["asset_id"]} for r in rows]
+    freeze_delivery(mapping, directory)
     return rows
 
 
@@ -81,6 +108,7 @@ def sample(tmp_path):
     manifest.write_text(json.dumps({"required_ids": ["accepted", "pending"], "rows": rows,
                                     "decisions_sha256": "a" * 64}))
     mapping["review_manifest_sha256"] = digest(manifest)
+    freeze_delivery(mapping, tmp_path)
     reply = "全2枚確認済み\n問題なし"
     return manifest, mapping, reply
 
@@ -170,18 +198,18 @@ def test_未完了返信や変更された番号表を拒否する(tmp_path):
         reply_reviews(mapping, manifest, "a" * 64, "全2枚未確認\n問題なし")
     altered = copy.deepcopy(mapping)
     altered["rows"][0]["subject"] = "terrain"
-    with pytest.raises(ValueError, match="固定根拠"):
+    with pytest.raises(ValueError, match="固定値"):
         reply_reviews(altered, manifest, "a" * 64, reply)
     altered = copy.deepcopy(mapping)
     altered["rows"].reverse()
     for number, row in enumerate(altered["rows"], 1):
         row["number"] = number
-    with pytest.raises(ValueError, match="固定根拠"):
+    with pytest.raises(ValueError, match="固定値"):
         reply_reviews(altered, manifest, "a" * 64, reply)
     with pytest.raises(ValueError, match="一致"):
         reply_reviews(mapping, manifest, "b" * 64, reply)
     manifest.write_text(manifest.read_text() + " ")
-    with pytest.raises(ValueError, match="固定した閲覧対象"):
+    with pytest.raises(ValueError, match="固定値"):
         reply_reviews(mapping, manifest, "a" * 64, reply)
 
 
@@ -229,7 +257,7 @@ def test_定型に合わない返信や重複範囲外理由なしを拒否す�
 def test_正しい返信もmanifest変更時には拒否する(tmp_path, reply):
     manifest, mapping, _ = sample(tmp_path)
     manifest.write_text(manifest.read_text() + "\n")
-    with pytest.raises(ValueError, match="固定した閲覧対象"):
+    with pytest.raises(ValueError, match="固定値"):
         reply_reviews(mapping, manifest, "a" * 64, reply)
 
 

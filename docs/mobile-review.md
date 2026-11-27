@@ -10,6 +10,15 @@ HTMLを会話でユーザーへ送り、全提示画像の確認済みと問題�
 
 ## 提示物
 
+信頼する根拠はDBの追記済み記録と、ユーザーが固定した標本・計画である。
+ディスク上のmanifest・判定artifact・番号表・HTML・返信ファイルは信頼しない。
+生成時に既存ProcessingRunへ提示run（`kind=mobile_presentation`）を追記し、manifest全体・
+判定artifact・番号表・HTMLのbyte SHAを`parameters.files`へ固定する。
+番号表の`presentation_run_id`からDB記録を読み、全固定値と照合してから配信・返信・P6へ進む。
+DB記録なしやSHA一式の自己更新は拒否する。受領ファイルからDBの固定値は更新しない。
+照合済みのbyteをそのまま解析・再生成に使い、SHA確認後の再読込みによる置換も避ける。
+旧提示物はDB固定を伴う生成からやり直す。新しい表・判定台帳は作らない。
+
 `mobile build`は保持ロック下で対象の利用期限、現行のimage-review-v1、region-policy-v1、
 privacy-review-v2を照合する。保留runも提示できるが、訂正前・旧policy・根拠が変わったrunは拒否する。
 判定台帳は増やさず、既存のProcessingRunとProcessingRunInput、保持台帳を使用する。
@@ -24,7 +33,7 @@ python -m bench.issue114.mobile build \
 ```
 
 - `--view raw`は原画像だけを提示し、個別の自動判定・予測maskをHTMLに含めない。
-  番号表は私有のままA/B/Cへの参照と確認方法を保持する。
+  確認方法と根拠はDBの提示runへ固定する。rawだけではP6の統計承認へ進めない。
 - `--view comparison`は原画像と予測を区別し、写真＋透明輪郭、各クラスの白黒maskを縦1列で表示する。
   写真の色とmaskの塗り色を混ぜない。建物・地形・空・人物・競合・voidは名前・説明・線種で区別する。
   個別の区分、元の採否・subject、画像側人物判断、人物方針による採否、版、除外理由を表示する。
@@ -67,12 +76,14 @@ python -m bench.issue114.mobile share \
 ```
 
 生成元の容量・SHA・埋込画像・番号を照合し、新しいHTMLコピーと番号表、`review.tar`を作る。
+共有コピーは提示run IDとbyteをそのまま引き継ぎ、新たな固定値として登録し直さない。
 tarへ入れるのはHTMLだけで、番号とassetの対応表は送付しない。
 生成先と共有先の`review-manifest.json`・`privacy-decisions.json`も同じ保持台帳へ登録する。
 前者は固定manifestのbyteを保持し、後者はそのSHAで束縛された自動判定artifactである。
 P6の`human/`へは、HTML・番号表とこの2つを同じ一式として配置する。
 全出力を既存の`image_bundle`として保持登録する。コピー・tarの構成画像が失効したら、
 既存cleanupが当該共有束を削除する。登録失敗時は今回の新規出力だけを取り除く。
+提示runの`asset_ids`にも構成画像を記録し、runの出力参照が期限後の削除を妨げないようにする。
 別hostへ転送したコピーも、実際の転送先host/pathを同じ保持台帳へ登録する必要がある。
 このコマンドは実行端末でコピーと登録を行い、遠隔転送は行わない。
 ページの構成項目は、各rowの`number`がファイルの`first`～`last`に入る全項目とする。

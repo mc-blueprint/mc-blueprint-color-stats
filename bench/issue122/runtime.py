@@ -163,14 +163,18 @@ def human_reviews(session, root, plan):
     names = ["number-map.json", "review-manifest.json", "converted-review.json"]
     if not all((directory / name).is_file() for name in names):
         raise PermissionError("新しい目視確認の提示・返信・runが揃っていません")
-    mapping, manifest, applied = [json.loads((directory / name).read_text(encoding="utf-8"))
-                                  for name in names]
+    raw = [(directory / name).read_bytes() for name in names]
+    mapping, manifest, applied = [json.loads(value) for value in raw]
     if manifest.get("sampling") != sampling:
         raise ValueError("目視の母集団・seed・合格条件が固定計画と一致しません")
+    if manifest.get("view", "comparison") != "comparison":
+        raise PermissionError("統計には比較表示を確認した提示runが必要です")
     held = nonpresented_reviews(session, manifest)
     expected = reply_reviews(mapping, directory / "review-manifest.json",
                              manifest["decisions_sha256"], applied["chat_reply"],
                              directory=directory, db=session.get_bind())
+    if hashlib.sha256(raw[1]).hexdigest() != mapping["review_manifest_sha256"]:
+        raise ValueError("P6のmanifestがDBに固定した提示と一致しません")
     if any(applied.get(k) != v for k, v in expected.items() if k != "rows"):
         raise ValueError("目視返信と固定番号表が一致しません")
     if len(applied["rows"]) != len(expected["rows"]):

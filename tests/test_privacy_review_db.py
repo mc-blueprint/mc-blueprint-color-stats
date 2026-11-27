@@ -560,7 +560,7 @@ def test_issue120正規selectionでHTMLを生成しpolicy定義hashへの差替�
         mapping = json.loads((output / "number-map.json").read_text())
         from bench.issue114.mobile import validate_delivery
 
-        rows = validate_delivery(mapping, output, db=queue.engine)
+        rows, _ = validate_delivery(mapping, output, db=queue.engine)
         assert rows[0]["privacy_review_run_id"] == str(rid)
 
 

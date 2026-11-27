@@ -9,13 +9,13 @@ import re
 import socket
 import tarfile
 from pathlib import Path
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import numpy as np
 from bench.issue114.mobile_labels import CODE_NAMES, mask_description
 from bench.issue114.privacy import digest, save
 from PIL import Image
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from colorstats import privacy_review, retention
@@ -32,7 +32,8 @@ from colorstats.review_html import (
 )
 from colorstats.review_html import image_tag as _image
 from colorstats.review_html import uri_sha as _uri_sha
-from colorstats.schema.models import Asset, ProcessingRun, Region
+from colorstats.rights import combine_license
+from colorstats.schema.models import Asset, ProcessingRun, ProcessingRunInput, Region
 
 LIMIT = 12_500_000
 FORMAT = "issue114-mobile-v3"
@@ -196,7 +197,7 @@ def write_pages(cards, output, limit=LIMIT, group_counts=None, *, view="comparis
             stream.write(content)
         path.chmod(0o600)
         files.append({"file": path.name, "bytes": len(content), "first": first, "last": last,
-                      "sha256": digest(path)})
+                      "sha256": hashlib.sha256(content).hexdigest()})
     return files
 
 
@@ -391,7 +392,8 @@ def build(db, bundle, execution, output, taxonomy, *, host=None, require_contrac
     _private_output(output)
     if view not in {"raw", "comparison"}:
         raise ValueError("確認方法はrawまたはcomparisonを指定してください")
-    manifest = json.loads((bundle / "manifest.json").read_text())
+    manifest_raw = (bundle / "manifest.json").read_bytes()
+    manifest = json.loads(manifest_raw)
     if view != manifest.get("view", "comparison"):
         raise ValueError("表示方法を固定manifestで指定してください")
     created = False
@@ -403,7 +405,7 @@ def build(db, bundle, execution, output, taxonomy, *, host=None, require_contrac
             nonpresented_reviews(session, manifest)
             output.mkdir(mode=0o700, exist_ok=False)
             created = True
-            _build(session, manifest, bundle, execution, output, taxonomy,
+            _build(session, manifest_raw, bundle, execution, output, taxonomy,
                    host or socket.gethostname(), require_contracts, view)
     except BaseException:
         if created:
@@ -414,10 +416,12 @@ def build(db, bundle, execution, output, taxonomy, *, host=None, require_contrac
 
 
 def _render(session, manifest, bundle, execution, taxonomy, require_contracts, view="comparison", *,
-            frozen=False):
-    if manifest["decisions_sha256"] != digest(execution / "privacy-decisions.json"):
+            frozen=False, decisions_raw=None):
+    if decisions_raw is None:
+        decisions_raw = (execution / "privacy-decisions.json").read_bytes()
+    if manifest["decisions_sha256"] != hashlib.sha256(decisions_raw).hexdigest():
         raise ValueError("閲覧manifestと自動判定が一致しません")
-    decision_rows = json.loads((execution / "privacy-decisions.json").read_text())
+    decision_rows = json.loads(decisions_raw)
     decisions = {row["asset_id"]: row for row in decision_rows}
     if len(decisions) != len(decision_rows):
         raise ValueError("自動判定に重複した項目があります")
@@ -617,26 +621,35 @@ def _render(session, manifest, bundle, execution, taxonomy, require_contracts, v
     return cards, rows, groups
 
 
-def _build(session, manifest, bundle, execution, output, taxonomy, host, require_contracts, view):
+def _build(session, manifest_raw, bundle, execution, output, taxonomy, host, require_contracts,
+           view):
+    manifest = json.loads(manifest_raw)
+    decisions_raw = (execution / "privacy-decisions.json").read_bytes()
     cards, rows, groups = _render(session, manifest, bundle, execution, taxonomy, require_contracts,
-                                view)
+                                view, decisions_raw=decisions_raw)
     files = write_pages(cards, output, group_counts=groups, view=view)
     for item in files:
         validate_html((output / item["file"]).read_text(encoding="utf-8"),
                       range(item["first"], item["last"] + 1), limit=LIMIT, style=STYLE)
-    for source, name in ((bundle / "manifest.json", "review-manifest.json"),
-                         (execution / "privacy-decisions.json", "privacy-decisions.json")):
+    for raw, name in ((manifest_raw, "review-manifest.json"),
+                      (decisions_raw, "privacy-decisions.json")):
         path = output / name
         with path.open("xb") as stream:
-            stream.write(source.read_bytes())
+            stream.write(raw)
         path.chmod(0o600)
-    save(output / "number-map.json", {
+    run_id = uuid4()
+    mapping = {
         "format": FORMAT, "template": TEMPLATE,
-        "review_manifest_sha256": digest(bundle / "manifest.json"),
+        "presentation_run_id": str(run_id),
+        "review_manifest_sha256": hashlib.sha256(manifest_raw).hexdigest(),
         "decisions_sha256": manifest["decisions_sha256"],
         "rows": [{"number": r["number"], "asset_id": r["asset_id"]} for r in rows],
         "files": files,
-    })
+    }
+    map_raw = (json.dumps(mapping, ensure_ascii=False, indent=2) + "\n").encode()
+    with (output / "number-map.json").open("xb") as stream:
+        stream.write(map_raw)
+    (output / "number-map.json").chmod(0o600)
     for item in files:
         for row in rows:
             if not item["first"] <= row["number"] <= item["last"]:
@@ -647,6 +660,34 @@ def _build(session, manifest, bundle, execution, output, taxonomy, host, require
         aid = row["asset_id"]
         for name in ("number-map.json", "review-manifest.json", "privacy-decisions.json"):
             retention.register_file(session, UUID(aid), host, output / name, "image_bundle")
+    names = ["review-manifest.json", "privacy-decisions.json", "number-map.json"]
+    names.extend(item["file"] for item in files)
+    parameters = {
+        "kind": "mobile_presentation", "template": TEMPLATE, "view": view,
+        "asset_ids": [row["asset_id"] for row in rows],
+        "sampling_sha256": contract_digest(manifest.get("sampling")),
+        "files": {
+            "review-manifest.json": hashlib.sha256(manifest_raw).hexdigest(),
+            "privacy-decisions.json": hashlib.sha256(decisions_raw).hexdigest(),
+            "number-map.json": hashlib.sha256(map_raw).hexdigest(),
+            **{item["file"]: item["sha256"] for item in files},
+        },
+    }
+    assets = [session.get(Asset, UUID(row["asset_id"])) for row in rows]
+    now = session.scalar(select(func.clock_timestamp()))
+    session.add(ProcessingRun(
+        id=run_id, stage="review",
+        license_class=combine_license(*(a.license_class for a in assets)),
+        config_hash=contract_digest(parameters), parameters=parameters,
+        output_paths={name: str(output / name) for name in names}, code_version=TEMPLATE,
+        taxonomy_version=assets[0].taxonomy_version, node=host, started_at=now, finished_at=now,
+    ))
+    session.flush()
+    parents = {UUID(row["privacy_review_run_id"]) for row in rows
+               if row.get("privacy_review_run_id")}
+    parents.update(UUID(held["privacy_review_run_id"])
+                   for held in manifest.get("nonpresented_holds", []))
+    session.add_all(ProcessingRunInput(run_id=run_id, input_run_id=parent) for parent in parents)
     print(json.dumps({"total": len(cards), "sample_items": len(rows), "files": files},
                      ensure_ascii=False))
 
@@ -656,14 +697,33 @@ def validate_delivery(mapping, directory, *, db=None, manifest=None):
 
     DBとartifactは読取りのみ。manifest省略時はdirectory内の固定原本を使う。
     番号表に描画入力を含めることはできない。根拠不足・改変は拒否する。
+    戻り値は再現した項目と、DB照合済みbyteから読んだmanifest。
     """
     if mapping["format"] != FORMAT or mapping.get("template") != TEMPLATE:
         raise ValueError("提示番号表を現行テンプレートで再生成してください")
     if db is None:
         raise ValueError("描画入力を独立に照合するDBが必要です")
     manifest = manifest or directory / "review-manifest.json"
-    review = json.loads(manifest.read_text(encoding="utf-8"))
-    if (mapping["review_manifest_sha256"] != digest(manifest)
+    if not mapping.get("presentation_run_id"):
+        raise ValueError("DBに固定した提示runが必要です")
+    with Session(db) as session:
+        run = session.get(ProcessingRun, UUID(mapping["presentation_run_id"]))
+        if (run is None or run.stage != "review" or not run.finished_at
+                or run.failure_reason is not None
+                or run.parameters.get("kind") != "mobile_presentation"):
+            raise ValueError("DBに固定した提示runがありません")
+        fixed = run.parameters["files"]
+    contents = {name: (directory / name).read_bytes() for name in fixed}
+    manifest_raw = (contents["review-manifest.json"]
+                    if manifest == directory / "review-manifest.json" else manifest.read_bytes())
+    if (set(fixed) != {"review-manifest.json", "privacy-decisions.json", "number-map.json"}
+                       | {item["file"] for item in mapping["files"]}
+            or any(hashlib.sha256(contents[name]).hexdigest() != sha for name, sha in fixed.items())
+            or hashlib.sha256(manifest_raw).hexdigest() != fixed["review-manifest.json"]
+            or mapping != json.loads(contents["number-map.json"])):
+        raise ValueError("提示一式のSHAがDBの固定値と一致しません")
+    review = json.loads(manifest_raw)
+    if (mapping["review_manifest_sha256"] != hashlib.sha256(manifest_raw).hexdigest()
             or mapping["decisions_sha256"] != review["decisions_sha256"]):
         raise ValueError("番号表と固定manifestのSHAが一致しません")
     view = review.get("view", "comparison")
@@ -671,9 +731,10 @@ def validate_delivery(mapping, directory, *, db=None, manifest=None):
         raise ValueError("固定manifestのテンプレート版・表示方法が一致しません")
     with Session(db) as session:
         cards, rows, counts = _render(session, review, directory, directory, Path("taxonomy"),
-                                      False, view, frozen=True)
+                                      False, view, frozen=True,
+                                      decisions_raw=contents["privacy-decisions.json"])
     if (set(mapping) != {"format", "template", "review_manifest_sha256", "decisions_sha256",
-                         "rows", "files"}
+                         "presentation_run_id", "rows", "files"}
             or mapping["rows"] != [{"number": r["number"], "asset_id": r["asset_id"]}
                                     for r in rows]):
         raise ValueError("番号表の対応・描画入力が固定根拠と一致しません")
@@ -687,7 +748,7 @@ def validate_delivery(mapping, directory, *, db=None, manifest=None):
             raise ValueError("提示HTMLのファイル名・番号範囲が一致しません")
         expected = page(cards[first - 1:item["last"]], first, item["last"], len(cards),
                         counts, legend=legend, view=view).encode()
-        raw = (directory / item["file"]).read_bytes()
+        raw = contents[item["file"]]
         if raw != expected:
             raise ValueError("提示HTMLの項目区画・比較内容が全体の再生成byteと一致しません")
         if len(raw) != item["bytes"] or hashlib.sha256(raw).hexdigest() != item["sha256"]:
@@ -697,7 +758,7 @@ def validate_delivery(mapping, directory, *, db=None, manifest=None):
         first = item["last"] + 1
     if first != len(groups) + 1 or not mapping["files"]:
         raise ValueError("提示HTMLの全番号が揃っていません")
-    return rows
+    return rows, review
 
 
 def share(db, source, output, *, host=None):
@@ -717,8 +778,7 @@ def share(db, source, output, *, host=None):
             validate_delivery(mapping, source, db=db)
             output.mkdir(mode=0o700, exist_ok=False)
             created = True
-            save(output / "number-map.json", mapping)
-            for name in ("review-manifest.json", "privacy-decisions.json"):
+            for name in ("number-map.json", "review-manifest.json", "privacy-decisions.json"):
                 path = output / name
                 with path.open("xb") as stream:
                     stream.write((source / name).read_bytes())
@@ -779,13 +839,12 @@ def parse_chat_reply(text, total):
 def reply_reviews(mapping, manifest, decisions_sha256, reply, *, directory=None, db=None):
     """定型テキストだけを解析して変換する。辞書入力・未確認・参照変更はValueError。"""
     if (mapping["format"] != FORMAT
-            or mapping["decisions_sha256"] != decisions_sha256
-            or mapping["review_manifest_sha256"] != digest(manifest)):
+            or mapping["decisions_sha256"] != decisions_sha256):
         raise ValueError("番号表と固定した閲覧対象が一致しません")
-    review = json.loads(manifest.read_text())
+    rows, review = validate_delivery(mapping, directory or manifest.parent,
+                                     db=db, manifest=manifest)
     holds = review_partition(review)
     required = set(review["required_ids"])
-    rows = validate_delivery(mapping, directory or manifest.parent, db=db, manifest=manifest)
     groups = _numbered_rows(rows)
     if ([row["asset_id"] for row in rows] != (
                 sorted(set(review.get("random_ids", [])))

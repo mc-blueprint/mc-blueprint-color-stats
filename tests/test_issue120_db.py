@@ -84,7 +84,7 @@ def test_固定原画像と版を提示し予測比較を区別する(queue, ass
     (execution / "review-manifest.json").write_text(json.dumps(manifest))
     mobile.build(queue.engine, bundle, execution, output, Path("taxonomy"), view=view)
     mapping = json.loads((output / "number-map.json").read_text())
-    rows = mobile.validate_delivery(mapping, output, db=queue.engine)
+    rows, _ = mobile.validate_delivery(mapping, output, db=queue.engine)
     content = (output / "review-01.html").read_text()
     assert "もとの写真は10枚" in content
     assert set(mapping["rows"][0]) == {"number", "asset_id"}

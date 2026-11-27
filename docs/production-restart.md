@@ -73,6 +73,9 @@ runは既存のappend-only writerで新しいCを作る。中断後は新rootの
 HTMLの生成・配信検証・番号変換・返信登録は
 [mobile-review.md](mobile-review.md) の既存手順を使う。
 全件確認の返信を、同じ番号表と提示manifestで変換して既存writerへ追記する。
+manifest全体・判定artifact・番号表・HTMLのSHAは、生成時のDB提示runへappend-onlyで固定する。
+ディスク上の一式は非信頼とし、配信・返信・P6ではDB固定値との一致を必須にする。
+DBにない提示やSHAの自己更新は拒否する。P6にはcomparisonの提示が必要である。
 統計に渡すrootの `human/` には、配信済みHTMLと `number-map.json`、
 `review-manifest.json`、SHAで束縛された `privacy-decisions.json`、
 適用結果の `converted-review.json` を揃える。
