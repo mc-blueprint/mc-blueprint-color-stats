@@ -36,6 +36,7 @@ from colorstats.rights import combine_license
 from colorstats.schema.models import Asset, ProcessingRun, ProcessingRunInput, Region
 
 LIMIT = 12_500_000
+SINGLE_LIMIT = 25_000_000
 FORMAT = "issue114-mobile-v3"
 TEMPLATE = "issue173-mobile-v1"
 REASONS = {**CODE_NAMES,
@@ -154,8 +155,12 @@ content="default-src 'none'; img-src data:; style-src 'unsafe-inline'">
 {''.join(cards)}</html>'''
 
 
+def _page_limit(count, limit=LIMIT):
+    return SINGLE_LIMIT if count == 1 else limit
+
+
 def write_pages(cards, output, limit=LIMIT, group_counts=None, *, view="comparison"):
-    """UTF-8の実byte数で上限を守り、通し番号を維持して分割する。"""
+    """複数番号は12.5MB、単一番号は25MBまでとし、通し番号を維持して分割する。"""
     groups, current, first = [], [], 1
     legend = _legend(cards)
     sizes = [len(card.encode()) for card in cards]
@@ -177,10 +182,18 @@ def write_pages(cards, output, limit=LIMIT, group_counts=None, *, view="comparis
             cut = min(candidates)[1]
             groups = [(1, cut, cards[:cut]), (cut + 1, len(cards), cards[cut:])]
     for number, card in enumerate([] if groups else cards, 1):
-        if len(page(current + [card], first, number, len(cards), group_counts,
-                    legend=legend, view=view).encode()) > limit:
-            if not current:
-                raise ValueError("1画像分のHTMLが容量上限を超えました")
+        single = len(page([card], number, number, len(cards), group_counts,
+                          legend=legend, view=view).encode())
+        if single > SINGLE_LIMIT:
+            raise ValueError("1画像分のHTMLが容量上限を超えました")
+        if single > limit:
+            if current:
+                groups.append((first, number - 1, current))
+            groups.append((number, number, [card]))
+            current, first = [], number + 1
+            continue
+        if current and len(page(current + [card], first, number, len(cards), group_counts,
+                                legend=legend, view=view).encode()) > limit:
             groups.append((first, number - 1, current))
             current, first = [], number
         current.append(card)
@@ -190,7 +203,7 @@ def write_pages(cards, output, limit=LIMIT, group_counts=None, *, view="comparis
     for part, (first, last, group) in enumerate(groups, 1):
         content = page(group, first, last, len(cards), group_counts,
                        legend=legend, view=view).encode()
-        if len(content) > limit:
+        if len(content) > _page_limit(len(group), limit):
             raise ValueError("HTMLが容量上限を超えました")
         path = output / f"review-{part:02}.html"
         with path.open("xb") as stream:
@@ -630,7 +643,8 @@ def _build(session, manifest_raw, bundle, execution, output, taxonomy, host, req
     files = write_pages(cards, output, group_counts=groups, view=view)
     for item in files:
         validate_html((output / item["file"]).read_text(encoding="utf-8"),
-                      range(item["first"], item["last"] + 1), limit=LIMIT, style=STYLE)
+                      range(item["first"], item["last"] + 1),
+                      limit=_page_limit(item["last"] - item["first"] + 1), style=STYLE)
     for raw, name in ((manifest_raw, "review-manifest.json"),
                       (decisions_raw, "privacy-decisions.json")):
         path = output / name
@@ -753,7 +767,7 @@ def validate_delivery(mapping, directory, *, db=None, manifest=None):
             raise ValueError("提示HTMLの項目区画・比較内容が全体の再生成byteと一致しません")
         if len(raw) != item["bytes"] or hashlib.sha256(raw).hexdigest() != item["sha256"]:
             raise ValueError("提示HTMLのbyte数・SHAが一致しません")
-        if len(expected) > LIMIT:
+        if len(expected) > _page_limit(item["last"] - first + 1):
             raise ValueError("HTMLが容量上限を超えました")
         first = item["last"] + 1
     if first != len(groups) + 1 or not mapping["files"]:
