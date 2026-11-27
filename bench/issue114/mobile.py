@@ -263,10 +263,20 @@ def _numbered_rows(rows):
 
 
 class _PresentedItems(HTMLParser):
-    def __init__(self):
+    def __init__(self, content):
         super().__init__()
         self.number = None
-        self.items, self.sources = {}, {}
+        self.items, self.sources, self.contents = {}, {}, {}
+        self.content = content
+        self.lines = [0]
+        for line in content.splitlines(keepends=True):
+            self.lines.append(self.lines[-1] + len(line))
+        self.depth = 0
+        self.sample = None
+
+    def _offset(self):
+        line, column = self.getpos()
+        return self.lines[line - 1] + column
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -275,14 +285,28 @@ class _PresentedItems(HTMLParser):
                 raise ValueError("提示番号を入れ子にできません")
             self.number = int(attrs["id"][1:])
             self.items[self.number], self.sources[self.number] = [], []
+            self.contents[self.number] = []
+        if tag == "section":
+            self.depth += 1
         if self.number is not None:
             if token := attrs.get("data-sample-sha256"):
+                if tag != "section" or self.sample is not None:
+                    raise ValueError("提示項目の比較内容を入れ子にできません")
                 self.items[self.number].append(token)
+                self.sample = (self.depth, self._offset() + len(self.get_starttag_text()))
             if tag == "img" and "raw" in attrs.get("class", "").split():
                 self.sources[self.number].append(attrs["data-sha256"])
 
     def handle_endtag(self, tag):
+        if tag == "section":
+            if self.sample is not None and self.depth == self.sample[0]:
+                content = self.content[self.sample[1]:self._offset()]
+                self.contents[self.number].append(hashlib.sha256(content.encode()).hexdigest())
+                self.sample = None
+            self.depth -= 1
         if tag == "article":
+            if self.sample is not None:
+                raise ValueError("提示項目の比較内容が閉じられていません")
             self.number = None
 
 
@@ -539,16 +563,17 @@ data-photo-sha256="{_uri_sha(prepared_uri)}"><h2>番号 {number}：{'・'.join(d
                          f'{"・".join(display_labels)}</h2><figure><figcaption>もとの写真</figcaption>'
                          f'{_image(raw_uri, f"番号{number} もとの写真", "raw")}</figure></article>')
 
-        token = contract_digest(rows[-1])
-        card = card.replace(f'<article id="n{number}"',
-                            f'<article id="n{number}" data-sample-sha256="{token}"', 1)
-        if first_source:
-            cards.append(card)
-        else:
+        if not first_source:
             pattern = r"<figure>.*?</figure>" if view == "raw" else r"<details>.*?</details>"
             card = re.sub(pattern, "", card, flags=re.S)
-            card = card.replace(f'<article id="n{number}"', '<section', 1)
-            card = card.replace("</article>", "</section>")
+        card = card.replace(f'<article id="n{number}"', '<section', 1)
+        card = card.replace("</article>", "</section>")
+        rows[-1]["presentation_sha256"] = hashlib.sha256(card.encode()).hexdigest()
+        token = contract_digest(rows[-1])
+        card = f'<section data-sample-sha256="{token}">{card}</section>'
+        if first_source:
+            cards.append(f'<article id="n{number}">{card}</article>')
+        else:
             cards[number - 1] = (cards[number - 1].removesuffix("</article>")
                                  + '<p>同じ原画像に対応する別の確認項目です。</p>'
                                  + card + "</article>")
@@ -601,13 +626,15 @@ def validate_delivery(mapping, directory):
             raise ValueError("提示HTMLのbyte数・SHAが一致しません")
         validate_html(raw.decode("utf-8"), range(item["first"], item["last"] + 1),
                       limit=LIMIT, style=STYLE)
-        presented = _PresentedItems()
+        presented = _PresentedItems(raw.decode("utf-8"))
         presented.feed(raw.decode("utf-8"))
         for number in range(item["first"], item["last"] + 1):
             rows = groups[number]
             if (presented.items[number] != [contract_digest(row) for row in rows]
                     or presented.sources[number] != [rows[0]["presented_source_sha256"]]):
                 raise ValueError("提示HTMLと番号表の原画像・項目区画が一致しません")
+            if presented.contents[number] != [row["presentation_sha256"] for row in rows]:
+                raise ValueError("提示HTMLと番号表の比較内容SHAが一致しません")
         expected = item["last"] + 1
     if expected != len(groups) + 1 or not mapping["files"]:
         raise ValueError("提示HTMLの全番号が揃っていません")

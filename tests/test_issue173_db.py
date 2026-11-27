@@ -2,6 +2,7 @@
 
 import copy
 import os
+import re
 from pathlib import Path
 from types import SimpleNamespace
 from uuid import UUID, uuid4
@@ -302,6 +303,51 @@ def test_番号表とHTMLの項目対応を消してファイルSHAを付け直�
     mapping["files"][0].update(bytes=path.stat().st_size, sha256=mobile.digest(path))
     with pytest.raises(ValueError, match="項目区画"):
         mobile.validate_delivery(mapping, grouped.human)
+
+
+@pytest.mark.parametrize("entry", ["delivery", "reply"])
+@pytest.mark.parametrize("change", ["missing", "prediction"])
+def test_属性とファイルSHAを残した比較の欠落や差替えを拒否する(queue, grouped, entry, change):
+    mapping = build(queue, grouped)
+    path = grouped.human / mapping["files"][0]["file"]
+    token = mobile.contract_digest(mapping["rows"][1])
+    original = path.read_text()
+    source_uri = re.search(r'<img class="raw"[^>]*src="([^"]+)"', original)[1]
+
+    def change_content(match):
+        content = match[2]
+        if change == "missing":
+            content = ""
+        else:
+            content, count = re.subn(
+                r'<img class="mask"[^>]*>',
+                mobile._image(source_uri, "合成の予測差替え", "mask"),
+                content,
+                count=1,
+            )
+            assert count == 1
+        return match[1] + content + match[3]
+
+    content, count = re.subn(
+        r'(<section\b[^>]*data-sample-sha256="' + token + r'"[^>]*>)(.*?)(</section></article>)',
+        change_content,
+        original,
+        flags=re.S,
+    )
+    assert count == 1 and token in content
+    path.write_text(content)
+    mapping["files"][0].update(bytes=path.stat().st_size, sha256=mobile.digest(path))
+    with pytest.raises(ValueError, match="比較内容"):
+        if entry == "delivery":
+            mobile.validate_delivery(mapping, grouped.human)
+        else:
+            mobile.reply_reviews(
+                mapping,
+                grouped.human / "review-manifest.json",
+                grouped.manifest["decisions_sha256"],
+                "全1枚確認済み\n問題なし",
+                directory=grouped.human,
+            )
 
 
 @pytest.mark.parametrize(
