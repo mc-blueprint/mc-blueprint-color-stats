@@ -154,7 +154,7 @@ def test_番号返信はproblemを保留し他画像をprivacy_review_writeで�
     monkeypatch.setattr(privacy_review, "record_hold", record_hold)
     monkeypatch.setattr(privacy_review, "write", write)
     monkeypatch.setattr(retention, "review_privacy", old_writer)
-    data = {"reviewer": "ユーザー", "rows": [
+    data = {"reviewer": "ユーザー", "presentation_run_id": "presentation", "rows": [
         {"asset_id": "flagged", "error_found": True, "note": "人物の見落とし",
          "privacy_review_run_id": "privacy-1", "presented_source_sha256": "a" * 64},
         {"asset_id": "clear", "error_found": False, "note": "問題なし",
@@ -172,6 +172,7 @@ def test_番号返信はproblemを保留し他画像をprivacy_review_writeで�
     result = apply_privacy_reply(queue, data)
 
     assert [call[0] for call in calls] == ["hold", "write"]
+    assert all(call[2]["presentation_run_id"] == "presentation" for call in calls)
     assert calls[0][1][1:3] == ("flagged", "privacy-1")
     assert calls[0][2]["note"] == "人物の見落とし"
     assert calls[1][1][1:4] == ("clear", "gate-2", "region-2")

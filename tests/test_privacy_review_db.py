@@ -5,6 +5,7 @@ import os
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import UUID
 
 import numpy as np
 import pytest
@@ -94,6 +95,21 @@ def write(queue, asset, source, *, code_version="test", **kwargs):
     payload, gate_id, _ = source
     return privacy.write(queue, asset, gate_id, payload["region_run_id"],
                          code_version=code_version, **kwargs)
+
+
+def presentation(queue, asset, original, run_id=None):
+    with Session(queue.engine) as session, session.begin():
+        row = session.get(Asset, asset)
+        parameters = {"kind": "mobile_presentation", "asset_ids": [str(asset)]}
+        run = ProcessingRun(stage="review", parameters=parameters, config_hash=digest(parameters),
+                            license_class=row.license_class, taxonomy_version=row.taxonomy_version,
+                            code_version="test", node="fixture", finished_at=datetime.now(UTC))
+        if run_id:
+            run.id = UUID(run_id)
+        session.add(run)
+        session.flush()
+        session.add(ProcessingRunInput(run_id=run.id, input_run_id=original))
+        return str(run.id)
 
 
 @pytest.mark.parametrize("review_source,reason", [
@@ -470,6 +486,7 @@ def test_issue120番号返信は新privacy契約を失効させ旧writerを使�
     with Session(queue.engine) as session:
         raw = Path(session.get(Asset, asset).storage_path)
     delivery(mapping, tmp_path, {str(asset): raw})
+    presentation(queue, asset, original, mapping["presentation_run_id"])
     reply = reply_reviews(mapping, manifest, "a" * 64,
                           "全1枚確認済み\n1: 確認内容の誤り", db=UNIT_DB)
 
@@ -595,7 +612,8 @@ def test_issue120問題なし返信は既存の人物訂正と保留を変更し
         original = write(queue, asset, review_source, code_version="uncertain")
     with Session(queue.engine) as session:
         before = copy.deepcopy(session.get(ProcessingRun, original).parameters)
-    data = {"reviewer": "ユーザー", "rows": [{
+    data = {"reviewer": "ユーザー", "presentation_run_id": presentation(queue, asset, original),
+            "rows": [{
         "asset_id": str(asset), "error_found": False, "note": "提示画像を確認済み・問題なし",
         "privacy_review_run_id": str(original), "presented_source_sha256": review_source[2],
         "image_gate_run_id": str(review_source[1]),

@@ -859,6 +859,7 @@ def reply_reviews(mapping, manifest, decisions_sha256, reply, *, directory=None,
     reply = parse_chat_reply(reply, len(groups))
     problems = {problem["number"]: problem["reason"] for problem in reply["problems"]}
     return {"reviewer": "ユーザー", "confirm_no_errors": not problems,
+            "presentation_run_id": mapping["presentation_run_id"],
             "nonpresented_holds": holds,
             "decisions_sha256": decisions_sha256, "chat_reply": reply["reply_text"].strip(),
             "number_map_sha256": hashlib.sha256(
@@ -888,12 +889,16 @@ def apply_privacy_reply(queue, data):
                 not row.get("image_gate_run_id") or not row.get("region_policy_run_id")):
             raise ValueError("問題なしの画像にはA/B runが必要です")
 
+    if not data.get("presentation_run_id"):
+        raise ValueError("確認した提示runが必要です")
+
     for row in rows:
         if row["error_found"]:
             run_id = privacy_review.record_hold(
                 queue, row["asset_id"], row["privacy_review_run_id"],
                 code_version="issue120-chat-review-v1", reviewer=data["reviewer"],
                 presented_source_sha256=row["presented_source_sha256"], note=row["note"],
+                presentation_run_id=data["presentation_run_id"],
             )
         else:
             with queue._transaction() as session:
@@ -907,6 +912,7 @@ def apply_privacy_reply(queue, data):
                 input_run_id=row["privacy_review_run_id"], reviewer=data["reviewer"],
                 real_people=evidence["real_people"], hold=evidence["human_hold"],
                 presented_source_sha256=row["presented_source_sha256"], note=row["note"],
+                presentation_run_id=data["presentation_run_id"],
             )
         row["recorded_privacy_review_run_id"] = str(run_id)
     return data

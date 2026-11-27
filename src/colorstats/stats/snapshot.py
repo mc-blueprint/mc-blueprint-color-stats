@@ -163,8 +163,6 @@ def _read(connection, selection, directory):
 def _inputs(run_id, asset_id, taxonomy, records, jobs, seen, active):
     if run_id in active:
         raise ValueError("入力runの参照が循環しています")
-    if run_id in seen:
-        return
     active.add(run_id)
     row = records.get(run_id)
     if row is None:
@@ -184,7 +182,27 @@ def _inputs(run_id, asset_id, taxonomy, records, jobs, seen, active):
             raise ValueError("画像reviewの由来が一致しません")
     elif row["stage"] != "subject":
         raise ValueError("対応しない解析stageです")
+    if run_id in seen:
+        active.remove(run_id)
+        return
     for parent in row["input_run_ids"]:
+        if (row["stage"] == "review" and row["parameters"].get("kind") == "privacy_review"
+                and row["parameters"].get("method") == "human"
+                and str(parent) == row["parameters"].get("presentation_run_id")):
+            presentation = records.get(parent)
+            original = uuid.UUID(row["parameters"]["input_run_id"])
+            if (presentation is None or presentation["stage"] != "review"
+                    or presentation["finished_at"] is None
+                    or presentation["failure_reason"] is not None
+                    or presentation["taxonomy_version"] != taxonomy
+                    or presentation["parameters"].get("kind") != "mobile_presentation"
+                    or str(asset_id) not in presentation["parameters"].get("asset_ids", [])
+                    or original not in presentation["input_run_ids"]
+                    or original not in row["input_run_ids"]):
+                raise ValueError("確認runの提示依存が一致しません")
+            # 提示は標本全体の根拠。画像ごとの解析入力は確認元Cから辿る。
+            seen[parent] = presentation
+            continue
         _inputs(parent, asset_id, taxonomy, records, jobs, seen, active)
     active.remove(run_id)
     seen[run_id] = row

@@ -76,6 +76,11 @@ HTMLの生成・配信検証・番号変換・返信登録は
 manifest全体・判定artifact・番号表・HTMLのSHAは、生成時のDB提示runへappend-onlyで固定する。
 ディスク上の一式は非信頼とし、配信・返信・P6ではDB固定値との一致を必須にする。
 DBにない提示やSHAの自己更新は拒否する。P6にはcomparisonの提示が必要である。
+確認runには提示runのIDとProcessingRunInputを完了取引で固定する。
+P6で採用するのは、同じ固定samplingに属する成功済みcomparison提示の最新1件だけとする。
+`finished_at`降順、同時刻はrun ID降順で決め、各確認runの提示IDと入力依存の両方を照合する。
+別の提示の確認・提示依存のない旧確認は拒否し、現行Cから提示と確認をやり直す。
+未提示保留はこの確認対象に含めず、保留参照として検証して統計から外す。
 統計に渡すrootの `human/` には、配信済みHTMLと `number-map.json`、
 `review-manifest.json`、SHAで束縛された `privacy-decisions.json`、
 適用結果の `converted-review.json` を揃える。

@@ -138,8 +138,9 @@ def build(queue, data):
     return production.read(data.human / "number-map.json")
 
 
-def confirm(queue, data):
-    mapping = build(queue, data)
+def confirm(queue, data, mapping=None):
+    if mapping is None:
+        mapping = build(queue, data)
     total = len({row["number"] for row in mapping["rows"]})
     reply = mobile.reply_reviews(
         mapping,
@@ -151,6 +152,124 @@ def confirm(queue, data):
     applied = mobile.apply_privacy_reply(queue, reply)
     production.save(data.human / "converted-review.json", applied)
     return mapping, applied
+
+
+def second_presentation(queue, data, change):
+    second = copy.copy(data)
+    root = data.human.parent / "second"
+    second.bundle, second.execution, second.human = (
+        root / n for n in ("bundle", "execution", "human")
+    )
+    second.manifest = copy.deepcopy(data.manifest)
+    decisions = production.read(data.execution / "privacy-decisions.json")
+    if change == "population":
+        second.manifest["population"] += 1
+    else:
+        decisions[0]["reason"] = "別の提示用の説明"
+        for row in second.manifest["rows"]:
+            if row["asset_id"] == decisions[0]["asset_id"]:
+                row["reason"] = decisions[0]["reason"]
+    production.save(second.execution / "privacy-decisions.json", decisions)
+    second.manifest["decisions_sha256"] = mobile.digest(second.execution / "privacy-decisions.json")
+    production.save(second.bundle / "manifest.json", second.manifest)
+    return second, build(queue, second)
+
+
+@pytest.mark.parametrize("change", ["population", "description"])
+def test_確認を別の正規提示へ付け替えてもP6は拒否する(queue, grouped, change):
+    first = build(queue, grouped)
+    second, mapping = second_presentation(queue, grouped, change)
+    _, applied = confirm(queue, grouped, first)
+    replaced = mobile.reply_reviews(
+        mapping, second.human / "review-manifest.json", second.manifest["decisions_sha256"],
+        applied["chat_reply"], db=queue.engine,
+    )
+    runs = {r["asset_id"]: r["recorded_privacy_review_run_id"] for r in applied["rows"]}
+    for row in replaced["rows"]:
+        row["recorded_privacy_review_run_id"] = runs[row["asset_id"]]
+    for path in second.human.iterdir():
+        (grouped.human / path.name).write_bytes(path.read_bytes())
+    production.save(grouped.human / "converted-review.json", replaced)
+    with Session(queue.engine) as session, pytest.raises(ValueError, match="提示"):
+        runtime.human_reviews(session, grouped.human.parent, {"human_sampling": grouped.sampling})
+
+
+def test_複数提示の最新を確認した場合だけP6で受理する(queue, grouped):
+    build(queue, grouped)
+    second, mapping = second_presentation(queue, grouped, "population")
+    _, applied = confirm(queue, second, mapping)
+    with Session(queue.engine) as session:
+        refs = runtime.human_reviews(session, second.human.parent,
+                                     {"human_sampling": second.sampling})
+        assert len(refs) == 3
+        for row in applied["rows"]:
+            run = session.get(ProcessingRun, UUID(refs[row["asset_id"]]))
+            assert run.parameters["presentation_run_id"] == mapping["presentation_run_id"]
+            assert session.get(ProcessingRunInput, (run.id, UUID(mapping["presentation_run_id"])))
+
+
+def test_古い提示の一式と確認をそのまま使ってもP6は拒否する(queue, grouped):
+    first = build(queue, grouped)
+    second_presentation(queue, grouped, "population")
+    confirm(queue, grouped, first)
+    with Session(queue.engine) as session, pytest.raises(ValueError, match="最新"):
+        runtime.human_reviews(session, grouped.human.parent, {"human_sampling": grouped.sampling})
+
+
+def test_提示への依存を持たない手動確認はP6で流用できない(queue, grouped):
+    mapping = build(queue, grouped)
+    reply = mobile.reply_reviews(
+        mapping, grouped.human / "review-manifest.json", grouped.manifest["decisions_sha256"],
+        "全1枚確認済み\n問題なし", db=queue.engine,
+    )
+    for row in reply["rows"]:
+        rid = privacy_review.write(
+            queue, row["asset_id"], row["image_gate_run_id"], row["region_policy_run_id"],
+            code_version="manual", input_run_id=row["privacy_review_run_id"],
+            reviewer=reply["reviewer"], real_people="absent",
+            presented_source_sha256=row["presented_source_sha256"], note=row["note"],
+        )
+        row["recorded_privacy_review_run_id"] = str(rid)
+    production.save(grouped.human / "converted-review.json", reply)
+    with Session(queue.engine) as session, pytest.raises(ValueError, match="結び付いて"):
+        runtime.human_reviews(session, grouped.human.parent, {"human_sampling": grouped.sampling})
+
+
+def test_確認runに複数の提示入力がある場合もP6は拒否する(queue, grouped):
+    first = build(queue, grouped)
+    second, mapping = second_presentation(queue, grouped, "population")
+    _, applied = confirm(queue, second, mapping)
+    with Session(queue.engine) as session, session.begin():
+        session.add(ProcessingRunInput(
+            run_id=UUID(applied["rows"][0]["recorded_privacy_review_run_id"]),
+            input_run_id=UUID(first["presentation_run_id"]),
+        ))
+    with Session(queue.engine) as session, pytest.raises(ValueError, match="結び付いて"):
+        runtime.human_reviews(session, second.human.parent, {"human_sampling": second.sampling})
+
+
+@pytest.mark.parametrize("invalid", ["missing", "other_c", "unshown"])
+def test_確認writerは提示と対象Cの入力依存を検証する(queue, grouped, invalid):
+    mapping = build(queue, grouped)
+    aid = grouped.ids[2] if invalid == "unshown" else mapping["rows"][0]["asset_id"]
+    original = grouped.originals[aid]
+    proof = str(uuid4()) if invalid == "missing" else mapping["presentation_run_id"]
+    rid = original["run"]
+    if invalid in {"other_c", "unshown"}:
+        rid = privacy_review.write(
+            queue, aid, original["gate"], original["source"]["region_run_id"],
+            code_version="not-presented",
+        )
+    with Session(queue.engine) as session:
+        before = set(session.scalars(select(ProcessingRun.id)))
+    with pytest.raises(ValueError, match="提示run"):
+        privacy_review.record_hold(
+            queue, aid, rid, code_version="reply", reviewer="ユーザー",
+            presented_source_sha256=original["sha"], note="確認",
+            presentation_run_id=proof,
+        )
+    with Session(queue.engine) as session:
+        assert set(session.scalars(select(ProcessingRun.id))) == before
 
 
 def test_同一SHAを一番号にまとめ全項目の比較と保持参照を残す(queue, grouped):
@@ -199,6 +318,8 @@ def test_共有番号の問題を全項目へ展開し未提示には確認を�
             )
             assert run.parameters["evidence"]["human_hold"]
             assert run.parameters["note"] == "輪郭の過不足"
+            assert run.parameters["presentation_run_id"] == mapping["presentation_run_id"]
+            assert session.get(ProcessingRunInput, (run.id, UUID(mapping["presentation_run_id"])))
     production.save(grouped.human / "converted-review.json", applied)
     with Session(queue.engine) as session, pytest.raises(PermissionError, match="問題"):
         runtime.human_reviews(session, grouped.human.parent, {"human_sampling": grouped.sampling})

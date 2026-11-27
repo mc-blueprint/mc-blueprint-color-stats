@@ -164,18 +164,36 @@ def evidence(session, asset_id, gate_id, segment_id):
             "real_people": people, "semantic_person_pixels": int((semantic == 12).sum())}
 
 
+def _presentation_input(session, asset_id, input_run_id, presentation_run_id):
+    presentation_id = uuid.UUID(str(presentation_run_id))
+    run = session.get(ProcessingRun, presentation_id)
+    if (run is None or run.stage != "review" or run.finished_at is None
+            or run.failure_reason is not None or run.parameters.get("kind") != "mobile_presentation"
+            or str(asset_id) not in run.parameters.get("asset_ids", [])
+            or input_run_id is None
+            or session.get(ProcessingRunInput, (presentation_id, uuid.UUID(str(input_run_id))))
+            is None):
+        raise ValueError("確認元の提示runと対象・privacy runが一致しません")
+    return presentation_id
+
+
 def write(queue, asset_id, gate_id, segment_id, *, code_version, input_run_id=None,
-          reviewer=None, real_people=None, presented_source_sha256=None, note=None, hold=False):
+          reviewer=None, real_people=None, presented_source_sha256=None, note=None, hold=False,
+          presentation_run_id=None):
     """A/Bを固定したreview runを追加する。旧Asset/quality/判定は書き換えない。
 
     人の訂正は元privacy run・取得解像度画像の提示SHA・確認者・所見を必要とする。
     人の訂正は同じasset・A/B実入力で版やrunを作り直しても継承する。
     hold=Trueは人物根拠と独立した保留。解除は元runを指定した新しい訂正でのみ行える。
     呼出し側は提示済みの画像への番号返信だけをこの引数へ変換する。
+    番号返信のpresentation_run_idは確認対象の提示runとして完了取引で入力依存に固定する。
     """
     asset_id = uuid.UUID(str(asset_id))
     with queue._transaction() as session:
         retention.lock(session)
+        if presentation_run_id is not None:
+            presentation_run_id = str(_presentation_input(
+                session, asset_id, input_run_id, presentation_run_id))
         data = evidence(session, asset_id, gate_id, segment_id)
         correction = _latest_correction(session, data)
         _apply_correction(data, correction)
@@ -202,6 +220,8 @@ def write(queue, asset_id, gate_id, segment_id, *, code_version, input_run_id=No
                         "reviewer": reviewer, "note": note,
                         "presented_source_sha256": presented_source_sha256,
                         "verdict": _verdict(data)})
+        if presentation_run_id is not None:
+            info.parameters["presentation_run_id"] = presentation_run_id
     payload = {"kind": "privacy_review", "parameters": info.parameters,
                "license_class": info.license_class, "code_version": code_version,
                "taxonomy_version": info.taxonomy_version}
@@ -220,7 +240,7 @@ def write(queue, asset_id, gate_id, segment_id, *, code_version, input_run_id=No
 
 
 def record_hold(queue, asset_id, run_id, *, code_version, reviewer,
-                presented_source_sha256, note):
+                presented_source_sha256, note, presentation_run_id=None):
     """提示済み画像への番号返信を、別review runの保留として追記する。
 
     run_idは番号対応表で提示したprivacy run。提示原画像SHA・確認者・理由を必須とし、
@@ -233,7 +253,7 @@ def record_hold(queue, asset_id, run_id, *, code_version, reviewer,
     return write(queue, asset_id, data["image_gate_run_id"], data["region_policy_run_id"],
                  code_version=code_version, input_run_id=run_id, reviewer=reviewer,
                  real_people=data["real_people"], presented_source_sha256=presented_source_sha256,
-                 note=note, hold=True)
+                 note=note, hold=True, presentation_run_id=presentation_run_id)
 
 
 def prepare(claim):
@@ -265,6 +285,9 @@ def register(session, run, data):
         parents.add(uuid.UUID(p["input_run_id"]))
     if correction:
         parents.add(correction.id)
+    if p.get("presentation_run_id") is not None:
+        parents.add(_presentation_input(
+            session, data["asset_id"], p["input_run_id"], p["presentation_run_id"]))
     session.add_all(ProcessingRunInput(run_id=run.id, input_run_id=parent) for parent in parents)
 
 
