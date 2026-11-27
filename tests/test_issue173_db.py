@@ -350,6 +350,57 @@ def test_属性とファイルSHAを残した比較の欠落や差替えを拒�
             )
 
 
+@pytest.mark.parametrize("entry", ["delivery", "reply"])
+@pytest.mark.parametrize("attribute", ['hidden', 'style="display:none"'])
+@pytest.mark.parametrize("outside", ["section", "article", "container", "html"])
+def test_比較区画の外側を非表示にしたら拒否する(queue, grouped, entry, attribute, outside):
+    mapping = build(queue, grouped)
+    path = grouped.human / mapping["files"][0]["file"]
+    token = mobile.contract_digest(mapping["rows"][1])
+    content = path.read_text()
+    if outside == "container":
+        content = content.replace(
+            f'<section data-sample-sha256="{token}">',
+            f'<div {attribute}><section data-sample-sha256="{token}">',
+        ).replace('</section></article>', '</section></div></article>')
+    else:
+        target = {"section": f'<section data-sample-sha256="{token}">',
+                  "article": '<article id="n1">', "html": '<html lang="ja">'}[outside]
+        content = content.replace(target, target[:-1] + f" {attribute}>")
+    path.write_text(content)
+    mapping["files"][0].update(bytes=path.stat().st_size, sha256=mobile.digest(path))
+    with pytest.raises(ValueError):
+        if entry == "delivery":
+            mobile.validate_delivery(mapping, grouped.human)
+        else:
+            mobile.reply_reviews(
+                mapping, grouped.human / "review-manifest.json",
+                grouped.manifest["decisions_sha256"], "全1枚確認済み\n問題なし",
+                directory=grouped.human,
+            )
+
+
+@pytest.mark.parametrize("separator", ["\u2028", "\u2029", "\x85", "\v", "\f"])
+def test_文字位置と異なる改行を含む正規の比較表示を受理する(queue, grouped, separator):
+    path = grouped.execution / "privacy-decisions.json"
+    decisions = production.read(path)
+    for row in decisions:
+        row["reason"] = "合成" + separator + "説明"
+    production.save(path, decisions)
+    grouped.manifest["decisions_sha256"] = mobile.digest(path)
+    for row in grouped.manifest["rows"]:
+        row["reason"] = "合成" + separator + "説明"
+    production.save(grouped.bundle / "manifest.json", grouped.manifest)
+    mapping = build(queue, grouped)
+    mobile.validate_delivery(mapping, grouped.human)
+    converted = mobile.reply_reviews(
+        mapping, grouped.human / "review-manifest.json",
+        grouped.manifest["decisions_sha256"], "全1枚確認済み\n問題なし",
+        directory=grouped.human,
+    )
+    assert len(converted["rows"]) == 2
+
+
 @pytest.mark.parametrize(
     "change", ["missing", "duplicate", "released", "stale", "expired", "policy"]
 )

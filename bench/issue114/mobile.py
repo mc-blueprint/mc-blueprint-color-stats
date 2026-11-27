@@ -262,48 +262,73 @@ def _numbered_rows(rows):
     return groups
 
 
-class _PresentedItems(HTMLParser):
-    def __init__(self, content):
+class _Markup(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.events = []
+
+    def handle_starttag(self, tag, attrs):
+        self.events.append(("start", tag, sorted(
+            (key, value) for key, value in attrs if key != "data-sample-sha256"
+        )))
+
+    def handle_endtag(self, tag):
+        self.events.append(("end", tag))
+
+    def handle_data(self, data):
+        self.events.append(("text", data))
+
+    def handle_comment(self, data):
+        self.events.append(("comment", data))
+
+
+def _presentation_digest(content):
+    parser = _Markup()
+    parser.feed(content)
+    parser.close()
+    return contract_digest(parser.events)
+
+
+class _PresentedItems(_Markup):
+    def __init__(self):
         super().__init__()
         self.number = None
         self.items, self.sources, self.contents = {}, {}, {}
-        self.content = content
-        self.lines = [0]
-        for line in content.splitlines(keepends=True):
-            self.lines.append(self.lines[-1] + len(line))
-        self.depth = 0
+        self.stack = []
         self.sample = None
 
-    def _offset(self):
-        line, column = self.getpos()
-        return self.lines[line - 1] + column
-
     def handle_starttag(self, tag, attrs):
+        start = len(self.events)
+        super().handle_starttag(tag, attrs)
         attrs = dict(attrs)
+        if tag == "html" and (self.stack or attrs != {"lang": "ja"}):
+            raise ValueError("比較内容の外側が生成時の構造と一致しません")
         if tag == "article":
-            if self.number is not None:
-                raise ValueError("提示番号を入れ子にできません")
+            if self.number is not None or self.stack != ["html"]:
+                raise ValueError("比較内容の番号を別の要素で囲めません")
             self.number = int(attrs["id"][1:])
+            if attrs != {"id": f"n{self.number}"}:
+                raise ValueError("比較内容の番号に表示属性を追加できません")
             self.items[self.number], self.sources[self.number] = [], []
             self.contents[self.number] = []
-        if tag == "section":
-            self.depth += 1
         if self.number is not None:
             if token := attrs.get("data-sample-sha256"):
-                if tag != "section" or self.sample is not None:
-                    raise ValueError("提示項目の比較内容を入れ子にできません")
+                if tag != "section" or self.stack != ["html", "article"]:
+                    raise ValueError("比較内容の項目を別の要素で囲めません")
                 self.items[self.number].append(token)
-                self.sample = (self.depth, self._offset() + len(self.get_starttag_text()))
+                self.sample = (len(self.stack), start)
             if tag == "img" and "raw" in attrs.get("class", "").split():
                 self.sources[self.number].append(attrs["data-sha256"])
+        if tag not in {"meta", "img", "br"}:
+            self.stack.append(tag)
 
     def handle_endtag(self, tag):
-        if tag == "section":
-            if self.sample is not None and self.depth == self.sample[0]:
-                content = self.content[self.sample[1]:self._offset()]
-                self.contents[self.number].append(hashlib.sha256(content.encode()).hexdigest())
-                self.sample = None
-            self.depth -= 1
+        super().handle_endtag(tag)
+        if not self.stack or self.stack.pop() != tag:
+            raise ValueError("比較内容の要素の対応が一致しません")
+        if self.sample is not None and len(self.stack) == self.sample[0]:
+            self.contents[self.number].append(contract_digest(self.events[self.sample[1]:]))
+            self.sample = None
         if tag == "article":
             if self.sample is not None:
                 raise ValueError("提示項目の比較内容が閉じられていません")
@@ -568,9 +593,10 @@ data-photo-sha256="{_uri_sha(prepared_uri)}"><h2>番号 {number}：{'・'.join(d
             card = re.sub(pattern, "", card, flags=re.S)
         card = card.replace(f'<article id="n{number}"', '<section', 1)
         card = card.replace("</article>", "</section>")
-        rows[-1]["presentation_sha256"] = hashlib.sha256(card.encode()).hexdigest()
+        card = f'<section>{card}</section>'
+        rows[-1]["presentation_sha256"] = _presentation_digest(card)
         token = contract_digest(rows[-1])
-        card = f'<section data-sample-sha256="{token}">{card}</section>'
+        card = card.replace('<section>', f'<section data-sample-sha256="{token}">', 1)
         if first_source:
             cards.append(f'<article id="n{number}">{card}</article>')
         else:
@@ -626,8 +652,9 @@ def validate_delivery(mapping, directory):
             raise ValueError("提示HTMLのbyte数・SHAが一致しません")
         validate_html(raw.decode("utf-8"), range(item["first"], item["last"] + 1),
                       limit=LIMIT, style=STYLE)
-        presented = _PresentedItems(raw.decode("utf-8"))
+        presented = _PresentedItems()
         presented.feed(raw.decode("utf-8"))
+        presented.close()
         for number in range(item["first"], item["last"] + 1):
             rows = groups[number]
             if (presented.items[number] != [contract_digest(row) for row in rows]
