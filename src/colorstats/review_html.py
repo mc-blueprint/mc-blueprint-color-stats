@@ -29,13 +29,21 @@ def jpeg(image):
     return "data:image/jpeg;base64," + base64.b64encode(stream.getvalue()).decode()
 
 
+def _image_media(image):
+    if image.format not in {"PNG", "JPEG", "MPO"}:
+        raise ValueError("取得画像にはPNG/JPEG（MPOを含む）が必要です")
+    if image.format == "MPO":
+        if image.getexif().get(274, 1) != 1:
+            raise ValueError("向き補正が必要なMPOは入力側との一致を確認できません")
+        return "jpeg"
+    return image.format.lower()
+
+
 def file_uri(path):
-    """取得画像のbyteと解像度を変えず、単体HTMLへ埋め込む。PNG/JPEG以外は拒否する。"""
+    """原画像byte・解像度を保持する。MPOは向き補正不要の先頭フレームをJPEGとして提示する。"""
     raw = path.read_bytes()
     with Image.open(io.BytesIO(raw)) as image:
-        if image.format not in {"PNG", "JPEG"}:
-            raise ValueError("取得画像にはPNG/JPEGが必要です")
-        media = image.format.lower()
+        media = _image_media(image)
         image.verify()
     return f"data:image/{media};base64," + base64.b64encode(raw).decode()
 
@@ -144,8 +152,9 @@ def _check_image(uri, sha):
     if hashlib.sha256(raw).hexdigest() != sha:
         raise ValueError("埋込画像SHAが一致しません")
     with Image.open(io.BytesIO(raw)) as image:
-        if image.format not in {"PNG", "JPEG"}:
-            raise ValueError("埋込画像の実形式が不正です")
+        media = _image_media(image)
+        if not uri.startswith(f"data:image/{media};"):
+            raise ValueError("埋込画像のMIMEと実形式が一致しません")
         image.verify()
 
 
