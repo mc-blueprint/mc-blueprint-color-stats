@@ -36,7 +36,7 @@ from colorstats.rights import combine_license
 from colorstats.schema.models import Asset, ProcessingRun, ProcessingRunInput, Region
 
 LIMIT = 12_500_000
-SINGLE_LIMIT = 25_000_000
+SINGLE_LIMIT = 50_000_000
 FORMAT = "issue114-mobile-v3"
 TEMPLATE = "issue173-mobile-v1"
 REASONS = {**CODE_NAMES,
@@ -160,7 +160,7 @@ def _page_limit(count, limit=LIMIT):
 
 
 def write_pages(cards, output, limit=LIMIT, group_counts=None, *, view="comparison"):
-    """複数番号は12.5MB、単一番号は25MBまでとし、通し番号を維持して分割する。"""
+    """複数番号は12.5MB、単一番号は50MBまでとし、通し番号を維持して分割する。"""
     groups, current, first = [], [], 1
     legend = _legend(cards)
     sizes = [len(card.encode()) for card in cards]
