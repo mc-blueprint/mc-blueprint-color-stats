@@ -30,8 +30,8 @@ def sized_card(number, size, total=1):
     return card.replace("<!-- -->", "<!--" + "x" * (size - len(header) + 1) + "-->")
 
 
-@pytest.mark.parametrize("size", [12_500_001, 25_000_000])
-def test_単一番号の大きいページを25MBまで受理する(tmp_path, size):
+@pytest.mark.parametrize("size", [12_500_001, 25_000_000, 25_000_001, 50_000_000])
+def test_単一番号の大きいページを50MBまで受理する(tmp_path, size):
     card = sized_card(1, size)
     files = mobile.write_pages([card], tmp_path)
     assert len(files) == 1 and files[0]["bytes"] == size
@@ -39,9 +39,9 @@ def test_単一番号の大きいページを25MBまで受理する(tmp_path, si
     mobile.validate_html(content, [1], limit=mobile._page_limit(1), style=mobile.STYLE)
 
 
-def test_単一番号でも25MB超は拒否する(tmp_path):
+def test_単一番号でも50MB超は拒否する(tmp_path):
     with pytest.raises(ValueError, match="容量上限"):
-        mobile.write_pages([sized_card(1, 25_000_001)], tmp_path)
+        mobile.write_pages([sized_card(1, 50_000_001)], tmp_path)
 
 
 @pytest.mark.parametrize("large_at", [0, 1, 2])
@@ -60,7 +60,7 @@ def test_大きい番号を前後の番号から独立したページに分割�
                              numbers, limit=limit, style=mobile.STYLE)
 
 
-def test_複数番号に単一番号の25MB上限を適用しない():
+def test_複数番号に単一番号の50MB上限を適用しない():
     cards = [sized_card(1, 12_500_001, total=2), sized_card(2, 10_000, total=2)]
     content = mobile.page(cards, 1, 2, 2)
     assert 12_500_000 < len(content.encode()) < 25_000_000
@@ -111,7 +111,7 @@ def test_大きい原画像の同一番号でDB固定と配信と返信と保持
         save(image, fp, *args, **kwargs)
         if isinstance(fp, (str, Path)) and Path(fp).name == "acquired.png":
             with Path(fp).open("ab") as stream:
-                stream.write(b"\0" * 9_400_000)
+                stream.write(b"\0" * 18_800_000)
 
     monkeypatch.setattr(Image.Image, "save", large_save)
     data = grouped_fixtures.grouped.__wrapped__(queue, asset, tmp_path, monkeypatch)
@@ -119,7 +119,7 @@ def test_大きい原画像の同一番号でDB固定と配信と返信と保持
     assert len(mapping["rows"]) == 2 and len(mapping["files"]) == 1
     item = mapping["files"][0]
     assert item["first"] == item["last"] == 1
-    assert mobile.LIMIT < item["bytes"] <= mobile.SINGLE_LIMIT
+    assert 25_000_000 < item["bytes"] <= mobile.SINGLE_LIMIT
     with Session(queue.engine) as session:
         original = session.get(Asset, UUID(mapping["rows"][0]["asset_id"]))
         raw_path = Path(original.storage_path)
